@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Concepto.Packages.KBDoctorCore</RootNamespace>
     <AssemblyName>KBDoctorCore</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>1</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,43 +33,44 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Artech.Architecture.Common">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Artech.Architecture.Common.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.UI.Framework">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Artech.Architecture.UI.Framework.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.UI.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Artech.Common.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common.Framework">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Artech.Common.Framework.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common.Helpers">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Artech.Common.Helpers.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common.Properties">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDKU3\Bin\Artech.Common.Properties.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Properties.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Genexus.Common">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Artech.Genexus.Common.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Genexus.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Packages.TeamDevClient.BL">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3U4\Packages\Artech.Packages.TeamDevClient.BL.dll</HintPath>
+      <HintPath>$(GX_PROGRAM_DIR)\Packages\Artech.Packages.TeamDevClient.BL.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Udm.Framework">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Artech.Udm.Framework.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Udm.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Connector">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Connector.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Connector.dll</HintPath>
     </Reference>
     <Reference Include="GeneXus.Server.Contracts">
-      <HintPath>..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3U4\GeneXus.Server.Contracts.dll</HintPath>
+      <HintPath>$(GX_PROGRAM_DIR)\GeneXus.Server.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
@@ -107,15 +109,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>StringResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

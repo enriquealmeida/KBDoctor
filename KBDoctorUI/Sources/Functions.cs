@@ -420,7 +420,7 @@ namespace Concepto.Packages.KBDoctor
                     try
                     {
                         SDTItem sdtItem = (SDTItem)structItem;
-                        if (sdtItem.BasedOn != null && sdtItem.BasedOn.ObjKey == a.Key)
+                        if (sdtItem.BasedOn != null && sdtItem.BasedOn.Key == a.Key)
                         {
 
                             output.AddLine("..." + sdtItem.Name + " based on  " + a.Name);
