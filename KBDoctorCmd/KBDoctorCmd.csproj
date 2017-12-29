@@ -80,8 +80,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>xcopy "KBDoctorCmd.dll" "%25GX_PROGRAM_DIR%25" /q /Y
+xcopy ..\..\KBDoctorCmd.Tasks.targets "%25GX_PROGRAM_DIR%25" /q /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

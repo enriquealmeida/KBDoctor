@@ -1,15 +1,11 @@
-﻿<Project DefaultTargets="Test" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="PrepareAndCompare" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="C:\Program Files (x86)\Artech\GeneXus\GeneXusXEv3U4\Genexus.Tasks.targets" />
-  <Import Project="C:\Program Files (x86)\Artech\GeneXus\GeneXusXEv3U4\KBDoctorCmd.Tasks.targets" />
+  <Import Project="$(GX_PROGRAM_DIR)\Genexus.Tasks.targets" />
+  <Import Project="$(GX_PROGRAM_DIR)\KBDoctorCmd.Tasks.targets" />
 
-  <PropertyGroup>
-    <KBPath Condition=" '$(KBPath)' == '' ">C:\Models\nsanguinetti\MTEv3</KBPath>
-  </PropertyGroup>
-
-  <Target  Name="Test">
+  <Target  Name="PrepareAndCompare">
     <OpenKnowledgeBase Directory="$(KBPath)"/>
-    <!--PrepareCompareNavigationsCmd /-->
+    <PrepareCompareNavigationsCmd/>
     <CompareNavigationsCmd />
     <CloseKnowledgeBase />
   </Target>
