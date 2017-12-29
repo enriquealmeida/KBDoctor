@@ -60,17 +60,11 @@
     <Reference Include="Artech.Genexus.Common">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Genexus.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Artech.Packages.TeamDevClient.BL">
-      <HintPath>$(GX_PROGRAM_DIR)\Packages\Artech.Packages.TeamDevClient.BL.dll</HintPath>
-    </Reference>
     <Reference Include="Artech.Udm.Framework">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Udm.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Connector">
       <HintPath>$(GX_SDK_DIR)\Bin\Connector.dll</HintPath>
-    </Reference>
-    <Reference Include="GeneXus.Server.Contracts">
-      <HintPath>$(GX_PROGRAM_DIR)\GeneXus.Server.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
