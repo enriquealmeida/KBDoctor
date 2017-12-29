@@ -417,26 +417,30 @@ namespace Concepto.Packages.KBDoctor
 
                 foreach (IStructureItem structItem in sdtstruct.Root.Items)
                 {
-                    SDTItem sdtItem = (SDTItem)structItem;
-                    if (sdtItem.BasedOn != null && sdtItem.BasedOn.ObjKey == a.Key )
+                    try
                     {
+                        SDTItem sdtItem = (SDTItem)structItem;
+                        if (sdtItem.BasedOn != null && sdtItem.BasedOn.ObjKey == a.Key)
+                        {
 
-                        output.AddLine("..." + sdtItem.Name + " based on  " + a.Name);
-                        eDBType type = sdtItem.Type;
-                        int length = sdtItem.Length;
-                        bool signed = sdtItem.Signed;
-                        string desc = sdtItem.Description;
-                        int dec = sdtItem.Decimals;
+                            output.AddLine("..." + sdtItem.Name + " based on  " + a.Name);
+                            eDBType type = sdtItem.Type;
+                            int length = sdtItem.Length;
+                            bool signed = sdtItem.Signed;
+                            string desc = sdtItem.Description;
+                            int dec = sdtItem.Decimals;
 
-                        //Modifico la variable, para que no se base en el atributo. 
-                        sdtItem.AttributeBasedOn = null;
-                        sdtItem.Type = type;
-                        sdtItem.Decimals = dec;
-                        sdtItem.Description = desc;
-                        sdtItem.Length = length;
-                        sdtItem.Signed = signed;
+                            //Modifico la variable, para que no se base en el atributo. 
+                            sdtItem.AttributeBasedOn = null;
+                            sdtItem.Type = type;
+                            sdtItem.Decimals = dec;
+                            sdtItem.Description = desc;
+                            sdtItem.Length = length;
+                            sdtItem.Signed = signed;
 
+                        }
                     }
+                    catch (Exception e) { output.AddErrorLine(e.Message); };
 
                 }
             }

@@ -1364,6 +1364,13 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             selectObjectOption.MultipleSelection = true;
             KBModel kbModel = UIServices.KB.CurrentModel;
 
+            //QualifiedName qn = 
+            //qn.ModuleName = "Root";
+            //qn.ObjectName = "Root";
+            //Folder root = Folder.Get(kbModel,"Root KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
+
+
+
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
 
             foreach (Procedure viejo in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
@@ -1390,20 +1397,23 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 viejo.SetPropertyValue("ObjectVisibility", ObjectVisibility.Private);
 
                 string parm = Functions.ExtractRuleParm(viejo);
+                string parm2 = "";
 
-                if (parm == "")
+                if (parm != "")
                 {
-                    nuevo.Rules.Source = parm + ";";
+                    nuevo.Rules.Source =  parm + ";";
 
-                    parm = parm.ToLower();
-                    parm = parm.Replace("parm", "");
-                    parm = parm.Replace("in:", "");
-                    parm = parm.Replace("out:", "");
-                    parm = parm.Replace("inout:", "");
+                    parm2 = parm.ToLower();
+                    parm2 = parm2.Replace("parm", "");
+                    parm2 = parm2.Replace("in:", "");
+                    parm2 = parm2.Replace("out:", "");
+                    parm2 = parm2.Replace("inout:", "");
+                    parm2 = parm2.Replace("(", "");
+                    parm2 = parm2.Replace(")", "");
                     //parm = parm.PadLeft().PadRight();
                 };
 
-                nuevo.ProcedurePart.Source = objName + "_core.call" + parm + " ";
+                nuevo.ProcedurePart.Source =    objName + "_core.call(" + parm2 + ") ";
 
                 foreach (Variable v in viejo.Variables.Variables)
                 {
@@ -1413,10 +1423,21 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 try
                 {
                     output.AddWarningLine("Create new: " + nuevo.Name + " Protocol: " + callProtocol);
-                    CleanKBHelper.CleanKBObjectVariables(nuevo);
+                   // CleanKBHelper.CleanKBObjectVariables(nuevo);
                     nuevo.Save();
                 }
-                catch (Exception e) { output.AddErrorLine(e.Message + " - " + e.InnerException); };
+                catch (Exception e)
+                {
+                    output.AddErrorLine(e.Message + " - " + e.InnerException);
+                    output.AddErrorLine("Can't save object" + objName + ". Try to save commented");
+                    output.AddLine("Parm = " + parm + " Parm2= " + parm2);
+
+                    nuevo.ProcedurePart.Source = "//"+ objName + "_core.call(" + parm2 + ") ";
+                    nuevo.Rules.Source = "//" + parm + ";";
+                    nuevo.Save();
+
+
+                };
             }
             output.EndSection("Split Main Object",true);
         }
@@ -2744,7 +2765,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     foreach (EntityReference reference in obj.GetReferences())
                     {
                         KBObject objRef = KBObject.Get(obj.Model, reference.To);
-
                         if ((objRef != null) && (objRef is Transaction || objRef is WorkPanel || objRef is WebPanel))
                         {
                             writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, Functions.linkObject(objRef), objRef.Description });
@@ -2753,7 +2773,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     }
                 }
             }
-            
+
             writer.AddFooter();
             writer.Close();
 
@@ -3555,11 +3575,11 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.StartSection(title);
 
             string sw="" , sw2 = "";
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
+       //     KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+       //     writer.AddHeader(title);
             int numObj = 0;
 
-            writer.AddTableHeader(new string[] { "Type", "Object", "Module", "Parm" });
+            //writer.AddTableHeader(new string[] { "Type", "Object", "Module", "Parm" });
 
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
@@ -3585,6 +3605,9 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     if (obj is WorkPanel && isMain)
                         tieneInterfaz = true;
 
+                    if (obj is ExternalObject || obj is SDT)
+                        tieneInterfaz = true;
+
 
                     string ruleparm = Functions.ExtractRuleParm(obj);
                     ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
@@ -3597,7 +3620,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     {
                         if (obj is Procedure && isMain)
 
-                        writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, ruleparm });
+                     //   writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, ruleparm });
                         sw += obj.TypeDescriptor.Name + "\t" + obj.QualifiedName + "\t" + callprotocol  + "\t"  + ruleparm + "\r\n";
                         sw2 += qualifiedName + "\t" +  callprotocol + "\r\n";
                     }
@@ -3606,21 +3629,23 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         output.AddLine(obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                 }
             }
-            writer.AddFooter();
-            writer.Close();
+       //     writer.AddFooter();
+       //     writer.Close();
 
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            //KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+          
 
             string directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
             string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
 
-            string fileName = directoryArg + @"\API-" + fechahora + ".txt";
-            System.IO.File.WriteAllText(fileName, sw);
+           // string fileName = directoryArg + @"\API-" + fechahora + ".txt";
+           // System.IO.File.WriteAllText(fileName, sw);
 
             string fileName2 = directoryArg + @"\API2-" + fechahora + ".txt";
             System.IO.File.WriteAllText(fileName2, sw2);
+            output.AddLine("URL/URI file generated in " + fileName2);
+            output.EndSection(title, success);
 
 
         }
