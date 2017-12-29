@@ -1,0 +1,388 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutKBDoctor" xml:space="preserve">
+    <value>About KBDoctor</value>
+  </data>
+  <data name="AttCharToVarchar" xml:space="preserve">
+    <value>Char that should be VarChar</value>
+  </data>
+  <data name="AttDescWithoutUniqueIndex" xml:space="preserve">
+    <value>Description attribute without unique index</value>
+  </data>
+  <data name="AttKeyVarchar" xml:space="preserve">
+    <value>Attributes Key and Varchar</value>
+  </data>
+  <data name="AttNotReferenced" xml:space="preserve">
+    <value>Not referenced by any reachable object</value>
+  </data>
+  <data name="AttVarcharToChar" xml:space="preserve">
+    <value>VarChar that shoud be Char</value>
+  </data>
+  <data name="AttWithNoDescription" xml:space="preserve">
+    <value>With no description</value>
+  </data>
+  <data name="AttWithNoDomain" xml:space="preserve">
+    <value>Without domain</value>
+  </data>
+  <data name="ListAttributes" xml:space="preserve">
+    <value>List Attributes</value>
+  </data>
+  <data name="AttWithoutBaseTable" xml:space="preserve">
+    <value>Remove attribute with no table</value>
+  </data>
+  <data name="AttWithoutColumnTitle" xml:space="preserve">
+    <value>Without column title</value>
+  </data>
+  <data name="AttWithoutDescription" xml:space="preserve">
+    <value>With incomplete description or title</value>
+  </data>
+  <data name="AttWithoutTitle" xml:space="preserve">
+    <value>Without title</value>
+  </data>
+  <data name="CleanVarsNotUsed" xml:space="preserve">
+    <value>Clean variables not used</value>
+  </data>
+  <data name="IndexWithNotRefAtt" xml:space="preserve">
+    <value>With not referenced attributes</value>
+  </data>
+  <data name="ObjectsNotCalled" xml:space="preserve">
+    <value>Remove not referenced objects</value>
+  </data>
+  <data name="ObjectsNotReacheable" xml:space="preserve">
+    <value>Mark unreachable objects with GenerateObject=FALSE</value>
+  </data>
+  <data name="ObjectsWithCommitOnExit" xml:space="preserve">
+    <value>With parm() and Commit on exit=Yes</value>
+  </data>
+  <data name="ObjectsWithoutInOut" xml:space="preserve">
+    <value>With parm() without in:/out:/inout:</value>
+  </data>
+  <data name="ObjectsMainCalled" xml:space="preserve">
+    <value>Mains called by others</value>
+  </data>
+  <data name="ObjectsReferenced" xml:space="preserve">
+    <value>List all object dependencies</value>
+  </data>
+  <data name="ObjectsWithVarNotBasedOnAtt" xml:space="preserve">
+    <value>With variables not based on attribute/domain</value>
+  </data>
+  <data name="ObjectsWithVarsNotUsed" xml:space="preserve">
+    <value>Objects with variables not used</value>
+  </data>
+  <data name="TablesWithNoDescription" xml:space="preserve">
+    <value>Tables with incomplete description</value>
+  </data>
+  <data name="GroupWithNoDescription" xml:space="preserve">
+    <value>Subtype groups with incomplete description</value>
+  </data>
+  <data name="CleanKBAsMuchAsPossible" xml:space="preserve">
+    <value>Clean my KB as much as possible</value>
+  </data>
+  <data name="TablesWidth" xml:space="preserve">
+    <value>Table's width</value>
+  </data>
+  <data name="ListTables" xml:space="preserve">
+    <value>List Tables</value>
+  </data>
+  <data name="AddINParmRule" xml:space="preserve">
+    <value>Add IN: to parametrs without IN:/OUT:/INOUT:</value>
+  </data>
+  <data name="ObjectsComplex" xml:space="preserve">
+    <value>Complex Specification Objects</value>
+  </data>
+  <data name="ObjectsLegacyCode" xml:space="preserve">
+    <value>Objects with legacy code</value>
+  </data>
+  <data name="ChangeLegacyCode" xml:space="preserve">
+    <value>Change code to improve readability</value>
+  </data>
+  <data name="ObjectsRefactoringCandidates" xml:space="preserve">
+    <value>Calculate KBDoctor complexity index</value>
+  </data>
+  <data name="ObjectsDiagnostics" xml:space="preserve">
+    <value>Objects Diagnostics</value>
+  </data>
+  <data name="AttInOneTrnOnly" xml:space="preserve">
+    <value>Attributes only in transactions</value>
+  </data>
+  <data name="AttFormula" xml:space="preserve">
+    <value>List attributes Formula</value>
+  </data>
+  <data name="AttUpdated" xml:space="preserve">
+    <value>Where is updated this attribute? </value>
+  </data>
+  <data name="TableTransaction" xml:space="preserve">
+    <value>Table &lt;-&gt; Transaction Relation</value>
+  </data>
+  <data name="PrcCalledByTrn" xml:space="preserve">
+    <value>Forced generation of SDT </value>
+  </data>
+  <data name="SearchAndReplace" xml:space="preserve">
+    <value>Search and Replace in Objects</value>
+  </data>
+  <data name="ClassNotInTheme" xml:space="preserve">
+    <value>Class not in Theme and Class not used</value>
+  </data>
+  <data name="CleanObjects" xml:space="preserve">
+    <value>Initialize and clean objects</value>
+  </data>
+  <data name="TableUpdate" xml:space="preserve">
+    <value>Table - Update/Insert/Delete/Read</value>
+  </data>
+  <data name="TableInsertNew" xml:space="preserve">
+    <value>New - Attribute not instanciated</value>
+  </data>
+  <data name="ProcedureSDT" xml:space="preserve">
+    <value>Generate SDT Sources</value>
+  </data>
+  <data name="ProcedureGetSet" xml:space="preserve">
+    <value>Generate Get/Set Procedures</value>
+  </data>
+  <data name="RemovableTransactions" xml:space="preserve">
+    <value>Removable Transactions</value>
+  </data>
+  <data name="RenameAttributesAndTables" xml:space="preserve">
+    <value>Rename Objects to significant name length</value>
+  </data>
+  <data name="ListObjWarningsErrors" xml:space="preserve">
+    <value>Objects with warnings and errors</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="specXEv2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\specXEv2.xsl;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="OpenFolderComparerNavigation" xml:space="preserve">
+    <value>Open navigation folder</value>
+  </data>
+  <data name="PrepareComparerNavigation" xml:space="preserve">
+    <value>Create a snapshot of navigations</value>
+  </data>
+  <data name="ListLastReports" xml:space="preserve">
+    <value>List last KBDoctor reports</value>
+  </data>
+  <data name="ListObj" xml:space="preserve">
+    <value>List Objects</value>
+  </data>
+  <data name="MainTableUsed" xml:space="preserve">
+    <value>Tables used by mains</value>
+  </data>
+  <data name="HelpKBDoctor" xml:space="preserve">
+    <value>KBDoctor Help (in Spanish)</value>
+  </data>
+  <data name="ListProcedureCallWebpanelTransaction" xml:space="preserve">
+    <value>Webpanels and Transactions called by Procedures</value>
+  </data>
+  <data name="ObjectsWINWEB" xml:space="preserve">
+    <value>Generated for WIN and WEB</value>
+  </data>
+  <data name="CalculateCheckSum" xml:space="preserve">
+    <value>Generate objects in text files</value>
+  </data>
+  <data name="MarkPublicObjects" xml:space="preserve">
+    <value>Mark Public Objects</value>
+  </data>
+  <data name="ListObjSimilarNavigation" xml:space="preserve">
+    <value>Find Similar Navigations</value>
+  </data>
+  <data name="OpenFolderObjComparerNavigation" xml:space="preserve">
+    <value>Open object  in text format folder</value>
+  </data>
+  <data name="GenerateLocationXML" xml:space="preserve">
+    <value>Generate Location.XML</value>
+  </data>
+  <data name="CompareLastNVGDirectory" xml:space="preserve">
+    <value>Compare Navigations (two last snapshots)</value>
+  </data>
+  <data name="CompareLastOBJDirectory" xml:space="preserve">
+    <value>Compare Objects in text format (two last snapshots)</value>
+  </data>
+  <data name="ClassUsed" xml:space="preserve">
+    <value>Classes Used</value>
+  </data>
+  <data name="GenerateTrnFromTable" xml:space="preserve">
+    <value>Generate transactions from tables</value>
+  </data>
+  <data name="ListClassUsed" xml:space="preserve">
+    <value>List classes used</value>
+  </data>
+  <data name="ListTablesInModules" xml:space="preserve">
+    <value>List tables in modules</value>
+  </data>
+  <data name="GenerateSimpleTransactionFromNotGeneratedTransactions" xml:space="preserve">
+    <value>Generate Simple Trn from Not Generate Transactions</value>
+  </data>
+  <data name="GenerateSQLScripts" xml:space="preserve">
+    <value>Generate scripts to check data</value>
+  </data>
+  <data name="GenerateGraph" xml:space="preserve">
+    <value>Generate KB Graphs</value>
+  </data>
+  <data name="ResetWINForm" xml:space="preserve">
+    <value>Reset all transaction and workpanel WIN Forms</value>
+  </data>
+  <data name="EditLegacyCodeToReplace" xml:space="preserve">
+    <value>Edit  code to replace</value>
+  </data>
+  <data name="ListDomain" xml:space="preserve">
+    <value>List Domains</value>
+  </data>
+  <data name="ReplaceDomain" xml:space="preserve">
+    <value>Replace Domain</value>
+  </data>
+  <data name="KBInterfaces" xml:space="preserve">
+    <value>KB Interfaces</value>
+  </data>
+  <data name="ListModules" xml:space="preserve">
+    <value>List Modules Errors</value>
+  </data>
+  <data name="ListModulesStatistics" xml:space="preserve">
+    <value>List Modules Statistics</value>
+  </data>
+  <data name="MoveTransactions" xml:space="preserve">
+    <value>Move Transactions to Folders</value>
+  </data>
+  <data name="ModuleDependencies" xml:space="preserve">
+    <value>Modules dependencies</value>
+  </data>
+  <data name="CountGeneratedByPattern" xml:space="preserve">
+    <value>List objects not generated by patterns</value>
+  </data>
+  <data name="ReplaceNullCompatible" xml:space="preserve">
+    <value>Change attributes with Nullable=Compatible</value>
+  </data>
+  <data name="BuildModule" xml:space="preserve">
+    <value>Build Module Objects and References</value>
+  </data>
+  <data name="BuildObjectAndReferences" xml:space="preserve">
+    <value>Build Object and References</value>
+  </data>
+  <data name="ListAPIObjects" xml:space="preserve">
+    <value>List system public URI/URL</value>
+  </data>
+  <data name="RecomendedModule" xml:space="preserve">
+    <value>Recommended Module</value>
+  </data>
+  <data name="SplitMainObject" xml:space="preserve">
+    <value>Split main object</value>
+  </data>
+  <data name="TreeCommit" xml:space="preserve">
+    <value>Tree call - Commit</value>
+  </data>
+</root>

@@ -1,0 +1,4 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<UsingTask TaskName="KBDoctorCmd.PrepareCompareNavigationsCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.CompareNavigationsCmd" AssemblyFile="KBDoctorCmd.dll"/>
+</Project>

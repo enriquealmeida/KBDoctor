@@ -1,0 +1,35 @@
+#Contain text to be replaced (Replace is case insensitive)
+#FindText, ReplaceToText
+#
+.and. , and 
+.like., like 
+.not., not 
+.or., or 
+AND,and
+OR ,or 
+NOT,not
+LIKE,like
+IF ,if 
+.udp(,(
+.call(,(
+SUB,Sub
+ENDSUB,EndSub
+DO CASE,do case
+ENDCASE,endcase
+EVENT,Event
+ENDEVENT,EndEvent
+FOR EACH,for each
+ORDER,order
+DEFINED BY,defined by
+WHERE,where
+WHEN,when
+ENDFOR,endfor
+ENDIF,endif
+ELSE,else
+NEW,new
+DUPLICATE,duplicate
+ENDNEW,endnew
+COMMIT,commit
+ROLLBACK,rollback
+MSG,msg
+LOAD,load

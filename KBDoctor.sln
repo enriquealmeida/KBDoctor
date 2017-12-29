@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBDoctorUI", ".\KBDoctorUI\KBDoctorUI.csproj", "{93AFE55B-1DB2-44C7-9D05-06B4479D0C15}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBDoctorValidator", ".\KBDoctorValidator\KBDoctorValidator.csproj", "{09F02B37-83C7-4EEF-847C-2441A0FF73D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBDoctorCore", ".\KBDoctorCore\KBDoctorCore.csproj", "{280A5263-3EFA-4585-86DD-EA8FD5310A4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBDoctorCmd", ".\KBDoctorCmd\KBDoctorCmd.csproj", "{C9E167CE-CA6D-4B03-9826-DF2F91DC76EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93AFE55B-1DB2-44C7-9D05-06B4479D0C15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93AFE55B-1DB2-44C7-9D05-06B4479D0C15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93AFE55B-1DB2-44C7-9D05-06B4479D0C15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93AFE55B-1DB2-44C7-9D05-06B4479D0C15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09F02B37-83C7-4EEF-847C-2441A0FF73D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09F02B37-83C7-4EEF-847C-2441A0FF73D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09F02B37-83C7-4EEF-847C-2441A0FF73D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09F02B37-83C7-4EEF-847C-2441A0FF73D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{280A5263-3EFA-4585-86DD-EA8FD5310A4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{280A5263-3EFA-4585-86DD-EA8FD5310A4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{280A5263-3EFA-4585-86DD-EA8FD5310A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{280A5263-3EFA-4585-86DD-EA8FD5310A4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9E167CE-CA6D-4B03-9826-DF2F91DC76EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9E167CE-CA6D-4B03-9826-DF2F91DC76EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9E167CE-CA6D-4B03-9826-DF2F91DC76EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9E167CE-CA6D-4B03-9826-DF2F91DC76EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

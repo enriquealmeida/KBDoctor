@@ -1,0 +1,327 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Package xmlns='http://schemas.genexus.com/addin/v1.0'
+         id='fa2c542d-cd46-4df2-9317-bd5899a536eb'
+         name='KBDoctor'>
+  <Resources>
+    <Resource type="strings" name="Concepto.Packages.KBDoctor.StringResources"/>
+    <Resource type="images" name="Concepto.Packages.KBDoctor.Icons"/>
+  </Resources>
+  <Commands>
+    <!-- Atributos -->
+    <CommandDefinition id="AttWithNoDomain" />
+    <CommandDefinition id="ListAttributes" />
+    <CommandDefinition id="AttWithoutDescription" />
+    <CommandDefinition id="AttCharToVarchar" />
+    <CommandDefinition id="AttVarcharToChar" />
+    <CommandDefinition id="AttKeyVarchar" />
+    <CommandDefinition id="AttDescWithoutUniqueIndex" />
+    <CommandDefinition id="AttWithoutBaseTable" image="Eraser" imageType="ico"/>
+    <CommandDefinition id="AttFormula" />
+    <CommandDefinition id="ReplaceDomain" />
+    <CommandDefinition id="ListDomain" />
+    <CommandDefinition id="AttUpdated" />
+    <CommandDefinition id="GenerateSQLScripts" />
+    <CommandDefinition id="GenerateGraph" />
+    <!-- Tablas -->
+    <CommandDefinition id="ListTables" />
+    <CommandDefinition id="TablesWithNoDescription" />
+    <CommandDefinition id="GroupWithNoDescription" />
+    <CommandDefinition id="TablesWidth" />
+    <CommandDefinition id="TableTransaction" />
+    <CommandDefinition id="GenerateSimpleTransactionFromNotGeneratedTransactions" />
+    <CommandDefinition id="TableUpdate" />
+    <CommandDefinition id="TableInsertNew" />
+    <CommandDefinition id="GenerateTrnFromTabless" />
+    <CommandDefinition id="GenerateTrnFromTables2" />
+    <CommandDefinition id="ListTablesInModules" />
+    <!-- Indices -->
+    <CommandDefinition id="IndexWithNotRefAtt" />
+    <CommandDefinition id="RemoveIndexAttribute"/>
+    <!-- Objetos -->
+    <CommandDefinition id="ObjectsNotCalled" />
+    <CommandDefinition id="ObjectsNotReacheable" image="Hand3" imageType="ico"/>
+    <CommandDefinition id="ObjectsWithoutInOut" />
+    <CommandDefinition id="ObjectsMainCalled" />
+    <CommandDefinition id="ObjectsReferenced" />
+    <CommandDefinition id="ObjectsWithVarNotBasedOnAtt" />
+    <CommandDefinition id="RenameVariables" />
+    <CommandDefinition id="BuildModule" />
+    <CommandDefinition id="BuildModuleContext" />
+    <CommandDefinition id="BuildObjectAndReferences" />
+    <CommandDefinition id="BuildObjectAndReferencesContext" />
+    <CommandDefinition id="ObjectsWithCommitOnExit" />
+    <CommandDefinition id="RemovableTransactions" />
+    <CommandDefinition id="ObjectsComplex" />
+    <CommandDefinition id="ObjectsLegacyCode" />
+    <CommandDefinition id="ChangeLegacyCode" />
+    <CommandDefinition id="ChangeCommitOnExit" />
+    <CommandDefinition id="TreeCommit" />
+    <CommandDefinition id="EditLegacyCodeToReplace" /> 
+    <CommandDefinition id="ObjectsRefactoringCandidates" />
+    <CommandDefinition id="ObjectsDiagnostics" />
+    <CommandDefinition id="ObjectsWINWEB" />
+    <CommandDefinition id="ListProcedureCallWebpanelTransaction" />
+    <CommandDefinition id="ListObjWarningsErrors" />
+    <CommandDefinition id="ListObjSimilarNavigation" />
+    <CommandDefinition id="ListAPIObjects" />
+    <CommandDefinition id="RecomendedModule" />
+    <CommandDefinition id="SplitMainObject" />
+    <CommandDefinition id="MainTableUsed" />
+    <CommandDefinition id="CreateDeployUnits" />
+    <CommandDefinition id="MarkPublicObjects" />
+    <CommandDefinition id="ListModules" />
+    <CommandDefinition id="ListModulesStatistics" />
+    <CommandDefinition id="MoveTransactions" />
+    <CommandDefinition id="ModuleDependencies" />
+    <CommandDefinition id="CalculateCheckSum" />
+    <CommandDefinition id="GenerateLocationXML" />
+    <CommandDefinition id="KBInterfaces" /> 
+    <CommandDefinition id="UDPCallables" />
+
+    <!-- Acciones sobre atributos -->
+    <CommandDefinition id="AssignDomainToAttribute" />
+    <CommandDefinition id="AssignDeionToAttribute" />
+    <CommandDefinition id="AssignTitleToAttribute" />
+    <CommandDefinition id="AssignColumnTitleToAttribute" />
+    <CommandDefinition id="ListAttribute" />
+    <CommandDefinition id="AddDeorIndex" />
+    <CommandDefinition id="AttInOneTrnOnly" />
+    <!-- Acciones sobre objetos -->
+    <CommandDefinition id="RemoveObject" />
+    <CommandDefinition id="OpenObject" />
+    <CommandDefinition id="AssignAttributeToVariable" />
+    <CommandDefinition id="AssignDomainToVariable" />
+    <CommandDefinition id="CleanVarsNotUsed" />
+    <CommandDefinition id="CleanObjects" />
+    <CommandDefinition id="ResetWINForm" />
+    <!--- acciones sobre atributos y tablas -->
+    <CommandDefinition id="RenameAttributesAndTables" />
+    <CommandDefinition id="CountGeneratedByPattern" />
+    <CommandDefinition id="ReplaceNullCompatible" />
+    <CommandDefinition id="ListObj" />
+    <CommandDefinition id="PrepareComparerNavigation" />
+    <CommandDefinition id="CompareLastNVGDirectory" />
+    <CommandDefinition id="OpenFolderComparerNavigation" />
+
+    <CommandDefinition id="CompareLastOBJDirectory" />
+    <CommandDefinition id="OpenFolderObjComparerNavigation" />
+    <!-- Acciones sobre tablas -->
+    <CommandDefinition id="AssignDeionToTable" />
+    <!-- Acciones sobre la KB-->
+    <CommandDefinition id="AddINParmRule" image="Splatter1" imageType="ico" />
+    <CommandDefinition id="ListTableAttributesUsingDomain" image="Splatter1" imageType="ico" />
+    <CommandDefinition id="CleanKBAsMuchAsPossible" image="escoba" imageType="ico"/>
+    <CommandDefinition id="ProcedureSDT" image="SDT" imageType="ico"/>
+    <CommandDefinition id="ProcedureGetSet" image="SDT" imageType="ico"/>
+    <CommandDefinition id="SearchAndReplace" image="Magnifier" imageType="ico"/>
+    <CommandDefinition id="ClassNotInTheme" image="Palette" imageType="ico"/>
+    <CommandDefinition id="ClassUsed" image="Palette" imageType="ico"/>
+    <CommandDefinition id="ListClassUsed" image="Palette" imageType="ico"/>
+    <CommandDefinition id ="ListLastReports" />
+    <!-- Acerca de -->
+    <CommandDefinition id="AboutKBDoctor" image="Red_Cross"   imageType="ico" />
+    <CommandDefinition id="HelpKBDoctor"  />
+  </Commands>
+  <!--  se comenta  
+  <Groups>
+    <Group refid='CommitGroup' package='319fb05a-2f9a-47c5-b133-acc33f0b95d7'>
+      <Group id='KBDoctor'></Group>
+      <Command refid="ListObj" />
+    </Group>
+  </Groups>
+
+  	<Groups>
+		<Group refid='KBObjectGrp' package='98121D96-A7D8-468b-9310-B1F468F812AE'>
+			<Popup id='ObjectsContext' name='ObjectContext' context='selection' dynamic='true' autoManageVisibility='true' insertBefore=''>
+				<Command refid='BuildModuleContext' initVisible='true'/>
+        <Command refid='BuildObjectAndReferences' initVisible='true'/>
+
+        </Popup>
+		</Group>
+	</Groups>
+   -->
+
+  <Menus>
+    <Menu type="menubar">
+      <Popup refid='ToolsMenu' name='Tools' >
+        <Popup name="KBDoctor"   >
+          <Popup name ="Attributes" >
+            <Group>
+              <Command refid="ListAttributes"/>
+              <Command refid="AttWithNoDomain"/>
+              <Command refid="AttWithoutDescription"/>
+              <Command refid="AttInOneTrnOnly"/>
+              <Command refid="AttFormula"/>
+            </Group>
+            <Group>
+              <Command refid="AttCharToVarchar"/>
+              <Command refid="AttVarcharToChar"/>
+              <Command refid="AttKeyVarchar"/>
+            </Group>
+          </Popup>
+           <Popup name ="Domains">
+            <Group>
+              <Command refid="ListDomain"/>
+              <Command refid="ReplaceDomain"/>
+            </Group>
+            </Popup>
+
+          <Popup name ="Tables">
+            <Command refid="ListTables" />
+            <Command refid="TablesWithNoDescription"/>
+            <Command refid="GroupWithNoDescription" />
+            <Command refid="TableTransaction" />
+            <Command refid="TableUpdate" />
+            <Command refid="ReplaceNullCompatible"  />
+            <Command refid="ListTableAttributesUsingDomain"/>
+          </Popup>
+          <Popup name="Indexes">
+            <Command refid="IndexWithNotRefAtt"/>
+          </Popup>
+          <Popup name ="Objects">
+            <Command refid="ListObj" />
+            <Command refid="ObjectsWithoutInOut"/>
+            <Command refid="ObjectsMainCalled"/>
+            <Command refid="KBInterfaces" />
+            <Command refid="ObjectsDiagnostics" />
+            <Command refid="BuildObjectAndReferences"/>
+            <Command refid="TreeCommit" />
+            <Group>
+              <Command refid="ChangeLegacyCode" />
+              <Command refid="EditLegacyCodeToReplace" />
+            </Group>
+
+            <Group name ="Object Comparer">
+              <Command refid="CalculateCheckSum"  />
+              <Command refid="CompareLastOBJDirectory" />
+              <Command refid="OpenFolderObjComparerNavigation"  />
+            </Group>
+
+          </Popup>
+
+          <Popup name="Navigation processing" insertAfter ="Objects">
+            <Command refid="ListObjWarningsErrors" />
+            <Command refid="AttUpdated"/>
+            <Command refid="ListObjSimilarNavigation" />
+            <Command refid="ObjectsComplex" />
+
+            <Group name ="Navigation Comparer">
+              <Command refid="PrepareComparerNavigation"  />
+              <Command refid="CompareLastNVGDirectory" />
+              <Command refid="OpenFolderComparerNavigation"  />
+            </Group>
+          </Popup>
+
+          <Popup name ="Modules" >
+            <Group>
+              <Command refid="ListModules" />
+              <Command refid="ListTablesInModules" />
+              <Command refid="BuildModule"/>
+              <Command refid="ListAPIObjects" />
+              <Command refid="ModuleDependencies" />
+              <Command refid="RecomendedModule" />
+              <Command refid="SplitMainObject" />
+              <Command refid="ListModulesStatistics" />
+              <Command refid="MoveTransactions" />
+            </Group>
+          </Popup>
+          <Group id="Utilities" >
+            <Popup name ="Utilities">
+              <Command refid="SearchAndReplace"/>
+              <Command refid="GenerateLocationXML" />
+              <Command refid="GenerateSQLScripts"/>
+              <Command refid="GenerateGraph"/>
+              <Command refid="GenerateLocationXML" />
+              <Command refid="RenameAttributesAndTables"  />
+             
+            
+            </Popup>
+          </Group>
+          <Group id="KBstats" >
+            <Popup name ="KB stats">
+              <Command refid="CountGeneratedByPattern"  />
+              <Command refid="ObjectsRefactoringCandidates" />
+
+            </Popup>
+          </Group>
+          <Group id="CleanKB" >
+            <Popup name ="Clean KB">
+              <Command refid="AttWithoutBaseTable" />
+              <Command refid="ObjectsNotCalled"/>        
+              <Command refid="CleanObjects" />
+              <Command refid="CleanVarsNotUsed" />
+              <Command refid="RemovableTransactions"/>
+            </Popup>
+          </Group>
+          <Group id="LastReports" >
+            <Command refid="ListLastReports"  />
+          </Group>
+
+          <Group id="LABS" >
+            <Popup name ="Labs">
+              <Command refid="AddINParmRule"/>
+
+              <Command refid="ProcedureSDT"/>
+              <Command refid="ProcedureGetSet"/>
+              <Command refid="CreateDeployUnits" />
+              <Command refid="GenerateSimpleTransactionFromNotGeneratedTransactions" />
+              <Command refid="ObjectsWithVarNotBasedOnAtt"/>
+              <Command refid="RenameVariables"/>
+              <Command refid="ObjectsWithVarsNotUsed"/>
+              <Command refid="GenerateTrnFromTables2" />
+              <Command refid="AttDescWithoutUniqueIndex"/>
+              <Command refid="TableInsertNew" />
+              <Command refid="MainTableUsed"  />
+              <Command refid="ObjectsReferenced"/>
+              <Command refid="ObjectsWithCommitOnExit"/>
+              <Command refid="ObjectsWINWEB" />
+              <Command refid="ListProcedureCallWebpanelTransaction" />
+              <Command refid="ObjectsLegacyCode" />
+              <Command refid="MarkPublicObjects" />
+              <Command refid="GenerateTrnFromTabless" />
+              <Command refid="ResetWINForm"/>
+              <Command refid="ObjectsNotReacheable"/>
+              <Command refid="CleanKBAsMuchAsPossible"/>
+              <Command refid="UDPCallables"/>
+              <Command refid="SplitMainObject"/>
+               <Command refid="ChangeCommitOnExit" />
+              <Popup name ="Themes" >
+                <Group>
+                  <Command refid="ClassNotInTheme" />
+                  <Command refid="ClassUsed" />
+                  <Command refid="ListClassUsed" />
+                </Group>
+              </Popup>
+             
+            </Popup>
+          </Group>
+
+          <Group id="AboutKBDoctor" >
+            <Command refid="AboutKBDoctor"  />
+            <Command refid="HelpKBDoctor" />
+          </Group>
+        </Popup>
+        
+      </Popup>
+    </Menu>
+
+    <Menus>
+      <Menu type='context' id='KBConfigurationContext' package='4703F0A9-2AEB-4469-9466-25E2A56C7B6D'>
+        <Popup id='GXPowerCommandKBPopUp' name='PowerCommands' context='selection' dynamic='true' autoManageVisibility='false' insertBefore=''>
+          <Command refid='CommandPromptKB' initVisible='true'/>
+          <Command refid='ExploreKB' initVisible='true'/>
+        </Popup>
+      </Menu>
+
+      <Menu type='context' id='EnvironmentContext' package='4703F0A9-2AEB-4469-9466-25E2A56C7B6D'>
+        <Popup id='GXPowerCommandEnvPopUp' name='PowerCommands' context='selection' dynamic='true' autoManageVisibility='true' insertBefore=''>
+          <Command refid='CommandPromptEnv' initVisible='true'/>
+          <Command refid='ExploreEnv' initVisible='true'/>
+        </Popup>
+      </Menu>
+
+    </Menus>
+    
+  </Menus>
+
+</Package>
