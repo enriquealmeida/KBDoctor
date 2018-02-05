@@ -24,7 +24,7 @@ using Artech.Genexus.Common.Parts;
 namespace Concepto.Packages.KBDoctor
 {
 
-    class ModulesHelper
+    static class ModulesHelper
     {
 
         public static string ObjectModule(KBObject obj)
@@ -55,23 +55,20 @@ namespace Concepto.Packages.KBDoctor
             {
                 output.AddLine("Object " + obj.Name);
                 ICallableObject callableObject = obj as ICallableObject;
-                if ((callableObject != null) || obj is ExternalObject || obj is SDT || obj is DataSelector)
+                if (((callableObject != null) || obj is ExternalObject || obj is SDT || obj is DataSelector) && (!(obj is Transaction)))
                 {
-                    if (!(obj is Transaction))
+                    ObjectVisibility objVisibility = obj.GetPropertyValue<ObjectVisibility>("ObjectVisibility");
+
+                    ObjectVisibility newObjVisibility = RecoverVisibility(obj);
+
+                    if (objVisibility != newObjVisibility)
                     {
-                        ObjectVisibility objVisibility = obj.GetPropertyValue<ObjectVisibility>("ObjectVisibility");
-
-                        ObjectVisibility newObjVisibility = RecoverVisibility(obj);
-
-                        if (objVisibility != newObjVisibility)
-                        {
-                            obj.SetPropertyValue("ObjectVisibility", newObjVisibility);
-                            Functions.SaveObject(output, obj);
-                            string objNameLink = Functions.linkObject(obj);
-                            writer.AddTableData(new string[] { objNameLink, obj.TypeDescriptor.Name, obj.Description, newObjVisibility.ToString() });
-                            output.AddLine("....Change Object " + obj.Name);
-                        }
-                    }
+                        obj.SetPropertyValue("ObjectVisibility", newObjVisibility);
+                        Functions.SaveObject(output, obj);
+                        string objNameLink = Functions.linkObject(obj);
+                        writer.AddTableData(new string[] { objNameLink, obj.TypeDescriptor.Name, obj.Description, newObjVisibility.ToString() });
+                        output.AddLine("....Change Object " + obj.Name);
+                    }  
                 }
             }
             output.AddLine("");
@@ -79,7 +76,6 @@ namespace Concepto.Packages.KBDoctor
             writer.AddFooter();
             writer.Close();
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
         }
 
         private static void MakeAllObjectPublic(IKBService kbserv, IOutputService output)
@@ -366,15 +362,12 @@ El módulo tiene objetos públicos no referenciados por externos?
 
                     ReferenceTypeInfo.ReadTableInfo(refe.LinkTypeInfo, out read, out insert, out update, out delete, out isBase);
 
-                    string updated = (update | delete | insert) ? "UPDATED" : "";
+                    string updated = (update || delete || insert) ? "UPDATED" : "";
 
-                    // writer.AddTableData(new string[] { Functions.linkObject(trn), trn.Description, Functions.linkObject(tbl), fld });
                     if (objRef.Parent is Folder)
                         list.Add("FOLDER:" + objRef.Parent.Name + " |  " + updated);
-                        //output.AddLine("FOLDER:" + objRef.Parent.Name + " | "  +updated);
                     if (objRef.Parent is Module)
                         list.Add("MODULE:" + objRef.Parent.Name + " |  " + updated);
-                    //output.AddLine("MODULE:" + objRef.Parent.Name + " | " + updated);
                 }
                 
             }
@@ -405,11 +398,8 @@ El módulo tiene objetos públicos no referenciados por externos?
             selectObjectOption.MultipleSelection = true;
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
             foreach (Module mdl in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-
-
-            // foreach (Module mdl in Module.GetAll(kbserv.CurrentModel) )
             {
-                if (mdl is Module)// && mdl.Name != "Root Module")
+                if (mdl is Module)
                 {
                     output.AddLine(mdl.Name + "....");
                     string[] mdlStat = ModuleStats((Module)mdl);
@@ -527,7 +517,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             foreach (EntityReference refer in obj.GetReferencesTo())
             {
                 KBObject objRef = KBObject.Get(obj.Model, refer.From);
-                if (objRef != null && Functions.isRunable(objRef)) //&& !(objRef is Artech.Genexus.Common.Objects.Attribute) )
+                if (objRef != null && Functions.isRunable(objRef)) 
                 {
                     Module modref = objRef.Module;
                     if (modref != mdl)
@@ -606,63 +596,6 @@ El módulo tiene objetos públicos no referenciados por externos?
 
         }
 
-
-    /*    public static bool BuildModuleContext(CommandData data)
-
-        {
-
-            IModelTree tree = data.Context as IModelTree;
-            if (tree == null)
-                return true;
-
-            bool success = false;
-
-            string title = "KBDoctor - Build Module";
-            IOutputService output = CommonServices.Output;
-            output.StartSection(title);
-
-            List<EntityKey> keys = GetAllObjectsKeys(tree.SelectedObjects.OfType<KBObject>());
-
-            if (keys == null)
-                return true;
-
-            IKBService kbserv = UIServices.KB;
-            KBModel kbModel = UIServices.KB.CurrentModel;
-
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description",  "Is Referenced by" });
-
-            KBObjectCollection objToBuild = new KBObjectCollection();
-
-
-            Artech.Common.Framework.Selection.Selection selection = data.Context as Artech.Common.Framework.Selection.Selection;
-            if (selection == null)
-                return true;
-            Module mdl = selection.SelectedObject as Module;
-            if (mdl == null)
-                return true;
-            CreateListObjectsModuleAndReferences(kbModel, mdl, writer);
-
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-            GenexusUIServices.Build.BuildWithTheseOnly(objToBuild.Keys);
-
-            do
-            {
-                Application.DoEvents();
-            } while (GenexusUIServices.Build.IsBuilding);
-
-
-            output.EndSection("KBDoctor", true);
-            return true;
-
-
-        }
-        */
         private static KBObjectCollection CreateListObjectsModuleAndReferences(KBModel kbModel, Module mdl, KBDoctorXMLWriter writer)
         {
             KBObjectCollection objToBuild = new KBObjectCollection();
@@ -854,8 +787,8 @@ El módulo tiene objetos públicos no referenciados por externos?
                                 Module objrefModule = ((objref is Table) ? TablesHelper.TableModule(objref.Model, (Table)objref) : objref.Module);
 
                                 if (objrefModule != module)
-                                    if (!(objref is Domain) & !(objref is Image) & !(objref is Theme) & !(objref is ThemeClass)
-                                        & !(objref is GeneratorCategory) & !(objref is KBCategory) & !(objref is SDT))
+                                    if (!(objref is Domain) && !(objref is Image) && !(objref is Theme) && !(objref is ThemeClass)
+                                        && !(objref is GeneratorCategory) && !(objref is KBCategory) && !(objref is SDT))
                                     {
                                         bool contain = objRefCollection.Any(p => p.Guid == objref.Guid);
                                         if (!contain)
@@ -944,8 +877,8 @@ El módulo tiene objetos públicos no referenciados por externos?
                             Module objrefModule = ((objref is Table) ? TablesHelper.TableModule(objref.Model, (Table)objref) : objref.Module);
 
                             if (objrefModule != module)
-                                if (!(objref is Domain) & !(objref is Image) & !(objref is Theme) & !(objref is ThemeClass)
-                                    & !(objref is GeneratorCategory) & !(objref is KBCategory) & !(objref is SDT))
+                                if (!(objref is Domain) && !(objref is Image) && !(objref is Theme) && !(objref is ThemeClass)
+                                    && !(objref is GeneratorCategory) && !(objref is KBCategory) && !(objref is SDT))
                                 {
                                     bool contain = objRefCollection.Any(p => p.Guid == objref.Guid);
                                     if (!contain)
@@ -1050,7 +983,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             // Module module2 = new Module(kbModel);
             foreach (Module module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
-                foreach (KBObject obj in module.GetAllMembers()) //   kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in module.GetAllMembers()) 
                 {
                     if (obj != null && ObjectsHelper.isGenerated(obj) && Functions.isRunable(obj))
                     {

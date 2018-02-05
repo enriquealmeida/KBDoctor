@@ -17,7 +17,7 @@ using Artech.Genexus.Common.Parts.SDT;
 
 namespace Concepto.Packages.KBDoctor
 {
-    class Functions
+    static class Functions
     {
         public static int MaxCodeBlock(string source)
         {
@@ -183,20 +183,22 @@ namespace Concepto.Packages.KBDoctor
 
                 if (obj is WebPanel) source = obj.Parts.Get<EventsPart>().Source;
             } 
-            catch (Exception e) { }
+            catch (Exception e) {
+                source = "";
+            }
 
             return source.ToUpper();
         }
 
         public static bool isRunable(KBObject obj)
         {
-            return (obj is Transaction | obj is WorkPanel | obj is WebPanel 
-                | obj is DataProvider | obj is DataSelector | obj is Procedure | obj is Menubar);
+            return (obj is Transaction || obj is WorkPanel || obj is WebPanel
+                || obj is DataProvider || obj is DataSelector || obj is Procedure || obj is Menubar);
         }
 
         public static bool CanBeBuilt(KBObject obj)
         {
-            return (obj is Transaction | obj is WebPanel | obj is Procedure | obj is DataProvider | obj is Menubar);
+            return (obj is Transaction || obj is WebPanel || obj is Procedure || obj is DataProvider || obj is Menubar);
         }
 
         public static string ExtractComments(string source)
@@ -230,7 +232,6 @@ namespace Concepto.Packages.KBDoctor
                 aux = noComments.Replace("  ", " ");
             } while (noComments != aux);
 
-            //noComments = noComments.ToUpper();
             return noComments;
         }
 
@@ -348,16 +349,16 @@ namespace Concepto.Packages.KBDoctor
                     CleanVariablesBasedInAttribute(a, output, objRef);
                     CleanSDT(a, output, objRef);
 
-                }
-                if (!(objRef is DataView))
-                {
-                    try
+                    if (!(objRef is DataView))
                     {
-                        objRef.Save();
-                    }
-                    catch (Exception e)
-                    {
-                        output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
+                        try
+                        {
+                            objRef.Save();
+                        }
+                        catch (Exception e)
+                        {
+                            output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
+                        }
                     }
                 }
             }
@@ -373,25 +374,23 @@ namespace Concepto.Packages.KBDoctor
             {
                 foreach (Variable v in vp.Variables)
                 {
-                    if (!v.IsStandard)
+                    if (!v.IsStandard && ((v.AttributeBasedOn != null) && (a.Name == v.AttributeBasedOn.Name)))
                     {
-                        if ((v.AttributeBasedOn != null) && (a.Name == v.AttributeBasedOn.Name))
-                        {
-                            output.AddLine("&" + v.Name + " based on  " + a.Name);
-                            eDBType type = v.Type;
-                            int length = v.Length;
-                            bool signed = v.Signed;
-                            string desc = v.Description;
-                            int dec = v.Decimals;
+                        output.AddLine("&" + v.Name + " based on  " + a.Name);
+                        eDBType type = v.Type;
+                        int length = v.Length;
+                        bool signed = v.Signed;
+                        string desc = v.Description;
+                        int dec = v.Decimals;
 
-                            //Modifico la variable, para que no se base en el atributo. 
-                            v.AttributeBasedOn = null;
-                            v.Type = type;
-                            v.Decimals = dec;
-                            v.Description = desc;
-                            v.Length = length;
-                            v.Signed = signed;
-                        }
+                        //Modifico la variable, para que no se base en el atributo. 
+                        v.AttributeBasedOn = null;
+                        v.Type = type;
+                        v.Decimals = dec;
+                        v.Description = desc;
+                        v.Length = length;
+                        v.Signed = signed;
+                        
                     }
                 }
 

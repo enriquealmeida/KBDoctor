@@ -73,27 +73,32 @@ namespace Concepto.Packages.KBDoctorValidator
                     }
                     if (someInOut)
                     {
-                        RulesPart rulesPart = obj.Parts.Get<RulesPart>();
-
-                        if (rulesPart != null)
-                        {
-                            Regex myReg = new Regex("//.*", RegexOptions.None);
-                            Regex paramReg = new Regex(@"parm\(.*\)", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
-                            string reglas = rulesPart.Source;
-                            reglas = myReg.Replace(reglas, "");
-                            Match match = paramReg.Match(reglas);
-                            if (match != null)
-                            {
-                                int countparms = match.ToString().Split(new char[] { ',' }).Length;
-                                int countsemicolon = match.ToString().Split(new char[] { ':' }).Length - 1;
-                                err = (countparms != countsemicolon);
-
-                            }
-                        }
+                        err = (err || errorRules(obj));
                     }
                 }
             }
             return (err);
+        }
+
+        private static bool errorRules(KBObject obj)
+        {
+            RulesPart rulesPart = obj.Parts.Get<RulesPart>();
+            bool err = false;
+            if (rulesPart != null)
+            {
+                Regex myReg = new Regex("//.*", RegexOptions.None);
+                Regex paramReg = new Regex(@"parm\(.*\)", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
+                string reglas = rulesPart.Source;
+                reglas = myReg.Replace(reglas, "");
+                Match match = paramReg.Match(reglas);
+                if (match != null)
+                {
+                    int countparms = match.ToString().Split(new char[] { ',' }).Length;
+                    int countsemicolon = match.ToString().Split(new char[] { ':' }).Length - 1;
+                    err = (countparms != countsemicolon);
+                }
+            }
+            return err;
         }
 
         public static string ObjectSourceUpper(KBObject obj)

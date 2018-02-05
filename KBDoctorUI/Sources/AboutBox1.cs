@@ -103,7 +103,7 @@ namespace Concepto.Packages.KBDoctor
 
         private void logoPictureBox_Click(object sender, EventArgs e)
         {
-
+            // No implementado
         }
     }
 }

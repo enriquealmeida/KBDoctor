@@ -74,12 +74,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         internal static void ShowKBDoctorResults(string outputFile)
         {
             //Usando la nueva tool window
-            /*
-           KBDoctor.Package p = PackageManager.Manager.GetPackage(KBDoctor.Package.guid) as KBDoctor.Package;
-           KBDoctorToolWindow tw = p.KBDoctorTW;
-           tw.URL = outputFile;
-           UIServices.ToolWindows.ShowToolWindow(KBDoctorToolWindow.guid);
-           */
+            
             // Usando la start page
 
             UIServices.StartPage.OpenPage(outputFile, "KBDoctor", null);
@@ -183,7 +178,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 return MaxNestLevel;
             }
-
         }
       
         internal static bool ValidateINOUTinParm(KBObject obj)
@@ -271,13 +265,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static bool isRunable(KBObject obj)
         {
-            return (obj is Transaction | obj is WorkPanel | obj is WebPanel
-                | obj is DataProvider | obj is DataSelector | obj is Procedure | obj is Menubar);
+            return (obj is Transaction || obj is WorkPanel || obj is WebPanel
+                || obj is DataProvider || obj is DataSelector || obj is Procedure || obj is Menubar);
         }
 
         internal static bool CanBeBuilt(KBObject obj)
         {
-            return (obj is Transaction | obj is WebPanel | obj is Procedure | obj is DataProvider | obj is Menubar);
+            return (obj is Transaction || obj is WebPanel || obj is Procedure || obj is DataProvider || obj is Menubar);
         }
 
         internal static string ExtractComments(string source)
@@ -428,19 +422,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     CleanVariablesBasedInAttribute(a, output, objRef);
                     CleanSDT(a, output, objRef);
-
-                }
-                if (!(objRef is DataView))
-                {
-                    try
+                    if (!(objRef is DataView))
                     {
-                        objRef.Save();
+                        try
+                        {
+                            objRef.Save();
+                        }
+                        catch (Exception e)
+                        {
+                            output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
-                    }
-                }
+               }
             }
         }
 
@@ -474,10 +467,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         }
                     }
                 }
-
-
-
-
             }
         }
 
@@ -541,6 +530,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 ret[0] = type;
                 ret[1] = qname[0];
                 ret[2] = qname[1];
+                sr.Dispose();
                 return ret;
             }
             else

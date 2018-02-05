@@ -45,7 +45,7 @@ namespace Concepto.Packages.KBDoctor
 
             string originalDomainName = comboBoxOriginalDomain.SelectedItem.ToString();
             string UnifyDomainName = comboBoxUnifiy.SelectedItem.ToString();
-            if (originalDomainName == "" | UnifyDomainName == "")
+            if (originalDomainName == "" || UnifyDomainName == "")
             {
                 labelError.Text = "Select Original and Replace Domain";
             }

@@ -51,6 +51,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -343,7 +344,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>xcopy kbdoctor*.*  "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
+    <PostBuildEvent>xcopy kbdoctor*.*  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
 "%25GX_PROGRAM_DIR%25\genexus.exe" /install</PostBuildEvent>
   </PropertyGroup>
 </Project>

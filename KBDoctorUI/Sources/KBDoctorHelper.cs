@@ -16,17 +16,7 @@ namespace Concepto.Packages.KBDoctor
     {
         public static void ShowKBDoctorResults(string outputFile)
         {
-             //Usando la nueva tool window
-             /*
-            KBDoctor.Package p = PackageManager.Manager.GetPackage(KBDoctor.Package.guid) as KBDoctor.Package;
-            KBDoctorToolWindow tw = p.KBDoctorTW;
-            tw.URL = outputFile;
-            UIServices.ToolWindows.ShowToolWindow(KBDoctorToolWindow.guid);
-            */
-            // Usando la start page
-
             UIServices.StartPage.OpenPage(outputFile, "KBDoctor", null);
-         //   UIServices.StartPage.OpenPage(outputFile, pageTitle, null);
             UIServices.ToolWindows.FocusToolWindow(UIServices.StartPage.ToolWindow.Id);
 
         }

@@ -148,28 +148,7 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
-        /*
-        private static List<KBObject> GetObjects(CommandData data)
-        {
-            List<KBObject> list = new List<KBObject>();
-            ISelectionContainer selectionContainer = data.Context as ISelectionContainer;
-            if (selectionContainer != null)
-            {
-                if (selectionContainer.SelectedObjects != null)
-                {
-                    foreach (object current in selectionContainer.SelectedObjects)
-                    {
-                        list.Add(current as KBObject);
-                    }
-                }
-            }
-            else
-            {
-                list.Add(data.Context as KBObject);
-            }
-            return list;
-        }
-        */
+       
         #region Atributos
 
         public bool ExecAttWithoutDescription(CommandData cmdData)
@@ -552,8 +531,6 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecChangeLegacyCode(CommandData cmdData)
         {
-            //           Thread t = new Thread(new ThreadStart(ObjectsHelper.ChangeLegacyCode));
-            //           t.Start();
             ObjectsHelper.ChangeLegacyCode();
             return true;
         }
@@ -613,8 +590,6 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecGenerateSQLScripts(CommandData cmdData)
         {
-            // Thread t = new Thread(new ThreadStart(TablesHelper.GenerateSQLScripts));
-            // t.Start();
             TablesHelper.GenerateSQLScripts();
             return true;
         }
@@ -622,8 +597,6 @@ namespace Concepto.Packages.KBDoctor
         {
              Thread t = new Thread(new ThreadStart(GraphHelper.GenerateGraph));
             t.Start();
-          //  Modularization.Modularization m = new Modularization.Modularization();
-          //  m.Show();
             return true;
         }
 
@@ -734,9 +707,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecPrepareComparerNavigation(CommandData cmdData)
         {
-            IKBService kbserv = UIServices.KB;
-            IOutputService output = CommonServices.Output;
-            KBDoctorCore.Sources.API.PrepareCompareNavigations(kbserv.CurrentKB, output);
+            ObjectsHelper.TestParser();
             return true;
         }
 
@@ -783,7 +754,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecListClassUsed(CommandData cmdData)
         {
-            CleanKBHelper.ListClassUsed();
+            CleanKBHelper.ClassUsed();
             return true;
         }
         #endregion

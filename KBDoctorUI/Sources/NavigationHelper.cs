@@ -163,10 +163,9 @@ namespace Concepto.Packages.KBDoctor
                         ProcesoNavigation(xmlstring, output, writer2, obj);
                     }
                 }
-
-
             }
         }
+
         private static KBObject ExtractObject(string xmlstring)
         {
             IKBService kbserv = UIServices.KB;
@@ -269,7 +268,6 @@ namespace Concepto.Packages.KBDoctor
                                             AttNames += reader.Value + " ";
                                         }
                                         break;
-
                                 }
                             }
                             if (LevelType != "")
@@ -657,7 +655,7 @@ namespace Concepto.Packages.KBDoctor
                                 if (obj == null)
                                     writer.AddTableData(new string[] { "Can't find object", "", "", x });
                                 else
-                                    if (ObjectsHelper.isGenerated(obj) | obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT")) 
+                                    if (ObjectsHelper.isGenerated(obj) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT")) 
                                           writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, x  });
                             }
                         }
