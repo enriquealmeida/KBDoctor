@@ -41,7 +41,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            string mensaje = string.Format("Do you have a backup?. Are you sure you want to clean the KB? Some objects will be modified and deleted.");
+            string mensaje = "Do you have a backup?. Are you sure you want to clean the KB? Some objects will be modified and deleted.";
             DialogResult dr = MessageBox.Show(mensaje, "Clean KB", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (dr == DialogResult.Yes)
             {
@@ -55,47 +55,52 @@ namespace Concepto.Packages.KBDoctor
                     CleanObject(obj, output);
                 }
 
-                bool stay = true;
-                int pasada = 1;
-                int borrados = 0;
-                do
+                ProcessObjectsInCategory(output, UnreachableCategory);
+                output.AddLine("Finish");
+
+            }
+        }
+
+        private static void ProcessObjectsInCategory(IOutputService output, KBCategory Category)
+        {
+            bool stay = true;
+            int pasada = 1;
+            int borrados = 0;
+            do
+            {
+                output.AddLine("Pass number " + pasada.ToString() + ". Cleaned objects: " + borrados.ToString());
+                stay = false;
+
+                foreach (KBObject obj in Category.AllMembers)
                 {
-                    output.AddLine("Pass number " + pasada.ToString() + ". Cleaned objects: " + borrados.ToString());
-                    stay = false;
-
-                    foreach (KBObject obj in UnreachableCategory.AllMembers)
+                    if ((obj is Transaction) || (obj is Table) || (obj is Image) || (obj is Artech.Genexus.Common.Objects.Group) || (obj is DataView))
                     {
-                        if ((obj is Transaction) || (obj is Table) || (obj is Image) || (obj is Artech.Genexus.Common.Objects.Group) || (obj is DataView))
-                        {
-                            output.AddLine("Skipping " + obj.Name);
+                        output.AddLine("Skipping " + obj.Name);
 
+                    }
+                    else
+                    {
+                        try
+                        {
+                            obj.Delete();
+                            output.AddLine("Removing : " + obj.Name);
+                            stay = true;
+                            borrados += 1;
                         }
-                        else
+                        catch
                         {
-                            try
-                            {
-                                obj.Delete();
-                                output.AddLine("Removing : " + obj.Name);
-                                stay = true;
-                                borrados += 1;
-                            }
-                            catch
-                            {
-                                output.AddLine("ERROR: Can't remove :" + obj.Name);
-
-                            }
+                            output.AddLine("ERROR: Can't remove :" + obj.Name);
 
                         }
 
                     }
 
+                }
 
 
-                    pasada += 1;
-                } while (stay);
-                output.AddLine("Finish");
 
-            }
+                pasada += 1;
+            } while (stay);
         }
 
         public static void CleanObject(KBObject obj, IOutputService output)
@@ -118,8 +123,6 @@ namespace Concepto.Packages.KBDoctor
             {
                 CleanAllRules(obj);
                 CleanAllProcedurePart(obj);
-                //LayoutPart lyPart = obj.Parts.Get<LayoutPart>();
-                //lyPart.Layout = null;
 
                 CleanAllConditions(obj);
                 CleanAllVars(obj);
@@ -282,7 +285,6 @@ namespace Concepto.Packages.KBDoctor
                 else
                 {
                     ThemeClasses.Remove(sd);
-                    // UsedClasses.Remove(sd);
                 }
             }
 
@@ -332,9 +334,8 @@ namespace Concepto.Packages.KBDoctor
                 foreach (Artech.Genexus.Common.Objects.Themes.ThemeStyle thmclass in part.GetAllStyles())
                 {
                     string thmstr = thmclass.Name;
-                    if (!ThemeClasses.Contains(thmstr))
+                    if (!ThemeClasses.Contains(thmstr) && (!(thmstr.Contains("Dragging") || thmstr.Contains("AcceptDrag") || thmstr.Contains("NoAcceptDrag")))) //Excluyo clases especiales
                     {
-                        if (!(thmstr.Contains("Dragging") || thmstr.Contains("AcceptDrag") || thmstr.Contains("NoAcceptDrag")))  //Excluyo clases especiales
                             ThemeClasses.Add(thmstr.ToLower());
                     }
                 }
@@ -371,24 +372,7 @@ namespace Concepto.Packages.KBDoctor
                 if (newParm != "")
                 {
                     cantObjChanged += 1;
-                    //SaveObjectNewParm(output, obj, oldParm, newParm);
-                    ICallableObject callableObject = obj as ICallableObject;
-
-                    if (callableObject != null)
-                    {
-                        foreach (Signature signature in callableObject.GetSignatures())
-                        {
-                            Boolean someInOut = false;
-                            foreach (Parameter parm in signature.Parameters)
-                            {
-                                string nameParm = parm.IsAttribute ? parm.Name : "&" + parm.Name;
-                                ListParmReferences(obj, nameParm, writer);
-                            }
-                        }
-                    }
-                    writer.AddTableData(new string[] { Functions.linkObject(obj), oldParm, "===="});
-                    writer.AddTableData(new string[] { "", newParm, "====="});
-                    writer.AddTableData(new string[] { "======", "======", "=======" });
+                    PrintNewRuleParm(writer, obj, oldParm, newParm);
                 }
 
             }
@@ -402,6 +386,26 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
+        }
+
+        private static void PrintNewRuleParm(KBDoctorXMLWriter writer, KBObject obj, string oldParm, string newParm)
+        {
+            ICallableObject callableObject = obj as ICallableObject;
+
+            if (callableObject != null)
+            {
+                foreach (Signature signature in callableObject.GetSignatures())
+                {
+                    foreach (Parameter parm in signature.Parameters)
+                    {
+                        string nameParm = parm.IsAttribute ? parm.Name : "&" + parm.Name;
+                        ListParmReferences(obj, nameParm, writer);
+                    }
+                }
+            }
+            writer.AddTableData(new string[] { Functions.linkObject(obj), oldParm, "====" });
+            writer.AddTableData(new string[] { "", newParm, "=====" });
+            writer.AddTableData(new string[] { "======", "======", "=======" });
         }
 
         public static void ListTableAttributesUsingDomain()
@@ -428,7 +432,6 @@ namespace Concepto.Packages.KBDoctor
             foreach (KBObject dom in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
                
-               // writer.AddTableData(new string[] { dom.Name, "Table", "Description", "Attribute" });
                 foreach (EntityReference reference in dom.GetReferencesTo())
                 {
                     KBObject att = KBObject.Get(dom.Model, reference.From);
@@ -508,66 +511,58 @@ namespace Concepto.Packages.KBDoctor
                             break;
                         }
                     }
-                    if (someInOut)
+                    if (someInOut && (rulesPart != null))
                     {
-                       
+                        Regex myReg = new Regex("//.*", RegexOptions.None);
+                        Regex myReg2 = new Regex(@"/\*.*\*/", RegexOptions.Singleline);
+                        Regex paramReg = new Regex(@"parm\(.*\)", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
+                        string reglas = rulesPart.Source;
+                        reglas = myReg.Replace(reglas, "");
+                        reglas = myReg2.Replace(reglas, "");
 
-                        if (rulesPart != null)
+                        string reglas2 = reglas.Replace(Environment.NewLine, " ");
+
+                        Match match = paramReg.Match(reglas2);
+
+
+                        if (match != null)
                         {
-                            Regex myReg = new Regex("//.*", RegexOptions.None);
-                            Regex myReg2 = new Regex(@"/\*.*\*/", RegexOptions.Singleline);
-                            Regex paramReg = new Regex(@"parm\(.*\)", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
-                            string reglas = rulesPart.Source;
-                            oldRules = reglas;
-                            reglas = myReg.Replace(reglas, "");
-                            reglas = myReg2.Replace(reglas, "");
-
-                            string reglas2 = reglas.Replace(Environment.NewLine, " ");
-                            //output.AddLine(obj.Name + " - " + reglas2);
-
-                            Match match = paramReg.Match(reglas2);
-
-
-                            if (match != null)
+                            int countparms = match.ToString().Split(new char[] { ',' }).Length;
+                            int countsemicolon = match.ToString().Split(new char[] { ':' }).Length - 1;
+                            if (countparms != countsemicolon)
                             {
-                                int countparms = match.ToString().Split(new char[] { ',' }).Length;
-                                int countsemicolon = match.ToString().Split(new char[] { ':' }).Length - 1;
-                                if (countparms != countsemicolon)
-                                {
-                                    string objNameLink = Functions.linkObject(obj);
+                                string objNameLink = Functions.linkObject(obj);
 
-                                    Regex coma = new Regex(",", RegexOptions.None);
-                                    newParm = coma.Replace(match.ToString(), ", IN:");
+                                Regex coma = new Regex(",", RegexOptions.None);
+                                newParm = coma.Replace(match.ToString(), ", IN:");
 
-                                    Regex inreg = new Regex("IN:", RegexOptions.IgnoreCase);
-                                    newParm = inreg.Replace(newParm, "IN:");
+                                Regex inreg = new Regex("IN:", RegexOptions.IgnoreCase);
+                                newParm = inreg.Replace(newParm, "IN:");
 
-                                    Regex outreg = new Regex("OUT:", RegexOptions.IgnoreCase);
-                                    newParm = outreg.Replace(newParm, "OUT:");
+                                Regex outreg = new Regex("OUT:", RegexOptions.IgnoreCase);
+                                newParm = outreg.Replace(newParm, "OUT:");
 
-                                    Regex IOreg = new Regex("INOUT:", RegexOptions.IgnoreCase);
-                                    newParm = IOreg.Replace(newParm, "INOUT:");
+                                Regex IOreg = new Regex("INOUT:", RegexOptions.IgnoreCase);
+                                newParm = IOreg.Replace(newParm, "INOUT:");
 
 
-                                    newParm = newParm.Replace(" ", "");
-                                    newParm = newParm.Replace("out:", "OUT:");
-                                    newParm = newParm.Replace("Out:", "OUT:");
-                                    newParm = newParm.Replace("InOut:", "INOUT:");
-                                    newParm = newParm.Replace("inout:", "INOUT:");
-                                    newParm = newParm.Replace("in:", "IN:");
-                                    newParm = newParm.Replace("In:", "IN:");
-                                    //---- CAMBIO REPETIDOS.
-                                    newParm = newParm.Replace("()", "##"); //Por los vectores
+                                newParm = newParm.Replace(" ", "");
+                                newParm = newParm.Replace("out:", "OUT:");
+                                newParm = newParm.Replace("Out:", "OUT:");
+                                newParm = newParm.Replace("InOut:", "INOUT:");
+                                newParm = newParm.Replace("inout:", "INOUT:");
+                                newParm = newParm.Replace("in:", "IN:");
+                                newParm = newParm.Replace("In:", "IN:");
+                                //---- CAMBIO REPETIDOS.
+                                newParm = newParm.Replace("()", "##"); //Por los vectores
 
-                                    newParm = newParm.Replace("(", "(IN:");
+                                newParm = newParm.Replace("(", "(IN:");
 
-                                    newParm = newParm.Replace("IN:IN:", "IN:");
-                                    newParm = newParm.Replace("IN:OUT:", "OUT:");
-                                    newParm = newParm.Replace("IN:INOUT:", "INOUT:");
-                                    newParm = newParm.Replace("##", "()"); //Vuelvo el vector al original
-                                    newParm = newParm + ";";
-
-                                }
+                                newParm = newParm.Replace("IN:IN:", "IN:");
+                                newParm = newParm.Replace("IN:OUT:", "OUT:");
+                                newParm = newParm.Replace("IN:INOUT:", "INOUT:");
+                                newParm = newParm.Replace("##", "()"); //Vuelvo el vector al original
+                                newParm = newParm + ";";
                             }
                         }
                     }
@@ -590,8 +585,6 @@ namespace Concepto.Packages.KBDoctor
 
             }
                 catch (Exception e) { output.AddLine(e.Message); };
-
-            //  newRules = newParm + Environment.NewLine + newRules;
             
 
             try
@@ -617,8 +610,6 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Attribute", "Domain" });
-            string type = "";
-            string name = "";
 
             Domain dom = Functions.DomainByName("Fecha");
 
@@ -626,8 +617,6 @@ namespace Concepto.Packages.KBDoctor
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
                 output.AddLine("Procesing.... " + obj.Name + " - " + obj.Type.ToString());
-                type = obj.TypeDescriptor.Description;
-                name = obj.Name;
                 Boolean SaveObj = false;
 
                 if (ObjectsHelper.isGenerated(obj) &&  !ObjectsHelper.isGeneratedbyPattern(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel))
@@ -713,109 +702,6 @@ namespace Concepto.Packages.KBDoctor
             Functions.AddLine("RenameVariables.txt", varaux);
         }
 
-        /*
-internal static void ProcedureSDT()
-{
-   IKBService kbserv = UIServices.KB;
-   IOutputService output = CommonServices.Output;
-   bool success = true;
-   string title = "KBDoctor - WEB called by WIN";
-   output.StartSection(title);
-   UIServices.ToolWindows.ShowToolWindow(new Guid("59CE53BC-F419-402b-AC09-AC275ED21AB9"));
-
-   string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-   KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-   writer.AddHeader(title);
-   writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Remove" });
-   KBObjectCollection WEBObjects = new KBObjectCollection();
-   KBObjectCollection WINObjects = new KBObjectCollection();
-   KBObjectCollection unreachablesObjects = new KBObjectCollection();
-   KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
-
-   KBModel kbModel = kbserv.CurrentModel;
-   GxModel gxModel = kbModel.GetAs<GxModel>();
-
-   foreach (KBObject obj in kbModel.Objects.GetAll())
-       if (obj is WorkPanel)
-       {
-           // IEnumerable<GxEnvironment> environments = gxModel.GetObjectEnvironments(obj.Key, null);
-       }
-   output.AddLine("----WORKPANELS ALCANZABLES DESDE WEB ------");
-   foreach (KBObject obj2 in WEBObjects)
-   {
-       if (obj2 is WorkPanel)
-           output.AddLine(obj2.Name);
-   }
-
-   output.AddLine("----WEBPANELS  ALCANZABLES DESDE WIN ------");
-
-   foreach (KBObject obj3 in WINObjects)
-   {
-       if (obj3 is WebPanel)
-           output.AddLine(obj3.Name);
-   }
-
-   output.AddLine("");
-   output.EndSection(title, success);
-   writer.AddFooter();
-   writer.Close();
-   KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-}
-
-
-internal static void  ProcedureGetSet()
-{
-   IKBService kbserv = UIServices.KB;
-   IOutputService output = CommonServices.Output;
-   bool success = true;
-   string title = "KBDoctor - WEB called by WIN";
-   output.StartSection(title);
-   UIServices.ToolWindows.ShowToolWindow(new Guid("59CE53BC-F419-402b-AC09-AC275ED21AB9"));
-
-   string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-   KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-   writer.AddHeader(title);
-   writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Remove" });
-   KBObjectCollection WEBObjects = new KBObjectCollection();
-   KBObjectCollection WINObjects = new KBObjectCollection();
-   KBObjectCollection unreachablesObjects = new KBObjectCollection();
-   KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
-
-   KBModel kbModel = kbserv.CurrentModel;
-   GxModel gxModel = kbModel.GetAs<GxModel>();
-
-   foreach (KBObject obj in kbModel.Objects.GetAll())
-       if (obj is WorkPanel)
-       {
-           // IEnumerable<GxEnvironment> environments = gxModel.GetObjectEnvironments(obj.Key, null);
-       }
-   output.AddLine("----WORKPANELS ALCANZABLES DESDE WEB ------");
-   foreach (KBObject obj2 in WEBObjects)
-   {
-       if (obj2 is WorkPanel)
-           output.AddLine(obj2.Name);
-   }
-
-   output.AddLine("----WEBPANELS  ALCANZABLES DESDE WIN ------");
-
-   foreach (KBObject obj3 in WINObjects)
-   {
-       if (obj3 is WebPanel)
-           output.AddLine(obj3.Name);
-   }
-
-   output.AddLine("");
-   output.EndSection(title, success);
-   writer.AddFooter();
-   writer.Close();
-   KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-}
-*/
-
         private static void MarkReachables(IOutputService output, KBObject obj, KBObjectCollection reachablesObjects)
         {
             reachablesObjects.Add(obj);
@@ -849,7 +735,6 @@ internal static void  ProcedureGetSet()
 
                 proc.Name = procName;
                 proc.ProcedurePart.Source = "// Generated by KBDoctor, to generate SDT source";
-                // proc.Parent = Folder.Get(kbModel, "Objects");
                 proc.SetPropertyValue("IsMain", true);
                 proc.Save();
 
@@ -863,7 +748,6 @@ internal static void  ProcedureGetSet()
                 }
 
                 proc.Save();
-                //   GenexusUIServices.Build.Rebuild(proc.Key, false);
 
 
                 //Para cada uno de los generadores del environment, genero el proc con los SDT.  
@@ -1038,7 +922,6 @@ internal static void  ProcedureGetSet()
             string doCommit = "";
             foreach (KBObject objRef in objRefCollection)
             {
-                commitInSource = "";
                 if (objRef is Procedure)
                 {
                     object aux = objRef.GetPropertyValue("CommitOnExit");
@@ -1081,11 +964,10 @@ internal static void  ProcedureGetSet()
 
         public static Boolean ObjectUpdateDB(KBObject obj)
         {
-            //boolean UpdateInsertDelete;
             KBModel model = obj.Model;
             IList<KBObject> tableUpdInsDel = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
                                               where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                              where (ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo) | ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo) | ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo))
+                                              where (ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo))
                                               select model.Objects.Get(r.From)).ToList();
             return (tableUpdInsDel.Count > 0) ;
         }
@@ -1169,8 +1051,6 @@ internal static void  ProcedureGetSet()
                     {
 
                         string source = xmldoc.OuterXml;
-                        //string source2 = Regex.Replace(source, txtfind, txtreplace, RegexOptions.IgnoreCase);
-
 
                         string source2 = source.Replace(txtfind, txtreplace);
                         source2 = source2.Replace(txtfind.ToLower(), txtreplace);
@@ -1245,7 +1125,6 @@ internal static void  ProcedureGetSet()
                 }
                 if (variablesPart != null && !variablesPart.GetPropertyValue<bool>("IsDefault"))
                 {
-                  //  CommonServices.Output.AddLine("Cleaning variables from '" + kbObj.Name + "'...");
                     foreach (Variable current4 in variablesPart.Variables)
                     {
                         if (!current4.IsAutoDefined && !current4.IsStandard && (Properties.ATT.Dimensions_Enum)Enum.Parse(typeof(Properties.ATT.Dimensions_Enum), current4.GetPropertyValue<string>("AttNumDim")) == Properties.ATT.Dimensions_Enum.Scalar)
@@ -1286,10 +1165,8 @@ internal static void  ProcedureGetSet()
                             kbObj.Save();
                            
                             CommonServices.Output.AddLine("Object cleaned successfully. Variables deleted: " + text2.Substring(2));
-                           // CommonServices.Output.AddLine("");
                            
                         }
-                      //  CommonServices.Output.AddErrorLine("Error validating object.");
                         using (IEnumerator<BaseMessage> enumerator8 = outputMessages.GetEnumerator())
                         {
                             while (enumerator8.MoveNext())
@@ -1303,7 +1180,6 @@ internal static void  ProcedureGetSet()
                             
                         }
                     }
-                   // CommonServices.Output.AddLine("No variables to clean.");
                 
                 }
 
@@ -1318,40 +1194,9 @@ internal static void  ProcedureGetSet()
 
         internal static void HistoryGXServer()
         {
-            /*
-              bool flag = true;
-              string filterString;
-          try
-          {
-             foreach (IKBVersionRevision current in UIServices.get_TeamDevClient().GetRevisions(UIServices.get_KB().get_WorkingEnvironment().get_TargetModel().get_KBVersion(), filterString, 1))
-             {
-
-                foreach (IRevisionAction current2 in current.get_Actions())
-                {
-                   KBObject kBObject = KBObject.Get(UIServices.get_KB().get_WorkingEnvironment().get_DesignModel(), current2.get_Key());
-                   if (kBObject != null)
-                   {
-                         CommonServices.Output.AddLine(current.get_RevisionId() + 
-                                  current.get_CommitDate().ToLocalTime().ToString(CultureInfo.CurrentCulture.DateTimeFormat) +
-                          current.get_UserName() +
-                          current.get_Comment() +
-                          current2.get_Operation().ToString() +
-                          kBObject.get_TypeDescriptor().get_Name()) +
-                                  current2.get_Name() +
-                                  current2.get_Timestamp().ToString(CultureInfo.InvariantCulture) ; 
-                   }
-
-                }
-
-             }
-
-             CommonServices.Output.AddLine("Termino");
-          }
-          catch (Exception ex)
-          {
-
-          }
-       */
+          /*
+           No Implementado
+             */
         }
 
 
@@ -1371,7 +1216,6 @@ internal static void  ProcedureGetSet()
                 if (((obj is Transaction) || (obj is WebPanel)) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
                 {
                     WebFormPart webForm = obj.Parts.Get<WebFormPart>();
-                    // output.AddLine(" Object : " + obj.Name);
                     foreach (IWebTag tag in WebFormHelper.EnumerateWebTag(webForm))
                     {
                         if (tag.Properties != null)
@@ -1385,14 +1229,15 @@ internal static void  ProcedureGetSet()
                                 {
                                     miclasslist = (ThemeClassReferenceList)prop.GetValue(new object());
                                 }
-                                catch (Exception e) { };
-                                //ThemeClassReferenceList miclasslist = new ThemeClassReferenceList();
+                                catch (Exception e) {
+                                    // Excepción no implementada
+                                    throw e;
+                                };
                                 foreach (ThemeClass miclass in miclasslist.GetThemeClasses(obj.Model))
                                 {
                                     if (miclass != null)
                                     {
                                         string miclstr = miclass.Name.ToLower();
-                                        //  output.AddLine(" DEGUG : " + obj.Name + " reference class " + miclstr + " " +prop.Name);
                                         if (!UsedClasses.Contains(miclstr))
                                         {
                                             UsedClasses.Add(miclstr);
@@ -1400,7 +1245,6 @@ internal static void  ProcedureGetSet()
                                         if (!ThemeClasses.Contains(miclstr))
                                         {
                                             bool classEstaEnElTheme = VeoSiClassEstaContenidaEnAlgunaClassDelTheme(ThemeClasses, miclstr);
-                                            //bool classEstaEnElTheme = true;
                                             if (!classEstaEnElTheme)
                                             {
                                                 string objName = obj.Name;
@@ -1510,48 +1354,6 @@ internal static void  ProcedureGetSet()
 
         }
 
-        public static void ListClassUsed()
-        {
-            IKBService kbserv = UIServices.KB;
-
-            string title = "KBDoctor - Classes Used";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection(title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Class", "Error" });
-
-
-            StringCollection UsedClasses = new StringCollection();
-            StringCollection ThemeClasses = new StringCollection();
-            //Reviso todos los objeto para ver las class usadas en cada control
-            LoadUsedClasses(kbserv, output, UsedClasses);
-
-
-            foreach (string sd in UsedClasses)
-            {
-
-                writer.AddTableData(new string[] { sd, "" });
-                output.AddLine("Application Class used " + sd);
-
-            }
-
-
-
-
-            writer.AddTableData(new string[] { "-----------------", "--------------", "---" });
-
-            writer.AddFooter();
-            writer.Close();
-            output.EndSection(title, true);
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-        }
-
         public static void RenameAttributesAndTables()
         {
 
@@ -1565,8 +1367,6 @@ internal static void  ProcedureGetSet()
             // If the no button was pressed ...
             if (result == DialogResult.Yes)
             {
-
-
                 IKBService kbserv = UIServices.KB;
                 KBModel model = kbserv.CurrentKB.DesignModel;
 
@@ -1668,7 +1468,6 @@ internal static void  ProcedureGetSet()
                 }
             }
 
-            //string listar = "List";
             foreach (Artech.Genexus.Common.Objects.Attribute a in attTodos)
             {
                 if (!Functions.AttIsSubtype(a))
@@ -1679,7 +1478,6 @@ internal static void  ProcedureGetSet()
                     {
                         a.Delete();
                         output.AddLine("Atribute deleted: " + a.Name);
-                        strRemoved = "REMOVED";
                     }
                     catch (Exception e)
                     {

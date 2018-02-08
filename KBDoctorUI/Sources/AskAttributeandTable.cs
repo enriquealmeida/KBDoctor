@@ -23,16 +23,13 @@ namespace Concepto.Packages.KBDoctor
         {
                 foreach (Table t in Artech.Genexus.Common.Objects.Table.GetAll(UIServices.KB.CurrentModel))
                 {
-                  //  description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
-                  //  string objNameLink = Functions.linkObject(t);
-
                     comboBoxTable.Items.Add(t.Name);
                 }
         }
 
         private void comboBoxAtt_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            // No implementado
         }
 
         private void comboBoxTable_SelectedIndexChanged(object sender, EventArgs e)
@@ -50,8 +47,8 @@ namespace Concepto.Packages.KBDoctor
         private void button1_Click(object sender, EventArgs e)
         {
             string tableName = comboBoxTable.SelectedItem.ToString();
-            string attName = comboBoxAtt.SelectedItem.ToString();
-            if (tableName == "" | attName == "")
+            string atrName = comboBoxAtt.SelectedItem.ToString();
+            if (tableName == "" || atrName == "")
             {
                 lblError.Text = "Select Table and Attribute";
             }

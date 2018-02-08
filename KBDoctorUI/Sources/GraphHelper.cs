@@ -7,7 +7,6 @@ using Artech.Genexus.Common.Objects;
 using Artech.Packages.Patterns.Definition;
 using Artech.Packages.Patterns.Engine;
 using Artech.Udm.Framework.References;
-//using Satsuma;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -17,7 +16,7 @@ using System.Text;
 
 namespace Concepto.Packages.KBDoctor
 {
-    class GraphHelper
+    static class GraphHelper
     {
         public static void GenerateGraph()
         {
@@ -49,13 +48,7 @@ namespace Concepto.Packages.KBDoctor
             FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
             GenerateKBTableGraph(Name, FileName); 
             writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-            /*
-            Check = "KB Table Graph SatSuma";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
-            GenerateKBTableGraphSatsuma(Name, FileName);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-            */
+
             Check = "KB Object Graph";
             Name = Functions.CleanFileName(Check);
             FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
@@ -67,14 +60,7 @@ namespace Concepto.Packages.KBDoctor
             FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
             GenerateKBModuleGraph(Name, FileName);
             writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-            /*
-            Check = "KB Component Conex Graphs";
-            Name = Functions.CleanFileName(Check);
-            // FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
-            GenerateKBConexComponentGraph(Name);
-          //  writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
 
-            */
             writer.AddFooter();
             writer.Close();
 
@@ -214,39 +200,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
             output.AddLine("Generating " + name);
-            /*
-            CustomGraph g = new CustomGraph();
-            Node a = g.AddNode();
-            Node b = g.AddNode();
-            Node c = g.AddNode();
-            Arc ab = g.AddArc(a, b, Directedness.Directed);
-            Arc bc = g.AddArc(b, c, Directedness.Undirected);
-            /*
-            int i = 1;
-            foreach (Table t in Table.GetAll(model))
-            {
-                Node node = new Node(nodeAllocator.Allocate());
-                g.AddNode();
-                foreach (TableRelation relation in t.SuperordinatedTables)
-                {
-                    String edge = "          <edge id='XXXX' source='" + relation.BaseTable.Name + "' target='" + relation.RelatedTable.Name + "' />  ";
-                    if (!aristas.Contains(edge))
-                        aristas.Add(edge);
-                }
-            };
-            scriptFile.WriteLine("      </nodes>");
-
-            //Grabo las aristas
-            scriptFile.WriteLine("      <edges>");
-
-            int i = 0;
-            foreach (String s in aristas)
-            {
-                string s2 = s.Replace("XXXX", i.ToString());
-                scriptFile.WriteLine("          " + s2);
-                i += 1;
-            };
-            */
+           
             scriptFile.WriteLine("      </edges>");
             scriptFile.WriteLine("  </graph>");
             scriptFile.WriteLine("</gexf>");
@@ -305,12 +259,6 @@ namespace Concepto.Packages.KBDoctor
                                     aristas.Add(edge);
                             }
                         }
-                        /*
-                        if (objRef is Transaction) // && obj is Table)
-                        {
-                            output.AddLine(objRef.TypeDescriptor.Name + ":" + objRef.Name + "->" + objName + " - " + r.LinkType.ToString() + " - " + r.LinkTypeInfo + " - " + r.ReferenceType );
-                        }
-                        */
                     }
                 }
             };
@@ -381,8 +329,6 @@ namespace Concepto.Packages.KBDoctor
                 foreach (KBObject obj in mdl.GetAllMembers())
                 {
                     if (obj is Procedure || obj is Table)
-
-                       // if (Functions.isRunable(obj) || obj is Table )
                     {
                         foreach (EntityReference r in obj.GetReferences())
                         {

@@ -16,8 +16,10 @@ using Artech.Genexus.Common.Parts;
 using Artech.Genexus.Common.Parts.SDT;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Helpers;
+using Artech.Genexus.Common.CustomTypes;
 using Artech.Common.Properties;
 using Artech.Common.Language.Parser;
+
 using Artech.Common.Diagnostics;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Architecture.UI.Framework.Objects;
@@ -34,7 +36,9 @@ using Artech.Architecture.Common.Collections;
 using Artech.Architecture.BL.Framework;
 using Artech.Architecture.BL.Framework.Services;
 using Artech.Architecture.Language.ComponentModel;
+
 using Artech.Udm.Framework;
+using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -328,7 +332,6 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
 
-
         public static bool isMain(KBObject obj)
         {
             object aux = obj.GetPropertyValue("isMain");
@@ -342,9 +345,6 @@ namespace Concepto.Packages.KBDoctor
             return ((aux != null) && (aux.ToString() == "True"));
 
         }
-
-
-
 
         public static void ObjectsWithParmAndCommitOnExit()
         {
@@ -492,8 +492,6 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
-
-
         public static void RemovableTransactions()
         {
             IKBService kbserv = UIServices.KB;
@@ -627,6 +625,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
+            
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Commit on Exit", "Update DB?", "Commit in Source", "Timestamp", "Last Update" });
 
@@ -673,7 +672,6 @@ namespace Concepto.Packages.KBDoctor
 
 
         }
-
 
         internal static void TreeCommit()
         {
@@ -785,7 +783,6 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
-
         static public void Parse(KBModel modelo, KBObject obj, string Anidacion, KBObjectCollection yaIncluido, KBDoctorXMLWriter writer)
         {
             ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
@@ -824,7 +821,7 @@ namespace Concepto.Packages.KBDoctor
             }
         }
         
-    public enum TokensIds
+        public enum TokensIds
  {
   FNONE = -1,
  
@@ -1037,7 +1034,7 @@ namespace Concepto.Packages.KBDoctor
  
   DTREDUNDANCY = 397, // Used to give redundancy info to the specifier
  };
-    /*
+        /*
 private static void IsLevelRemovable(Transaction trn, Table tbl, out bool isRemovable, out bool isRemovableWithWarning)
 {
 isRemovable = true;
@@ -1090,7 +1087,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 }
 }
 */
-    private static KBObjectCollection AttributesFromGeneratedTransactions(Table tBL)
+        private static KBObjectCollection AttributesFromGeneratedTransactions(Table tBL)
         {
             KBObjectCollection attlist = new KBObjectCollection();
             foreach (Transaction trn in tBL.AssociatedTransactions)
@@ -1137,10 +1134,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             }
             return attlist;
         }
-
-
-
-
+        
         public static void MainTableUsed()
         {
             IKBService kbserv = UIServices.KB;
@@ -1254,17 +1248,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             }
         }
-
-
-
-
-
-
-
-
-
-
-
+        
         public static void CreateDeployUnits()
         {
             IKBService kbserv = UIServices.KB;
@@ -1533,8 +1517,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     writer.WriteElementString("Proxyauthenticationpassword", "proxypass");
                     writer.WriteEndElement();
                     writer.WriteEndElement();
-
-
                 }
 
             }
@@ -1546,7 +1528,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.EndSection(title, success);
 
         }
-
 
         private static void WriteObjectToTextFile(KBObject obj, string newDir)
         {
@@ -1703,7 +1684,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 ListStructure(childLevel, tabs + 1, file);
         }
 
-
         private static void ListItem(SDTItem item, int tabs, System.IO.StreamWriter file)
         {
             WriteTabs(tabs, file);
@@ -1718,10 +1698,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             while (tabs-- > 0)
                 file.Write('\t');
         }
-
-
-
-
+        
         private static void WriteCopyObject(IOutputService output, KBObject obj, StringCollection tableOperation, KBObjectCollection objMarked, string mainstr, string Dircopia)
         {
             IKBService kbserv = UIServices.KB;
@@ -2026,9 +2003,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 p.Save();
             }
         }
-
-
-
+        
         private static string ReplaceOneLegacy(string myString, string v)
         {
             //IOutputService output = CommonServices.Output;
@@ -2281,8 +2256,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             bool success = true;
             output.EndSection(title, success);
         }
-
-
+        
         public static void ObjectsUDPCallables()
         {
             IKBService kbserv = UIServices.KB;
@@ -2628,9 +2602,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             return typeOfParm;
         }
-
-
-
+        
         private static int CalculateComplexityIndex(int MaxCodeBlock, int MaxNestLevel, int ComplexityLevel, string ParmINOUT)
         {
             int ComplexityIndex = 0;
@@ -2740,10 +2712,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 MaxCodeBlock = (MaxCodeBlock <= countLine) ? countLine : MaxCodeBlock;
             }
         }
-
-
-
-
+        
         public static void ListProcedureCallWebPanelTransaction()
         {
             IKBService kbserv = UIServices.KB;
@@ -2868,8 +2837,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 }
             }
         }
-
-
+        
         public static void ObjectsWithVarNotBasedOnAtt()
         {
             IKBService kbserv = UIServices.KB;
@@ -2926,10 +2894,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             bool success = true;
             output.EndSection(title, success);
         }
-
-
-
-
+        
         public static string VariablesNotBasedAttributesOrDomain(KBObject obj)
         {
             IKBService kbserv = UIServices.KB;
@@ -2953,10 +2918,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             }
             return variables;
         }
-
-
-
-
+        
         public static void AssignDomainToVariable(object[] parameters)
         {
             IKBService kbserv = UIServices.KB;
@@ -3434,6 +3396,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.EndSection(title, true);
 
         }
+
         private static void SetDocumentDirty(IGxDocument doc)
         {
             if (UIServices.Environment.InvokeRequired) // devuelve true cuando el thread que está ejecutando no es el thread de UI
@@ -3507,8 +3470,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.EndSection(title, success);
 
         }
-
-
+        
         public static void BuildObjectAndReferences()
         {
             IKBService kbserv = UIServices.KB;
@@ -3649,6 +3611,355 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
 
         }
+
+        public static void ObjectsWithTheSameSignature()
+        {
+            // Object with parm() rule without in: out: or inout:
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+
+            string title = "KBDoctor - Objects with the same signature";
+            output.StartSection(title);
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+            IEnumerable<KBObject> objects = kbserv.CurrentModel.Objects.GetAll();
+
+            HashSet<int> classes;
+            Hashtable[] Classes_types;
+
+            API.GetClassesTypesWithTheSameSignature(objects, out classes, out Classes_types);
+
+            writer.AddTableHeader(new string[] { "Class", "Object", "Datatype params" });
+
+            //Despliego en pantalla los objetos para los cuales existe otro objeto con la misma firma, de forma ordenada.
+            foreach (int i in classes)
+            {
+                Hashtable table_type = Classes_types[i - 1];
+                foreach (string parameters in table_type.Keys)
+                {
+                    List<KBObject> objs = table_type[parameters] as List<KBObject>;
+                    if (objs.Count > 1)
+                    {
+                        foreach (KBObject obj in objs)
+                        {
+                            writer.AddTableData(new string[] { parameters, obj.Name, Functions.ExtractRuleParm(obj) });
+                        }
+                    }
+                }
+            }
+
+            writer.AddFooter();
+            writer.Close();
+            bool success = true;
+            output.EndSection(title, success);
+
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+        }
+
+        public static void ObjectsWithTheSameSignatureAssociated()
+        {
+            // Object with parm() rule without in: out: or inout:
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+
+            string title = "KBDoctor - Objects with the same signature associated to a transaction";
+            output.StartSection(title);
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+            List<KBObject> objects = new List<KBObject>();
+            HashSet<EntityKey> guids = new HashSet<EntityKey>();
+            foreach (Transaction transaction in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            {
+                foreach (EntityReference refer in transaction.GetReferences())
+                {
+                    KBObject refto = KBObject.Get(kbserv.CurrentModel, refer.To);
+                    ICallableObject callableObject = refto as ICallableObject;
+                    if (!guids.Contains(refer.To))
+                    {
+                        if (callableObject != null)
+                        {
+                            objects.Add(refto);
+                            guids.Add(refer.To);
+                        }
+                    }
+                }
+            }
+
+            HashSet<int> classes;
+            Hashtable[] Classes_types;
+
+            API.GetClassesTypesWithTheSameSignature(objects, out classes, out Classes_types);
+
+            writer.AddTableHeader(new string[] { "Class", "Object", "Datatype params" });
+
+            //Despliego en pantalla los objetos para los cuales existe otro objeto con la misma firma, de forma ordenada.
+            foreach (int i in classes)
+            {
+                Hashtable table_type = Classes_types[i - 1];
+                foreach (string parameters in table_type.Keys)
+                {
+                    List<KBObject> objs = table_type[parameters] as List<KBObject>;
+                    if (objs.Count > 1)
+                    {
+                        foreach (KBObject obj in objs)
+                        {
+                            writer.AddTableData(new string[] { parameters, obj.Name, Functions.ExtractRuleParm(obj) });
+                        }
+                    }
+                }
+            }
+
+            writer.AddFooter();
+            writer.Close();
+            bool success = true;
+            output.EndSection(title, success);
+
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+        }
+
+        public static void TestParser()
+        {
+
+            Hashtable token_meaning = new Hashtable();
+
+            token_meaning.Add(TokensIds.FNONE, "FNONE");
+            token_meaning.Add(TokensIds.FOB, " '(' Open Bracket");
+            token_meaning.Add(TokensIds.FFN, " 'Function(' Fuction call");
+            token_meaning.Add(TokensIds.FNA, " Name Attribute");
+            token_meaning.Add(TokensIds.FNC, " Name Cconstant");
+            token_meaning.Add(TokensIds.FCB, " ')' Close Bracket");
+            token_meaning.Add(TokensIds.FPL, " '+''-' Plus Minus oper.");
+            token_meaning.Add(TokensIds.FPR, " '*''/' Product Divis. oper.");
+            token_meaning.Add(TokensIds.FCM, " ',' Comma separate parms.");
+            token_meaning.Add(TokensIds.FNT, " 'NOT' NOT");
+            token_meaning.Add(TokensIds.FAN, " 'AND' 'OR' AND OR");
+            token_meaning.Add(TokensIds.FRE, " '<' '>' '=' Relational oper.");
+            token_meaning.Add(TokensIds.EXP, " Expression");
+            token_meaning.Add(TokensIds.SUM, " Sum");
+            token_meaning.Add(TokensIds.COU, " Count");
+            token_meaning.Add(TokensIds.AVE, " Average");
+            token_meaning.Add(TokensIds.MAX, " Maximum");
+            token_meaning.Add(TokensIds.MIN, " Minimum");
+            token_meaning.Add(TokensIds.FIF, " IF ...");
+            token_meaning.Add(TokensIds.FSC, " Semicolon ';'");
+            token_meaning.Add(TokensIds.FOT, " Otherwise");
+            token_meaning.Add(TokensIds.ERR_TOKEN, "ERR_TOKEN");
+            token_meaning.Add(TokensIds.FEN, " EOExpression");
+            token_meaning.Add(TokensIds.FCO, " Comment (') for rules / commands");
+            token_meaning.Add(TokensIds.FUV, " User Variable (&) for rules/commands");
+            token_meaning.Add(TokensIds.FUA, " User Variable Array '&xx('");
+            token_meaning.Add(TokensIds.FCN, " Continuation Line / White spaces");
+            token_meaning.Add(TokensIds.FAM, " String to replace '&' with '&&'");
+            token_meaning.Add(TokensIds.FCL, " CLass id (used for calls)");
+            token_meaning.Add(TokensIds.FOI, " Object Id (used for calls)");
+            token_meaning.Add(TokensIds.FCT, " ConTrol ID/Name (for properties)");
+            token_meaning.Add(TokensIds.FCI, " Control type Id (combo/edit/etc.)");
+            token_meaning.Add(TokensIds.FMT, " control id/name (for MeThods) (Used only in specifier)");
+            token_meaning.Add(TokensIds.FBI, " BInary info in value (used to save bin data in obj_info)");
+            token_meaning.Add(TokensIds.FDC, " Date constante (used only in dYNQ by now)");
+            token_meaning.Add(TokensIds.FCV, " Control Variable (the var associated with the control (Used only in specifier)");
+            token_meaning.Add(TokensIds.FWH, " WHEN (GXW) / WHERE (DKL) ...");
+            token_meaning.Add(TokensIds.FNS, " Name space ...");
+            token_meaning.Add(TokensIds.FON, " ON ...");
+            token_meaning.Add(TokensIds.FBC, " Comentario de bloque");
+            token_meaning.Add(TokensIds.FOR, " ORDER ...");
+            token_meaning.Add(TokensIds.TKN_TRUE, " TRUE");
+            token_meaning.Add(TokensIds.TKN_FALSE, " FALSE");
+            token_meaning.Add(TokensIds.TKN_NONE, " NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR");
+            token_meaning.Add(TokensIds.PRM, " Parámetro, utilizado en DYNQ");
+            token_meaning.Add(TokensIds.FND, " Name Domain");
+            token_meaning.Add(TokensIds.FLV, " LEVEL token");
+            token_meaning.Add(TokensIds.TKN_NEW, " NEW token");
+            token_meaning.Add(TokensIds.FSDTCLS, " Structure Class");
+            token_meaning.Add(TokensIds.TKN_NULL, " NULL");
+            token_meaning.Add(TokensIds.TKN_IN, " IN");
+            token_meaning.Add(TokensIds.SSL, " SUBSELECT : used by generators; reserved it for Gx.");
+            token_meaning.Add(TokensIds.FEX, " Exception name");
+            token_meaning.Add(TokensIds.TMSGID, " Message id");
+            token_meaning.Add(TokensIds.TNCNT, " Token Name Constant NonTranslatable");
+            token_meaning.Add(TokensIds.TFOR, " For token, defined to be used with Lookup Deklarit's rule");
+            token_meaning.Add(TokensIds.TDEPENDENCIES, " Dependencies token, new condition for rules.");
+            token_meaning.Add(TokensIds.TRULE, " Rule token");
+            token_meaning.Add(TokensIds.TBY, " 'By' token");
+            token_meaning.Add(TokensIds.TGIVEN, " 'Given' token");
+            token_meaning.Add(TokensIds.TWHERE, " 'Where' token -GeneXus, Deklarit uses FWH");
+            token_meaning.Add(TokensIds.TDEFINEDBY, " 'Defined by' token");
+            token_meaning.Add(TokensIds.TSECTION, " [Web], [Win], [Web], [Text]");
+            token_meaning.Add(TokensIds.TINDP, " Used for token 'in <dataselector>'");
+            token_meaning.Add(TokensIds.OPENSQUAREBRACKET, "OPENSQUAREBRACKET");
+            token_meaning.Add(TokensIds.CLOSESQUAREBRACKET, "CLOSESQUAREBRACKET");
+            token_meaning.Add(TokensIds.OUTPUTNAME, "OUTPUTNAME");
+            token_meaning.Add(TokensIds.OUTPUTDYNAMICSYM, "OUTPUTDYNAMICSYM");
+            token_meaning.Add(TokensIds.INPUT, "INPUT");
+            token_meaning.Add(TokensIds.OUTPUTPROPERTY, "OUTPUTPROPERTY");
+            token_meaning.Add(TokensIds.OBJREFERENCE, "OBJREFERENCE");
+            token_meaning.Add(TokensIds.TUSING, "TUSING");
+            token_meaning.Add(TokensIds.TSIGN, " Now that rules supports comments, define the TSIGN token to specified the sign of an expression (e.g. '-1')");
+            token_meaning.Add(TokensIds.TEXO, "TEXO");
+            token_meaning.Add(TokensIds.DTEJE, " 'Eject'");
+            token_meaning.Add(TokensIds.DTNSK, " 'NoSkip'");
+            token_meaning.Add(TokensIds.DTLNN, " 'Lineno'");
+            token_meaning.Add(TokensIds.DTPRC, "DTPRC");
+            token_meaning.Add(TokensIds.DTCLL, " 'Call'");
+            token_meaning.Add(TokensIds.DTDBA, "DTDBA");
+            token_meaning.Add(TokensIds.DTCOB, "DTCOB");
+            token_meaning.Add(TokensIds.DTASG, " Assignment");
+            token_meaning.Add(TokensIds.DTPRI, "DTPRI");
+            token_meaning.Add(TokensIds.DTIF, "IF");
+            token_meaning.Add(TokensIds.DTELS, " 'Else'");
+            token_meaning.Add(TokensIds.DTEIF, " 'Endif'");
+            token_meaning.Add(TokensIds.DTNPR, "Defined by");
+            token_meaning.Add(TokensIds.DTDEL, " 'Delete'");
+            token_meaning.Add(TokensIds.DTDO, " 'Do'");
+            token_meaning.Add(TokensIds.DTEDO, " 'Enddo'");
+            token_meaning.Add(TokensIds.DTWHE, "Where");
+            token_meaning.Add(TokensIds.DTNEW, "New");
+            token_meaning.Add(TokensIds.DTRET, "Return");
+            token_meaning.Add(TokensIds.DTHEA, "DTHEA");
+            token_meaning.Add(TokensIds.DTBEG, "DTBEG");
+            token_meaning.Add(TokensIds.DTFOR, " 'ForEach'");
+            token_meaning.Add(TokensIds.DTEND, "DTEND");
+            token_meaning.Add(TokensIds.DTPL, "DTPL");
+            token_meaning.Add(TokensIds.DTMT, "DTMT");
+            token_meaning.Add(TokensIds.DTMB, "DTMB");
+            token_meaning.Add(TokensIds.DTSRC, "DTSRC");
+            token_meaning.Add(TokensIds.DTENW, "End New");
+            token_meaning.Add(TokensIds.DTEFO, " 'EndFor'");
+            token_meaning.Add(TokensIds.DTWDU, " 'When Duplicate'");
+            token_meaning.Add(TokensIds.DTWNO, " 'When None'");
+            token_meaning.Add(TokensIds.DTCP, "DTCP");
+            token_meaning.Add(TokensIds.DTCMM, "Commit");
+            token_meaning.Add(TokensIds.DTXFE, "DTXFE");
+            token_meaning.Add(TokensIds.DTXFF, "DTXFF");
+            token_meaning.Add(TokensIds.DTXNW, "DTXNW");
+            token_meaning.Add(TokensIds.DTXEF, "DTXEF");
+            token_meaning.Add(TokensIds.DTXEN, "DTXEN");
+            token_meaning.Add(TokensIds.DTDBY, "DTDBY");
+            token_meaning.Add(TokensIds.DTEXF, " 'Exit' from a 'Do While'");
+            token_meaning.Add(TokensIds.DTEXD, "DTEXD");
+            token_meaning.Add(TokensIds.DTMSG, "Msg - Message");
+            token_meaning.Add(TokensIds.DTFOO, "DTFOO");
+            token_meaning.Add(TokensIds.DTPRO, " 'Sub' 'subroutine'");
+            token_meaning.Add(TokensIds.DTEPR, " 'EndSub'");
+            token_meaning.Add(TokensIds.DTDOP, " Do 'subroutine'");
+            token_meaning.Add(TokensIds.DTEVT, "DTEVT");
+            token_meaning.Add(TokensIds.DTEEV, "DTEEV");
+            token_meaning.Add(TokensIds.DTREF, "DTREF");
+            token_meaning.Add(TokensIds.DTFLN, "DTFLN");
+            token_meaning.Add(TokensIds.DTEFL, "DTEFL");
+            token_meaning.Add(TokensIds.DTCNF, "DTCNF");
+            token_meaning.Add(TokensIds.DTDOC, "Do case");
+            token_meaning.Add(TokensIds.DTCAS, "Case 'Condition''");
+            token_meaning.Add(TokensIds.DTECA, "EndCase");
+            token_meaning.Add(TokensIds.DTLOA, "DTLOA");
+            token_meaning.Add(TokensIds.DTLVL, "DTLVL");
+            token_meaning.Add(TokensIds.DTRBK, " Comando ROLLBACK");
+            token_meaning.Add(TokensIds.DTSBM, " Comando SUBMIT");
+            token_meaning.Add(TokensIds.DTGRA, "DTGRA");
+            token_meaning.Add(TokensIds.DTERH, " Commando Error_Handler");
+            token_meaning.Add(TokensIds.DTVB, " Comando VB");
+            token_meaning.Add(TokensIds.DTFSL, "DTFSL");
+            token_meaning.Add(TokensIds.DTDMY, "Reserved for spec RPC");
+            token_meaning.Add(TokensIds.DTOTH, "Otherwise");
+            token_meaning.Add(TokensIds.DTEFS, " Reserved for End for each selected line");
+            token_meaning.Add(TokensIds.DTJAV, " Comando JAVA");
+            token_meaning.Add(TokensIds.DTSQL, " Comando SQL");
+            token_meaning.Add(TokensIds.DTFLS, "DTFLS");
+            token_meaning.Add(TokensIds.DTFSS, "DTFSS");
+            token_meaning.Add(TokensIds.DTEFF, "DTEFF");
+            token_meaning.Add(TokensIds.DTLNK, " Comando LINK");
+            token_meaning.Add(TokensIds.DTAPL, " Asignación del tipo +=");
+            token_meaning.Add(TokensIds.DTAMI, " Asignación del tipo -=");
+            token_meaning.Add(TokensIds.DTAMU, " Asignación del tipo *=");
+            token_meaning.Add(TokensIds.DTADI, " Asignación del tipo /=");
+            token_meaning.Add(TokensIds.DTFIN, " FOR <var> IN <array>");
+            token_meaning.Add(TokensIds.DTEFI, " END' del token anterior");
+            token_meaning.Add(TokensIds.DTFFT, " FOR <var>=<exp> TO <exp> STEP <exp>");
+            token_meaning.Add(TokensIds.DTEFT, " END' del token anterior");
+            token_meaning.Add(TokensIds.DTIN, " Comando IN de FOR var IN array");
+            token_meaning.Add(TokensIds.DTTO, " Comando TO de FOR EACH var=exp TO exp");
+            token_meaning.Add(TokensIds.DTSTP, " Comando STEP de FOR var=exp TO exp STEP exp");
+            token_meaning.Add(TokensIds.DTCSH, " Comando CSHARP");
+            token_meaning.Add(TokensIds.DTON, " Comando ON");
+            token_meaning.Add(TokensIds.DTWHN, " Comando WHEN");
+            token_meaning.Add(TokensIds.DTOPD, " Comando OPTION DISTINCT");
+            token_meaning.Add(TokensIds.DTUSG, " Comando USING de FOR EACH ... ENDFOR");
+            token_meaning.Add(TokensIds.DTPOPUP, " Comando POPUP()");
+            token_meaning.Add(TokensIds.BLOCKING, " Comando BLOCKING");
+            token_meaning.Add(TokensIds.OUTPUTELEMENT, "OUTPUTELEMENT");
+            token_meaning.Add(TokensIds.OPENCURLYBRACKET, "OPENCURLYBRACKET");
+            token_meaning.Add(TokensIds.CLOSECURLYBRACKET, "CLOSECURLYBRACKET");
+            token_meaning.Add(TokensIds.PRINT, "PRINT");
+            token_meaning.Add(TokensIds.INSERT, "INSERT");
+            token_meaning.Add(TokensIds.SUBGROUP, "SUBGROUP");
+            token_meaning.Add(TokensIds.ENDSUBGROUP, "ENDSUBGROUP");
+            token_meaning.Add(TokensIds.DTStub, " 'public sub'");
+            token_meaning.Add(TokensIds.DTJavaScript, " 'javascript' command - not implemented yet! - reserved number");
+            token_meaning.Add(TokensIds.DTEndStub, "DTEndStub");
+            token_meaning.Add(TokensIds.DTCallStub, "DTCallStub");
+            token_meaning.Add(TokensIds.DTRuby, " Comando 'RUBY <LINE>'");
+            token_meaning.Add(TokensIds.DTREDUNDANCY, " Used to give redundancy info to the specifier");
+
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+
+            string title = "KBDoctor - TESTEO DE PARSER ";
+            output.StartSection(title);
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+           
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+
+            ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
+            IParserEngine parser = parserSrv.CreateEngine();
+            ParserInfo parserInfo;
+            writer.AddTableHeader(new string[] {"OBJECT", "COMMAND", "TOKEN", "Id"});
+
+
+            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            {
+                writer.AddTableData(new string[] { obj.Name, "","",""});
+                Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                if (source != null)
+                {
+                    parserInfo = new ParserInfo(source);
+                    foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
+                    {
+                        string meaning = token_meaning[(TokensIds)token.Token] as string;
+                        if (token.Token >= 100)
+                        {
+                            writer.AddTableData(new string[] { "", meaning, "", token.Token.ToString() });
+                        }
+                        else
+                        { 
+                   //         writer.AddTableData(new string[] { "", "", meaning, token.Token.ToString() });
+                        }
+                    }
+                }
+            }
+            writer.AddFooter();
+            writer.Close();
+            bool success = true;
+            output.EndSection(title, success);
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+        }
+
     }
 
 

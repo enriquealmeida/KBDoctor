@@ -81,6 +81,7 @@
     <Compile Include="Sources\API.cs" />
     <Compile Include="Sources\Navigation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sources\Objects.cs" />
     <Compile Include="Sources\Utility.cs" />
     <Compile Include="StringResources.Designer.cs">
       <AutoGen>True</AutoGen>

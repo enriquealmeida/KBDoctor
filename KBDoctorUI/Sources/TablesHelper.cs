@@ -166,7 +166,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (Group g in Group.GetAll(kbserv.CurrentModel))
             {
-                if (g.Name == g.Description.Replace(" ", "") | (g.Name == ""))
+                if (g.Name == g.Description.Replace(" ", "") || (g.Name == ""))
                 {
                     string grpLink = Functions.linkObject(g);
 
@@ -947,7 +947,7 @@ namespace Concepto.Packages.KBDoctor
                         //SeedAutonumber += Environment.NewLine + "DBCC CHECKIDENT ( <TargetDB>.<TargetSchema>." + tblName + ", RESEED, @max);";
                     }
 
-                    if (!(a.IsFormula) || (a.IsFormula & a.IsRedundant)) 
+                    if (!(a.IsFormula) || (a.IsFormula && a.IsRedundant)) 
                         if (!(a.IsInferred))
                         {
                             tblAtt += coma + attName;
