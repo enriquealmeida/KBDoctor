@@ -347,19 +347,20 @@ namespace Concepto.Packages.KBDoctor
                 {
                     CleanVariablesBasedInAttribute(a, output, objRef);
                     CleanSDT(a, output, objRef);
+                    if (!(objRef is DataView))
+                    {
+                        try
+                        {
+                            objRef.Save();
+                        }
+                        catch (Exception e)
+                        {
+                            output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
+                        }
+                    }
 
                 }
-                if (!(objRef is DataView))
-                {
-                    try
-                    {
-                        objRef.Save();
-                    }
-                    catch (Exception e)
-                    {
-                        output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
-                    }
-                }
+
             }
         }
 

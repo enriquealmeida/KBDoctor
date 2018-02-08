@@ -237,7 +237,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             using (StreamWriter sw = new StreamWriter(fs))
             {
                 sw.WriteLine(DateTime.Now.ToString() + "," + texto);
+                fs.Dispose();
             }
+            
         }
 
         internal static void AddLine(KnowledgeBase KB, string fileName, string texto)
@@ -248,6 +250,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             using (StreamWriter sw = new StreamWriter(fs))
             {
                 sw.WriteLine(texto);
+                fs.Dispose();
             }
         }
 
@@ -428,19 +431,20 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     CleanVariablesBasedInAttribute(a, output, objRef);
                     CleanSDT(a, output, objRef);
+                    if (!(objRef is DataView))
+                    {
+                        try
+                        {
+                            objRef.Save();
+                        }
+                        catch (Exception e)
+                        {
+                            output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
+                        }
+                    }
 
                 }
-                if (!(objRef is DataView))
-                {
-                    try
-                    {
-                        objRef.Save();
-                    }
-                    catch (Exception e)
-                    {
-                        output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
-                    }
-                }
+               
             }
         }
 
@@ -535,12 +539,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     line = sr.ReadLine();
                     i++;
                 }
+                sr.Dispose();
                 string type = ReadTypeFromLine(line);
                 string[] qname = ReadQnameFromLine(line,output);
                 string[] ret = new string[3];
                 ret[0] = type;
                 ret[1] = qname[0];
                 ret[2] = qname[1];
+
                 return ret;
             }
             else
