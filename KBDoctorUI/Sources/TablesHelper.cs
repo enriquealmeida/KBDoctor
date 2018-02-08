@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -1210,7 +1211,7 @@ namespace Concepto.Packages.KBDoctor
                 foreach (TableRelation relation in t.SuperordinatedTables)
                 {
                     string baseAttributes = ExtractListBaseAttributes(relation,ATTNAME_LEN);
-                    string relatedAttributes = ExtractListRelatedAttributes(relation,ATTNAME_LEN);
+                   // string relatedAttributes = ExtractListRelatedAttributes(relation,ATTNAME_LEN);
                     string whereCondition = ExtractWhereCondition(t, relation,ATTNAME_LEN,TBLNAME_LEN);
                     string whereJoinCondition = ExtractWhereJoinCondition(t, relation,ATTNAME_LEN,TBLNAME_LEN);
                     scriptFile.WriteLine(" select " + comilla + ShortName(TBLNAME_LEN,relation.RelatedTable.Name) + comilla + ",'->',"
@@ -1234,7 +1235,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.AddLine("Generating " + name);
 
-            scriptFile.WriteLine("/* KBDoctor - " + name + " " + DateTime.Now.ToString("yyyy/MM/dd"));
+            scriptFile.WriteLine("/* KBDoctor - " + name + " " + DateTime.Now.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture));
             scriptFile.WriteLine("");
             scriptFile.WriteLine("   Delete records with referential integrity problemas ");
             scriptFile.WriteLine("");
@@ -1242,12 +1243,11 @@ namespace Concepto.Packages.KBDoctor
             scriptFile.WriteLine("   ");
             scriptFile.WriteLine("      */");
 
-            string comilla = "'";
 
             foreach (Table t in Table.GetAll(model))
             {
 
-                string tblKey = KeyList(t,ATTNAME_LEN);
+             //   string tblKey = KeyList(t,ATTNAME_LEN);
 
                 foreach (TableRelation relation in t.SuperordinatedTables)
                 {
@@ -1260,6 +1260,7 @@ namespace Concepto.Packages.KBDoctor
 
             }
             scriptFile.Close();
+            scriptFile.Dispose();
    }
 
         public static string ShortName(int length, string name)

@@ -52,6 +52,14 @@ namespace Concepto.Packages.KBDoctor
                  }
 
             }
+            writer.AddFooter();
+            writer.Close();
+            writer.Dispose();
+
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            bool success = true;
+            output.EndSection(title, success);
+
             /*   
             type = obj.TypeDescriptor.Description;
                 name = obj.Name;
@@ -101,12 +109,7 @@ namespace Concepto.Packages.KBDoctor
                     }
                 }
             }
-            writer.AddFooter();
-            writer.Close();
 
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection(title, success);
             
              * */
         }

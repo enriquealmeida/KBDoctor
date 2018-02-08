@@ -360,7 +360,9 @@ namespace Concepto.Packages.KBDoctor
                             output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
                         }
                     }
+
                 }
+
             }
         }
 
