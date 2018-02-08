@@ -27,5 +27,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             Objects.GetClassesTypesWithTheSameSignature(objects, out classes, out Classes_types);
         }
+        public static void CleanKBObjectVariables(KBObject obj, IOutputService output)
+        {
+            CleanKB.CleanKBObjectVariables(obj, output);
+        }
+
+        public static void CleanAllKBObjectVariables(KnowledgeBase KB, IOutputService output)
+        {
+            foreach (KBObject kbo in KB.DesignModel.Objects.GetAll())
+                CleanKB.CleanKBObjectVariables(kbo, output);
+        }
     }
 }

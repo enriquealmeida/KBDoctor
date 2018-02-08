@@ -3390,8 +3390,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.StartSection(title);
 
             int totalvarremoved = 0;
-            foreach (KBObject kbo in UIServices.KB.CurrentModel.Objects.GetAll())
-                CleanKBHelper.CleanKBObjectVariables(kbo);
+            KBDoctorCore.Sources.API.CleanAllKBObjectVariables(UIServices.KB.CurrentKB, output);
 
             output.EndSection(title, true);
 
@@ -3959,7 +3958,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.EndSection(title, success);
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
-
     }
 
 

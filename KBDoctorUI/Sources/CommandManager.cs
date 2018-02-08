@@ -558,8 +558,12 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecUDPCallables(CommandData cmdData)
         {
-            ObjectsHelper.ObjectsUDPCallables();
+
             return true;
+            /*
+             * Comento este procedimiento para usarlo como opción nueva. 
+             * ObjectsHelper.ObjectsUDPCallables();
+            return true;*/
         }
 
         public bool ExecObjectsDiagnostics(CommandData cmdData)
@@ -707,7 +711,9 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecPrepareComparerNavigation(CommandData cmdData)
         {
-            ObjectsHelper.TestParser();
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            KBDoctorCore.Sources.API.PrepareCompareNavigations(kbserv.CurrentKB, output);
             return true;
         }
 

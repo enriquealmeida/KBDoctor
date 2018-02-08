@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="PrepareAndCompare" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="CleanAllObjectsVariables" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="$(GX_PROGRAM_DIR)\Genexus.Tasks.targets" />
   <Import Project="$(GX_PROGRAM_DIR)\KBDoctorCmd.Tasks.targets" />
@@ -7,6 +7,12 @@
     <OpenKnowledgeBase Directory="$(KBPath)"/>
     <PrepareCompareNavigationsCmd/>
     <CompareNavigationsCmd />
+    <CloseKnowledgeBase />
+  </Target>
+
+  <Target  Name="CleanAllObjectsVariables">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <CleanAllKBObjectVariablesCmd/>
     <CloseKnowledgeBase />
   </Target>
 

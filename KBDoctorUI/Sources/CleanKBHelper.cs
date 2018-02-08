@@ -109,7 +109,7 @@ namespace Concepto.Packages.KBDoctor
             output.AddLine("Cleaning object " + obj.Name);
             if (obj is Transaction)
             {
-                CleanKBObjectVariables(obj);
+                KBDoctorCore.Sources.API.CleanKBObjectVariables(obj, output);
                 CleanAllRules(obj);
                 CleanAllWebForm(obj);
                 CleanAllWInForm(obj);
@@ -1068,129 +1068,6 @@ namespace Concepto.Packages.KBDoctor
             }
             return cambio;
         }
-
-        public static void CleanKBObjectVariables(KBObject kbObj)
-        {
-            try
-            {
-                VariablesPart variablesPart = null;
-                if (!kbObj.IsCurrentVersion || kbObj.Dirty)
-                {
-                    kbObj = KBObject.Get(kbObj.Model, kbObj.Key);
-                }
-                List<Variable> list = new List<Variable>();
-                List<IEnumerable<VariableReference>> list2 = new List<IEnumerable<VariableReference>>();
-                List<VariableReference> list3 = new List<VariableReference>();
-                string text = null;
-                foreach (KBObjectPart current in kbObj.Parts)
-                {
-                    if (current is VariablesPart)
-                    {
-                        variablesPart = (VariablesPart)current;
-                    }
-                    else
-                    {
-                        if (current is IHasVariableReferences)
-                        {
-                            list2.Add(((IHasVariableReferences)current).GetReferencedVariables());
-                        }
-                    }
-                    if (current is LayoutPart && ((LayoutPart)current).Layout != null)
-                    {
-                        using (IEnumerator<IReportBand> enumerator2 = ((LayoutPart)current).Layout.ReportBands.GetEnumerator())
-                        {
-                            while (enumerator2.MoveNext())
-                            {
-                                IReportBand current2 = enumerator2.Current;
-                                foreach (IReportComponent current3 in current2.Controls)
-                                {
-                                    if (current3 is ReportAttribute)
-                                    {
-                                        VariableReference item = new VariableReference(current3.Name);
-                                        list3.Add(item);
-                                    }
-                                }
-                            }
-                            continue;
-                        }
-                    }
-                    if (current is WebFormPart && ((WebFormPart)current).Document != null)
-                    {
-                        text = ((WebFormPart)current).Document.OuterXml;
-                    }
-                }
-                if (list3.Count > 0)
-                {
-                    list2.Add(list3);
-                }
-                if (variablesPart != null && !variablesPart.GetPropertyValue<bool>("IsDefault"))
-                {
-                    foreach (Variable current4 in variablesPart.Variables)
-                    {
-                        if (!current4.IsAutoDefined && !current4.IsStandard && (Properties.ATT.Dimensions_Enum)Enum.Parse(typeof(Properties.ATT.Dimensions_Enum), current4.GetPropertyValue<string>("AttNumDim")) == Properties.ATT.Dimensions_Enum.Scalar)
-                        {
-                            bool flag = false;
-                            foreach (IEnumerable<VariableReference> current5 in list2)
-                            {
-                                foreach (VariableReference current6 in current5)
-                                {
-                                    if (current6.Name.Replace("&", "").Equals(current4.Name.Replace("&", ""), StringComparison.InvariantCultureIgnoreCase))
-                                    {
-                                        flag = true;
-                                        break;
-                                    }
-                                }
-                                if (flag)
-                                {
-                                    break;
-                                }
-                            }
-                            if (!flag && (text == null || !text.Contains("\"var:" + current4.Id + "\"")))
-                            {
-                                list.Add(current4);
-                            }
-                        }
-                    }
-                    if (list.Count > 0)
-                    {
-                        string text2 = "";
-                        foreach (Variable current7 in list)
-                        {
-                            text2 = text2 + ", " + current7.Name;
-                            variablesPart.Remove(current7);
-                        }
-                        OutputMessages outputMessages = new OutputMessages();
-                        if (kbObj.Validate(outputMessages))
-                        {
-                            kbObj.Save();
-                           
-                            CommonServices.Output.AddLine("Object cleaned successfully. Variables deleted: " + text2.Substring(2));
-                           
-                        }
-                        using (IEnumerator<BaseMessage> enumerator8 = outputMessages.GetEnumerator())
-                        {
-                            while (enumerator8.MoveNext())
-                            {
-                                BaseMessage current8 = enumerator8.Current;
-                                if (current8.Level == MessageLevel.Error)
-                                {
-                                    CommonServices.Output.AddErrorLine(current8.Text);
-                                }
-                            }
-                            
-                        }
-                    }
-                
-                }
-
-            }
-            catch (Exception ex)
-            {
-                CommonServices.Output.AddWarningLine("Object '" + kbObj.Name + "' was not cleaned because an error ocurred: " + ex.Message);
-            }
-            
-        }
-
 
         internal static void HistoryGXServer()
         {
