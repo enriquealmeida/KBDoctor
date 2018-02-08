@@ -44,7 +44,6 @@
     </Reference>
     <Reference Include="Artech.Architecture.Language, Version=11.0.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\GeneXus\GeneXus15PlatformSDK\Bin\Artech.Architecture.Language.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.UI.Framework">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.UI.Framework.dll</HintPath>
@@ -84,7 +83,6 @@
   <ItemGroup>
     <Compile Include="Sources\API.cs" />
     <Compile Include="Sources\CleanKB.cs" />
-    <Compile Include="Sources\KBDoctorXMLWriter.cs" />
     <Compile Include="Sources\Navigation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sources\Objects.cs" />
