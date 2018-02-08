@@ -44,6 +44,7 @@
     </Reference>
     <Reference Include="Artech.Architecture.Language, Version=11.0.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Language.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.UI.Framework">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.UI.Framework.dll</HintPath>
