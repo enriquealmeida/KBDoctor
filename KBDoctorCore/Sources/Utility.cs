@@ -436,13 +436,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
                         }
                     }
-<<<<<<< HEAD
-
                 }
                
-=======
-               }
->>>>>>> origin/master
+               
             }
         }
 
@@ -540,11 +536,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 ret[0] = type;
                 ret[1] = qname[0];
                 ret[2] = qname[1];
-<<<<<<< HEAD
 
-=======
+
                 sr.Dispose();
->>>>>>> origin/master
+
                 return ret;
             }
             else

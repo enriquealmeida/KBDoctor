@@ -348,10 +348,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     CleanVariablesBasedInAttribute(a, output, objRef);
                     CleanSDT(a, output, objRef);
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/master
                     if (!(objRef is DataView))
                     {
                         try
