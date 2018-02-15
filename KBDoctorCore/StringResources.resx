@@ -325,6 +325,11 @@
   <data name="ListTablesInModules" xml:space="preserve">
     <value>List tables in modules</value>
   </data>
+
+  <data name="ListObjectsWithTableInOtherModule" xml:space="preserve">
+    <value>List tables in modules</value>
+  </data>
+  
   <data name="GenerateSimpleTransactionFromNotGeneratedTransactions" xml:space="preserve">
     <value>Generate Simple Trn from Not Generate Transactions</value>
   </data>

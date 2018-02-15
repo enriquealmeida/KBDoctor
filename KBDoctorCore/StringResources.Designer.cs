@@ -475,6 +475,15 @@ namespace Concepto.Packages.KBDoctorCore {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a List tables in modules.
+        /// </summary>
+        internal static string ListObjectsWithTableInOtherModule {
+            get {
+                return ResourceManager.GetString("ListObjectsWithTableInOtherModule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Find Similar Navigations.
         /// </summary>
         internal static string ListObjSimilarNavigation {

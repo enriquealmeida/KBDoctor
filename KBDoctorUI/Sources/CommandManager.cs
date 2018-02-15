@@ -55,6 +55,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.GenerateTrnFromTables, new ExecHandler(ExecGenerateTrnFromTables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.GenerateTrnFromTables2, new ExecHandler(ExecGenerateTrnFromTables2), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListTablesInModules, new ExecHandler(ExecListTablesInModules), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListObjectsWithTableInOtherModule, new ExecHandler(ExecListObjectsWithTableInOtherModule), new QueryHandler(QueryKBDoctor));
 
             // Acciones sobre tablas
             AddCommand(CommandKeys.AssignDescriptionToTable, new ExecHandler(ExecAssignDescriptionToTable), new QueryHandler(QueryKBDoctor));
@@ -71,6 +72,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.BuildModule, new ExecHandler(ExecBuildModule), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.BuildObjectWithProperty, new ExecHandler(ExecBuildObjectWithProperty), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ObjectsNotCalled, new ExecHandler(ExecObjectsNotCalled), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWithCommitOnExit, new ExecHandler(ExecObjectsWithCommitOnExit), new QueryHandler(QueryKBDoctor));
@@ -362,6 +364,18 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        /// <summary>
+        /// Lista las objetos con tablas en modulos diferentes al suyo. 
+        /// </summary>
+        /// <param name="cmdData"></param>
+        /// <returns></returns>
+        public bool ExecListObjectsWithTableInOtherModule(CommandData cmdData)
+        {
+            ModulesHelper.ListObjectsWithTableInOtherModule();
+            return true;
+        }
+
+
         public bool ExecModuleDependencies(CommandData cmdData)
         {
             ModulesHelper.ModuleDependencies();
@@ -461,6 +475,13 @@ namespace Concepto.Packages.KBDoctor
         {
             //Hace el Build with this only de los objetos de un modulo y de los que lo referencian
             ObjectsHelper.BuildObjectAndReferences();
+            return true;
+        }
+
+        public bool ExecBuildObjectWithProperty(CommandData cmdData)
+        {
+            //Hace el Build with this only de los objetos de un modulo y de los que lo referencian
+            ObjectsHelper.BuildObjectWithProperty();
             return true;
         }
 

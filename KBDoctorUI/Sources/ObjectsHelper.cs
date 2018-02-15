@@ -341,6 +341,8 @@ namespace Concepto.Packages.KBDoctor
 
         public static bool isGenerated(KBObject obj)
         {
+            if (obj is DataSelector)  //Los Dataselector no tienen la propiedad de generarlos o no , por lo que siempre devuelven falso y sin son referenciados se generan. 
+                return true;
             object aux = obj.GetPropertyValue(Properties.TRN.GenerateObject);
             return ((aux != null) && (aux.ToString() == "True"));
 
@@ -3477,7 +3479,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IOutputService output = CommonServices.Output;
 
             bool success = true;
-            string title = "KBDoctor - Build Module";
+            string title = "KBDoctor - Build Objects with references";
             output.StartSection(title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -3523,6 +3525,100 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
         }
 
+        public static void BuildObjectWithProperty()
+        {
+          
+
+            IKBService kbserv = UIServices.KB;
+            KBModel kbModel = UIServices.KB.CurrentModel;
+            IOutputService output = CommonServices.Output;
+
+            bool success = true;
+            string title = "KBDoctor - Build Objects with property";
+            output.StartSection(title);
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+            // Procedure proc = new 
+            Artech.Genexus.Common.Objects.WebPanel nuevo = new Artech.Genexus.Common.Objects.WebPanel(kbModel);
+            string pdName = "";
+            /*
+            foreach (PropDefinition pd in nuevo.GetPropertiesDefinition())
+            {
+            
+                output.AddLine(pd.DisplayName);
+                pdName = pd.Name;
+                //output.AddLine(pd.DefaultValue.ToString());
+            //    output.AddLine(pd.ValuesResolver.GetHashCode||||||)
+            }
+
+            foreach (KBObject obj in kbModel.Objects.GetAll() ) 
+            {
+                if (obj.Name=="Webpanel1" )
+                       output.AddLine(obj.Name);
+            }
+            */
+            output.AddLine("===== ENCRYPT URL PARAMETERS ========");
+            foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("USE_ENCRYPTION", "SITE"))
+            {
+                output.AddLine(obj.Name);
+            }
+
+            output.AddLine("===== SOAP ========");
+            foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "SOAP"))
+            {
+                output.AddLine(obj.Name);
+            }
+
+            output.AddLine("===== HTTP ========");
+            foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "HTTP"))
+            {
+                output.AddLine(obj.Name);
+            }
+
+            //pd.GetByPropertyValue wbp in WebPanel.GetPropertiesReferences() .GetByPropertyValue)
+            /*
+           // foreach ( nuevo.GetPropertiesDefinition() )
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Description", "Visibility", "Is Referenced by" });
+
+
+            KBObjectCollection objToBuild = new KBObjectCollection();
+
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+
+            foreach (KBObject obj in kbModel.KB.Properties.)
+            {
+
+                if (KBObjectHelper.IsSpecifiable(obj))
+                {
+                    output.AddLine(obj.TypeDescriptor.Name + " " + obj.Name);
+                    if (!objToBuild.Contains(obj))
+                    {
+                        objToBuild.Add(obj);
+                        writer.AddTableData(new string[] { obj.QualifiedName.ToString(), obj.Description, obj.IsPublic ? "Public" : "", "" });
+                    }
+                }
+                ModulesHelper.AddObjectsReferenceTo(obj, objToBuild, writer);
+
+            }
+
+            writer.AddFooter();
+            writer.Close();
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+            GenexusUIServices.Build.BuildWithTheseOnly(objToBuild.Keys);
+
+            do
+            {
+                Application.DoEvents();
+            } while (GenexusUIServices.Build.IsBuilding);
+
+            output.EndSection(title, true);
+            */
+
+        }
         public static void ListAPIObjects()
         {
             IKBService kbserv = UIServices.KB;

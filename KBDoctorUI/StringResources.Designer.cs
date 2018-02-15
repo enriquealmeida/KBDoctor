@@ -223,6 +223,15 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Build objects with property.
+        /// </summary>
+        internal static string BuildObjectWithProperty {
+            get {
+                return ResourceManager.GetString("BuildObjectWithProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Generate objects in text files.
         /// </summary>
         internal static string CalculateCheckSum {
@@ -573,7 +582,18 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListTablesInModules", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a List tables in modules.
+        /// </summary>
+        internal static string ListObjectsWithTableInOtherModule
+        {
+            get
+            {
+                return ResourceManager.GetString("ListObjectsWithTableInOtherModule", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Busca una cadena traducida similar a Tables used by mains.
         /// </summary>
