@@ -175,7 +175,6 @@
     <Compile Include="$(GX_SDK_DIR)\Src\CommonPackageInfo.cs">
       <Link>CommonPackageInfo.cs</Link>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Sources\AboutBox1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -333,6 +332,12 @@
       <Name>KBDoctorCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Louvain\LouvainCommunityPL.csproj">
+      <Project>{462156c1-ff14-4a0f-99b9-1f167435356d}</Project>
+      <Name>LouvainCommunityPL</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -343,6 +348,7 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>xcopy kbdoctor*.*  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
+xcopy louvain*.dll  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
 "%25GX_PROGRAM_DIR%25\genexus.exe" /install</PostBuildEvent>
   </PropertyGroup>
 </Project>

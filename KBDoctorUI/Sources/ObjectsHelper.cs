@@ -332,6 +332,21 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
 
+        public static bool isMain(KBObject obj)
+        {
+            object aux = obj.GetPropertyValue("isMain");
+            return ((aux != null) && (aux.ToString() == "True"));
+
+        }
+
+        public static bool isGenerated(KBObject obj)
+        {
+            if (obj is DataSelector)  //Los Dataselector no tienen la propiedad de generarlos o no , por lo que siempre devuelven falso y sin son referenciados se generan. 
+                return true;
+            object aux = obj.GetPropertyValue(Properties.TRN.GenerateObject);
+            return ((aux != null) && (aux.ToString() == "True"));
+
+        }
 
         public static void ObjectsWithParmAndCommitOnExit()
         {
@@ -373,7 +388,7 @@ namespace Concepto.Packages.KBDoctor
 
                         if (commitOnExit)
                         {
-                            string isGeneratedstr = (KBDoctorCore.Sources.Utility.isGenerated(obj) ? "Yes" : string.Empty);
+                            string isGeneratedstr = (isGenerated(obj) ? "Yes" : string.Empty);
                             objNameLink = Functions.linkObject(obj);
                             writer.AddTableData(new string[] { obj.TypeDescriptor.Name, objNameLink, obj.Description, isGeneratedstr });
                         }
@@ -398,21 +413,78 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Not referenced objects";
             string outputFile = Functions.CreateOutputFile(kbserv, title);
-            List<string[]> lineswriter;
+
 
             output.StartSection(title);
-
-            KBDoctorCore.Sources.API.RemoveObjectsNotCalled(kbserv.CurrentModel, output,out lineswriter);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Type", "Object", "Remove", "is generated?", "isMain?" });
+            int callers;
+            string remove = "";
+            bool continuar = true;
 
-            foreach (string[] line in lineswriter)
+            do
             {
-                writer.AddTableData(line);
-            }
-            
+                continuar = false;
+                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                {
+                    ICallableObject callableObject = obj as ICallableObject;
+                    if ((callableObject != null) | (obj is Artech.Genexus.Common.Objects.Attribute)
+                        | obj is Artech.Genexus.Common.Objects.Table | obj is Domain | obj is ExternalObject | obj is Image | obj is SDT)
+                    {
+                        callers = 0;
+                        foreach (EntityReference reference in obj.GetReferencesTo(LinkType.UsedObject))
+                        {
+                            callers = callers + 1;
+                        }
+
+                        if (callers == 0)
+                        {
+                            if ((obj is Transaction) | obj is Table | obj is Artech.Genexus.Common.Objects.Attribute | obj is Domain | obj is Image)
+                            {
+                                remove = "";
+                            }
+                            else
+                            {
+                                remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
+                            }
+                            string objNameLink = Functions.linkObject(obj);
+                            string isMainstr = (isMain(obj) ? "Main" : string.Empty);
+                            string isGeneratedstr = (isGenerated(obj) ? "Yes" : string.Empty);
+                            if (!isMain(obj))
+                            {
+
+                                if (remove != "")
+                                {
+                                    try
+                                    {
+                                        obj.Delete();
+                                        output.AddLine("REMOVING..." + obj.Name);
+                                        remove = "REMOVED!";
+                                        objNameLink = obj.Name;
+                                        continuar = true;
+                                    }
+                                    catch (Exception e) { };
+
+                                }
+                                writer.AddTableData(new string[] { obj.TypeDescriptor.Name, objNameLink, remove, isGeneratedstr, isMainstr });
+                            }
+                            if ((obj is Transaction) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
+                            {
+                                try
+                                {
+                                    obj.SetPropertyValue(Properties.TRN.GenerateObject, false);
+                                    CleanKBHelper.CleanObject(obj, output);
+                                }
+                                catch (Exception e) { };
+
+                            }
+                        }
+                    }
+                }
+            } while (continuar);
+
             writer.AddFooter();
             writer.Close();
 
@@ -421,7 +493,6 @@ namespace Concepto.Packages.KBDoctor
             output.EndSection(title, success);
 
         }
-
 
         public static void RemovableTransactions()
         {
@@ -444,7 +515,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (Transaction trn in Transaction.GetAll(kbserv.CurrentModel))
             {
 
-                if (!KBDoctorCore.Sources.Utility.isGenerated(trn))
+                if (!isGenerated(trn))
                 {
                     output.AddLine("Procesing... " + trn.Name);
                     bool isRemovable, isRemovableWithWarning;
@@ -1023,7 +1094,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             KBObjectCollection attlist = new KBObjectCollection();
             foreach (Transaction trn in tBL.AssociatedTransactions)
             {
-                if (KBDoctorCore.Sources.Utility.isGenerated(trn))
+                if (isGenerated(trn))
                 {
                     foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     {
@@ -1117,7 +1188,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if ((objRef != null) && !objMarked.Contains(objRef))
                 {
-                    if (KBDoctorCore.Sources.Utility.isMain(objRef))
+                    if (isMain(objRef))
                         return;
                     if ((reference.ReferenceType == ReferenceType.WeakExternal) && (objRef is Table))
                     {
@@ -1650,7 +1721,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if ((objRef != null) && !objMarked.Contains(objRef))
                 {
-                    if (KBDoctorCore.Sources.Utility.isMain(objRef))
+                    if (isMain(objRef))
                         return;
                     if (objRef is Transaction || objRef is WorkPanel || objRef is WebPanel || objRef is Menubar || objRef is Procedure || objRef is DataProvider || objRef is DataSelector)
                         WriteCopyObject(output, objRef, tableOperation, objMarked, mainstr, Dircopia);
@@ -1728,7 +1799,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
                 {
 
-                    if (KBDoctorCore.Sources.Utility.isGenerated(obj))
+                    if (isGenerated(obj))
                     {
                         output.AddLine(obj.Name);
 
@@ -1850,7 +1921,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             {
                 if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
                 {
-                    if (KBDoctorCore.Sources.Utility.isGenerated(obj) && !isGeneratedbyPattern(obj))
+                    if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                     {
                         string source = ObjectSource(obj);
                         string newSource = source;
@@ -1991,7 +2062,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
                 {
 
-                    if (KBDoctorCore.Sources.Utility.isGenerated(obj) && !isGeneratedbyPattern(obj))
+                    if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                     {
                         output.AddLine(obj.Name);
 
@@ -2099,7 +2170,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
-                if (KBDoctorCore.Sources.Utility.isGenerated(obj) && !isGeneratedbyPattern(obj))
+                if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                 {
                     //output.AddLine(obj.Name);
 
@@ -2239,7 +2310,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
         static string ChangeUDPCallWhenNecesary(KBObject obj)
         {
             string callers = "";
-            if (KBDoctorCore.Sources.Utility.isGenerated(obj) && !isGeneratedbyPattern(obj))
+            if (isGenerated(obj) && !isGeneratedbyPattern(obj))
             {
                 foreach (EntityReference reference in obj.GetReferences(LinkType.UsedObject))
                 {
@@ -2791,7 +2862,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 output.AddLine("Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
 
                 Boolean SaveObj = false;
-                if (KBDoctorCore.Sources.Utility.isGenerated(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel || obj is Procedure))
+                if (isGenerated(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel || obj is Procedure))
                 {
                     //string variables = VariablesNotBasedAttributesOrDomain(obj);
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
@@ -3210,7 +3281,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             {
                 VariablesPart vp = obj.Parts.Get<VariablesPart>();
 
-                if ((vp != null) && KBDoctorCore.Sources.Utility.isGenerated(obj))
+                if ((vp != null) && isGenerated(obj))
                 {
                     output.AddLine("Procesing.." + obj.Name);
                     varsNotUsed = "";
@@ -3369,7 +3440,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             foreach (Transaction obj in Transaction.GetAll(kbserv.CurrentModel)) //kbserv.CurrentModel.Objects.GetAll<Transaction>)
             {
-                if (KBDoctorCore.Sources.Utility.isGenerated(obj))
+                if (isGenerated(obj))
                 {
                     output.AddLine("Procesing.." + obj.Name);
 
@@ -3408,7 +3479,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IOutputService output = CommonServices.Output;
 
             bool success = true;
-            string title = "KBDoctor - Build Module";
+            string title = "KBDoctor - Build Objects with references";
             output.StartSection(title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -3454,6 +3525,100 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
         }
 
+        public static void BuildObjectWithProperty()
+        {
+          
+
+            IKBService kbserv = UIServices.KB;
+            KBModel kbModel = UIServices.KB.CurrentModel;
+            IOutputService output = CommonServices.Output;
+
+            bool success = true;
+            string title = "KBDoctor - Build Objects with property";
+            output.StartSection(title);
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+            // Procedure proc = new 
+            Artech.Genexus.Common.Objects.WebPanel nuevo = new Artech.Genexus.Common.Objects.WebPanel(kbModel);
+            string pdName = "";
+            /*
+            foreach (PropDefinition pd in nuevo.GetPropertiesDefinition())
+            {
+            
+                output.AddLine(pd.DisplayName);
+                pdName = pd.Name;
+                //output.AddLine(pd.DefaultValue.ToString());
+            //    output.AddLine(pd.ValuesResolver.GetHashCode||||||)
+            }
+
+            foreach (KBObject obj in kbModel.Objects.GetAll() ) 
+            {
+                if (obj.Name=="Webpanel1" )
+                       output.AddLine(obj.Name);
+            }
+            */
+            output.AddLine("===== ENCRYPT URL PARAMETERS ========");
+            foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("USE_ENCRYPTION", "SITE"))
+            {
+                output.AddLine(obj.Name);
+            }
+
+            output.AddLine("===== SOAP ========");
+            foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "SOAP"))
+            {
+                output.AddLine(obj.Name);
+            }
+
+            output.AddLine("===== HTTP ========");
+            foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "HTTP"))
+            {
+                output.AddLine(obj.Name);
+            }
+
+            //pd.GetByPropertyValue wbp in WebPanel.GetPropertiesReferences() .GetByPropertyValue)
+            /*
+           // foreach ( nuevo.GetPropertiesDefinition() )
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Description", "Visibility", "Is Referenced by" });
+
+
+            KBObjectCollection objToBuild = new KBObjectCollection();
+
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+
+            foreach (KBObject obj in kbModel.KB.Properties.)
+            {
+
+                if (KBObjectHelper.IsSpecifiable(obj))
+                {
+                    output.AddLine(obj.TypeDescriptor.Name + " " + obj.Name);
+                    if (!objToBuild.Contains(obj))
+                    {
+                        objToBuild.Add(obj);
+                        writer.AddTableData(new string[] { obj.QualifiedName.ToString(), obj.Description, obj.IsPublic ? "Public" : "", "" });
+                    }
+                }
+                ModulesHelper.AddObjectsReferenceTo(obj, objToBuild, writer);
+
+            }
+
+            writer.AddFooter();
+            writer.Close();
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+            GenexusUIServices.Build.BuildWithTheseOnly(objToBuild.Keys);
+
+            do
+            {
+                Application.DoEvents();
+            } while (GenexusUIServices.Build.IsBuilding);
+
+            output.EndSection(title, true);
+            */
+
+        }
         public static void ListAPIObjects()
         {
             IKBService kbserv = UIServices.KB;
@@ -3475,7 +3640,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
-                if (obj != null && KBDoctorCore.Sources.Utility.isGenerated(obj))
+                if (obj != null && ObjectsHelper.isGenerated(obj))
 
 
                 {

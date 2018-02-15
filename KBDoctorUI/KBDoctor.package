@@ -34,6 +34,7 @@
     <CommandDefinition id="GenerateTrnFromTabless" />
     <CommandDefinition id="GenerateTrnFromTables2" />
     <CommandDefinition id="ListTablesInModules" />
+    <CommandDefinition id="ListObjectsWithTableInOtherModule" />    
     <!-- Indices -->
     <CommandDefinition id="IndexWithNotRefAtt" />
     <CommandDefinition id="RemoveIndexAttribute"/>
@@ -49,6 +50,7 @@
     <CommandDefinition id="BuildModuleContext" />
     <CommandDefinition id="BuildObjectAndReferences" />
     <CommandDefinition id="BuildObjectAndReferencesContext" />
+    <CommandDefinition id="BuildObjectWithProperty" />
     <CommandDefinition id="ObjectsWithCommitOnExit" />
     <CommandDefinition id="RemovableTransactions" />
     <CommandDefinition id="ObjectsComplex" />
@@ -185,13 +187,14 @@
             <Command refid="KBInterfaces" />
             <Command refid="ObjectsDiagnostics" />
             <Command refid="BuildObjectAndReferences"/>
+            <Command refid="BuildObjectWithProperty"/>
             <Command refid="TreeCommit" />
             <Group>
               <Command refid="ChangeLegacyCode" />
               <Command refid="EditLegacyCodeToReplace" />
             </Group>
 
-            <Group name ="Object Comparer">
+            <Group >
               <Command refid="CalculateCheckSum"  />
               <Command refid="CompareLastOBJDirectory" />
               <Command refid="OpenFolderObjComparerNavigation"  />
@@ -199,13 +202,13 @@
 
           </Popup>
 
-          <Popup name="Navigation processing" insertAfter ="Objects">
+          <Popup name="Navigation processing" >
             <Command refid="ListObjWarningsErrors" />
             <Command refid="AttUpdated"/>
             <Command refid="ListObjSimilarNavigation" />
             <Command refid="ObjectsComplex" />
 
-            <Group name ="Navigation Comparer">
+            <Group >
               <Command refid="PrepareComparerNavigation"  />
               <Command refid="CompareLastNVGDirectory" />
               <Command refid="OpenFolderComparerNavigation"  />
@@ -216,12 +219,13 @@
             <Group>
               <Command refid="ListModules" />
               <Command refid="ListTablesInModules" />
+              <Command refid="ListObjectsWithTableInOtherModule" />
               <Command refid="BuildModule"/>
               <Command refid="ListAPIObjects" />
               <Command refid="ModuleDependencies" />
               <Command refid="RecomendedModule" />
               <Command refid="SplitMainObject" />
-              <Command refid="ListModulesStatistics" />
+
               <Command refid="MoveTransactions" />
             </Group>
           </Popup>
@@ -241,7 +245,7 @@
             <Popup name ="KB stats">
               <Command refid="CountGeneratedByPattern"  />
               <Command refid="ObjectsRefactoringCandidates" />
-
+               <Command refid="ListModulesStatistics" />
             </Popup>
           </Group>
           <Group id="CleanKB" >
@@ -283,7 +287,6 @@
               <Command refid="ObjectsNotReacheable"/>
               <Command refid="CleanKBAsMuchAsPossible"/>
               <Command refid="UDPCallables"/>
-              <Command refid="SplitMainObject"/>
                <Command refid="ChangeCommitOnExit" />
               <Popup name ="Themes" >
                 <Group>
@@ -305,7 +308,7 @@
       </Popup>
     </Menu>
 
-    <Menus>
+    
       <Menu type='context' id='KBConfigurationContext' package='4703F0A9-2AEB-4469-9466-25E2A56C7B6D'>
         <Popup id='GXPowerCommandKBPopUp' name='PowerCommands' context='selection' dynamic='true' autoManageVisibility='false' insertBefore=''>
           <Command refid='CommandPromptKB' initVisible='true'/>
@@ -320,7 +323,7 @@
         </Popup>
       </Menu>
 
-    </Menus>
+    
     
   </Menus>
 

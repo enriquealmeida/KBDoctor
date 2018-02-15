@@ -89,6 +89,9 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey tblListTablesInModules = new CommandKey(Package.guid, "ListTablesInModules");
         public static CommandKey ListTablesInModules { get { return tblListTablesInModules; } }
 
+        private static CommandKey tblListObjectsWithTableInOtherModule = new CommandKey(Package.guid, "ListObjectsWithTableInOtherModule");
+        public static CommandKey ListObjectsWithTableInOtherModule { get { return tblListObjectsWithTableInOtherModule; } }
+
         // Acciones sobre tablas
         private static CommandKey assignDescriptionToTable = new CommandKey(Package.guid, "AssignDescriptionToTable");
 
@@ -112,6 +115,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey buildModule = new CommandKey(Package.guid, "BuildModule");
         private static CommandKey buildModuleContext = new CommandKey(Package.guid, "BuildModuleContext");
         private static CommandKey buildObjectAndReferences = new CommandKey(Package.guid, "BuildObjectAndReferences");
+        private static CommandKey buildObjectWithProperty = new CommandKey(Package.guid, "BuildObjectWithProperty");
         private static CommandKey objectsNotCalled = new CommandKey(Package.guid, "ObjectsNotCalled");
         private static CommandKey objectsWithCommitOnExit = new CommandKey(Package.guid, "ObjectsWithCommitOnExit");
         private static CommandKey objectsWithVarsNotUsed = new CommandKey(Package.guid, "ObjectsWithVarsNotUsed");
@@ -147,6 +151,7 @@ namespace Concepto.Packages.KBDoctor
 
         public static CommandKey BuildModuleContext { get { return buildModuleContext; } }
         public static CommandKey BuildObjectAndReferences { get { return buildObjectAndReferences; } }
+        public static CommandKey BuildObjectWithProperty { get { return buildObjectWithProperty; } }
         public static CommandKey ObjectsNotCalled { get { return objectsNotCalled; } }
         public static CommandKey ObjectsWithCommitOnExit { get { return objectsWithCommitOnExit; } }
         public static CommandKey ObjectsWithVarsNotUsed { get { return objectsWithVarsNotUsed; } }

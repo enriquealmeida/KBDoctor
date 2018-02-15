@@ -402,6 +402,15 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
+        internal static bool hasModule(KBObject obj)
+        {
+            if (obj.Module.Guid == Guid.Empty )
+                return false;
+            else
+                return true;
+        }
+
+
         internal static KBCategory MainCategory(KBModel model)
         {
            return KBCategory.Get(model, "Main Programs");

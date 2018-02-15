@@ -867,7 +867,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 if (Functions.isRunable(obj) || obj is Table)
                 {
-                    string modulename = ModulesHelper.ObjectModule(obj);
+                    string modulename = ModulesHelper.ObjectModuleName(obj);
 
                     scriptFile.WriteLine("          <node id='" + obj.Name + "' label='" + obj.Name + "' >");
                     scriptFile.WriteLine("              <attvalues>  <attvalue for='0' value = '" + modulename + "' /> </attvalues>");
