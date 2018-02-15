@@ -20,6 +20,7 @@ using Artech.Common.Framework.Commands;
 using Artech.Udm.Framework;
 using Artech.Genexus.Common;
 using Artech.Genexus.Common.Parts;
+using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -601,7 +602,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             KBObjectCollection objToBuild = new KBObjectCollection();
             foreach (KBObject obj in mdl.GetAllMembers())
             {
-                if (KBObjectHelper.IsSpecifiable(obj) && ObjectsHelper.isGenerated(obj))
+                if (KBObjectHelper.IsSpecifiable(obj) && KBDoctorCore.Sources.Utility.isGenerated(obj))
                 {
                     if (!objToBuild.Contains(obj))
                     {
@@ -625,7 +626,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             foreach (EntityReference refe in obj.GetReferencesTo())
             {
                 KBObject objRef = KBObject.Get(obj.Model, refe.From);
-                if (objRef != null && KBObjectHelper.IsSpecifiable(objRef) && !objToBuild.Contains(objRef) && ObjectsHelper.isGenerated(objRef) )
+                if (objRef != null && KBObjectHelper.IsSpecifiable(objRef) && !objToBuild.Contains(objRef) && KBDoctorCore.Sources.Utility.isGenerated(objRef) )
                 {
                     objToBuild.Add(objRef);
                     writer.AddTableData(new string[] { objRef.QualifiedName.ToString(), objRef.Description,  obj.QualifiedName.ToString() + " (" + obj.TypeDescriptor.Name + ")" });
@@ -985,7 +986,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             {
                 foreach (KBObject obj in module.GetAllMembers()) 
                 {
-                    if (obj != null && ObjectsHelper.isGenerated(obj) && Functions.isRunable(obj))
+                    if (obj != null && KBDoctorCore.Sources.Utility.isGenerated(obj) && Functions.isRunable(obj))
                     {
 
                         string moduleListString = "";

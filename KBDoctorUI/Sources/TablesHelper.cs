@@ -19,6 +19,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Globalization;
+using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -37,7 +38,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(title);
 
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] {
                 "Name", "Description","Module","is Public", "#Key", "Key Width", "Width Variable", "Width Fixed", "Width Total" , "Cache Level"
@@ -118,7 +119,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(title);
 
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] {
                 "Name", "Description"
@@ -157,7 +158,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(title);
 
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] {
                 "Name", "Description"
@@ -230,7 +231,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(title);
 
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] {
                 "Name", "Description", "#Key", "Key Width", "Width Variable", "Width Fixed", "Width Total" , "Cache Level"
@@ -297,7 +298,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] {
                 "Table", "Transactions with GenerateObject=False", " Transactions with GENERATEObject=True","Check"
@@ -342,7 +343,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (Transaction trn in Transaction.GetAll(kbserv.CurrentModel))
             {
-                if (!ObjectsHelper.isGenerated(trn) && !trn.Name.StartsWith("KBDoctor_"))
+                if (!KBDoctorCore.Sources.Utility.isGenerated(trn) && !trn.Name.StartsWith("KBDoctor_"))
                 {
                     output.AddLine("");
                     output.AddLine("Processing transaction " + trn.Name);
@@ -383,7 +384,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(title);
 
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] {
                 "Table", "Update", "Delete", "Insert", "Read", "*"
@@ -497,7 +498,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] {
                 "Table", "Insert", "Att not referenced"
@@ -727,7 +728,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Check", "File" });
 

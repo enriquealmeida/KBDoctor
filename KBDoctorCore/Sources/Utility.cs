@@ -16,11 +16,26 @@ using Artech.Udm.Framework.References;
 using Artech.Genexus.Common;
 using Artech.Common.Helpers.Structure;
 using Artech.Genexus.Common.Parts.SDT;
+using Artech.Architecture.Common.Descriptors;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
-    static class Utility
+    public static class Utility
     {
+        public static bool isMain(KBObject obj)
+        {
+            object aux = obj.GetPropertyValue("isMain");
+            return ((aux != null) && (aux.ToString() == "True"));
+
+        }
+
+        public static bool isGenerated(KBObject obj)
+        {
+            object aux = obj.GetPropertyValue(Artech.Genexus.Common.Properties.TRN.GenerateObject);
+            return ((aux != null) && (aux.ToString() == "True"));
+
+        }
+
         internal static string AddXMLHeader(string fileName)
         {
             string xmlstring = File.ReadAllText(fileName);
@@ -516,6 +531,52 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+        internal static void CreateModuleNamesFile(KnowledgeBase KB)
+        {
+            string pathNvg = Path.Combine(Utility.SpcDirectory(KB), "NvgComparer");
+            string path = pathNvg + "\\ModuleNames.txt";
+            KBObjectDescriptor kbod = KBObjectDescriptor.Get("Module");
+            List<string> lines = new List<string>();
+            foreach (KBObject obj in KB.DesignModel.Objects.GetAll(kbod.Id))
+            {
+                lines.Add(obj.QualifiedName.ToString());
+            }
+            File.WriteAllLines(path, SortModulesByLevel(lines));
+        }
+
+        internal static List<string> SortModulesByLevel(List<string> moduleNames)
+        {
+            List<string> sortedlist = new List<string>();
+            int level = 1;
+            bool end = false;
+            while (!end)
+            {
+                end = true;
+                foreach (string module in moduleNames)
+                {
+                    if (LevelQualifiedName(module) == level)
+                    {
+                        end = false;
+                        sortedlist.Add(module);
+                    }
+                }
+                level++;
+            }
+            sortedlist.Reverse();
+            return sortedlist;
+        }
+
+        internal static string GetModuleNamesFilePath(KnowledgeBase KB)
+        {
+            string pathNvg = Path.Combine(Utility.SpcDirectory(KB), "NvgComparer");
+            return pathNvg + "\\ModuleNames.txt";
+        }
+
+        internal static int LevelQualifiedName(string name)
+        {
+            return name.Split('.').Length;
+        }
+
         internal static string[] ReadQnameTypeFromNVGFile(string path, IOutputService output)
         {
             if (File.Exists(path))
@@ -582,7 +643,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 splits = qname.Split('.');
                 int i = 0;
                 while (i < splits.Length - 1){
-                    module += splits[i];
+                    //Si este es el último, no pongo un punto. 
+                    if (i + 1 < splits.Length - 1)
+                        module += splits[i] + ".";
+                    else
+                        module += splits[i];
                     i++;
                 }
                 ret[0] = module;

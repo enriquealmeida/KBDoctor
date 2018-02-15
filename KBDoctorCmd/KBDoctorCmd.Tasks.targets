@@ -2,4 +2,6 @@
 	<UsingTask TaskName="KBDoctorCmd.PrepareCompareNavigationsCmd" AssemblyFile="KBDoctorCmd.dll"/>
   <UsingTask TaskName="KBDoctorCmd.CompareNavigationsCmd" AssemblyFile="KBDoctorCmd.dll"/>
   <UsingTask TaskName="KBDoctorCmd.CleanAllKBObjectVariablesCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.RemoveAttributesWithoutTableCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.RemoveObjectsNotReferencedCmd" AssemblyFile="KBDoctorCmd.dll"/>
 </Project>

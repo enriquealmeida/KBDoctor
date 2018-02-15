@@ -36,6 +36,261 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 {
     static class CleanKB
     {
+        private static void CleanAllWebForm(KBObject obj)
+        {
+            List<KBObjectPart> parts = new List<KBObjectPart>() { obj.Parts[typeof(WebFormPart).GUID] };
+            parts.ForEach(part =>
+            {
+                if (part.Default.CanCalculateDefault())
+                    part.Default.SilentSetIsDefault(true);
+            }
+                          );
+        }
+
+        private static void CleanAllWInForm(KBObject obj)
+        {
+            List<KBObjectPart> parts = new List<KBObjectPart>() { obj.Parts[typeof(WinFormPart).GUID] };
+            parts.ForEach(part =>
+            {
+                if (part.Default.CanCalculateDefault())
+                    part.Default.SilentSetIsDefault(true);
+            }
+                        );
+
+        }
+        private static void CleanAllEvents(KBObject obj)
+        {
+            EventsPart evPart = obj.Parts.Get<EventsPart>();
+            evPart.Source = "";
+        }
+
+        private static void CleanAllProcedurePart(KBObject obj)
+        {
+            ProcedurePart procPart = obj.Parts.Get<ProcedurePart>();
+            procPart.Source = "";
+        }
+
+        private static void CleanAllConditions(KBObject obj)
+        {
+            ConditionsPart cndPart = obj.Parts.Get<ConditionsPart>();
+            cndPart.Source = "";
+        }
+
+        private static void CleanAllRules(KBObject obj)
+        {
+            RulesPart rulesPart = obj.Parts.Get<RulesPart>();
+            rulesPart.Source = "";
+        }
+        public static void CleanAllVars(KBObject obj)
+        {
+            ArrayList idVasrBorrar = new ArrayList();
+
+            VariablesPart vp = obj.Parts.Get<VariablesPart>();
+            ArrayList variables = new ArrayList();
+            foreach (Variable v in vp.Variables)
+            {
+                if (!v.IsStandard)
+                    variables.Add(v);
+            }
+            foreach (Variable v in variables)
+            {
+                vp.Remove(v);
+            }
+
+        }
+
+        /// <summary>
+        /// Clean and destroy objects. Initizlize objects 
+        /// </summary>
+        public static void CleanObjects(KBModel kbmodel, IOutputService output)
+        {
+
+            IKBService kB = UIServices.KB;
+            if (kB != null && kB.CurrentModel != null)
+            {
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                output.StartSection("Cleaning objects");
+
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                {
+                    CleanObject(obj, output);
+                }
+                output.EndSection("Cleaning objects", true);
+            }
+        }
+
+        public static void CleanObject(KBObject obj, IOutputService output)
+        {
+            int totalvarremoved = 0;
+            output.AddLine("Cleaning object " + obj.Name);
+            if (obj is Transaction)
+            {
+                KBDoctorCore.Sources.API.CleanKBObjectVariables(obj, output);
+                CleanAllRules(obj);
+                CleanAllWebForm(obj);
+                CleanAllWInForm(obj);
+                CleanAllEvents(obj);
+                CleanAllVars(obj);
+                obj.SetPropertyValue(Artech.Genexus.Common.Properties.TRN.MasterPage, WebPanelReference.NoneRef);
+            }
+
+            if (obj is Procedure)
+            {
+                CleanAllRules(obj);
+                CleanAllProcedurePart(obj);
+                CleanAllConditions(obj);
+                CleanAllVars(obj);
+            }
+            if (obj is WebPanel)
+            {
+                CleanAllRules(obj);
+                CleanAllWebForm(obj);
+                CleanAllEvents(obj);
+                CleanAllConditions(obj);
+                CleanAllVars(obj);
+            }
+            if (obj is WorkPanel)
+            {
+                CleanAllRules(obj);
+                CleanAllWInForm(obj);
+                CleanAllEvents(obj);
+                CleanAllConditions(obj);
+                CleanAllVars(obj);
+            }
+
+            try
+            {
+
+                obj.Save();
+            }
+            catch (Exception e)
+            {
+                output.AddLine("Can't clean " + obj.Name + " Message: " + e.Message + "--" + e.StackTrace);
+            }
+        }
+
+        internal static void RemoveObjectsNotCalled(KBModel kbmodel, IOutputService output, out List<string[]> lineswriter)
+        {
+            int callers;
+            string remove = "";
+            bool continuar = true;
+            lineswriter = new List<string[]>();
+            do
+            {
+                continuar = false;
+                foreach (KBObject obj in kbmodel.Objects.GetAll())
+                {
+                    ICallableObject callableObject = obj as ICallableObject;
+                    if ((callableObject != null) | (obj is Artech.Genexus.Common.Objects.Attribute)
+                        | obj is Artech.Genexus.Common.Objects.Table | obj is Domain | obj is ExternalObject | obj is Image | obj is SDT)
+                    {
+                        callers = 0;
+                        foreach (EntityReference reference in obj.GetReferencesTo(LinkType.UsedObject))
+                        {
+                            callers = callers + 1;
+                        }
+
+                        if (callers == 0)
+                        {
+                            if ((obj is Transaction) | obj is Table | obj is Artech.Genexus.Common.Objects.Attribute | obj is Domain | obj is Image)
+                            {
+                                remove = "";
+                            }
+                            else
+                            {
+                                remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
+                            }
+                            string objNameLink = Utility.linkObject(obj);
+                            string isMainstr = (Utility.isMain(obj) ? "Main" : string.Empty);
+                            string isGeneratedstr = (Utility.isGenerated(obj) ? "Yes" : string.Empty);
+                            if (!Utility.isMain(obj))
+                            {
+
+                                if (remove != "")
+                                {
+                                    try
+                                    {
+                                        obj.Delete();
+                                        output.AddLine("REMOVING..." + obj.Name);
+                                        remove = "REMOVED!";
+                                        objNameLink = obj.Name;
+                                        continuar = true;
+                                    }
+                                    catch (Exception e) { };
+
+                                }
+                                lineswriter.Add(new string[] { obj.TypeDescriptor.Name, objNameLink, remove, isGeneratedstr, isMainstr });
+                            }
+                            if ((obj is Transaction) && (obj.GetPropertyValue<bool>(Artech.Genexus.Common.Properties.TRN.GenerateObject)))
+                            {
+                                try
+                                {
+                                    obj.SetPropertyValue(Artech.Genexus.Common.Properties.TRN.GenerateObject, false);
+                                    CleanObject(obj, output);
+                                }
+                                catch (Exception e) { };
+
+                            }
+                        }
+                    }
+                }
+            } while (continuar);
+        }
+
+
+        internal static void RemoveAttributesWithoutTable(KBModel kbmodel, IOutputService output, out List<string[]> lineswriter)
+        {
+            lineswriter = new List<string[]>();
+            // grabo todos los atributos en una colección
+            List<Artech.Genexus.Common.Objects.Attribute> attTodos = new List<Artech.Genexus.Common.Objects.Attribute>();
+            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbmodel))
+            {
+                attTodos.Add(a);
+            }
+
+            // voy borrando todos los atributos que estan en alguna tabla
+            foreach (Table t in Table.GetAll(kbmodel))
+            {
+                foreach (EntityReference reference in t.GetReferences(LinkType.UsedObject))
+                {
+                    KBObject objRef = KBObject.Get(kbmodel, reference.To);
+                    if (objRef is Artech.Genexus.Common.Objects.Attribute)
+                    {
+                        Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute)objRef;
+                        attTodos.Remove(a);
+                    }
+                }
+            }
+
+            foreach (Artech.Genexus.Common.Objects.Attribute a in attTodos)
+            {
+                if (!Utility.AttIsSubtype(a))
+                {
+                    Utility.KillAttribute(a);
+                    string strRemoved = "";
+                    try
+                    {
+                        a.Delete();
+                        output.AddLine("Atribute deleted: " + a.Name);
+                    }
+                    catch (Exception e)
+                    {
+                        output.AddErrorLine("Can't delete " + a.Name + " Msg: " + e.Message);
+
+                    }
+                    string attNameLink = Utility.linkObject(a); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
+                    strRemoved = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + a.Guid.ToString() + "\">Remove</a>";
+                    string Picture = Utility.ReturnPicture(a);
+                    lineswriter.Add(new string[] { strRemoved, attNameLink, a.Description, Picture });
+                }
+            }
+        }
+
         internal static void CleanKBObjectVariables(KBObject kbObj, IOutputService output)
         {
             try
@@ -130,7 +385,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (kbObj.Validate(outputMessages))
                         {
                             kbObj.Save();
-                            output.AddLine(kbObj.Name + "Object cleaned successfully. Variables deleted: " + text2.Substring(2));
+                            output.AddLine("Object '" + kbObj.Name + "' cleaned successfully. Variables deleted: " + text2.Substring(2));
 
                         }
                         using (IEnumerator<BaseMessage> enumerator8 = outputMessages.GetEnumerator())
@@ -146,15 +401,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                         }
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
                 output.AddWarningLine("Object '" + kbObj.Name + "' was not cleaned because an error ocurred: " + ex.Message);
             }
-
         }
     }
 }

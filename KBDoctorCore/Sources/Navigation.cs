@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -82,6 +83,65 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
             string[] xFiles = System.IO.Directory.GetFiles(directoryArg, fileWildcard, searchSubDirsArg);
 
+            Hashtable colisiones = new Hashtable();
+            HashSet<string> colisionesStr = new HashSet<string>();
+
+            //Busco colisiones en los nombres de los archivos
+            foreach (string x in xFiles)
+            {
+                string filename = Path.GetFileNameWithoutExtension(x);
+                if (!colisiones.Contains(filename))
+                {
+                    List<string> paths = new List<string>();
+                    paths.Add(x);
+                    colisiones[filename] = paths;
+                }
+                else
+                {
+                    List<string> paths = (List<string>)colisiones[filename];
+                    paths.Add(x);
+                    colisiones[filename] = paths;
+                    if (!colisionesStr.Contains(filename))
+                        colisionesStr.Add(filename);
+                }
+            }
+
+            //Me quedo sólo con el archivo más nuevo y cambio el nombre de todos los demás. 
+            foreach (string name in colisionesStr)
+            {
+                FileInfo newestFile = null;
+                DateTime newestDate = new DateTime(1891,09,28);
+                List<string> paths = (List<string>)colisiones[name];
+                List<FileInfo> oldfiles = new List<FileInfo>();
+                output.AddLine("Colisión en archivos: ");
+                foreach (string path in paths)
+                {
+                    output.AddLine("-- -- -- -- -- -- -- -" + path);
+                    FileInfo file = new FileInfo(path);
+                    if(file.LastWriteTime >= newestDate)
+                    {
+                        if (newestFile != null)
+                        {
+                            oldfiles.Add(newestFile);
+                        }                    
+                        newestDate = file.LastWriteTime;
+                        newestFile = file;
+                    }
+                    else
+                    {
+                        oldfiles.Add(file);
+                    }
+                }
+                int i = 1;
+                foreach(FileInfo fileToRename in oldfiles)
+                {
+                    fileToRename.MoveTo(fileToRename.DirectoryName + '\\' + Path.GetFileNameWithoutExtension(fileToRename.Name) + i.ToString() + ".oldxml");
+                    i++;
+                }
+            }
+
+            xFiles = System.IO.Directory.GetFiles(directoryArg, fileWildcard, searchSubDirsArg);
+
             foreach (string x in xFiles)
             {
                 if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
@@ -96,6 +156,45 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     xslTransform.Transform(newXmlFile, xTxt);
                     File.Delete(newXmlFile);
+                }
+            }
+        }
+
+        
+
+        internal static void ReplaceModulesInNVGFiles(KnowledgeBase KB, IOutputService output)
+        {
+            string pathNvg = Path.Combine(Utility.SpcDirectory(KB), "NvgComparer");
+            string fileWildcard = @"*.*";
+            string[] Files = Directory.GetDirectories(pathNvg, fileWildcard);
+            string[] Last2directories = GetLast2Directorys(Files, output);
+            List<string> replaces = new List<string>();
+            foreach(string line in File.ReadAllLines(Utility.GetModuleNamesFilePath(KB)))
+            {
+                if(!line.TrimStart().StartsWith("#"))
+                {
+                    replaces.Add(line + ".");
+                }
+            }
+            RemoveTextInFiles(Last2directories[0], fileWildcard, replaces, output);
+            RemoveTextInFiles(Last2directories[1], fileWildcard, replaces, output);
+        }
+
+        internal static void RemoveTextInFiles(string path, string fileWildcard, List<string> replaces, IOutputService output)
+        {
+            var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
+            string[] FilesDirectory = System.IO.Directory.GetFiles(path, fileWildcard, searchSubDirsArg);
+            foreach (string filePath in FilesDirectory)
+            {
+                foreach (string replace in replaces)
+                {
+                    string text = File.ReadAllText(filePath);
+                    if (text.Contains(replace))
+                    {
+                        output.AddLine("Replacing text " + replace + " in: " + filePath);
+                        text = text.Replace(replace, "");
+                        File.WriteAllText(filePath, text);
+                    }
                 }
             }
         }
@@ -124,14 +223,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (Diffs.Count > 0)
                     {
                         output.AddLine("-- Se encontraron diferencias en las navegaciones de los siguientes objetos:");
-                        foreach (string x in Diffs) 
+                        foreach (string x in Diffs)
                         {
                             string[] objectnametype = Utility.ReadQnameTypeFromNVGFile(x, output);
                             string objtype = objectnametype[0];
                             string objmodule = objectnametype[1];
                             string objname = objectnametype[2];
                             KBObjectDescriptor kbod = KBObjectDescriptor.Get(objtype);
-                            QualifiedName qname = new QualifiedName(objmodule,objname);
+                            QualifiedName qname = new QualifiedName(objmodule, objname);
                             KBObject obj = KB.DesignModel.Objects.Get(kbod.Id,qname);
                             if (obj != null)
                             {
@@ -160,13 +259,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     }
                                 }
                             }
+                            else
+                            {
+                                output.AddLine("-- NO SE ENCONTRO EL OBJETO: " + qname.ToString());
+                            }
                         }
                     }
                     else
                     {
                         output.AddLine("No se encontraron diferencias en las navegaciones");
                     }
-                    
                 }
                 if (cant_error > 0){
                     output.AddErrorLine("Se encontraron " + cant_error + " errores en la comparación.");

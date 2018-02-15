@@ -36,7 +36,7 @@ using Artech.Packages.Patterns.Objects;
 using Artech.Genexus.Common.Parts;
 using Artech.Udm.Framework;
 //using Artech.Genexus.Common.Resources;
-
+using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -53,7 +53,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(title);
 
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Name", "Type", "Description" });
 
@@ -66,7 +66,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
                 Objcount += 1;
-                if (ObjectsHelper.isGenerated(obj) && ( obj is WebPanel || obj is Transaction || obj is WorkPanel ||  obj is DataSelector))
+                if (KBDoctorCore.Sources.Utility.isGenerated(obj) && ( obj is WebPanel || obj is Transaction || obj is WorkPanel ||  obj is DataSelector))
                 {
                     //El objeto es generado con algun pattern?
                     Boolean isGeneratedWithPattern = false;
@@ -127,7 +127,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
 
             output.AddLine("Listing objects...");
@@ -157,7 +157,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
 
             writer.AddTableHeader(new string[] { "Report", "", "Date Generated" });
@@ -212,7 +212,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             int numObj = 0;
 
@@ -225,7 +225,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
                 if (obj != null)
-                    if (Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj) && (obj.LastUpdate >= limite || obj.Timestamp >= limite))
+                    if (Functions.isRunable(obj) && KBDoctorCore.Sources.Utility.isGenerated(obj) && (obj.LastUpdate >= limite || obj.Timestamp >= limite))
                     {
                         string desc = obj.Description.Replace(",", " ");
                         desc = desc.Replace(">", "");
@@ -236,7 +236,7 @@ namespace Concepto.Packages.KBDoctor
                             objProtocol = "";
 
                     string isMain = obj.GetPropertyValue<bool>("IsMain") ? "True" : "";
-                    string isGenerated = ObjectsHelper.isGenerated(obj) ? "Yes" : "";
+                    string isGenerated = KBDoctorCore.Sources.Utility.isGenerated(obj) ? "Yes" : "";
 
 
                         string appLocation = obj.UserName.ToString();
@@ -289,7 +289,7 @@ namespace Concepto.Packages.KBDoctor
                     string objProtocol = obj.GetPropertyValueString("CALL_PROTOCOL");
 
                    
-                    string isGenerated = ObjectsHelper.isGenerated(obj) ? "Yes" : "";
+                    string isGenerated = KBDoctorCore.Sources.Utility.isGenerated(obj) ? "Yes" : "";
 
 
                         writer.AddTableData(new string[] { obj.TypeDescriptor.Name +" ", Functions.linkObject(obj), desc,
@@ -362,7 +362,7 @@ namespace Concepto.Packages.KBDoctor
 
 
 
-        public static void List2(KBObject obj, string objLocation, Dictionary<string, KBObjectCollection> dic, KBDoctorXMLWriter writer)
+        public static void List2(KBObject obj, string objLocation, Dictionary<string, KBObjectCollection> dic,KBDoctorXMLWriter writer)
         {
             string objMasterPage = obj.GetPropertyValueString("MasterPage");
             writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), objLocation, objMasterPage });
@@ -510,7 +510,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(title);
 
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Name", "Value", "Observation" });
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
@@ -697,7 +697,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(titulo);
 
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(titulo);
             writer.AddTableHeader(new string[] { "Object", "Variable", "Type", "mains" });
 
@@ -771,7 +771,7 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
-        private static void AddLineKBInterfazSource(KBDoctorXMLWriter writer, KBObject obj, string texto, string tipo, string sourceWOComments, string mainss)
+        private static void AddLineKBInterfazSource( KBDoctorXMLWriter writer, KBObject obj, string texto, string tipo, string sourceWOComments, string mainss)
         {
             string callTree = "";
             KBObjectCollection objColl = new KBObjectCollection();
@@ -783,7 +783,7 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
-        public static void ObjectsVariablesExternal(KBObject obj, KBDoctorXMLWriter writer, string mainss)
+        public static void ObjectsVariablesExternal(KBObject obj,KBDoctorXMLWriter writer, string mainss)
         {
             IKBService kbserv = UIServices.KB;
 
@@ -792,7 +792,7 @@ namespace Concepto.Packages.KBDoctor
             string variables = "";
 
 
-            if (ObjectsHelper.isGenerated(obj))
+            if (KBDoctorCore.Sources.Utility.isGenerated(obj))
             {
                 VariablesPart vp = obj.Parts.Get<VariablesPart>();
                 if (vp != null)
@@ -823,7 +823,7 @@ namespace Concepto.Packages.KBDoctor
         }
 
 
-        public static void UserControlUsageCheck(KBObject obj, KBDoctorXMLWriter writer, string mainss)
+        public static void UserControlUsageCheck(KBObject obj,KBDoctorXMLWriter writer, string mainss)
         {
 
             Artech.Genexus.Common.Parts.WebFormPart webpart = obj.Parts.Get<Artech.Genexus.Common.Parts.WebFormPart>();

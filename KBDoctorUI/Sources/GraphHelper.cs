@@ -13,6 +13,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -104,7 +105,7 @@ namespace Concepto.Packages.KBDoctor
         private static bool isNode(KBObject obj)
         {
             if (obj != null)
-                return ((Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table) || (obj is ExternalObject));
+                return ((Functions.isRunable(obj) && KBDoctorCore.Sources.Utility.isGenerated(obj)) || (obj is Table) || (obj is ExternalObject));
             else
                 return false;
         }
@@ -231,7 +232,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (KBObject obj in model.Objects.GetAll())
             {
                 
-                if ((Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj) ) || (obj is Table ))
+                if ((Functions.isRunable(obj) && KBDoctorCore.Sources.Utility.isGenerated(obj) ) || (obj is Table ))
                 {
 
                     objName = NombreNodo(obj);

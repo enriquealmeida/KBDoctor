@@ -37,7 +37,7 @@ using Artech.Packages.Patterns;
 using Artech.Packages.Patterns.Objects;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Genexus.Common.Parts;
-//using Artech.Genexus.Common.Resources;
+using Concepto.Packages.KBDoctorCore.Sources;
 
 
 namespace Concepto.Packages.KBDoctor
@@ -53,7 +53,7 @@ namespace Concepto.Packages.KBDoctor
 
             output.StartSection(title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            KBDoctorXMLWriter writer = new  KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Object", "Description", "Attribute", "Description", "PK / FK", "Nullable" });
 

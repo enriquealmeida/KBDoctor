@@ -23,6 +23,8 @@ using Artech.Genexus.Common.Entities;
 using Artech.Genexus.Common;
 using Artech.Genexus.Common.Collections;
 
+using Concepto.Packages.KBDoctorCore.Sources;
+
 namespace Concepto.Packages.KBDoctor
 {
     static class NavigationHelper
@@ -655,7 +657,7 @@ namespace Concepto.Packages.KBDoctor
                                 if (obj == null)
                                     writer.AddTableData(new string[] { "Can't find object", "", "", x });
                                 else
-                                    if (ObjectsHelper.isGenerated(obj) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT")) 
+                                    if (KBDoctorCore.Sources.Utility.isGenerated(obj) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT")) 
                                           writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, x  });
                             }
                         }

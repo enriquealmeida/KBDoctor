@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="CleanAllObjectsVariables" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="CleanKB" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="$(GX_PROGRAM_DIR)\Genexus.Tasks.targets" />
   <Import Project="$(GX_PROGRAM_DIR)\KBDoctorCmd.Tasks.targets" />
@@ -9,6 +9,12 @@
     <CompareNavigationsCmd />
     <CloseKnowledgeBase />
   </Target>
+  
+  <Target  Name="JustCompare">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <CompareNavigationsCmd />
+    <CloseKnowledgeBase />
+  </Target>
 
   <Target  Name="CleanAllObjectsVariables">
     <OpenKnowledgeBase Directory="$(KBPath)"/>
@@ -16,5 +22,25 @@
     <CloseKnowledgeBase />
   </Target>
 
+  <Target  Name="RemoveAttributesWithoutTable">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <RemoveAttributesWithoutTableCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+
+  <Target  Name="RemoveObjectsNotReferenced">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <RemoveObjectsNotReferencedCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+
+   <Target  Name="CleanKB">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <RemoveAttributesWithoutTableCmd/>
+    <CleanAllKBObjectVariablesCmd/>
+    <RemoveObjectsNotReferencedCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+  
 </Project>
 

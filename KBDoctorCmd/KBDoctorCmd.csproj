@@ -37,6 +37,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Artech.Architecture.UI.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa" />
     <Reference Include="Artech.Common, Version=10.1.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.dll</HintPath>
@@ -58,6 +59,8 @@
     <Compile Include="CompareNavigationsCmd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PrepareCompareNavigationsCmd.cs" />
+    <Compile Include="RemoveAttributesWithoutTableCmd.cs" />
+    <Compile Include="RemoveObjectsNotReferencedCmd.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj">

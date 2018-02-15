@@ -5,9 +5,9 @@ using System.Text;
 using System.Xml;
 using Artech.Architecture.UI.Framework.Services;
 
-namespace Concepto.Packages.KBDoctor
+namespace Concepto.Packages.KBDoctorCore.Sources
 {
-    class KBDoctorXMLWriter: XmlTextWriter
+    public class KBDoctorXMLWriter: XmlTextWriter
     {
         public KBDoctorXMLWriter(string archivo, Encoding enc): base(archivo, enc)
         {
@@ -95,7 +95,7 @@ namespace Concepto.Packages.KBDoctor
         { 
             WriteElementString("h2", title); 
         }
-
+        
         private static void WriteJScripttoDir()
         {
             IKBService kbserv = UIServices.KB;

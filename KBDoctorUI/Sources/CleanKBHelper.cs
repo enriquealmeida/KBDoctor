@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Collections.Generic;
 using System.Linq;
 using Artech.Udm.Framework;
+using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -52,7 +53,7 @@ namespace Concepto.Packages.KBDoctor
                 KBCategory UnreachableCategory = KBCategory.Get(kbserv.CurrentModel, "KBDoctor.UnReachable");
                 foreach (KBObject obj in UnreachableCategory.AllMembers)
                 {
-                    CleanObject(obj, output);
+                    KBDoctorCore.Sources.API.CleanKBObject(obj, output);
                 }
 
                 ProcessObjectsInCategory(output, UnreachableCategory);
@@ -102,152 +103,6 @@ namespace Concepto.Packages.KBDoctor
                 pasada += 1;
             } while (stay);
         }
-
-        public static void CleanObject(KBObject obj, IOutputService output)
-        {
-            int totalvarremoved = 0;
-            output.AddLine("Cleaning object " + obj.Name);
-            if (obj is Transaction)
-            {
-                KBDoctorCore.Sources.API.CleanKBObjectVariables(obj, output);
-                CleanAllRules(obj);
-                CleanAllWebForm(obj);
-                CleanAllWInForm(obj);
-                CleanAllEvents(obj);
-                CleanAllVars(obj);
-                obj.SetPropertyValue(Properties.TRN.MasterPage, WebPanelReference.NoneRef);
-
-            }
-
-            if (obj is Procedure)
-            {
-                CleanAllRules(obj);
-                CleanAllProcedurePart(obj);
-
-                CleanAllConditions(obj);
-                CleanAllVars(obj);
-            }
-            if (obj is WebPanel)
-            {
-                CleanAllRules(obj);
-                CleanAllWebForm(obj);
-                CleanAllEvents(obj);
-                CleanAllConditions(obj);
-                CleanAllVars(obj);
-            }
-            if (obj is WorkPanel)
-            {
-                CleanAllRules(obj);
-                CleanAllWInForm(obj);
-                CleanAllEvents(obj);
-                CleanAllConditions(obj);
-                CleanAllVars(obj);
-
-            }
-
-            try
-            {
-
-                obj.Save();
-            }
-            catch (Exception e)
-            {
-                output.AddLine("Can't clean " + obj.Name + " Message: " + e.Message + "--" + e.StackTrace);
-            }
-        }
-
-        private static void CleanAllWebForm(KBObject obj)
-        {
-
-            List<KBObjectPart> parts = new List<KBObjectPart>() { obj.Parts[typeof(WebFormPart).GUID] };
-            parts.ForEach(part =>
-            {
-                if (part.Default.CanCalculateDefault())
-                    part.Default.SilentSetIsDefault(true);
-            }
-                          );
-
-        }
-
-        private static void CleanAllWInForm(KBObject obj)
-        {
-            List<KBObjectPart> parts = new List<KBObjectPart>() { obj.Parts[typeof(WinFormPart).GUID] };
-            parts.ForEach(part =>
-            {
-                if (part.Default.CanCalculateDefault())
-                    part.Default.SilentSetIsDefault(true);
-            }
-                        );
-
-        }
-        private static void CleanAllEvents(KBObject obj)
-        {
-            EventsPart evPart = obj.Parts.Get<EventsPart>();
-            evPart.Source = "";
-        }
-
-        private static void CleanAllProcedurePart(KBObject obj)
-        {
-            ProcedurePart procPart = obj.Parts.Get<ProcedurePart>();
-            procPart.Source = "";
-        }
-
-        private static void CleanAllConditions(KBObject obj)
-        {
-            ConditionsPart cndPart = obj.Parts.Get<ConditionsPart>();
-            cndPart.Source = "";
-        }
-
-        private static void CleanAllRules(KBObject obj)
-        {
-            RulesPart rulesPart = obj.Parts.Get<RulesPart>();
-            rulesPart.Source = "";
-        }
-        public static void CleanAllVars(KBObject obj)
-        {
-            ArrayList idVasrBorrar = new ArrayList();
-
-            VariablesPart vp = obj.Parts.Get<VariablesPart>();
-            ArrayList variables = new ArrayList();
-            foreach (Variable v in vp.Variables)
-            {
-                if (!v.IsStandard)
-                    variables.Add(v);
-            }
-            foreach (Variable v in variables)
-            {
-                vp.Remove(v);
-            }
-
-        }
-
-        /// <summary>
-        /// Clean and destroy objects. Initizlize objects 
-        /// </summary>
-        public static void CleanObjects()
-        {
-
-            IKBService kB = UIServices.KB;
-            if (kB != null && kB.CurrentModel != null)
-            {
-                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                selectObjectOption.MultipleSelection = true;
-                KBModel kbModel = UIServices.KB.CurrentModel;
-                IOutputService output = CommonServices.Output;
-                output.StartSection("Cleaning objects");
-
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-                {
-                    CleanObject(obj, output);
-                }
-                output.EndSection("Cleaning objects", true);
-            }
-        }
-
 
 
         public static void ClassNotInTheme()
@@ -356,7 +211,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Object", "Description", "Param rule"  });
             int cantObjChanged = 0;
@@ -619,7 +474,7 @@ namespace Concepto.Packages.KBDoctor
                 output.AddLine("Procesing.... " + obj.Name + " - " + obj.Type.ToString());
                 Boolean SaveObj = false;
 
-                if (ObjectsHelper.isGenerated(obj) &&  !ObjectsHelper.isGeneratedbyPattern(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel))
+                if (Utility.isGenerated(obj) &&  !ObjectsHelper.isGeneratedbyPattern(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel))
                 {
                     Functions.AddLine("RenameVariables.txt", "##" + obj.Name);
                     List<Variable> lstVariables = VariablesToRename(obj);
@@ -894,7 +749,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
 
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
@@ -1078,7 +933,7 @@ namespace Concepto.Packages.KBDoctor
 
 
 
-        public static void LoadAndCheckUsedClasses(IKBService kbserv, IOutputService output, StringCollection UsedClasses, StringCollection ThemeClasses, KBDoctorXMLWriter writer)
+        public static void LoadAndCheckUsedClasses(IKBService kbserv, IOutputService output, StringCollection UsedClasses, StringCollection ThemeClasses,KBDoctorXMLWriter writer)
         {
 
             int cant = 0;
@@ -1203,7 +1058,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Class", "Error" });
 
@@ -1253,7 +1108,7 @@ namespace Concepto.Packages.KBDoctor
 
                 string title = "KBDoctor - Rename Objects to significant name length";
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+               KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Type", "Object", "Description" });
 
@@ -1320,54 +1175,16 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
 
+            List<string[]> lineswriter;
+            KBDoctorCore.Sources.API.RemoveAttributesWithoutTable(kbserv.CurrentModel, output, out lineswriter);
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "", "Attribute", "Description", "Data type" });
-
-            // grabo todos los atributos en una colección
-            List<Artech.Genexus.Common.Objects.Attribute> attTodos = new List<Artech.Genexus.Common.Objects.Attribute>();
-            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+            foreach(string[] line in lineswriter)
             {
-                attTodos.Add(a);
+                writer.AddTableData(line);
             }
-
-            // voy borrando todos los atributos que estan en alguna tabla
-            foreach (Table t in Table.GetAll(kbserv.CurrentModel))
-            {
-                foreach (EntityReference reference in t.GetReferences(LinkType.UsedObject))
-                {
-                    KBObject objRef = KBObject.Get(kbserv.CurrentModel, reference.To);
-                    if (objRef is Artech.Genexus.Common.Objects.Attribute)
-                    {
-                        Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute)objRef;
-                        attTodos.Remove(a);
-                    }
-                }
-            }
-
-            foreach (Artech.Genexus.Common.Objects.Attribute a in attTodos)
-            {
-                if (!Functions.AttIsSubtype(a))
-                {
-                    Functions.KillAttribute(a);
-                    string strRemoved = "";
-                    try
-                    {
-                        a.Delete();
-                        output.AddLine("Atribute deleted: " + a.Name);
-                    }
-                    catch (Exception e)
-                    {
-                        output.AddErrorLine("Can't delete " + a.Name + " Msg: " + e.Message);
-
-                    }
-                    string attNameLink = Functions.linkObject(a); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
-                    strRemoved = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + a.Guid.ToString() + "\">Remove</a>";
-                    string Picture = Functions.ReturnPicture(a);
-                    writer.AddTableData(new string[] { strRemoved, attNameLink, a.Description, Picture });
-                }
-            }
-
             writer.AddFooter();
             writer.Close();
 
@@ -1377,6 +1194,7 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
+       
     }
 }
 

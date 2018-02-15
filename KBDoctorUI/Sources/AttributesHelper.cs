@@ -16,6 +16,7 @@ using Artech.Genexus.Common.Services;
 using Artech.Udm.Framework.References;
 using System.Linq;
 using Artech.Udm.Framework;
+using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor
 {

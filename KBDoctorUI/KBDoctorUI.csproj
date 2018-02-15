@@ -224,7 +224,6 @@
     <Compile Include="Sources\CommandKeys.cs" />
     <Compile Include="Sources\CommandManager.cs" />
     <Compile Include="Sources\KBDoctorHelper.cs" />
-    <Compile Include="Sources\KBDoctorXMLWriter.cs" />
     <Compile Include="Sources\ObjectsHelper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -251,8 +250,6 @@
     <None Include="Resources\DiffDotNet.exe" />
     <Content Include="Resources\Icons\favicon.ico" />
     <None Include="Resources\Kbdoctor.jpg" />
-    <None Include="Resources\jquery-latest.js" />
-    <None Include="Resources\jquery.tablesorter.js" />
     <None Include="Resources\specXEv2.xsl">
       <SubType>Designer</SubType>
     </None>

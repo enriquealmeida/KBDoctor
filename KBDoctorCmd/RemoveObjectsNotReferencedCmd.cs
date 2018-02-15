@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 
 using Artech.Architecture.Common.Services;
 using Artech.MsBuild.Common;
 using Concepto.Packages.KBDoctorCore.Sources;
-
+using System.Collections.Generic;
 
 namespace KBDoctorCmd
 {
-    public class CleanAllKBObjectVariablesCmd : ArtechTask
+    public class RemoveObjectsNotReferencedCmd : ArtechTask
     {
         public override bool Execute()
         {
@@ -27,14 +24,16 @@ namespace KBDoctorCmd
 
                 if (KB == null)
                 {
-                    output.AddErrorLine("No hay ninguna KB abierta en el contexto actual, asegúrese de incluír la tarea OpenKnowledgeBase antes de ejecutar la limpieza de variables.");
+                    output.AddErrorLine("No hay ninguna KB abierta en el contexto actual.");
                     isSuccess = false;
                 }
                 else
                 {
                     CommonServices.Output.AddLine(string.Format(KB.Name, KB.Location));
-                    API.CleanAllKBObjectVariables(KB, output);
+                    List<string[]> list = new List<string[]>();
+                    API.RemoveObjectsNotCalled(KB.DesignModel, output, out list);
                 }
+
             }
             catch (Exception e)
             {
@@ -43,7 +42,7 @@ namespace KBDoctorCmd
             }
             finally
             {
-                output.EndSection("Clean all variables ", isSuccess);
+                output.EndSection("Remove attributes without table", isSuccess);
                 OutputUnsubscribe();
             }
             return isSuccess;

@@ -204,6 +204,9 @@
   <data name="AddINParmRule" xml:space="preserve">
     <value>Add IN: to parametrs without IN:/OUT:/INOUT:</value>
   </data>
+  <data name="ListTableAttributesUsingDomain" xml:space="preserve">
+    <value>List tables/attributes using domain</value>
+  </data>
   <data name="ObjectsComplex" xml:space="preserve">
     <value>Complex Specification Objects</value>
   </data>
@@ -267,6 +270,12 @@
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="specXEv2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\specXEv2.xsl;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="jquery_latest" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\jquery-latest.js;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="jquery_tablesorter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\jquery.tablesorter.js;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="OpenFolderComparerNavigation" xml:space="preserve">
     <value>Open navigation folder</value>

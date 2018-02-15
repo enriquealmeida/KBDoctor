@@ -23,7 +23,7 @@ namespace KBDoctorCmd
 
                 if (KB == null)
                 {
-                    output.AddErrorLine("No hay ninguna KB abierta en el contexto actual, asegúrese de incluír la tarea OpenKnowledgeBase antes de ejecutar la comparación de navegaciones.");
+                    output.AddErrorLine("No hay ninguna KB abierta en el contexto actual.");
                     isSuccess = false;
                 }
                 else

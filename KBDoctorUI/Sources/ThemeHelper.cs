@@ -16,6 +16,8 @@ using Artech.Genexus.Common.Parts;
 using Artech.Udm.Framework.References;
 using Artech.Genexus.Common.Parts.WebForm;
 using Artech.Common.Collections;
+using Concepto.Packages.KBDoctorCore.Sources;
+
 namespace Concepto.Packages.KBDoctor
 {
     class ThemeHelper
