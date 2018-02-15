@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Sources\KBDoctorXMLWriter.cs" />
     <Compile Include="Sources\API.cs" />
     <Compile Include="Sources\CleanKB.cs" />
     <Compile Include="Sources\Navigation.cs" />

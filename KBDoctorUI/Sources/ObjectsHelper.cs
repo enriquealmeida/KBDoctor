@@ -475,7 +475,7 @@ namespace Concepto.Packages.KBDoctor
                                 try
                                 {
                                     obj.SetPropertyValue(Properties.TRN.GenerateObject, false);
-                                    CleanKBHelper.CleanObject(obj, output);
+                                    KBDoctorCore.Sources.API.CleanKBObject(obj, output);
                                 }
                                 catch (Exception e) { };
 

@@ -17,6 +17,8 @@ using LouvainCommunityPL;
 using System.Diagnostics;
 using Artech.Udm.Framework;
 using Artech.Genexus.Common.Services;
+using Concepto.Packages.KBDoctorCore.Sources;
+
 
 namespace Concepto.Packages.KBDoctor
 {
