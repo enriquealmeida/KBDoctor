@@ -24,7 +24,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static bool CompareNavigations(KnowledgeBase KB, IOutputService output)
         {
-            return Navigation.CompareLastNVGDirectories(KB, output);
+           Navigation.ReplaceModulesInNVGFiles(KB, output);
+           return Navigation.CompareLastNVGDirectories(KB, output);
         }
         //
         public static void GetClassesTypesWithTheSameSignature(IEnumerable<KBObject> objects, out HashSet<int> classes, out Hashtable[] Classes_types)

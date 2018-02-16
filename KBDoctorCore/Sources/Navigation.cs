@@ -184,18 +184,46 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
             string[] FilesDirectory = System.IO.Directory.GetFiles(path, fileWildcard, searchSubDirsArg);
+            bool contains;
             foreach (string filePath in FilesDirectory)
             {
+                string dataline;
+                string nameline;
+                contains = false;
+                StreamReader sr = new StreamReader(filePath);
+                dataline = sr.ReadLine();
+                nameline = sr.ReadLine();
+                Encoding enc = sr.CurrentEncoding;
+                sr.Close();
+
+                DeleteFirstLines(2, filePath);
+
+                string text = File.ReadAllText(filePath);
+
                 foreach (string replace in replaces)
                 {
-                    string text = File.ReadAllText(filePath);
                     if (text.Contains(replace))
                     {
-                        output.AddLine("Replacing text " + replace + " in: " + filePath);
-                        text = text.Replace(replace, "");
-                        File.WriteAllText(filePath, text);
+                        string escreplace = replace.Replace(".", @"\.");
+                        contains = true;
+                        string pattern = @"([^a-zA-Z0-9])" + '(' + escreplace + ')';
+                        string replacement = "$1";
+                        Regex rgx = new Regex(pattern);
+                        text = rgx.Replace(text, replacement);
                     }
                 }
+                File.WriteAllText(filePath, dataline + "\r\n" + nameline + "\r\n" + text, enc);
+                if (contains)
+                    output.AddLine("Module names replaced in: " + filePath);
+            }
+        }
+
+        internal static void DeleteFirstLines(int number, string filePath)
+        {
+            for(int i = 1;i<= number; i++)
+            {
+                var lines = File.ReadAllLines(filePath);
+                File.WriteAllLines(filePath, lines.Skip(1).ToArray());
             }
         }
 
@@ -338,12 +366,36 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string fileNewPath = Path.Combine(pathNew, Path.GetFileName(fileSourcePath));
                 if (File.Exists(fileNewPath))
                 {
-                    FileInfo fileNew = new FileInfo(fileNewPath);
+                    FileInfo fileNew = new FileInfo(fileNewPath);                   
                     FileInfo fileSource = new FileInfo(fileSourcePath);
                     if (!Utility.FilesAreEqual(fileSource, fileNew))
                     {
-                        Diffs.Add(fileNewPath);
+                        StreamReader sr = new StreamReader(fileNewPath);
+                        string datalineNew = sr.ReadLine();
+                        string namelineNew = sr.ReadLine();
+                        Encoding encnew = sr.CurrentEncoding;
+                        sr.Close();
+                        DeleteFirstLines(2, fileNewPath);
+                        string textnew = File.ReadAllText(fileNewPath);
+
+                        sr = new StreamReader(fileSourcePath);
+                        string datalineSource = sr.ReadLine();
+                        string namelineSource = sr.ReadLine();
+                        Encoding encSource = sr.CurrentEncoding;
+                        sr.Close();
+                        DeleteFirstLines(2, fileSourcePath);
+                        string textsource = File.ReadAllText(fileSourcePath);
+
+                        FileInfo fileNewReplace = new FileInfo(fileNewPath);
+                        FileInfo fileSourceReplace = new FileInfo(fileSourcePath);
+                        if (!Utility.FilesAreEqual(fileSourceReplace, fileNewReplace))
+                            Diffs.Add(fileNewPath);                            
+
+                        File.WriteAllText(fileNewPath, datalineNew + "\r\n" + namelineNew + "\r\n" + textnew, encnew);
+                        File.WriteAllText(fileSourcePath, datalineSource + "\r\n" + namelineSource + "\r\n" + textsource, encSource);
                     }
+
+                    
                 }
                 else
                 {
