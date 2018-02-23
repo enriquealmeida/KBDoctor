@@ -35,6 +35,11 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">
+    <DefineConstants>EVO3</DefineConstants>
+  </PropertyGroup>
+  
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>

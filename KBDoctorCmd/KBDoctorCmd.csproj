@@ -37,10 +37,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Artech.Architecture.UI.Framework" >
-	      <SpecificVersion>False</SpecificVersion>
-          <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.UI.Framework.dll</HintPath>
-	</Reference>
+    <Reference Include="Artech.Architecture.UI.Framework">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.UI.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="Artech.Common">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.dll</HintPath>
@@ -49,13 +49,17 @@
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.MsBuild.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.Build.Utilities.v3.5" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="KBDoctorCore">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\KBDoctorCore\bin\Debug\KBDoctorCore.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CleanAllKBObjectVariablesCmd.cs" />

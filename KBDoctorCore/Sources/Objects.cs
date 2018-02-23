@@ -76,7 +76,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static string GetParametersString(KBObject obj)
         {
-            Tuple<int, string> type_access;
+            //TODO - ARREGLAR TUPLE 
+            string paramstring = "";
+            /* 
+             * Tuple<int, string> type_access;
             List<Tuple<int, string>> parameters = new List<Tuple<int, string>>();
             ICallableObject callableObject = obj as ICallableObject;
             foreach (Signature signature in callableObject.GetSignatures())
@@ -105,7 +108,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 paramstring += accessor + ":" + parameter.Item1.ToString() + " ";
             }
-
+            */
             return paramstring.TrimEnd();
         }
     }
