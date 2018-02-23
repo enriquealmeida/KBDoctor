@@ -507,7 +507,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 foreach (IStructureItem structItem in sdtstruct.Root.Items)
                 {
                     SDTItem sdtItem = (SDTItem)structItem;
-                    if (sdtItem.BasedOn != null && sdtItem.BasedOn.Key == a.Key)
+                    if (sdtItem.BasedOn != null && sdtItem.BasedOn.ObjKey == a.Key)
                     {
 
                         output.AddLine("..." + sdtItem.Name + " based on  " + a.Name);
@@ -541,7 +541,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 lines.Add(obj.QualifiedName.ToString());
             }
-            File.WriteAllLines(path, SortModulesByLevel(lines));
+            File.WriteAllLines(path, SortModulesByLevel(lines).ToArray());
         }
 
         internal static List<string> SortModulesByLevel(List<string> moduleNames)

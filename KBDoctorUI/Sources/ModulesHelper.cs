@@ -1045,9 +1045,10 @@ El módulo tiene objetos públicos no referenciados por externos?
             {
                 foreach (KBObject obj in module.GetAllMembers()) 
                 {
-                    if (obj != null && KBDoctorCore.Sources.Utility.isGenerated(obj) && Functions.isRunable(obj))
+                    if (Functions.hasModule(obj))
                     {
 
+                        output.AddLine(obj.Name);
                         string moduleListString = "";
                         foreach (Module mod in ListModulesOfReferencedTables(obj))
                             moduleListString += mod.Name + " ";

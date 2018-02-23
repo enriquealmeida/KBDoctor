@@ -6,7 +6,7 @@ using Artech.Architecture.Common.Objects;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Architecture.Common.Services;
 using System.Collections;
-using System.Threading.Tasks;
+
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {

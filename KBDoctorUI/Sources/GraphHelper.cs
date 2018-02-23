@@ -313,7 +313,7 @@ namespace Concepto.Packages.KBDoctor
             int objId = 0;
 
             string objName = "";
-            StringCollection nodos = new StringCollection();
+
             foreach (KBObject obj in model.Objects.GetAll())
             {
 
@@ -335,11 +335,11 @@ namespace Concepto.Packages.KBDoctor
                     catch (Exception e) { //output.AddWarningLine("Can't add : " + objName); 
                     };
 
-
+                    //Tomo las referencias que no sean tablas. 
                     foreach (EntityReference r in obj.GetReferencesTo())
                     {
                         KBObject objRef = KBObject.Get(obj.Model, r.From);
-                        if ((objRef != null) && (Functions.isRunable(objRef) || objRef is Table))
+                        if ((objRef != null) && (Functions.isRunable(objRef)) || (objRef is Table))
 
                         {
                             string objRefName = NombreNodo(objRef);
@@ -357,12 +357,26 @@ namespace Concepto.Packages.KBDoctor
                             }
                         }
                     }
+
+
+
                 }
+
+                
             };
+
+            Dictionary<int, int> initialpartition = new Dictionary<int, int>();
+            foreach (int node in g.Nodes)
+            {
+                // int moduleId = NameToId()
+                initialpartition.Add(node, 5);
+            }
+
+            output.AddLine("Before automatic modularization. TurboMQ = " + TurboMQ(g, initialpartition).ToString());
 
             //Empiezo modularizacion
             Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Restart();
+           // stopwatch.Restart();
             Dictionary<int, int> partition = Community.BestPartition(g);
             output.AddLine("BestPartition: "+ stopwatch.Elapsed );
             var communities = new Dictionary<int, List<int>>();
@@ -374,7 +388,7 @@ namespace Concepto.Packages.KBDoctor
                     nodeset = communities[kvp.Value] = new List<int>();
                 }
                 nodeset.Add(kvp.Key);
-                output.AddLine(kvp.Key.ToString() +"  "+kvp.Value);
+            //    output.AddLine(kvp.Key.ToString() +"  "+kvp.Value);
             }
             output.AddLine(communities.Count + " modules found");
             Dictionary<string, int> modu = new Dictionary<string, int>();
@@ -400,7 +414,7 @@ namespace Concepto.Packages.KBDoctor
                 //Cantidad de modulo nuevo y modulo viejo. 
                 foreach (KeyValuePair<string, int> entry in sortedDict)
                 {
-                    output.AddLine(entry.Key + " " + entry.Value.ToString());
+                 //   output.AddLine(entry.Key + " " + entry.Value.ToString());
                     Module m = new Module(model);
                     m.Name = entry.Key.Replace(" ", "_") + string.Format("_{0:yyyy_MM_dd_hh_mm_ss}",DateTime.Now);
                     output.AddLine(m.Name);
@@ -420,7 +434,7 @@ namespace Concepto.Packages.KBDoctor
                                     trnBest.Module = m;
                                     trnBest.Save();
                                 }
-                                catch (Exception e) { output.AddErrorLine(e.Message); }
+                                catch (Exception e) { output.AddErrorLine(objToChange.Name +  e.Message); }
                             }
                             else
                             {
@@ -429,7 +443,7 @@ namespace Concepto.Packages.KBDoctor
                                     objToChange.Module = m;
                                     objToChange.Save();
                                 }
-                                catch (Exception e) { output.AddErrorLine(e.Message); }
+                                catch (Exception e) { output.AddErrorLine(objToChange.Name + e.Message); }
                             }
                         }
 
@@ -445,6 +459,11 @@ namespace Concepto.Packages.KBDoctor
            
         }
 
+        private static Double TurboMQ(Graph g, Dictionary<int,int> partition)
+        {
+            return 1.0;
+        }
+
         private static void GraboArista(Graph g,  Dictionary<string, int> NameToId, string objName, string objRefName, int weight)
         {
 
@@ -456,7 +475,7 @@ namespace Concepto.Packages.KBDoctor
                 id1 = NameToId[objName];
                 id2 = NameToId[objRefName];
 
-                g.AddEdge(id1, id2, 1);
+                g.AddEdge(id1, id2, weight);
             }
             catch (Exception e) {  };
         }
@@ -471,23 +490,23 @@ namespace Concepto.Packages.KBDoctor
 
         private static string NombreNodo(KBObject obj)
         {
-            IOutputService output = CommonServices.Output;
-            string objName = obj.Name + ":" + obj.TypeDescriptor.Name ;
-            if (obj.GetPropertyValue<bool>(KBObjectProperties.IsGeneratedObject))
+            string objName = ""; 
+            if (obj != null)
             {
-                
+                objName = obj.Name + ":" + obj.TypeDescriptor.Name;
+                if (obj.GetPropertyValue<bool>(KBObjectProperties.IsGeneratedObject))
+                {
+
                     PatternDefinition pattern;
                     if (InstanceManager.IsInstanceObject(obj, out pattern))
                     {
-                       // objName = obj.Parent.Name +":" + obj.Parent.TypeDescriptor.Name;
-                    objName = obj.Parent.Name.Replace("WorkWithPlus", "");
-                    objName = objName.Replace("WorkWith", "");
-                    objName = objName + ":Transaction";
+                        // objName = obj.Parent.Name +":" + obj.Parent.TypeDescriptor.Name;
+                        objName = obj.Parent.Name.Replace("WorkWithPlus", "");
+                        objName = objName.Replace("WorkWith", "");
+                        objName = objName + ":Transaction";
+                    }
                 }
-                    
-
             }
-            
             return objName ;
         }
 
