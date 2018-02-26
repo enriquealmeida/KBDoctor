@@ -488,8 +488,9 @@ namespace Concepto.Packages.KBDoctor
         public bool ExecRenameVariables(CommandData cmdData)
         {
             // Cambiar las variables para que se basen en atributos o dominios.
-            Thread t = new Thread(new ThreadStart(CleanKBHelper.RenameVariables));
-            t.Start();
+            /*   Thread t = new Thread(new ThreadStart(CleanKBHelper.RenameVariables));
+               t.Start();*/
+            ObjectsHelper.TestParser();
             return true;
         }
 

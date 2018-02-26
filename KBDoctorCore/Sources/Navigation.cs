@@ -389,7 +389,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         FileInfo fileNewReplace = new FileInfo(fileNewPath);
                         FileInfo fileSourceReplace = new FileInfo(fileSourcePath);
                         if (!Utility.FilesAreEqual(fileSourceReplace, fileNewReplace))
-                            Diffs.Add(fileNewPath);                            
+                            Diffs.Add(fileSourcePath);                            
 
                         File.WriteAllText(fileNewPath, datalineNew + "\r\n" + namelineNew + "\r\n" + textnew, encnew);
                         File.WriteAllText(fileSourcePath, datalineSource + "\r\n" + namelineSource + "\r\n" + textsource, encSource);

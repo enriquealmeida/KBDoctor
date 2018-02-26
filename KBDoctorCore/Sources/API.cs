@@ -24,6 +24,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static bool CompareNavigations(KnowledgeBase KB, IOutputService output)
         {
+           Utility.CreateModuleNamesFile(KB);
            Navigation.ReplaceModulesInNVGFiles(KB, output);
            return Navigation.CompareLastNVGDirectories(KB, output);
         }

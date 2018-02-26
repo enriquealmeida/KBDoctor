@@ -4024,7 +4024,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
             IParserEngine parser = parserSrv.CreateEngine();
             ParserInfo parserInfo;
-            writer.AddTableHeader(new string[] {"OBJECT", "COMMAND", "TOKEN", "Id"});
+            writer.AddTableHeader(new string[] {"OBJECT", "COMMAND", "TOKEN", "Id", "Row"});
 
 
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
@@ -4043,7 +4043,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         }
                         else
                         { 
-                   //         writer.AddTableData(new string[] { "", "", meaning, token.Token.ToString() });
+                            writer.AddTableData(new string[] { "", "", meaning, token.Token.ToString()});
                         }
                     }
                 }
