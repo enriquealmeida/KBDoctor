@@ -403,52 +403,6 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a /*
-        /// * jQuery 1.2.3 - New Wave Javascript
-        /// *
-        /// * Copyright (c) 2008 John Resig (jquery.com)
-        /// * Dual licensed under the MIT (MIT-LICENSE.txt)
-        /// * and GPL (GPL-LICENSE.txt) licenses.
-        /// *
-        /// * $Date: 2008-02-06 00:21:25 -0500 (Wed, 06 Feb 2008) $
-        /// * $Rev: 4663 $
-        /// */
-        ///(function(){if(window.jQuery)var _jQuery=window.jQuery;var jQuery=window.jQuery=function(selector,context){return new jQuery.prototype.init(selector,context);};if(window.$)var _$=window.$;window.$=jQuery;var quickExpr=/^[^&lt;]*(&lt;(.|\s)+&gt;)[^&gt;]*$|^ [resto de la cadena truncado]&quot;;.
-        /// </summary>
-        internal static string jquery_latest {
-            get {
-                return ResourceManager.GetString("jquery_latest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a /*
-        /// * 
-        /// * TableSorter 2.0 - Client-side table sorting with ease!
-        /// * Version 2.0.5b
-        /// * @requires jQuery v1.2.3
-        /// * 
-        /// * Copyright (c) 2007 Christian Bach
-        /// * Examples and docs at: http://tablesorter.com
-        /// * Dual licensed under the MIT and GPL licenses:
-        /// * http://www.opensource.org/licenses/mit-license.php
-        /// * http://www.gnu.org/licenses/gpl.html
-        /// * 
-        /// */
-        ////**
-        /// * 
-        /// * @description Create a sortable table with multi-column sorting capabilitys
-        /// * 
-        /// * @example $(&apos;table&apos;).tablesorter();
-        /// * @desc Create  [resto de la cadena truncado]&quot;;.
-        /// </summary>
-        internal static string jquery_tablesorter {
-            get {
-                return ResourceManager.GetString("jquery_tablesorter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a KB Interfaces.
         /// </summary>
         internal static string KBInterfaces {
@@ -582,18 +536,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListTablesInModules", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Busca una cadena traducida similar a List tables in modules.
-        /// </summary>
-        internal static string ListObjectsWithTableInOtherModule
-        {
-            get
-            {
-                return ResourceManager.GetString("ListObjectsWithTableInOtherModule", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Busca una cadena traducida similar a Tables used by mains.
         /// </summary>

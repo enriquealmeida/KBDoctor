@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
     <AssemblyName>KBDoctorValidator</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+       <TargetFrameworkVersion>$(TargetFrameworkVersion)</TargetFrameworkVersion>
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkProfile />
   </PropertyGroup>

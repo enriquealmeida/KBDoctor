@@ -227,6 +227,10 @@
               <Command refid="SplitMainObject" />
 
               <Command refid="MoveTransactions" />
+              <Group>
+                  <Command refid="GenerateGraph"/>
+              </Group>
+
             </Group>
           </Popup>
           <Group id="Utilities" >

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KBDoctorCmd</RootNamespace>
     <AssemblyName>KBDoctorCmd</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>$(TargetFrameworkVersion)</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -33,12 +33,15 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Artech.Architecture.Common, Version=10.1.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa, processorArchitecture=MSIL">
+    <Reference Include="Artech.Architecture.Common">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Artech.Architecture.UI.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa" />
-    <Reference Include="Artech.Common, Version=10.1.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa, processorArchitecture=MSIL">
+    <Reference Include="Artech.Architecture.UI.Framework">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.UI.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Common">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.dll</HintPath>
     </Reference>
@@ -46,13 +49,17 @@
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.MsBuild.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.Build.Utilities.v3.5" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="KBDoctorCore">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\KBDoctorCore\bin\Debug\KBDoctorCore.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CleanAllKBObjectVariablesCmd.cs" />

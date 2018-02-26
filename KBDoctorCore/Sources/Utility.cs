@@ -17,6 +17,7 @@ using Artech.Genexus.Common;
 using Artech.Common.Helpers.Structure;
 using Artech.Genexus.Common.Parts.SDT;
 using Artech.Architecture.Common.Descriptors;
+using Artech.Udm.Framework;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -507,7 +508,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 foreach (IStructureItem structItem in sdtstruct.Root.Items)
                 {
                     SDTItem sdtItem = (SDTItem)structItem;
-                    if (sdtItem.BasedOn != null && sdtItem.BasedOn.Key == a.Key)
+
+                    //Esto es para permitir trabajar con Evo3 y la 15. 
+                    EntityKey myKey = new EntityKey(a.Key);
+#if EVO3
+                    myKey = sdtItem.BasedOn.ObjKey;
+#else
+                    myKey = sdtItem.BasedOn.Key;
+#endif
+                    //Termina compilacion condicional. 
+      
+                    if (sdtItem.BasedOn != null && myKey == a.Key)
                     {
 
                         output.AddLine("..." + sdtItem.Name + " based on  " + a.Name);
@@ -541,7 +552,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 lines.Add(obj.QualifiedName.ToString());
             }
-            File.WriteAllLines(path, SortModulesByLevel(lines));
+            File.WriteAllLines(path, SortModulesByLevel(lines).ToArray());
         }
 
         internal static List<string> SortModulesByLevel(List<string> moduleNames)
