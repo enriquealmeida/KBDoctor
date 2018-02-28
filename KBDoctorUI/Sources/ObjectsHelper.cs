@@ -3491,6 +3491,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
+            string lista = "";
 
             // selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
@@ -3498,7 +3499,9 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if (KBObjectHelper.IsSpecifiable(obj))
                 {
-                    output.AddLine(obj.TypeDescriptor.Name + " " + obj.Name);
+            //        lista += obj.Name + ";";
+                    //output.Add(obj.QualifiedName.ObjectName.ToString() + ";");
+
                     if (!objToBuild.Contains(obj))
                     {
                         objToBuild.Add(obj);
@@ -3508,7 +3511,11 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 ModulesHelper.AddObjectsReferenceTo(obj, objToBuild, writer);
 
             }
+            foreach (KBObject obj2 in objToBuild)
+            { lista += obj2.Name + ";"; };
 
+           
+            writer.AddTableData(new string[] { lista });
             writer.AddFooter();
             writer.Close();
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
@@ -3520,6 +3527,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 Application.DoEvents();
             } while (GenexusUIServices.Build.IsBuilding);
 
+            output.AddLine(lista);
             output.EndSection(title, true);
 
 
