@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace LouvainCommunityPL {
+namespace LouvainCommunityPL
+{
     /// <summary>
     /// This class implements community detection.
     /// 
@@ -99,7 +98,7 @@ namespace LouvainCommunityPL {
         public static Dendrogram GenerateDendrogram(Graph graph, Dictionary<int, int> part_init) {
             Dictionary<int, int> partition;
             Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Restart();
+            //stopwatch.Restart();
 
             // Special case, when there is no link, the best partition is everyone in its own community.
             if (graph.NumberOfEdges == 0) {
@@ -243,7 +242,7 @@ namespace LouvainCommunityPL {
             /// </summary>
             private Tuple<double, int> EvaluateIncrease(int com, double dnc, double degc_totw) {
                 double incr = dnc - DictGet(Degrees, com, 0) * degc_totw;
-                return Tuple.Create(incr, com);
+                return  Tuple.Create(incr, com);
             }
 
             /// <summary>
@@ -268,9 +267,9 @@ namespace LouvainCommunityPL {
                         Remove(node, com_node, DictGet(neigh_communities, com_node, 0));
 
                         Tuple<double, int> best;
-                        best = (from entry in neigh_communities.AsParallel()
+                        best = (from entry in neigh_communities.AsEnumerable()
                                   select EvaluateIncrease(entry.Key, entry.Value, degc_totw))
-                               .Concat(new[]{Tuple.Create(0.0, com_node)}.AsParallel())
+                               .Concat(new[]{Tuple.Create(0.0, com_node)}.AsEnumerable())
                                .Max();
                         int best_com = best.Item2;
                         Insert(node, best_com, DictGet(neigh_communities, best_com, 0));
@@ -370,4 +369,6 @@ namespace LouvainCommunityPL {
             return partition;
         }
     }
+
+
 }

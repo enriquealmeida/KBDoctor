@@ -244,7 +244,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (token.Token >= 100)
                     {
                         //Command   
-                        List<TokensIds>[] IndentTokens = GetIndentationTokens()
+                        List<TokensIds>[] IndentTokens = GetIndentationTokens();
                     }
                     else
                     {
@@ -252,8 +252,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     }
                 }
+               
             }
-
+            return null;
         }
 
         private static List<TokensIds>[] GetIndentationTokens()

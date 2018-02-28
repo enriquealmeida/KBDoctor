@@ -331,8 +331,6 @@
       <Project>{280a5263-3efa-4585-86dd-ea8fd5310a4f}</Project>
       <Name>KBDoctorCore</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Louvain\LouvainCommunityPL.csproj">
       <Project>{462156c1-ff14-4a0f-99b9-1f167435356d}</Project>
       <Name>LouvainCommunityPL</Name>
