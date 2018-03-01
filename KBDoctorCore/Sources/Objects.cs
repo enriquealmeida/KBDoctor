@@ -233,26 +233,27 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static KBDAST ParseSourceIntoAST(Artech.Genexus.Common.Parts.ProcedurePart source)
         {
-            if (source != null)
-            {
-                Stack stk;
-                ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
-                IParserEngine parser = parserSrv.CreateEngine();
-                ParserInfo parserInfo = new ParserInfo(source);
-                foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
-                {
-                    if (token.Token >= 100)
-                    {
-                        //Command   
-                        List<TokensIds>[] IndentTokens = GetIndentationTokens()
-                    }
-                    else
-                    {
-                        //Token
+            /* if (source != null)
+             {
+                 Stack stk;
+                 ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
+                 IParserEngine parser = parserSrv.CreateEngine();
+                 ParserInfo parserInfo = new ParserInfo(source);
+                 foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
+                 {
+                     if (token.Token >= 100)
+                     {
+                         //Command   
+                         List<TokensIds>[] IndentTokens = GetIndentationTokens()
+                     }
+                     else
+                     {
+                         //Token
 
-                    }
-                }
-            }
+                     }
+                 }
+             }*/
+            return null;
 
         }
 
@@ -369,10 +370,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static string GetParametersString(KBObject obj)
         {
-            //TODO - ARREGLAR TUPLE 
-            string paramstring = "";
-            /* 
-             * Tuple<int, string> type_access;
+            
+            Tuple<int, string> type_access;
             List<Tuple<int, string>> parameters = new List<Tuple<int, string>>();
             ICallableObject callableObject = obj as ICallableObject;
             foreach (Signature signature in callableObject.GetSignatures())
@@ -401,7 +400,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 paramstring += accessor + ":" + parameter.Item1.ToString() + " ";
             }
-            */
             return paramstring.TrimEnd();
         }
     }
