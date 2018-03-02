@@ -87,6 +87,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ChangeLegacyCode, new ExecHandler(ExecChangeLegacyCode), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.EditLegacyCodeToReplace, new ExecHandler(ExecEditLegacyCodeToReplace), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsRefactoringCandidates, new ExecHandler(ExecObjectsRefactoringCandidates), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.CountTableAccess, new ExecHandler(ExecCountTableAccess), new QueryHandler(QueryKBDoctor));
+
             AddCommand(CommandKeys.ObjectsDiagnostics, new ExecHandler(ExecObjectsDiagnostics), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.KBInterfaces, new ExecHandler(ExecKBInterfaces), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWINWEB, new ExecHandler(ExecObjectsWINWEB), new QueryHandler(QueryKBDoctor));
@@ -574,6 +576,13 @@ namespace Concepto.Packages.KBDoctor
         public bool ExecObjectsRefactoringCandidates(CommandData cmdData)
         {
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsRefactoringCandidates));
+            t.Start();
+            return true;
+        }
+
+        public bool ExecCountTableAccess(CommandData cmdData)
+        {
+            Thread t = new Thread(new ThreadStart(ObjectsHelper.CountTableAccess));
             t.Start();
             return true;
         }

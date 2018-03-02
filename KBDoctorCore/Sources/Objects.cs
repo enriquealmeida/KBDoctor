@@ -233,6 +233,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static KBDAST ParseSourceIntoAST(Artech.Genexus.Common.Parts.ProcedurePart source)
         {
+            return null;
             if (source != null)
             {
                 Stack stk;
@@ -244,7 +245,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (token.Token >= 100)
                     {
                         //Command   
-                        List<TokensIds>[] IndentTokens = GetIndentationTokens()
+                        List<TokensIds>[] IndentTokens = GetIndentationTokens();
                     }
                     else
                     {

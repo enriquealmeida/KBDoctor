@@ -322,6 +322,15 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Count table access.
+        /// </summary>
+        internal static string CountTableAccess {
+            get {
+                return ResourceManager.GetString("CountTableAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Edit  code to replace.
         /// </summary>
         internal static string EditLegacyCodeToReplace {
@@ -635,7 +644,9 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsRefactoringCandidates", resourceCulture);
             }
         }
-        
+
+
+
         /// <summary>
         ///   Busca una cadena traducida similar a List all object dependencies.
         /// </summary>

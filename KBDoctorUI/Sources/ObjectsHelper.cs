@@ -2039,6 +2039,59 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
         }
 
+        public static void CountTableAccess()
+        {
+            IKBService kbserv = UIServices.KB;
+            KBModel model = kbserv.CurrentModel;
+            IOutputService output = CommonServices.Output;
+            string title = "KBDoctor - Count Table Access per Object";
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+
+            output.StartSection(title);
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module", "Inserts", "Updates", "Delete", "Read", "Total" });
+
+
+
+            foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+            {
+                if (Functions.isRunable(obj))
+
+                {
+                    output.AddLine(obj.Name);
+                    int updaters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                                where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                                where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
+                                                select model.Objects.Get(r.To)).ToList().Count;
+                    int inserters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                    where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                    where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
+                                    select model.Objects.Get(r.To)).ToList().Count;
+                    int deleters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                     where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                     where ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo)
+                                     select model.Objects.Get(r.To)).ToList().Count;
+                    int readers = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                    where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                    where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
+                                    select model.Objects.Get(r.To)).ToList().Count;
+                    int total = updaters + inserters + deleters + readers; 
+                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.TypeDescriptor.Name, obj.Description, obj.Module.Name, updaters.ToString(), inserters.ToString(), deleters.ToString(), readers.ToString() , total.ToString()});
+
+                }
+
+            }
+            writer.AddTableFooterOnly();
+            writer.Close();
+
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            bool success = true;
+            output.EndSection(title, success);
+        }
+
         public static void ObjectsRefactoringCandidates()
         {
             IKBService kbserv = UIServices.KB;
