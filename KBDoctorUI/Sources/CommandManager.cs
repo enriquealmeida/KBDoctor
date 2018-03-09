@@ -828,7 +828,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecListModulesStatistics(CommandData cmdData)
         {
-            ModulesHelper.ListModulesStatistics();
+            ModulesHelper.ListModulesStatisticsTotal();
             return true;
         }
 

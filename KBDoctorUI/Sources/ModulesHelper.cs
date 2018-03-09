@@ -172,6 +172,60 @@ Largo máximo de dependencias en la que participa.
 El módulo tiene objetos públicos no referenciados por externos?
 */
 
+        public static void ListModulesStatisticsTotal()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            KBModel kbmodel = kbserv.CurrentModel;
+            bool success = true;
+            int objInRoot = 0;
+            int objInModule = 0;
+            int tblInRoot = 0;
+            int tblInModule = 0;
+            int objTot = 0;
+            int modules = 0;
+            string title = "KBDoctor - List Modules Statistics Total";
+            output.StartSection(title);
+            //  string outputFile = Functions.CreateOutputFile(kbserv, title);
+            //  KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            //  writer.AddHeader(title);
+            //  writer.AddTableHeader(new string[] { "Module", "Description", "Tables", "Public Tables", "Objects", "Public Obj", "Obj/Publ %", "In References", "Out References" });
+
+
+            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            {
+                objTot += 1;
+                if (obj is Table)
+                {
+                    if (TablesHelper.TableModule(kbmodel, (Table)obj) == kbserv.CurrentModel.GetDesignModel().RootModule)
+                        tblInRoot += 1;
+                    else
+                        tblInModule += 1;
+                }
+                else
+                {
+                    if (obj.Module == kbserv.CurrentModel.GetDesignModel().RootModule)
+                        objInRoot += 1;
+                    else
+                        objInModule += 1;
+
+                    if (obj is Module)
+                        modules += 1;
+                        
+                }
+            }
+            int ratio = (objInRoot == 0) ? 0 : (objInModule * 100) / objInRoot;
+            output.AddLine("# Objects: " + objTot + " in Module: " + objInModule.ToString() + " in Root: " + objInRoot.ToString() );
+            output.AddLine("% Modularization:  " + ratio.ToString());
+            output.AddLine("# Tables in Module: " + tblInModule.ToString() + " in Root: " + tblInRoot.ToString());
+
+
+            output.EndSection(title, success);
+           
+          //  Functions.AddLineSummary("moduleStats.txt", Resumen);
+
+        }
+
         public static void ListModulesStatistics()
         {
             IKBService kbserv = UIServices.KB;

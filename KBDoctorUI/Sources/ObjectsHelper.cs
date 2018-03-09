@@ -3640,6 +3640,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.StartSection(title);
 
             string sw="" , sw2 = "";
+            SortedDictionary<string, string> sw3 = new SortedDictionary<string, string>();
        //     KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
        //     writer.AddHeader(title);
             int numObj = 0;
@@ -3678,16 +3679,17 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
                     ruleparm = ruleparm.Replace(" ", "");
                     string callprotocol = obj.GetPropertyValueString("CALL_PROTOCOL");
-                    if (callprotocol == "Internal")
-                            callprotocol="";
+                    if (callprotocol == "")
+                             callprotocol="Internal";
 
                     if (tieneInterfaz)
                     {
-                        if (obj is Procedure && isMain)
+                       // if (obj is Procedure && isMain)
 
                      //   writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, ruleparm });
-                        sw += obj.TypeDescriptor.Name + "\t" + obj.QualifiedName + "\t" + callprotocol  + "\t"  + ruleparm + "\r\n";
-                        sw2 += qualifiedName + "\t" +  callprotocol + "\r\n";
+                        //sw += obj.TypeDescriptor.Name + "\t" + obj.QualifiedName + "\t" + callprotocol  + "\t"  + ruleparm + "\r\n";
+                  //      sw2 += callprotocol+ "\t" + obj.Name + "\t" + qualifiedName + "\r\n";
+                        sw3[callprotocol + "\t" + obj.Name] = qualifiedName;
                     }
                     numObj += 1;
                     if ((numObj % 100) == 0)
@@ -3704,10 +3706,18 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
             string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
 
-           // string fileName = directoryArg + @"\API-" + fechahora + ".txt";
-           // System.IO.File.WriteAllText(fileName, sw);
+            // string fileName = directoryArg + @"\API-" + fechahora + ".txt";
+            // System.IO.File.WriteAllText(fileName, sw);
 
-            string fileName2 = directoryArg + @"\API2-" + fechahora + ".txt";
+
+ 
+           foreach (KeyValuePair<string, string> entry in sw3)
+            {
+                sw2 += entry.Value + "\r\n";
+            }
+            
+
+            string fileName2 = directoryArg + @"\API3-" + fechahora + ".txt";
             System.IO.File.WriteAllText(fileName2, sw2);
             output.AddLine("URL/URI file generated in " + fileName2);
             output.EndSection(title, success);
