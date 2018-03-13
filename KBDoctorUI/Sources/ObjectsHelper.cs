@@ -2864,19 +2864,28 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 Boolean SaveObj = false;
                 if (isGenerated(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel || obj is Procedure))
                 {
+                    string pic2 = (string) obj.GetPropertyValue("ATT_PICTURE");
+                    if (pic2 == "@!")
+                    {
+                        Console.WriteLine(obj.Name);
+                    }
+
                     //string variables = VariablesNotBasedAttributesOrDomain(obj);
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     if (vp != null)
                     {
                         foreach (Variable v in vp.Variables)
                         {
-                            if ((!v.IsStandard) && (v.Type == eDBType.DATE) )
-
+                            //   if ((!v.IsStandard) && (v.Type == eDBType.NUMERIC) )
+                            if ((!v.IsStandard) && (v.Type != eDBType.CHARACTER))
                             {
                                 string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
                                 string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
 
-                                if (attname == "" && domname == "")
+                                string picture = (string) v.GetPropertyValue("ATT_PICTURE");
+
+                                if (picture=="@!")
+                                //if (attname == "" && domname == "")
 
                                 {
                                     string vname = v.Name.ToLower();
@@ -3666,7 +3675,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     if (obj is Procedure && isMain)
                     {
                         qualifiedName = obj.QualifiedName.ModuleName + (obj.QualifiedName.ModuleName == ""?"a":".a")  + obj.QualifiedName.ObjectName; 
-                            tieneInterfaz = true;
+                        tieneInterfaz = true;
                     }   
                     if (obj is WorkPanel && isMain)
                         tieneInterfaz = true;
@@ -3675,9 +3684,9 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         tieneInterfaz = true;
 
 
-                    string ruleparm = Functions.ExtractRuleParm(obj);
-                    ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
-                    ruleparm = ruleparm.Replace(" ", "");
+                  //  string ruleparm = Functions.ExtractRuleParm(obj);
+                  //  ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
+                   // ruleparm = ruleparm.Replace(" ", "");
                     string callprotocol = obj.GetPropertyValueString("CALL_PROTOCOL");
                     if (callprotocol == "")
                              callprotocol="Internal";
