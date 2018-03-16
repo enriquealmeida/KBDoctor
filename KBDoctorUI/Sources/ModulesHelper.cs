@@ -194,24 +194,27 @@ El módulo tiene objetos públicos no referenciados por externos?
 
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
-                objTot += 1;
-                if (obj is Table)
+                if (Functions.hasModule(obj))
                 {
-                    if (TablesHelper.TableModule(kbmodel, (Table)obj) == kbserv.CurrentModel.GetDesignModel().RootModule)
-                        tblInRoot += 1;
+                    objTot += 1;
+                    if (obj is Table)
+                    {
+                        if (TablesHelper.TableModule(kbmodel, (Table)obj) == kbserv.CurrentModel.GetDesignModel().RootModule)
+                            tblInRoot += 1;
+                        else
+                            tblInModule += 1;
+                    }
                     else
-                        tblInModule += 1;
-                }
-                else
-                {
-                    if (obj.Module == kbserv.CurrentModel.GetDesignModel().RootModule)
-                        objInRoot += 1;
-                    else
-                        objInModule += 1;
+                    {
+                        if (obj.Module == kbserv.CurrentModel.GetDesignModel().RootModule)
+                            objInRoot += 1;
+                        else
+                            objInModule += 1;
 
-                    if (obj is Module)
-                        modules += 1;
-                        
+                        if (obj is Module)
+                            modules += 1;
+
+                    }
                 }
             }
             int ratio = (objInRoot == 0) ? 0 : (objInModule * 100) / objInRoot;

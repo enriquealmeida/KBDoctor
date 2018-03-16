@@ -2865,10 +2865,10 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 if (isGenerated(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel || obj is Procedure))
                 {
                     string pic2 = (string) obj.GetPropertyValue("ATT_PICTURE");
-                    if (pic2 == "@!")
+                   /*  if (pic2 == "@!")
                     {
                         Console.WriteLine(obj.Name);
-                    }
+                    }*/
 
                     //string variables = VariablesNotBasedAttributesOrDomain(obj);
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
