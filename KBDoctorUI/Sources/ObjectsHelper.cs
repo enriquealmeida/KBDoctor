@@ -2038,7 +2038,56 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             return newString;
 
         }
+        
+        public static void ObjectsWithConstants()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            string title = "KBDoctor - Objects with Constants";
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
 
+
+            output.StartSection(title);
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Description", "Line", "Constant" });
+
+
+
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+
+            ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
+            IParserEngine parser = parserSrv.CreateEngine();
+            ParserInfo parserInfo;
+
+
+
+            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            {
+                writer.AddTableData(new string[] { obj.Name, "", "", "" });
+                Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                if (source != null)
+                {
+                    parserInfo = new ParserInfo(source);
+                    foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
+                    {
+                        if (token.Token == 3)
+                            writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, token.Row.ToString(), token.Word });
+
+                    }
+                }
+            }
+            writer.AddFooter();
+
+            writer.Close();
+
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            bool success = true;
+            output.EndSection(title, success);
+         }
         public static void ObjectsRefactoringCandidates()
         {
             IKBService kbserv = UIServices.KB;

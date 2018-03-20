@@ -86,7 +86,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ObjectsLegacyCode, new ExecHandler(ExecObjectsLegacyCode), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ChangeLegacyCode, new ExecHandler(ExecChangeLegacyCode), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.EditLegacyCodeToReplace, new ExecHandler(ExecEditLegacyCodeToReplace), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectsRefactoringCandidates, new ExecHandler(ExecObjectsRefactoringCandidates), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ObjectsWithConstants, new ExecHandler(ExecObjectsWithConstants), new QueryHandler(QueryKBDoctor));
+            
             AddCommand(CommandKeys.ObjectsDiagnostics, new ExecHandler(ExecObjectsDiagnostics), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.KBInterfaces, new ExecHandler(ExecKBInterfaces), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWINWEB, new ExecHandler(ExecObjectsWINWEB), new QueryHandler(QueryKBDoctor));
@@ -578,6 +579,12 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecObjectsWithConstants(CommandData cmdData)
+        {
+            ObjectsHelper.ObjectsWithConstants();
+            return true;
+        }
+        
         public bool ExecUDPCallables(CommandData cmdData)
         {
 

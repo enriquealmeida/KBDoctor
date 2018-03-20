@@ -405,7 +405,7 @@ namespace Concepto.Packages.KBDoctor
 
         internal static bool hasModule(KBObject obj)
         {
-            if (obj.Module.Guid == Guid.Empty)
+            if (obj.Module.Guid == Guid.Empty )
                 return false;
             else
                 if ((obj is Module) || (obj is Folder))
