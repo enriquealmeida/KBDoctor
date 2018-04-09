@@ -2060,21 +2060,34 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
 
             ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
-            IParserEngine parser = parserSrv.CreateEngine();
+           // IParserEngine parser = parserSrv.CreateEngine();
+
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+
             ParserInfo parserInfo;
 
 
 
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
-                writer.AddTableData(new string[] { obj.Name, "", "", "" });
+               
                 Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+
                 if (source != null)
                 {
                     parserInfo = new ParserInfo(source);
+
+                    
+                     var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+                    if (parser.Validate(info, source.Source))
+                    {
+                        Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source,  vp , info);
+                    }
+
                     foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
                     {
-                        if (token.Token == 3)
+                        if (token.Token == 3 && token.Word.Length > 3)
                             writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, token.Row.ToString(), token.Word });
 
                     }
@@ -2901,18 +2914,19 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Attribute", "Domain" });
+            writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Picture" , "Attribute", "Domain" });
             string type = "";
             string name = "";
 
             //All useful objects are added to a collection
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
-                output.AddLine("Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
+               
 
                 Boolean SaveObj = false;
                 if (isGenerated(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel || obj is Procedure))
                 {
+                    output.AddLine("Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
                     string pic2 = (string) obj.GetPropertyValue("ATT_PICTURE");
                    /*  if (pic2 == "@!")
                     {
@@ -2925,20 +2939,20 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     {
                         foreach (Variable v in vp.Variables)
                         {
-                            //   if ((!v.IsStandard) && (v.Type == eDBType.NUMERIC) )
-                            if ((!v.IsStandard) && (v.Type != eDBType.CHARACTER))
+                              if ((!v.IsStandard) && v.Length == 3 ) //&& (v.Type == eDBType.NUMERIC) )
+                          //  if ((!v.IsStandard) && (v.Type != eDBType.CHARACTER))
                             {
                                 string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
                                 string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
 
                                 string picture = (string) v.GetPropertyValue("ATT_PICTURE");
 
-                                if (picture=="@!")
-                                //if (attname == "" && domname == "")
+                               // if (picture=="@!")
+                               if (attname == "" && domname == "" ) //&& (v.Name.Contains("PUE") || v.Name.Contains("PAI")))
 
                                 {
                                     string vname = v.Name.ToLower();
-                                    writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), v.Name, attname, domname });
+                                    writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), v.Name, picture, attname, domname });
                                 }
                             }
                         }
