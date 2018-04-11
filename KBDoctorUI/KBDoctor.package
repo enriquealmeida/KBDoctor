@@ -60,6 +60,7 @@
     <CommandDefinition id="TreeCommit" />
     <CommandDefinition id="EditLegacyCodeToReplace" /> 
     <CommandDefinition id="ObjectsRefactoringCandidates" />
+    <CommandDefinition id="CountTableAccess"  />
     <CommandDefinition id="ObjectsDiagnostics" />
     <CommandDefinition id="ObjectsWINWEB" />
     <CommandDefinition id="ListProcedureCallWebpanelTransaction" />
@@ -249,6 +250,7 @@
             <Popup name ="KB stats">
               <Command refid="CountGeneratedByPattern"  />
               <Command refid="ObjectsRefactoringCandidates" />
+               <Command refid="CountTableAccess" />
                <Command refid="ListModulesStatistics" />
             </Popup>
           </Group>
