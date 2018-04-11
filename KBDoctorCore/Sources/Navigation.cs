@@ -113,10 +113,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 DateTime newestDate = new DateTime(1891,09,28);
                 List<string> paths = (List<string>)colisiones[name];
                 List<FileInfo> oldfiles = new List<FileInfo>();
-                output.AddLine("Colisión en archivos: ");
                 foreach (string path in paths)
                 {
-                    output.AddLine("-- -- -- -- -- -- -- -" + path);
                     FileInfo file = new FileInfo(path);
                     if(file.LastWriteTime >= newestDate)
                     {
@@ -146,7 +144,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
                 {
-                    output.AddLine("Procesando archivo: " + x);
                     string xTxt = newDir + generator + Path.GetFileNameWithoutExtension(x) + ".nvg";
 
                     string xmlstring = Utility.AddXMLHeader(x);
@@ -213,8 +210,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                 }
                 File.WriteAllText(filePath, dataline + "\r\n" + nameline + "\r\n" + text, enc);
-                if (contains)
-                    output.AddLine("Module names replaced in: " + filePath);
             }
         }
 

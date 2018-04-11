@@ -19,7 +19,6 @@ using Artech.Udm.Framework;
 using Artech.Genexus.Common.Services;
 using Concepto.Packages.KBDoctorCore.Sources;
 
-
 namespace Concepto.Packages.KBDoctor
 {
     static class GraphHelper
@@ -303,7 +302,7 @@ namespace Concepto.Packages.KBDoctor
             StringCollection aristas = new StringCollection();
             output.AddLine("Generating " + name);
 
-           // Dictionary<string, Tuple<int,string>> dictionary = new Dictionary<string, Tuple<int,string>>();
+            Dictionary<string, Tuple<int, string>> dictionary = new Dictionary<string, Tuple<int, string>>();
             Dictionary<string, int> NameToId = new Dictionary<string, int>();
             Dictionary<string, string> NameToModule = new Dictionary<string, string>();
             Dictionary<int, string> IdToName = new Dictionary<int, string>();
