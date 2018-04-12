@@ -9,6 +9,7 @@ using System.Xml.Xsl;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.IO.Compression;
 using Microsoft.VisualBasic.FileIO;
 
 using Artech.Genexus.Common;
@@ -43,7 +44,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 Directory.CreateDirectory(newDir);
                 Utility.WriteXSLTtoDir(KB);
-                foreach (string d in Directory.GetDirectories(Utility.SpcDirectory(KB), "NVG", System.IO.SearchOption.AllDirectories))
+                string pathspcdir = Utility.SpcDirectory(KB);
+                string[] paths = Directory.GetDirectories(Utility.SpcDirectory(KB), "NVG", System.IO.SearchOption.AllDirectories);
+                foreach (string d in paths)
                 {
                     output.AddLine("Procesando directorio: " + d);
                     string generator = d.Replace(Utility.SpcDirectory(KB), "");
@@ -115,6 +118,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 List<FileInfo> oldfiles = new List<FileInfo>();
                 foreach (string path in paths)
                 {
+         
                     FileInfo file = new FileInfo(path);
                     if(file.LastWriteTime >= newestDate)
                     {
@@ -144,15 +148,23 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
                 {
-                    string xTxt = newDir + generator + Path.GetFileNameWithoutExtension(x) + ".nvg";
+                    try
+                    {
+                        string xTxt = newDir + generator + Path.GetFileNameWithoutExtension(x) + ".nvg";
 
-                    string xmlstring = Utility.AddXMLHeader(x);
+                        string xmlstring = Utility.AddXMLHeader(x);
 
-                    string newXmlFile = x.Replace(".xml", ".xxx");
-                    File.WriteAllText(newXmlFile, xmlstring);
+                        string newXmlFile = x.Replace(".xml", ".xxx");
+                        File.WriteAllText(newXmlFile, xmlstring);
 
-                    xslTransform.Transform(newXmlFile, xTxt);
-                    File.Delete(newXmlFile);
+                        xslTransform.Transform(newXmlFile, xTxt);
+                        File.Delete(newXmlFile);
+                    }
+                    catch(Exception e)
+                    {
+                        output.AddErrorLine(e);
+                    }
+                    
                 }
             }
         }
@@ -246,19 +258,23 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (Diffs.Count > 0)
                     {
                         output.AddLine("-- Se encontraron diferencias en las navegaciones de los siguientes objetos:");
+                        List<string> FilesDiff = new List<string>();
                         foreach (string x in Diffs)
                         {
                             string[] objectnametype = Utility.ReadQnameTypeFromNVGFile(x, output);
+                            string filename = Path.GetFileName(x);
                             string objtype = objectnametype[0];
                             string objmodule = objectnametype[1];
                             string objname = objectnametype[2];
                             KBObjectDescriptor kbod = KBObjectDescriptor.Get(objtype);
                             QualifiedName qname = new QualifiedName(objmodule, objname);
+                            //Null in HCIHisMo
                             KBObject obj = KB.DesignModel.Objects.Get(kbod.Id,qname);
                             if (obj != null)
                             {
                                 if (obj.Timestamp <= Utility.GetDateTimeNVGDirectory(Last2directories[1].ToString()))
                                 {
+                                    FilesDiff.Add(filename);
                                     if (objmodule != "")
                                     {
                                         output.AddLine("-- ERROR " + objmodule + '.' + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
@@ -287,9 +303,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 output.AddLine("-- NO SE ENCONTRO EL OBJETO: " + qname.ToString());
                             }
                         }
+                        CopyDifferences(FilesDiff,Last2directories[0],Last2directories[1]);
                     }
                     else
                     {
+                        DeleteDifferenceDir(KB);
                         output.AddLine("No se encontraron diferencias en las navegaciones");
                     }
                 }
@@ -303,6 +321,52 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 output.AddLine(e.Message);
                 return false;
             }
+        }
+
+        private static void DeleteDifferenceDir(KnowledgeBase KB)
+        {
+            string pathnvg = Utility.NvgComparerDirectory(KB);
+            string pathdiff = Directory.GetParent(pathnvg).FullName;
+            string copydir = Path.Combine(pathdiff, "NvgErrors");
+
+            if (Directory.Exists(copydir))
+                Directory.Delete(copydir, true);
+
+            if (File.Exists(copydir + ".zip"))
+                File.Delete(copydir + ".zip");
+        }
+
+
+        private static void CopyDifferences(List<string> filenames, string path1, string path2)
+        {
+            string nvgdir = Directory.GetParent(path1).FullName;
+            string spcdir = Directory.GetParent(nvgdir).FullName;
+            string copydir = Path.Combine(spcdir, "NvgErrors");
+
+            if (Directory.Exists(copydir))
+                Directory.Delete(copydir, true);
+
+            if (File.Exists(copydir + ".zip"))
+                File.Delete(copydir + ".zip");
+
+            Directory.CreateDirectory(copydir);
+            string olddir = Path.Combine(copydir, "Old");
+            string newdir = Path.Combine(copydir, "New");
+            Directory.CreateDirectory(olddir);
+            Directory.CreateDirectory(newdir);
+            foreach (string file in filenames)
+            {
+                File.Copy(Path.Combine(path1, file), Path.Combine(olddir, file));
+                File.Copy(Path.Combine(path2, file), Path.Combine(newdir, file));
+            }
+
+            CompressDir(copydir);
+
+        }
+
+        private static void CompressDir(string Dir)
+        {
+            ZipFile.CreateFromDirectory(Dir, Dir + ".zip");
         }
 
         private static string[] GetLast2Directorys(string[] Files, IOutputService output)
