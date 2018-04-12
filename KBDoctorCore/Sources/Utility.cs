@@ -496,6 +496,19 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return KBCategory.Get(model, "Main Programs");
         }
 
+        public static EntityKey KeyOfBasedOn_CompatibleConEvo3(SDTItem sdtItem)
+        {
+            // esto es para mantener compatibilidad con Evo3 y la 15
+            EntityKey myKey = new EntityKey(Guid.Empty, 0);
+#if EVO3
+            myKey = sdtItem.BasedOn.ObjKey;
+#else
+            myKey = sdtItem.BasedOn.ObjKey;
+#endif
+            //Termina compatibilidad Evo3 y 15. 
+            return myKey;
+        }
+
         internal static void CleanSDT(Artech.Genexus.Common.Objects.Attribute a, IOutputService output, KBObject objRef)
         {
 
@@ -508,16 +521,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 foreach (IStructureItem structItem in sdtstruct.Root.Items)
                 {
                     SDTItem sdtItem = (SDTItem)structItem;
+                    EntityKey myKey = KeyOfBasedOn_CompatibleConEvo3(sdtItem);
 
-                    //Esto es para permitir trabajar con Evo3 y la 15. 
-                    EntityKey myKey = new EntityKey(a.Key);
-#if EVO3
-                    myKey = sdtItem.BasedOn.ObjKey;
-#else
-                    myKey = sdtItem.BasedOn.Key;
-#endif
-                    //Termina compilacion condicional. 
-      
                     if (sdtItem.BasedOn != null && myKey == a.Key)
                     {
 

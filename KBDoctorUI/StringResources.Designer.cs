@@ -675,6 +675,15 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Objects With Constants.
+        /// </summary>
+        internal static string ObjectsWithConstants {
+            get {
+                return ResourceManager.GetString("ObjectsWithConstants", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a With parm() without in:/out:/inout:.
         /// </summary>
         internal static string ObjectsWithoutInOut {

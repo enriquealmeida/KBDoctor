@@ -56,7 +56,6 @@ namespace Concepto.Packages.KBDoctor
             }
             writer.AddFooter();
             writer.Close();
-            writer.Dispose();
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;

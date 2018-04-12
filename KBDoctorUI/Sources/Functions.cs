@@ -14,6 +14,7 @@ using Artech.Udm.Framework.References;
 using Artech.Genexus.Common;
 using Artech.Common.Helpers.Structure;
 using Artech.Genexus.Common.Parts.SDT;
+using Artech.Udm.Framework;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -404,7 +405,7 @@ namespace Concepto.Packages.KBDoctor
 
         internal static bool hasModule(KBObject obj)
         {
-            if (obj.Module.Guid == Guid.Empty)
+            if (obj.Module.Guid == Guid.Empty )
                 return false;
             else
                 if ((obj is Module) || (obj is Folder))
@@ -433,7 +434,10 @@ namespace Concepto.Packages.KBDoctor
                     try
                     {
                         SDTItem sdtItem = (SDTItem)structItem;
-                        if (sdtItem.BasedOn != null && sdtItem.BasedOn.Key == a.Key)
+
+                        EntityKey myKey = KBDoctorCore.Sources.Utility.KeyOfBasedOn_CompatibleConEvo3(sdtItem);
+
+                        if (sdtItem.BasedOn != null && myKey == a.Key)
                         {
 
                             output.AddLine("..." + sdtItem.Name + " based on  " + a.Name);
@@ -458,7 +462,8 @@ namespace Concepto.Packages.KBDoctor
                 }
             }
         }
-    
+
+
 
 
         public static string ReturnPicture(Artech.Genexus.Common.Objects.Attribute a)

@@ -61,6 +61,7 @@
     <CommandDefinition id="EditLegacyCodeToReplace" /> 
     <CommandDefinition id="ObjectsRefactoringCandidates" />
     <CommandDefinition id="CountTableAccess"  />
+    <CommandDefinition id="ObjectsWithConstants" />
     <CommandDefinition id="ObjectsDiagnostics" />
     <CommandDefinition id="ObjectsWINWEB" />
     <CommandDefinition id="ListProcedureCallWebpanelTransaction" />
@@ -252,6 +253,7 @@
               <Command refid="ObjectsRefactoringCandidates" />
                <Command refid="CountTableAccess" />
                <Command refid="ListModulesStatistics" />
+              <Command refid="ObjectsWithConstants" />
             </Popup>
           </Group>
           <Group id="CleanKB" >

@@ -290,6 +290,70 @@ namespace Concepto.Packages.KBDoctor
             scriptFile.Close();
         }
 
+        private static void GenerateMDGGraph(string name, string fileName)
+        {
+            IKBService kbserv = UIServices.KB;
+            KBModel model = kbserv.CurrentModel;
+            StreamWriter scriptFile = new StreamWriter(fileName);
+            IOutputService output = CommonServices.Output;
+            StringCollection aristas = new StringCollection();
+            output.AddLine("Generating MDG " + name);
+
+            string objName = "";
+            StringCollection nodos = new StringCollection();
+            foreach (KBObject obj in model.Objects.GetAll())
+            {
+
+                bool includedInGraph = (Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table);
+                if (includedInGraph)
+                {
+
+                    objName = NombreNodo(obj);
+                    string modulename = ModulesHelper.ObjectModuleName(obj);
+
+                    if (!nodos.Contains(objName))
+                    {
+                        scriptFile.WriteLine("          <node id='" + objName + "' label='" + objName + "' >");
+                        scriptFile.WriteLine("              <attvalues>  <attvalue for='0' value = '" + modulename + "' /> </attvalues>");
+                        scriptFile.WriteLine("          </node>");
+                        nodos.Add(objName);
+                    }
+
+                    foreach (EntityReference r in obj.GetReferencesTo())
+                    {
+                        KBObject objRef = KBObject.Get(obj.Model, r.From);
+                        if ((objRef != null) && (Functions.isRunable(objRef) || objRef is Table))
+
+                        {
+                            string objRefName = NombreNodo(objRef);
+                            if (objName != objRefName)
+                            {
+                                String edge = " source='" + objRefName + "' target='" + objName + "' weight= '1.0' ";
+                                if (!aristas.Contains(edge))
+                                    aristas.Add(edge);
+                            }
+                        }
+                    }
+                }
+            };
+            scriptFile.WriteLine("      </nodes>");
+
+            //Grabo las aristas
+            scriptFile.WriteLine("      <edges>");
+
+            int i = 0;
+            foreach (String s in aristas)
+            {
+                scriptFile.WriteLine("                     <edge id=" + i.ToString() + s + " />  ");
+                i += 1;
+            };
+            scriptFile.WriteLine("      </edges>");
+            scriptFile.WriteLine("  </graph>");
+            scriptFile.WriteLine("</gexf>");
+            scriptFile.Close();
+        }
+
+
         private static void GenerateKBObjectEdgesTxt(string name, string fileName)
         {
             IKBService kbserv = UIServices.KB;
@@ -303,6 +367,10 @@ namespace Concepto.Packages.KBDoctor
             output.AddLine("Generating " + name);
 
             Dictionary<string, Tuple<int, string>> dictionary = new Dictionary<string, Tuple<int, string>>();
+            Dictionary<int, int> initialpartition = new Dictionary<int, int>();
+
+            // Dictionary<string, Tuple<int,string>> dictionary = new Dictionary<string, Tuple<int,string>>();
+
             Dictionary<string, int> NameToId = new Dictionary<string, int>();
             Dictionary<string, string> NameToModule = new Dictionary<string, string>();
             Dictionary<int, string> IdToName = new Dictionary<int, string>();
@@ -311,14 +379,37 @@ namespace Concepto.Packages.KBDoctor
 
             int objId = 0;
 
-            string objName = "";
+            foreach (KBObject obj in model.Objects.GetAll())
+            {
+                if (Functions.hasModule(obj) || (obj is Module))
+                {
+                    string objName = NombreNodo(obj);
+                    string modulename = ModulesHelper.ObjectModuleName(obj);
+
+                    try
+                    {
+                        objId += 1;
+                        NameToId.Add(objName, objId);
+                        NameToModule.Add(objName, modulename);
+                        IdToName.Add(objId, objName);
+                        IdToModule.Add(objId, modulename);
+                        IdToKey.Add(objId, obj.Key);
+                    }
+                    catch (Exception e)
+                    {// output.AddWarningLine("Can't add : " + objName + " Exception: " + e.Message + " " + e.InnerException);                   
+                    };
+                }
+            }
+ 
 
             foreach (KBObject obj in model.Objects.GetAll())
             {
 
-                if (Functions.hasModule(obj)) //((Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table))
-                {
+                string objName = "";
 
+                if (Functions.hasModule(obj) || (obj is Module)) //((Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table))
+                {
+                    /*
                     objName = NombreNodo(obj);
                     string modulename = ModulesHelper.ObjectModuleName(obj);
 
@@ -333,6 +424,7 @@ namespace Concepto.Packages.KBDoctor
                     }
                     catch (Exception e) { //output.AddWarningLine("Can't add : " + objName); 
                     };
+                    */
 
                     //Tomo las referencias que no sean tablas. 
                     foreach (EntityReference r in obj.GetReferencesTo())
@@ -364,11 +456,12 @@ namespace Concepto.Packages.KBDoctor
                 
             };
 
-            Dictionary<int, int> initialpartition = new Dictionary<int, int>();
+           
             foreach (int node in g.Nodes)
             {
-                // int moduleId = NameToId()
-                initialpartition.Add(node, 5);
+                string moduleName = IdToModule[node];
+                int moduleId = NameToId[moduleName];
+                initialpartition.Add(node, moduleId);
             }
 
             output.AddLine("Before automatic modularization. TurboMQ = " + TurboMQ(g, initialpartition).ToString());

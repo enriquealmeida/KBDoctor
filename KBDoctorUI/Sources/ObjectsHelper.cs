@@ -2039,6 +2039,50 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
         }
 
+        public static void ObjectsWithConstants()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            string title = "KBDoctor - Objects with Constants";
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+
+            output.StartSection(title);
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Description", "Line", "Constant" });
+
+
+
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+
+            ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
+            // IParserEngine parser = parserSrv.CreateEngine();
+
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+
+            ParserInfo parserInfo;
+
+
+
+            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            {
+
+                Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+
+                if (source != null)
+                {
+                    parserInfo = new ParserInfo(source);
+
+                }
+            }
+        }
+
+
         public static void CountTableAccess()
         {
             IKBService kbserv = UIServices.KB;
@@ -2085,13 +2129,23 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             }
             writer.AddTableFooterOnly();
+
+                    
+               
+                
+         
+
+
             writer.Close();
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
             output.EndSection(title, success);
+
         }
 
+
+         
         public static void ObjectsRefactoringCandidates()
         {
             IKBService kbserv = UIServices.KB;
@@ -2905,35 +2959,45 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Attribute", "Domain" });
+            writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Picture" , "Attribute", "Domain" });
             string type = "";
             string name = "";
 
             //All useful objects are added to a collection
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
-                output.AddLine("Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
+               
 
                 Boolean SaveObj = false;
                 if (isGenerated(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel || obj is Procedure))
                 {
+                    output.AddLine("Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
+                    string pic2 = (string) obj.GetPropertyValue("ATT_PICTURE");
+                   /*  if (pic2 == "@!")
+                    {
+                        Console.WriteLine(obj.Name);
+                    }*/
+
                     //string variables = VariablesNotBasedAttributesOrDomain(obj);
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     if (vp != null)
                     {
                         foreach (Variable v in vp.Variables)
                         {
-                            if ((!v.IsStandard) && (v.Type == eDBType.DATE) )
-
+                              if ((!v.IsStandard) && v.Length == 3 ) //&& (v.Type == eDBType.NUMERIC) )
+                          //  if ((!v.IsStandard) && (v.Type != eDBType.CHARACTER))
                             {
                                 string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
                                 string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
 
-                                if (attname == "" && domname == "")
+                                string picture = (string) v.GetPropertyValue("ATT_PICTURE");
+
+                               // if (picture=="@!")
+                               if (attname == "" && domname == "" ) //&& (v.Name.Contains("PUE") || v.Name.Contains("PAI")))
 
                                 {
                                     string vname = v.Name.ToLower();
-                                    writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), v.Name, attname, domname });
+                                    writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), v.Name, picture, attname, domname });
                                 }
                             }
                         }
@@ -3544,6 +3608,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
+            string lista = "";
 
             // selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
@@ -3551,7 +3616,9 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if (KBObjectHelper.IsSpecifiable(obj))
                 {
-                    output.AddLine(obj.TypeDescriptor.Name + " " + obj.Name);
+            //        lista += obj.Name + ";";
+                    //output.Add(obj.QualifiedName.ObjectName.ToString() + ";");
+
                     if (!objToBuild.Contains(obj))
                     {
                         objToBuild.Add(obj);
@@ -3561,7 +3628,11 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 ModulesHelper.AddObjectsReferenceTo(obj, objToBuild, writer);
 
             }
+            foreach (KBObject obj2 in objToBuild)
+            { lista += obj2.Name + ";"; };
 
+           
+            writer.AddTableData(new string[] { lista });
             writer.AddFooter();
             writer.Close();
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
@@ -3573,6 +3644,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 Application.DoEvents();
             } while (GenexusUIServices.Build.IsBuilding);
 
+            output.AddLine(lista);
             output.EndSection(title, true);
 
 
@@ -3685,6 +3757,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.StartSection(title);
 
             string sw="" , sw2 = "";
+            SortedDictionary<string, string> sw3 = new SortedDictionary<string, string>();
        //     KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
        //     writer.AddHeader(title);
             int numObj = 0;
@@ -3710,7 +3783,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     if (obj is Procedure && isMain)
                     {
                         qualifiedName = obj.QualifiedName.ModuleName + (obj.QualifiedName.ModuleName == ""?"a":".a")  + obj.QualifiedName.ObjectName; 
-                            tieneInterfaz = true;
+                        tieneInterfaz = true;
                     }   
                     if (obj is WorkPanel && isMain)
                         tieneInterfaz = true;
@@ -3719,20 +3792,21 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         tieneInterfaz = true;
 
 
-                    string ruleparm = Functions.ExtractRuleParm(obj);
-                    ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
-                    ruleparm = ruleparm.Replace(" ", "");
+                  //  string ruleparm = Functions.ExtractRuleParm(obj);
+                  //  ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
+                   // ruleparm = ruleparm.Replace(" ", "");
                     string callprotocol = obj.GetPropertyValueString("CALL_PROTOCOL");
-                    if (callprotocol == "Internal")
-                            callprotocol="";
+                    if (callprotocol == "")
+                             callprotocol="Internal";
 
                     if (tieneInterfaz)
                     {
-                        if (obj is Procedure && isMain)
+                       // if (obj is Procedure && isMain)
 
                      //   writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, ruleparm });
-                        sw += obj.TypeDescriptor.Name + "\t" + obj.QualifiedName + "\t" + callprotocol  + "\t"  + ruleparm + "\r\n";
-                        sw2 += qualifiedName + "\t" +  callprotocol + "\r\n";
+                        //sw += obj.TypeDescriptor.Name + "\t" + obj.QualifiedName + "\t" + callprotocol  + "\t"  + ruleparm + "\r\n";
+                  //      sw2 += callprotocol+ "\t" + obj.Name + "\t" + qualifiedName + "\r\n";
+                        sw3[callprotocol + "\t" + obj.Name] = qualifiedName;
                     }
                     numObj += 1;
                     if ((numObj % 100) == 0)
@@ -3749,10 +3823,18 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
             string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
 
-           // string fileName = directoryArg + @"\API-" + fechahora + ".txt";
-           // System.IO.File.WriteAllText(fileName, sw);
+            // string fileName = directoryArg + @"\API-" + fechahora + ".txt";
+            // System.IO.File.WriteAllText(fileName, sw);
 
-            string fileName2 = directoryArg + @"\API2-" + fechahora + ".txt";
+
+ 
+           foreach (KeyValuePair<string, string> entry in sw3)
+            {
+                sw2 += entry.Value + "\r\n";
+            }
+            
+
+            string fileName2 = directoryArg + @"\API3-" + fechahora + ".txt";
             System.IO.File.WriteAllText(fileName2, sw2);
             output.AddLine("URL/URI file generated in " + fileName2);
             output.EndSection(title, success);
