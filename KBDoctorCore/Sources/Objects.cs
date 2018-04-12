@@ -233,6 +233,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static KBDAST ParseSourceIntoAST(Artech.Genexus.Common.Parts.ProcedurePart source)
         {
+
             /* if (source != null)
              {
                  Stack stk;
@@ -253,6 +254,30 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                      }
                  }
              }*/
+            return null;
+
+
+            if (source != null)
+            {
+                Stack stk;
+                ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
+                IParserEngine parser = parserSrv.CreateEngine();
+                ParserInfo parserInfo = new ParserInfo(source);
+                foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
+                {
+                    if (token.Token >= 100)
+                    {
+                        //Command   
+                        List<TokensIds>[] IndentTokens = GetIndentationTokens();
+                    }
+                    else
+                    {
+                        //Token
+
+                    }
+                }
+               
+            }
             return null;
 
         }

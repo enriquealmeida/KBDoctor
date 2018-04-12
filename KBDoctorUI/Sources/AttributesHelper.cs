@@ -229,6 +229,7 @@ namespace Concepto.Packages.KBDoctor
                     output.AddLine("Procesing " + a.Name);
                     string suggestedDomains = "";
                     string value = "";
+                    /*
                     //busco el 
                     if (myDict.TryGetValue(Picture, out value))
                     {
@@ -238,6 +239,7 @@ namespace Concepto.Packages.KBDoctor
                     {
                         suggestedDomains = SuggestedDomains(kbserv, a);
                     }
+                    */
                     string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
                     writer.AddTableData(new string[] { attNameLink, a.Description, Picture, suggestedDomains });
                 }

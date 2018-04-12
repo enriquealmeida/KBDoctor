@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
-    class KBDMatrix
+   /* class KBDMatrix
     {
         private readonly double[,] _matrix;
 
@@ -54,5 +54,5 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return resultMatrix;
         }
         
-    }
+    }*/
 }
