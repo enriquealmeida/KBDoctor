@@ -501,8 +501,6 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
-
-
     }
 }
 
