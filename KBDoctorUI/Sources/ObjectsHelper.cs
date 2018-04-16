@@ -2053,24 +2053,18 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Object", "Description", "Line", "Constant" });
 
-
-
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
 
             ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
-            // IParserEngine parser = parserSrv.CreateEngine();
 
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
 
             ParserInfo parserInfo;
 
-
-
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
-
                 Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
                 Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
 
@@ -2107,9 +2101,9 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 {
                     output.AddLine(obj.Name);
                     int updaters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
-                                                where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                                where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
-                                                select model.Objects.Get(r.To)).ToList().Count;
+                                     where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                     where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
+                                     select model.Objects.Get(r.To)).ToList().Count;
                     int inserters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
                                     where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
                                     where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
