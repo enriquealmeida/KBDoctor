@@ -91,7 +91,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.CountTableAccess, new ExecHandler(ExecCountTableAccess), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ObjectsWithConstants, new ExecHandler(ExecObjectsWithConstants), new QueryHandler(QueryKBDoctor));
-            
+           
             AddCommand(CommandKeys.ObjectsDiagnostics, new ExecHandler(ExecObjectsDiagnostics), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.KBInterfaces, new ExecHandler(ExecKBInterfaces), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWINWEB, new ExecHandler(ExecObjectsWINWEB), new QueryHandler(QueryKBDoctor));

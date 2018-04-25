@@ -25,6 +25,7 @@ using Artech.Common.Framework.Commands;
 using Artech.Genexus.Common.Entities;
 using Artech.Genexus.Common.Collections;
 using Artech.Architecture.Common.Descriptors;
+using System.Net;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -65,7 +66,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                     ts.Hours, ts.Minutes, ts.Seconds,
                     ts.Milliseconds / 10);
-
+                
                 output.AddLine(title + " elepsed time: " + elapsedTime);
                 output.EndSection(title, true);
             }
@@ -205,6 +206,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Encoding enc = sr.CurrentEncoding;
                 sr.Close();
 
+    
                 DeleteFirstLines(2, filePath);
 
                 string text = File.ReadAllText(filePath);
@@ -413,7 +415,32 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return last2directories;
         }
 
-        
+        private static List<string> EqualWSDLDirectories(string pathSource, string pathNew, IOutputService output)
+        {
+            string fileWildcard = @"*.*";
+            var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
+            string[] FilesDirectorySource = System.IO.Directory.GetFiles(pathSource, fileWildcard, searchSubDirsArg);
+            List<string> Diffs = new List<string>();
+            foreach (string fileSourcePath in FilesDirectorySource)
+            {
+                string fileNewPath = Path.Combine(pathNew, Path.GetFileName(fileSourcePath));
+                if (File.Exists(fileNewPath))
+                {
+                    FileInfo fileNew = new FileInfo(fileNewPath);
+                    FileInfo fileSource = new FileInfo(fileSourcePath);
+                    if (!Utility.FilesAreEqual(fileSource, fileNew))
+                    {
+                        Diffs.Add(fileSourcePath);
+                    }
+                }
+                else
+                {
+                    output.AddLine("-- No existe: " + fileNewPath);
+                }
+            }
+            return Diffs;
+        }
+
         private static List<string> EqualNavigationDirectories(string pathSource, string pathNew, IOutputService output)
         {
             string fileWildcard = @"*.*";
@@ -462,6 +489,85 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
             }
             return Diffs;
+        }
+
+        public static void SaveObjectsWSDL(KnowledgeBase KB, IOutputService output, bool isSource)
+        {
+            
+            IEnumerable<KBObject> soapobjs = Utility.GetObjectsSOAP(KB);
+            string urlbase = Utility.GetWebRootProperty(KB, "Default"); 
+            foreach (KBObject obj in soapobjs)
+            {
+                string objqname = obj.QualifiedName.ModuleName.ToLower() + ".a" + obj.QualifiedName.ObjectName.ToLower();
+                string path =  objqname + ".aspx?wsdl";
+                string absolutePath = urlbase + path;
+                
+
+                var http = (HttpWebRequest)WebRequest.Create(absolutePath);
+                var response = http.GetResponse();
+                var stream = response.GetResponseStream();
+                var sr = new StreamReader(stream);
+                var content = sr.ReadToEnd();
+                string responseuri = response.ResponseUri.ToString();
+                string wsdldir = Utility.WsdlDir(KB, isSource);
+
+                sr.Dispose();
+                stream.Dispose();
+                response.Dispose();
+                
+                if (responseuri  == urlbase + path)
+                {
+                    output.AddLine(absolutePath + ": OK");
+                    string filename = wsdldir + "\\" + objqname + ".wsdl";
+                    if (File.Exists(filename))
+                    {
+                        File.Delete(filename);
+                    }
+                    File.AppendAllText(filename, content);
+                }
+                else
+                {
+                    output.AddLine(absolutePath + ": Requiere login");
+                }
+            }
+        }
+
+        public static void CompareWSDLDirectories(KnowledgeBase KB, IOutputService output)
+        {
+            string source = Utility.WsdlDir(KB, true);
+            string last = GetLastWSDLDir(KB);
+            List<string> diffs = EqualWSDLDirectories(source, last, output);
+            if (diffs.Count > 0)
+            {
+                output.AddLine("- Diferencias: ");
+                foreach (string diff in diffs)
+                {
+                    output.AddErrorLine("- " + diff);
+                }
+            }
+            else
+            {
+                output.AddLine("- No se encontraron diferencias. ");
+            }
+            
+        }
+
+        internal static string GetLastWSDLDir(KnowledgeBase KB)
+        {
+            string wsdldir = Utility.WsdlComparerDirectory(KB);
+            string[] dirs = Directory.GetDirectories(wsdldir,@"WSDL*");
+            DateTime max = new DateTime(1830, 01, 01);
+            string maxdir = "";
+            foreach(string dir in dirs)
+            {
+                DateTime actual = Utility.GetDateTimeWSDLDirectory(dir);
+                if (DateTime.Compare(actual, max) > 0)
+                {
+                    max = actual;
+                    maxdir = dir;
+                }
+            }
+            return maxdir;
         }
     }
 }

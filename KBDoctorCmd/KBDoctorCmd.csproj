@@ -64,6 +64,9 @@
     <Compile Include="PrepareCompareNavigationsCmd.cs" />
     <Compile Include="RemoveAttributesWithoutTableCmd.cs" />
     <Compile Include="RemoveObjectsNotReferencedCmd.cs" />
+    <Compile Include="CompareWSDLCmd.cs" />
+    <Compile Include="UpdateSourceObjectsWSDLCmd.cs" />
+    <Compile Include="SaveObjectsWSDLCmd.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj">

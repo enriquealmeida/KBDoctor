@@ -42,5 +42,30 @@
     <CloseKnowledgeBase />
   </Target>
   
+  <Target  Name="UpdateSourceWSDL">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <UpdateSourceObjectsWSDLCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+
+  <Target  Name="SaveObjectsWSDL">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <SaveObjectsWSDLCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+
+  <Target  Name="CompareWSDL">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <CompareWSDLCmd/>
+    <CloseKnowledgeBase />
+  </Target>  
+  
+<Target  Name="SaveAndCompareWSDL">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <SaveObjectsWSDLCmd/>
+    <CompareWSDLCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+
 </Project>
 

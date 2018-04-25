@@ -64,5 +64,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             CleanKB.RemoveObjectsNotCalled(kbmodel, output, out lineswriter);
         }
+        public static void SaveObjectsWSDLSource(KnowledgeBase KB, IOutputService output)
+        {
+            Navigation.SaveObjectsWSDL(KB, output, true);
+        }
+        public static void SaveObjectsWSDL(KnowledgeBase KB, IOutputService output)
+        {
+            Navigation.SaveObjectsWSDL(KB, output, false);
+        }
+        public static void CompareWSDL(KnowledgeBase KB, IOutputService output)
+        {
+            Navigation.CompareWSDLDirectories(KB, output);
+        }
     }
 }

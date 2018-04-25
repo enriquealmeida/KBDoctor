@@ -4,4 +4,7 @@
   <UsingTask TaskName="KBDoctorCmd.CleanAllKBObjectVariablesCmd" AssemblyFile="KBDoctorCmd.dll"/>
   <UsingTask TaskName="KBDoctorCmd.RemoveAttributesWithoutTableCmd" AssemblyFile="KBDoctorCmd.dll"/>
   <UsingTask TaskName="KBDoctorCmd.RemoveObjectsNotReferencedCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.SaveObjectsWSDLCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.CompareWSDLCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.UpdateSourceObjectsWSDLCmd" AssemblyFile="KBDoctorCmd.dll"/>
 </Project>
