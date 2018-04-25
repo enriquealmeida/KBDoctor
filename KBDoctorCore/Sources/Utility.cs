@@ -503,7 +503,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 #if EVO3
             myKey = sdtItem.BasedOn.ObjKey;
 #else
-            myKey = sdtItem.BasedOn.ObjKey;
+            myKey = sdtItem.BasedOn.Key;
 #endif
             //Termina compatibilidad Evo3 y 15. 
             return myKey;

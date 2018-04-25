@@ -36,7 +36,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">
+  <PropertyGroup Condition="'$(TargetFrameworkVersion)' == 'v4.6' ">
     <DefineConstants>EVO3</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
