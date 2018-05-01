@@ -301,3 +301,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+KBDoctorCmd/SeteoVariables_Evo3_ealmeida.cmd
+KBDoctorCmd/RunMsbuild_ealmeida.bat

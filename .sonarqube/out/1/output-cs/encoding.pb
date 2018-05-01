@@ -1,24 +1,0 @@
-U
-LC:\Program Files (x86)\GeneXus\GeneXus15PlatformSDK\Src\CommonPackageInfo.csutf-8H
-?C:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\AboutBox1.csutf-8V
-FC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\AttributesHelper.cswindows-1252S
-JC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\AskAttributeandTable.csutf-8H
-?C:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\Functions.csutf-8T
-KC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\CodeGeneration\CodeGeneration.csutf-8J
-AC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\GraphHelper.csutf-8C
-:C:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\Labs.csutf-8L
-CC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\ModulesHelper.csutf-8O
-FC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\NavigationHelper.csutf-8F
-=C:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\KbStats.csutf-8L
-CC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\ReplaceDomain.csutf-8J
-AC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\ThemeHelper.csutf-8L
-CC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\CleanKBHelper.csutf-8J
-AC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\CommandKeys.csutf-8M
-DC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\CommandManager.csutf-8M
-DC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\KBDoctorHelper.csutf-8P
-GC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\KBDoctorXMLWriter.csutf-8S
-CC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\ObjectsHelper.cswindows-1252F
-=C:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\Package.csutf-8P
-GC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\PromptDescription.csutf-8N
-EC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Properties\AssemblyInfo.csutf-8K
-BC:\Models\nsanguinetti\KBDoctor\KBDoctorUI\Sources\TablesHelper.csutf-8
