@@ -511,8 +511,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         }
                     }
                 }
-               
-               
             }
         }
 
@@ -600,7 +598,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         sdtItem.Signed = signed;
 
                     }
-
                 }
             }
         }

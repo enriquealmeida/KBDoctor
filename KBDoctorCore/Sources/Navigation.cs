@@ -305,7 +305,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 output.AddLine("-- NO SE ENCONTRO EL OBJETO: " + qname.ToString());
                             }
                         }
-                        CopyDifferences(FilesDiff,Last2directories[0],Last2directories[1]);
+                        CopyDifferences(FilesDiff,Last2directories[0],Last2directories[1],"NvgErrors");
                     }
                     else
                     {
@@ -339,11 +339,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
 
 
-        private static void CopyDifferences(List<string> filenames, string path1, string path2)
+        private static void CopyDifferences(List<string> filenames, string path1, string path2, string name)
         {
             string nvgdir = Directory.GetParent(path1).FullName;
             string spcdir = Directory.GetParent(nvgdir).FullName;
-            string copydir = Path.Combine(spcdir, "NvgErrors");
+            string copydir = Path.Combine(spcdir, name);
 
             if (Directory.Exists(copydir))
                 Directory.Delete(copydir, true);
@@ -363,7 +363,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
 
             CompressDir(copydir);
-
         }
 
         private static void CompressDir(string Dir)
@@ -372,8 +371,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
 
         private static string[] GetLast2Directorys(string[] Files, IOutputService output)
-        {
-            
+        {   
             DateTime FechaMax = new DateTime(1830,1,1);
             DateTime FechaMaxSec = new DateTime(1830,1,1);
             string DirectoryMax = "";
@@ -481,7 +479,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         File.WriteAllText(fileSourcePath, datalineSource + "\r\n" + namelineSource + "\r\n" + textsource, encSource);
                     }
 
-                    
                 }
                 else
                 {
@@ -501,7 +498,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string objqname = obj.QualifiedName.ModuleName.ToLower() + ".a" + obj.QualifiedName.ObjectName.ToLower();
                 string path =  objqname + ".aspx?wsdl";
                 string absolutePath = urlbase + path;
-                
 
                 var http = (HttpWebRequest)WebRequest.Create(absolutePath);
                 var response = http.GetResponse();
@@ -537,13 +533,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string source = Utility.WsdlDir(KB, true);
             string last = GetLastWSDLDir(KB);
             List<string> diffs = EqualWSDLDirectories(source, last, output);
+            List<string> FilesDiff = new List<string>();
             if (diffs.Count > 0)
             {
                 output.AddLine("- Diferencias: ");
                 foreach (string diff in diffs)
                 {
+                    string filename = Path.GetFileName(diff);
+                    FilesDiff.Add(filename);
                     output.AddErrorLine("- " + diff);
                 }
+                CopyDifferences(FilesDiff, source, last, "WSDLErrors");
             }
             else
             {

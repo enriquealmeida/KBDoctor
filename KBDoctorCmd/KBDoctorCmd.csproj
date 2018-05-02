@@ -58,6 +58,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CleanProcess.cs" />
+    <Compile Include="ObjectsWithoutInOutCmd.cs" />
     <Compile Include="CleanAllKBObjectVariablesCmd.cs" />
     <Compile Include="CompareNavigationsCmd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

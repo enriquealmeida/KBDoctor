@@ -1,0 +1,844 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ExportFile>
+  <KMW>
+    <MajorVersion>4</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <Build>121631</Build>
+  </KMW>
+  <Source kb="c1f825f1-c13d-4bc0-93d9-91a262e0f979" username="VAIOEALMEIDA\nsanguinetti" UNCPath="\\VAIOEALMEIDA\C$\Models\nsanguinetti\MT15_TestWWP11">
+    <Version guid="4cc9993b-4682-42b7-9c7c-a2d5aeaf2c11" name="MT15_TestWWP11" />
+  </Source>
+  <Objects>
+    <Object parent="Seguridad" parentType="c88fffcd-b6f8-0000-8fec-00b5497e2117" parentGuid="1d41214f-acf6-4fd4-849e-d465901e4e3b" user="VAIOEALMEIDA\nsanguinetti" versionDate="2018-04-16T18:42:01.0000000Z" lastUpdate="2018-04-27T13:57:39.0000000Z" checksum="93218e99ee67cf8200d2d6470b8127ab" fullyQualifiedName="Seguridad.SetCustomProperties" guid="d97a58c3-6106-446c-993f-10ab59c281b7" name="SetCustomProperties" type="84a12160-f59b-4ad7-a683-ea4481ac23e9" description="Set Custom Properties">
+      <Part type="528d1c06-a9c2-420d-bd35-21dca83f12ff">
+        <Source><![CDATA[	&CustomProperty = new()
+	
+	&CustomProperty.Id    = "LDAPpath"
+	&CustomProperty.Token    = "LDAPpath"
+	&CustomProperty.Value    = "LDAP://concepto.com.uy/OU=Usuarios,OU=Concepto,DC=concepto,DC=com,DC=uy"
+	&AdditionalParameter.Properties.Add(&CustomProperty)
+	
+	&CustomProperty = new()
+	&CustomProperty.Id    = "LDAPFilter"
+	&CustomProperty.Token    = "LDAPFilter"
+	&CustomProperty.Value    = "(&(memberOf=CN=usuarios_mt,OU=Listas Distribucion,OU=Concepto,DC=concepto,DC=com,DC=uy)(CN="+ &UserName +"))"
+	&AdditionalParameter.Properties.Add(&CustomProperty)
+	
+	Do Case
+		Case &KeepMeLoggedIn	
+			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.Authentication
+		Case &RememberMe		
+			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.Login
+		Otherwise
+			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.None		
+	EndCase
+	
+	&AdditionalParameter.AuthenticationTypeName = &LogOnTo
+	// Login User //////////////////////////////////////////////
+	&LoginOK = GAMRepository.Login(&UserName, &UserPassword, &AdditionalParameter, &Errors )
+	If &LoginOK
+		//Get my custom application data in json format ////////////
+		//The &ApplicationData is saved in the Login action when authentication type is "Web service" or "Custom"
+		&ApplicationData = GAMSession.GetApplicationData()
+		If not &ApplicationData.IsEmpty()
+			&GAMExampleSDTApplicationData.FromJson(&ApplicationData)
+		Endif
+		////////////////////////////////////////////////////////////
+		
+		////////////////////////////////////////////////////////////
+		&ret = setuserid(&UserName.ToUpper())
+		&URL = GAMRepository.GetLastErrorsURL()
+		If &URL.IsEmpty()
+				GAMApplication.GoHome()
+		Else
+			Link(&URL)
+		Endif
+		////////////////////////////////////////////////////////////	
+	Else
+		If &Errors.Count > 0 
+			Do Case
+				Case (&Errors.Item(1).Code = GAMErrorMessages.UserPasswordExpired   OR  &Errors.Item(1).Code = GAMErrorMessages.UserPasswordMustBeChanged)
+					//Webpanel to Change Password
+					GAMExampleChangePassword(&ApplicationClientId)
+				Case &Errors.Item(1).Code = GAMErrorMessages.UserMissingRequiredData
+					//Webpanel to Complete User data
+					GAMExampleUpdateRegisterUser(&ApplicationClientId)
+				Otherwise
+					Do 'DisplayMessages'
+			EndCase
+		EndIf
+	Endif
+
+Sub 'DisplayMessages'
+
+	For &Error in &Errors
+		If &Error.Code <> GAMErrorMessages.SessionExpired
+			Msg(Format(!"%1 (GAM%2)", &Error.Message, &Error.Code))
+		Endif
+	EndFor
+
+EndSub
+]]></Source>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="c414ed00-8cc4-4f44-8820-4baf93547173">
+        <Properties />
+      </Part>
+      <Part type="9b0a32a3-de6d-4be1-a4dd-1b85d3741534">
+        <Source><![CDATA[parm(in:&LogOnTo, in:&UserName, in:&UserPassword, in:&KeepMeLoggedIn, inout: &RememberMe);
+]]></Source>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="763f0d8b-d8ac-4db4-8dd4-de8979f2b5b9">
+        <Source><![CDATA[]]></Source>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="e4c4ade7-53f0-4a56-bdfd-843735b66f47">
+        <Variable Name="URL">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>URL</Value></Property><Property><Name>idIsAutoDefinedVariable</Name><Value>True</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:Url, GeneXus</Value></Property></Properties>
+        </Variable>
+        <Variable Name="AdditionalParameter">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>AdditionalParameter</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMLoginAdditionalParameters</Value></Property><Property><Name>AttCollection</Name><Value>False</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ApplicationData">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ApplicationData</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMSessionSharedData</Value></Property></Properties>
+        </Variable>
+        <Variable Name="AuthenticationType">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>AuthenticationType</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMAuthenticationTypeSimple</Value></Property></Properties>
+        </Variable>
+        <Variable Name="AuthenticationTypes">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>AuthenticationTypes</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMAuthenticationTypeSimple</Value></Property><Property><Name>AttCollection</Name><Value>True</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ButtonFacebook">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ButtonFacebook</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Image</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ButtonGoogle">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ButtonGoogle</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Image</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ButtonTwitter">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ButtonTwitter</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Image</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Connection">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Connection</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMConnection</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ConnectionInfoCollection">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ConnectionInfoCollection</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMConnectionInfo</Value></Property><Property><Name>AttCollection</Name><Value>True</Value></Property></Properties>
+        </Variable>
+        <Variable Name="CustomProperty">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>CustomProperty</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMProperty</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Error">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Error</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMError</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Errors">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Errors</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMError</Value></Property><Property><Name>AttCollection</Name><Value>True</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ErrorsLogin">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ErrorsLogin</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMError</Value></Property><Property><Name>AttCollection</Name><Value>True</Value></Property></Properties>
+        </Variable>
+        <Variable Name="GAMExampleSDTApplicationData">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>GAMExampleSDTApplicationData</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>sdt:GAMExampleSDTApplicationData</Value></Property></Properties>
+        </Variable>
+        <Variable Name="GAMExampleSDTApplicationData1">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>GAMExampleSDTApplicationData1</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>sdt:GAMExampleSDTApplicationData</Value></Property></Properties>
+        </Variable>
+        <Variable Name="IsAuthorized">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>IsAuthorized</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="isOK">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>isOK</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="isRedirect">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>isRedirect</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="KeepMeLoggedIn">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>KeepMeLoggedIn</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Language">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Language</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMLanguageISO639_3</Value></Property></Properties>
+        </Variable>
+        <Variable Name="LoginOK">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>LoginOK</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="LogOnTo">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>LogOnTo</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMUserIdentification</Value></Property></Properties>
+        </Variable>
+        <Variable Name="RememberMe">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>RememberMe</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Repository">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Repository</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMRepository</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ret">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ret</Value></Property></Properties>
+        </Variable>
+        <Variable Name="SecurityFunctionalityKeys">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>SecurityFunctionalityKeys</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:SecGAMFunctionalityKey, Dominios</Value></Property><Property><Name>AttCollection</Name><Value>True</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Session">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Session</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMSession</Value></Property></Properties>
+        </Variable>
+        <Variable Name="SessionValid">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>SessionValid</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="UserName">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>UserName</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMUserIdentification</Value></Property></Properties>
+        </Variable>
+        <Variable Name="UserPassword">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>UserPassword</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMPassword</Value></Property><Property><Name>IsPassword</Name><Value>True</Value></Property><Property><Name>AutoResize</Name><Value>False</Value></Property></Properties>
+        </Variable>
+        <Variable Name="UserRememberMe">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>UserRememberMe</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMRememberUserTypes</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ApplicationClientId">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ApplicationClientId</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMClientApplicationId</Value></Property><Property><Name>AttCollection</Name><Value>False</Value></Property><Property><Name>ControlType</Name><Value>Edit</Value></Property></Properties>
+        </Variable>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="ad3ca970-19d0-44e1-a7b7-db05556e820c">
+        <Help>
+          <HelpItem>
+            <Language>88313f43-5eb2-0000-0028-e8d9f5bf9588-Spanish</Language>
+            <Content />
+          </HelpItem>
+        </Help>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="babf62c5-0111-49e9-a1c3-cc004d90900a">
+        <Properties />
+      </Part>
+      <Properties><Property><Name>Name</Name><Value>SetCustomProperties</Value></Property><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+    </Object>
+    <Object parent="GAM_Frontend" parentType="00000000-0000-0000-0000-000000000008" parentGuid="2896f7a3-4874-40c9-ac7e-f57685983b0f" user="GeneXus" versionDate="2018-03-19T18:15:20.0000000Z" lastUpdate="2018-01-24T13:37:37.0000000Z" checksum="cbc43b2d86c4f6e14768d47401451d57" fullyQualifiedName="GAMExampleLogin" guid="891f84b2-0377-4aa3-b0b8-60cb3d882caf" name="GAMExampleLogin" type="c9584656-94b6-4ccd-890f-332d11fc2c25" description="Login">
+      <Part type="d24a58ad-57ba-41b7-9e6e-eaca3543c778">
+        <Source><![CDATA[<GxMultiForm rootId="2" version="html:15.0.0;layout:15.0.16"><Form id="2" type="layout"><detail><layout><table controlName="MainTable" class="BodyContainer" tableType="Responsive" responsiveSizes="[{&quot;scale&quot;:&quot;sm&quot;,&quot;rows&quot;:[[{&quot;width&quot;:100,&quot;offset&quot;:0}]]}]"><row><cell hAlign="Default"><table controlName="Table1" class="LoginContainer" tableType="Responsive" responsiveSizes="[{&quot;scale&quot;:&quot;xs&quot;,&quot;rows&quot;:[[],[{&quot;width&quot;:100,&quot;offset&quot;:0}]]}]"><row><cell cellClass="" hAlign="Center" vAlign="Default"><errorviewer controlName="ErrorViewer1" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;DisplayMode&lt;/Name&gt;&lt;Value&gt;Bullet List&lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell></row><row><cell hAlign="Center" vAlign="Default"><table controlName="TableLogin" class="TableLogin" tableType="Responsive" responsiveSizes="[{&quot;scale&quot;:&quot;xs&quot;,&quot;rows&quot;:[[],[{&quot;width&quot;:100,&quot;offset&quot;:0}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:58,&quot;offset&quot;:25}]]},{&quot;scale&quot;:&quot;sm&quot;,&quot;rows&quot;:[[],[{&quot;width&quot;:100,&quot;offset&quot;:0}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}]]},{&quot;scale&quot;:&quot;md&quot;,&quot;rows&quot;:[[],[],[],[],[],[{&quot;label&quot;:25}]]},{&quot;scale&quot;:&quot;lg&quot;,&quot;rows&quot;:[[],[{&quot;label&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}],[{&quot;width&quot;:67,&quot;offset&quot;:17}]]}]"><row><cell hAlign="Center" vAlign="Default"><textblock controlName="Textblock1" caption="LOGIN" class="BigTitle" /></cell></row><row><cell hAlign="Center" vAlign="Default"><textblock controlName="CurrentRepository" caption="Text Block" class="VersionText" /></cell></row><row><cell cellClass="" hAlign="Center"><data attribute="&amp;LogOnTo" labelPosition="Left" class="LoginComboAttribute" inviteMessage="Log on to" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;ControlType&lt;/Name&gt;&lt;Value&gt;Combo Box&lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell></row><row><cell cellClass="" hAlign="Center" vAlign="Default"><data attribute="&amp;UserName" labelPosition="None" class="LoginAttribute" inviteMessage="User Name" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;Autocomplete&lt;/Name&gt;&lt;Value&gt;False&lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell></row><row><cell cellClass="" vAlign="Default"><data attribute="&amp;UserPassword" labelPosition="None" class="LoginAttribute" inviteMessage="Password" /></cell></row><row><cell cellClass="" vAlign="Default"><data attribute="&amp;KeepMeLoggedIn" labelPosition="Left" labelCaption="" class="CheckBox Label" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;ControlTitle&lt;/Name&gt;&lt;Value&gt;Keep me logged in&lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell></row><row><cell cellClass="" hAlign="Default" vAlign="Default"><data attribute="&amp;RememberMe" labelCaption="" class="CheckBox Label" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;ControlTitle&lt;/Name&gt;&lt;Value&gt;Remember Me&lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell></row><row><cell cellClass="" hAlign="Default" vAlign="Default"><action controlName="Login" onClickEvent="Enter" caption="LOG IN" class="BtnLogin" /></cell></row><row><cell cellClass="" hAlign="Center" vAlign="Default"><textblock controlName="TBRememberMe2" caption="FORGOT YOUR PASSWORD?" class="PagingText TextLikeLink" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;Event&lt;/Name&gt;&lt;Value&gt;'ForgotPassword'&lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell></row><row><cell hAlign="Center"><table controlName="Table2"><row><cell cellClass="" hAlign="Right" vAlign="Default"><textblock controlName="Textblock3" caption="or" class="SpecialText" /></cell><cell cellClass="" hAlign="Left" vAlign="Default"><textblock controlName="TBRegister" caption="create an account" class="ActionText TextLikeLink" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;Event&lt;/Name&gt;&lt;Value&gt;'Register'&lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell></row></table></cell></row><row><cell cellClass="" hAlign="Right" vAlign="Default"><table controlName="Buttons" class="TableButtons" tableType="Responsive" responsiveSizes="[{&quot;scale&quot;:&quot;xs&quot;,&quot;rows&quot;:[[{&quot;visible&quot;:false},{&quot;width&quot;:17,&quot;offset&quot;:17},{&quot;width&quot;:17},{&quot;width&quot;:17},{&quot;width&quot;:17}]]},{&quot;scale&quot;:&quot;sm&quot;,&quot;rows&quot;:[[{&quot;width&quot;:42,&quot;offset&quot;:8},{&quot;width&quot;:8},{&quot;width&quot;:8},{&quot;width&quot;:8},{&quot;width&quot;:8}]]},{&quot;scale&quot;:&quot;md&quot;,&quot;rows&quot;:[[{},{},{},{},{&quot;width&quot;:8}]]},{&quot;scale&quot;:&quot;lg&quot;,&quot;rows&quot;:[[{&quot;width&quot;:42,&quot;offset&quot;:8},{&quot;width&quot;:8},{&quot;width&quot;:8},{&quot;width&quot;:8},{&quot;width&quot;:8}]]}]"><row><cell cellClass="" hAlign="Left" vAlign="Default"><textblock controlName="Textblock2" caption="OR LOGIN WITH" class="SpecialText" /></cell><cell cellClass="" hAlign="Left" vAlign="Default"><image controlName="ButtonFacebook" image="9fb193d9-64a4-4d30-b129-ff7c76830f7e-GAMButtonFacebookSmall" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;alt&lt;/Name&gt;&lt;Value&gt;Sign in with Facebook&lt;/Value&gt;&lt;/Property&gt;&lt;Property&gt;&lt;Name&gt;title&lt;/Name&gt;&lt;Value&gt;Sign in with Facebook&lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell><cell cellClass="" hAlign="Left" vAlign="Default"><image controlName="ButtonTwitter" image="9fb193d9-64a4-4d30-b129-ff7c76830f7e-GAMButtonTwitterSmall" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;alt&lt;/Name&gt;&lt;Value&gt;Sign in with Twitter&lt;/Value&gt;&lt;/Property&gt;&lt;Property&gt;&lt;Name&gt;title&lt;/Name&gt;&lt;Value&gt;Sign in with Twitter&lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell><cell cellClass="" hAlign="Left" vAlign="Default"><image controlName="ButtonGoogle" image="9fb193d9-64a4-4d30-b129-ff7c76830f7e-GAMButtonGoogleSmall" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;alt&lt;/Name&gt;&lt;Value&gt;Sign in with Google&lt;/Value&gt;&lt;/Property&gt;&lt;Property&gt;&lt;Name&gt;title&lt;/Name&gt;&lt;Value&gt;Sign in with Google&lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell><cell cellClass="" hAlign="Left" vAlign="Default"><image controlName="ButtonGAMRemote" image="9fb193d9-64a4-4d30-b129-ff7c76830f7e-GAMButtonGAMRemoteSmall" PATTERN_ELEMENT_CUSTOM_PROPERTIES="&lt;Properties&gt;&lt;Property&gt;&lt;Name&gt;alt&lt;/Name&gt;&lt;Value&gt;Sign in with remote GAM &lt;/Value&gt;&lt;/Property&gt;&lt;Property&gt;&lt;Name&gt;title&lt;/Name&gt;&lt;Value&gt;Sign in with remote GAM &lt;/Value&gt;&lt;/Property&gt;&lt;/Properties&gt;" /></cell></row></table></cell></row></table></cell></row></table></cell></row></table></layout></detail></Form></GxMultiForm>]]></Source>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="9b0a32a3-de6d-4be1-a4dd-1b85d3741534">
+        <Source><![CDATA[]]></Source>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="c44bd5ff-f918-415b-98e6-aca44fed84fa">
+        <Source><![CDATA[Event Start
+	CurrentRepository.Visible = false
+	//Used when multiple repository connections exist
+	&isOK = GAM.CheckConnection()
+	&ConnectionInfoCollection = GAM.GetConnections()
+	If not &isOK		
+		If &ConnectionInfoCollection.Count > 0 
+			//The first connection found is established by default 
+			&isOK = GAM.SetConnection(&ConnectionInfoCollection.Item(1).Name, &Errors)			
+		EndIf		
+	Endif
+	If &ConnectionInfoCollection.Count > 1
+		&GAMRepository = GAMrepository.Get()
+		CurrentRepository.Caption = "Repository: " + &GAMRepository.Name
+		CurrentRepository.Visible = true
+	EndIf
+
+	Do 'DisplayExternalAuthentications'
+EndEvent
+
+Event Refresh
+	&isRedirect = False	
+	//Gets last error in the GAM 
+	&ErrorsLogin = GAMRepository.GetLastErrors()
+	If &ErrorsLogin.Count > 0
+		Do Case
+		Case &ErrorsLogin.Item(1).Code = GAMErrorMessages.ConnectionNotSpecified
+			//DO NOT display these messages
+		Case (&ErrorsLogin.Item(1).Code = GAMErrorMessages.UserPasswordExpired   OR  &ErrorsLogin.Item(1).Code = GAMErrorMessages.UserPasswordMustBeChanged)
+			//Webpanel to Change Password
+			GAMExampleChangePassword(&ApplicationClientId)
+			&isRedirect 	= True
+		Case &ErrorsLogin.Item(1).Code = GAMErrorMessages.UserMissingRequiredData
+			//Webpanel to Complete User data
+			GAMExampleUpdateRegisterUser(&ApplicationClientId)
+			&isRedirect 	= True
+		Otherwise
+			&UserPassword.SetEmpty()
+			&Errors = &ErrorsLogin
+			Do 'DisplayMessages'
+		EndCase
+	Endif
+
+	If not &isRedirect
+		//Gets last error in GAM
+		&SessionValid = GAMSession.IsValid(&Session, &Errors)
+
+		If &SessionValid and not &Session.IsAnonymous
+			&URL = GAMRepository.GetLastErrorsURL()
+			If &URL.IsEmpty()
+				GAMRepository.ApplicationGoHome(GAMInternalGUIDs.AppGAMUserBackend)
+				&Errors = GAMRepository.GetLastErrors()
+				Do 'DisplayMessages'
+			Else
+				Link(&URL)
+			Endif
+		Else
+			//List Log on to
+			&LogOnTo.Clear()
+			&AuthenticationTypes = GAMRepository.GetEnabledAuthenticationTypes(&Language, &Errors)
+			For &AuthenticationType in &AuthenticationTypes
+				If &AuthenticationType.NeedUserName //Authentication types you must enter the username in this web panel
+					&LogOnTo.AddItem(&AuthenticationType.Name, &AuthenticationType.Description)
+				EndIf
+			EndFor
+			If &LogOnTo.Count 	<= 1
+				&LogOnTo.Visible = False
+			Else
+				&LogOnTo = &AuthenticationTypes.Item(1).Name
+			Endif
+
+			//Initialize variables if the user chooses to keep that information 
+			&isOK = GAMRepository.GetRememberLogin(&LogOnTo, &UserName, &UserRememberMe, &Errors)
+			If &UserRememberMe = GAMRememberUserTypes.Login
+				&RememberMe = True
+			Endif
+
+			//Select Default Authentication Type, Display Remember User if it is enabled on Repository
+			&Repository = GAMRepository.Get()
+			If &LogOnTo.Count > 1
+				&LogOnTo = &Repository.DefaultAuthenticationTypeName
+			Endif
+			Do Case
+				Case &Repository.UserRememberMeType = GAMRepositoryRememberUserTypes.Login
+					&RememberMe.Visible 	= True
+				Case &Repository.UserRememberMeType = GAMRepositoryRememberUserTypes.Authentication
+					&KeepMeLoggedIn.Visible	= True
+				Case &Repository.UserRememberMeType = GAMRepositoryRememberUserTypes.Both
+					&RememberMe.Visible		= True
+					&KeepMeLoggedIn.Visible	= True
+				Otherwise
+					&RememberMe.Visible		= False
+					&KeepMeLoggedIn.Visible	= False
+			EndCase
+			
+		EndIf
+	Endif
+EndEvent
+
+Event Enter
+	//Set Remember User type
+	Do Case
+		Case &KeepMeLoggedIn	
+			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.Authentication
+		Case &RememberMe		
+			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.Login
+		Otherwise
+			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.None		
+	EndCase
+
+	////////////////////////////////////////////////////////////
+	//Send Custom Properties (optional) ////////////////////////
+	//&CustomProperty.Id	= "branch"
+	//&CustomProperty.Value	= "120"
+	//&AdditionalParameter.Properties.Add(&CustomProperty)
+	////////////////////////////////////////////////////////////
+	
+	&AdditionalParameter.AuthenticationTypeName = &LogOnTo
+	
+	//Login User	
+	&LoginOK = GAMRepository.Login(&UserName, &UserPassword, &AdditionalParameter, &Errors )
+	If &LoginOK
+		//Get my custom application data in json format
+		
+		//The &ApplicationData is saved in the Login action when authentication type is "Web service" or "Custom"
+		&ApplicationData = GAMSession.GetApplicationData()
+		If not &ApplicationData.IsEmpty()
+			&GAMExampleSDTApplicationData.FromJson(&ApplicationData)
+		Endif		
+		
+		&URL = GAMRepository.GetLastErrorsURL()
+		If &URL.IsEmpty()
+			GAMRepository.ApplicationGoHome(GAMInternalGUIDs.AppGAMUserBackend)
+			&Errors = GAMRepository.GetLastErrors()
+			Do 'DisplayMessages'
+		Else
+			Link(&URL)
+		Endif
+		
+	Else
+		If &Errors.Count > 0 
+			Do Case
+				Case (&Errors.Item(1).Code = GAMErrorMessages.UserPasswordExpired   OR  &Errors.Item(1).Code = GAMErrorMessages.UserPasswordMustBeChanged)
+					//Webpanel to Change Password
+					GAMExampleChangePassword(&ApplicationClientId)
+				Case &Errors.Item(1).Code = GAMErrorMessages.UserMissingRequiredData
+					//Webpanel to Complete User data
+					GAMExampleUpdateRegisterUser(&ApplicationClientId)
+				Otherwise
+					&UserPassword.SetEmpty()
+					Do 'DisplayMessages'
+			EndCase
+		EndIf
+	Endif
+EndEvent
+
+Sub 'DisplayMessages'
+	For &Error in &Errors
+		If &Error.Code <> GAMErrorMessages.SessionExpired
+			Msg(Format(!"%1 (GAM%2)", &Error.Message, &Error.Code))
+		Endif
+	EndFor
+EndSub
+
+Event 'ForgotPassword'
+	GAMExampleRecoverPasswordStep1(&ApplicationClientId)
+EndEvent
+
+Event 'Register'
+	GAMExampleRegisterUser()
+EndEvent
+
+Event ButtonFacebook.Click
+	GAMRepository.LoginFacebook()
+EndEvent
+
+Event ButtonGoogle.Click
+	GAMRepository.LoginGoogle()
+EndEvent
+
+Event ButtonTwitter.Click		
+	GAMRepository.LoginTwitter()
+EndEvent
+
+Event ButtonGAMRemote.Click
+	GAMRepository.LoginGAMRemote()
+EndEvent
+
+Sub 'DisplayExternalAuthentications'	
+	Buttons.Visible				= False
+	If GAMRepository.CanAuthenticateWith(GAMAuthenticationTypes.Facebook)
+		ButtonFacebook.Visible 	= True	
+		Buttons.Visible			= True
+	Else
+		ButtonFacebook.Visible 	= False
+	Endif
+	If GAMRepository.CanAuthenticateWith(GAMAuthenticationTypes.Google)
+		ButtonGoogle.Visible	= True		
+		Buttons.Visible			= True
+	Else
+		ButtonGoogle.Visible	= False
+	Endif
+	If GAMRepository.CanAuthenticateWith(GAMAuthenticationTypes.Twitter)
+		ButtonTwitter.Visible 	= True	
+		Buttons.Visible			= True
+	Else
+		ButtonTwitter.Visible	= False
+	Endif
+	If GAMRepository.CanAuthenticateWith(GAMAuthenticationTypes.GAMRemote)
+		ButtonGAMRemote.Visible = True
+		Buttons.Visible			= True
+	Else
+		ButtonGAMRemote.Visible	= False
+	Endif
+EndSub
+]]></Source>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="763f0d8b-d8ac-4db4-8dd4-de8979f2b5b9">
+        <Source><![CDATA[]]></Source>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="e4c4ade7-53f0-4a56-bdfd-843735b66f47">
+        <Variable Name="AdditionalParameter">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>AdditionalParameter</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMLoginAdditionalParameters</Value></Property><Property><Name>AttCollection</Name><Value>False</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ApplicationClientId">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ApplicationClientId</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMClientApplicationId</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ApplicationData">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ApplicationData</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMSessionSharedData</Value></Property></Properties>
+        </Variable>
+        <Variable Name="AuthenticationType">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>AuthenticationType</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMAuthenticationTypeSimple</Value></Property></Properties>
+        </Variable>
+        <Variable Name="AuthenticationTypes">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>AuthenticationTypes</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMAuthenticationTypeSimple</Value></Property><Property><Name>AttCollection</Name><Value>True</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ConnectionInfoCollection">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ConnectionInfoCollection</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMConnectionInfo</Value></Property><Property><Name>AttCollection</Name><Value>True</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Error">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Error</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMError</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Errors">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Errors</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMError</Value></Property><Property><Name>AttCollection</Name><Value>True</Value></Property></Properties>
+        </Variable>
+        <Variable Name="ErrorsLogin">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>ErrorsLogin</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMError</Value></Property><Property><Name>AttCollection</Name><Value>True</Value></Property></Properties>
+        </Variable>
+        <Variable Name="GAMExampleSDTApplicationData">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>GAMExampleSDTApplicationData</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>sdt:GAMExampleSDTApplicationData</Value></Property></Properties>
+        </Variable>
+        <Variable Name="isOK">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>isOK</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="isRedirect">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>isRedirect</Value></Property><Property><Name>idIsAutoDefinedVariable</Name><Value>False</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="KeepMeLoggedIn">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>KeepMeLoggedIn</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Language">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Language</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMLanguageISO639_3</Value></Property></Properties>
+        </Variable>
+        <Variable Name="LoginOK">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>LoginOK</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="LogOnTo">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>LogOnTo</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMDescriptionShort</Value></Property></Properties>
+        </Variable>
+        <Variable Name="RememberMe">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>RememberMe</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Repository">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Repository</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMRepository</Value></Property></Properties>
+        </Variable>
+        <Variable Name="Session">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>Session</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMSession</Value></Property></Properties>
+        </Variable>
+        <Variable Name="SessionValid">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>SessionValid</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>bas:Boolean</Value></Property></Properties>
+        </Variable>
+        <Variable Name="URL">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>URL</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMURL</Value></Property></Properties>
+        </Variable>
+        <Variable Name="UserName">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>UserName</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMUserIdentification</Value></Property></Properties>
+        </Variable>
+        <Variable Name="UserPassword">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>UserPassword</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMPassword</Value></Property><Property><Name>IsPassword</Name><Value>True</Value></Property><Property><Name>AutoResize</Name><Value>False</Value></Property></Properties>
+        </Variable>
+        <Variable Name="UserRememberMe">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>UserRememberMe</Value></Property><Property><Name>idBasedOn</Name><Value>Domain:GAMRememberUserTypes</Value></Property></Properties>
+        </Variable>
+        <Variable Name="GAMRepository">
+          <Documentation />
+          <Properties><Property><Name>Name</Name><Value>GAMRepository</Value></Property><Property><Name>idIsAutoDefinedVariable</Name><Value>False</Value></Property><Property><Name>ATTCUSTOMTYPE</Name><Value>exo:GAMRepository</Value></Property></Properties>
+        </Variable>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="ad3ca970-19d0-44e1-a7b7-db05556e820c">
+        <Help>
+          <HelpItem>
+            <Language>88313f43-5eb2-0000-0028-e8d9f5bf9588-Spanish</Language>
+            <Content />
+          </HelpItem>
+        </Help>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Part type="babf62c5-0111-49e9-a1c3-cc004d90900a">
+        <InnerHtml><![CDATA[]]></InnerHtml>
+        <Properties><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      </Part>
+      <Properties><Property><Name>Name</Name><Value>GAMExampleLogin</Value></Property><Property><Name>Description</Name><Value>Login</Value></Property><Property><Name>Theme</Name><Value>c804fdbd-7c0b-440d-8527-4316c92649a6-Carmine</Value></Property><Property><Name>MasterPage</Name><Value>(none)</Value></Property><Property><Name>IsMain</Name><Value>True</Value></Property><Property><Name>IntegratedSecurityLevel</Name><Value>SecurityNone</Value></Property><Property><Name>WebUX</Name><Value>SMOOTH</Value></Property><Property><Name>IsDefault</Name><Value>False</Value></Property></Properties>
+      <Categories>GAM_Samples-web</Categories>
+    </Object>
+  </Objects>
+  <Dependencies>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Object" Id="84a12160-f59b-4ad7-a683-ea4481ac23e9">
+      <Properties Name="Procedure" PackageName="GenexusBL" />
+    </Reference>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Part" Id="528d1c06-a9c2-420d-bd35-21dca83f12ff">
+      <Properties Name="Source" PackageName="GenexusBL" />
+    </Reference>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Part" Id="c414ed00-8cc4-4f44-8820-4baf93547173">
+      <Properties Name="Layout" PackageName="GenexusBL" />
+    </Reference>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Part" Id="9b0a32a3-de6d-4be1-a4dd-1b85d3741534">
+      <Properties Name="Rules" PackageName="GenexusBL" />
+    </Reference>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Part" Id="763f0d8b-d8ac-4db4-8dd4-de8979f2b5b9">
+      <Properties Name="Conditions" PackageName="GenexusBL" />
+    </Reference>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Part" Id="e4c4ade7-53f0-4a56-bdfd-843735b66f47">
+      <Properties Name="Variables" PackageName="GenexusBL" />
+    </Reference>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Part" Id="ad3ca970-19d0-44e1-a7b7-db05556e820c">
+      <Properties Name="Help" PackageName="GenexusBL" />
+    </Reference>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Part" Id="babf62c5-0111-49e9-a1c3-cc004d90900a">
+      <Properties Name="Documentation" PackageName="GenexusBL" />
+    </Reference>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Object" Id="c9584656-94b6-4ccd-890f-332d11fc2c25">
+      <Properties Name="Web Panel" PackageName="GenexusBL" />
+    </Reference>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Part" Id="d24a58ad-57ba-41b7-9e6e-eaca3543c778">
+      <Properties Name="Web Form" PackageName="GenexusBL" />
+    </Reference>
+    <Reference Package="3ea7e1c6-b849-4df9-931a-070171a8a2f0" Type="Part" Id="c44bd5ff-f918-415b-98e6-aca44fed84fa">
+      <Properties Name="Events" PackageName="GenexusBL" />
+    </Reference>
+  </Dependencies>
+  <ObjectsIdentityMapping>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="Url" parent="GeneXus">
+      <Guid>b67b7a1b-60cd-4f53-8610-f94684abcdc7</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c88fffcd-b6f8-0000-8fec-00b5497e2117" Name="Seguridad" parent="">
+      <Guid>1d41214f-acf6-4fd4-849e-d465901e4e3b</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c88fffcd-b6f8-0000-8fec-00b5497e2117" Name="GeneXus" parent="">
+      <Guid>4f454e73-7d8f-4a0f-908a-1a355f3634a5</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMRememberUserTypes" parent="">
+      <Guid>2f11ebbb-27ad-4e2f-9c9e-164b4211ef33</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMClientApplicationId" parent="">
+      <Guid>5003a80d-c8b5-48b7-9c75-10a0ca40559a</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMSessionSharedData" parent="">
+      <Guid>eae75a58-f7c8-40a0-8042-d02e3941cc8d</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMLanguageISO639_3" parent="">
+      <Guid>2eb93abf-faa9-4faa-b3fc-661f8116daec</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMErrorMessages" parent="">
+      <Guid>e9f1f0db-d267-4899-a1c5-3cd1aa2ab084</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMUserIdentification" parent="">
+      <Guid>2c3eb7f5-fd2e-4d1b-af75-c7ba33de8cb1</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMPassword" parent="">
+      <Guid>58742444-f138-4d98-825f-9b0f8df9fcb7</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="SecGAMFunctionalityKey" parent="Dominios">
+      <Guid>5f7b1f40-bc88-41ce-95b4-9c4652e62eab</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c88fffcd-b6f8-0000-8fec-00b5497e2117" Name="Dominios" parent="">
+      <Guid>2d0e298b-f50d-4eb8-9eaf-3a5483841c15</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c163e562-42c6-4158-ad83-5b21a14cf30e" Name="GAMLoginAdditionalParameters" parent="">
+      <Guid>fc4e3f2d-3dc9-4b0f-891a-a333c6309317</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00000000-0000-0000-0000-000000000008" Name="GAM_Library" parent="">
+      <Guid>487c0187-78e7-4a62-8005-d449d299c018</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c163e562-42c6-4158-ad83-5b21a14cf30e" Name="GAMProperty" parent="">
+      <Guid>6aa413db-4260-44b8-8044-2bdffec20159</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c163e562-42c6-4158-ad83-5b21a14cf30e" Name="GAMAuthenticationTypeSimple" parent="">
+      <Guid>224a70f6-6003-4b54-b1cb-7aff77393f80</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c163e562-42c6-4158-ad83-5b21a14cf30e" Name="GAMConnection" parent="">
+      <Guid>59c407a5-d496-433b-8205-453a5f56aef4</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c163e562-42c6-4158-ad83-5b21a14cf30e" Name="GAMConnectionInfo" parent="">
+      <Guid>bba3fed0-e457-4293-af04-75cd4cd0d2d6</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c163e562-42c6-4158-ad83-5b21a14cf30e" Name="GAMError" parent="">
+      <Guid>cfbf5d75-050d-4960-81b5-42e2e47af44d</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c163e562-42c6-4158-ad83-5b21a14cf30e" Name="GAMRepository" parent="">
+      <Guid>1f5e2657-1fab-42bc-b23f-a04fe72e1870</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c163e562-42c6-4158-ad83-5b21a14cf30e" Name="GAMApplication" parent="">
+      <Guid>981582ad-ca8a-4c5a-99a3-7f8a187d48fd</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c163e562-42c6-4158-ad83-5b21a14cf30e" Name="GAMSession" parent="">
+      <Guid>88490126-a329-4a48-9646-0356e439677c</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="447527b5-9210-4523-898b-5dccb17be60a" Name="GAMExampleSDTApplicationData" parent="">
+      <Guid>0bbaadd5-078e-4c0a-8cb5-b9e8cc964d5c</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00000000-0000-0000-0000-000000000008" Name="GAM_General" parent="">
+      <Guid>fdf9baf8-1249-463c-b803-76e914f87c2d</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00000000-0000-0000-0000-000000000008" Name="GAM_Backend" parent="">
+      <Guid>a72890ef-37c8-4564-bc13-9d7feb580f2e</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00000000-0000-0000-0000-000000000008" Name="GAM_Examples" parent="">
+      <Guid>c347d56f-7dfa-4ac6-9f00-1f02a1cbcd64</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c9584656-94b6-4ccd-890f-332d11fc2c25" Name="GAMExampleUpdateRegisterUser" parent="">
+      <Guid>ab388a7a-25c9-421a-a90d-8550bbe2d29a</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00000000-0000-0000-0000-000000000008" Name="GAM_Frontend" parent="">
+      <Guid>2896f7a3-4874-40c9-ac7e-f57685983b0f</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c9584656-94b6-4ccd-890f-332d11fc2c25" Name="GAMExampleChangePassword" parent="">
+      <Guid>c7136c8b-7292-4a35-b20e-fa7def6e1d1b</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00000000-0000-0000-0000-000000000008" Name="GAM_Passwords" parent="">
+      <Guid>f7f3960f-5d7a-4f3d-877c-d685d9f8d51a</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="ecececec-dfe0-4a57-ae8f-c6e31b0dcbc0" Name="Default" parent="">
+      <Guid>ad074325-ff9e-4184-ae06-1f5ebddd080f</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00000000-0000-0000-0000-000000000006" Name="GAM_Samples-web" parent="">
+      <Guid>a6f4762c-6801-42e7-98e0-a1d4be093fdd</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMAuthenticationTypes" parent="">
+      <Guid>c662bd3d-8a62-4db5-a151-98a0b12e30d5</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMDescriptionShort" parent="">
+      <Guid>555492de-4a68-4109-9597-86d18bd68758</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMRepositoryRememberUserTypes" parent="">
+      <Guid>66a62be5-b094-4773-8fd1-ad3ce5fdd276</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMURL" parent="">
+      <Guid>66b3abb6-aeb3-48de-9c1b-6ee5a464380e</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="00972a17-9975-449e-aab1-d26165d51393" Name="GAMInternalGUIDs" parent="">
+      <Guid>18f1c02a-8363-4e39-819a-bd50b8f0838b</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c163e562-42c6-4158-ad83-5b21a14cf30e" Name="GAM" parent="">
+      <Guid>82237f49-f3d8-45aa-b81c-3b156c718dec</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c804fdbd-7c0b-440d-8527-4316c92649a6" Name="Carmine" parent="">
+      <Guid>c3d9279b-69fb-4f4a-920e-62a13a536d87</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c9584656-94b6-4ccd-890f-332d11fc2c25" Name="GAMExampleRecoverPasswordStep1" parent="">
+      <Guid>6c17a686-2646-432b-b58b-d030441a58ac</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="c9584656-94b6-4ccd-890f-332d11fc2c25" Name="GAMExampleRegisterUser" parent="">
+      <Guid>5952e087-79c4-4968-b8ff-47e453b8e51d</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="9fb193d9-64a4-4d30-b129-ff7c76830f7e" Name="GAMButtonFacebookSmall" parent="">
+      <Guid>1965aed6-daad-4687-8b71-4797860e630c</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="9fb193d9-64a4-4d30-b129-ff7c76830f7e" Name="GAMButtonTwitterSmall" parent="">
+      <Guid>5b513ef3-c434-4c8c-aacb-feefd834b2ee</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="9fb193d9-64a4-4d30-b129-ff7c76830f7e" Name="GAMButtonGoogleSmall" parent="">
+      <Guid>57720a5a-eb93-4911-895a-35207ed2dd03</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="9fb193d9-64a4-4d30-b129-ff7c76830f7e" Name="GAMButtonGAMRemoteSmall" parent="">
+      <Guid>6cdd3e18-cc5b-44e0-bd22-3efaf48a6c40</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="Form" parent="">
+      <Guid>d5ef9926-a55b-5eb1-ac93-2211cfeeb656</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="Attribute" parent="">
+      <Guid>7f83da99-bc71-5230-bf17-0352ce27c129</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="Button" parent="">
+      <Guid>abd2de3e-1c96-5681-b52b-bbe33c0dca49</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="Image" parent="">
+      <Guid>bad8bf74-0d18-57e2-af30-d97b6ce00722</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="Table" parent="">
+      <Guid>784008a4-3c1e-563a-9723-453ef4d698c9</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="TextBlock" parent="">
+      <Guid>27607de1-bd65-5b1b-99b8-9db711c42fc6</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="ErrorViewer" parent="">
+      <Guid>6cac53e4-08c8-51a9-a433-766359ce7d61</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="Section" parent="">
+      <Guid>3c52635e-dc92-5738-9e3c-9d15ea5a3694</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="TableLogin" parent="">
+      <Guid>3def329d-5dd4-52c9-b678-dbb98a2c509c</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="Label" parent="">
+      <Guid>b61cbecd-12ad-5495-be78-0ca650dfd81b</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="CheckBox" parent="">
+      <Guid>065fb8df-90d1-5001-828d-77dbff494f53</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="BodyContainer" parent="">
+      <Guid>78e95c8c-2d78-4df0-9d89-b6735231f7be</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="LoginContainer" parent="">
+      <Guid>e3b9d109-b79c-4c38-a9b6-9d56ce5c41f3</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="BigTitle" parent="">
+      <Guid>2e3bb5d7-58bf-4859-9642-f5fa99093f8d</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="Title" parent="">
+      <Guid>d8d3269c-fba8-51e8-8a14-816d97aefe75</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="SpecialText" parent="">
+      <Guid>f20626ae-60d6-4b3d-abf8-ec5f1ac2e8a2</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="PagingText" parent="">
+      <Guid>bda6a5f0-3e35-4eee-ab7b-48fd95815a60</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="TextLikeLink" parent="">
+      <Guid>61105a49-bba5-47ca-bb4e-fe6fbca192e8</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="LoginComboAttribute" parent="">
+      <Guid>4e3efdb8-c5b4-46a7-8fd1-916c0eb194f4</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="LoginAttribute" parent="">
+      <Guid>3dab8d3e-e4e2-4bb5-8719-1df3ffb9a8d5</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="BtnLogin" parent="">
+      <Guid>a9374006-283e-4a91-836b-a9e9a91c2324</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="SpecialButtons" parent="">
+      <Guid>ae5742ca-2939-5491-a671-7060dc74222a</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="TableButtons" parent="">
+      <Guid>d0d85836-7223-58da-b177-b01d4aad7fe8</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="ActionText" parent="">
+      <Guid>d9bda835-de2d-5fe7-b136-6aace7b17db3</Guid>
+    </ObjectIdentity>
+    <ObjectIdentity Type="d4876646-98dd-419b-8c1c-896f83c48368" Name="VersionText" parent="">
+      <Guid>0dfc3818-a82a-45b1-a7d0-84b553ba00f5</Guid>
+    </ObjectIdentity>
+  </ObjectsIdentityMapping>
+</ExportFile>

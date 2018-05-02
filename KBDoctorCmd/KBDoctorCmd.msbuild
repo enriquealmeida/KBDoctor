@@ -66,6 +66,17 @@
     <CompareWSDLCmd/>
     <CloseKnowledgeBase />
   </Target>
-
+  
+   <Target  Name="ObjectsWOInOut">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <ObjectsWithoutInOutCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+  
+  <Target  Name="ExportObjects">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <CleanProcess Objects="Procedure:SetCustomProperties;WebPanel:GAMExampleLogin" />
+    <CloseKnowledgeBase />
+  </Target>
 </Project>
 

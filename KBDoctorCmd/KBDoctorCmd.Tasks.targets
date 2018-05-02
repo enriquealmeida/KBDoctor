@@ -7,4 +7,6 @@
   <UsingTask TaskName="KBDoctorCmd.SaveObjectsWSDLCmd" AssemblyFile="KBDoctorCmd.dll"/>
   <UsingTask TaskName="KBDoctorCmd.CompareWSDLCmd" AssemblyFile="KBDoctorCmd.dll"/>
   <UsingTask TaskName="KBDoctorCmd.UpdateSourceObjectsWSDLCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.ObjectsWithoutInOutCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.CleanProcess" AssemblyFile="KBDoctorCmd.dll"/>
 </Project>

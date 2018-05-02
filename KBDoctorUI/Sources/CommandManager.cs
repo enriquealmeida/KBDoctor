@@ -716,9 +716,9 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecCleanObjects(CommandData cmdData)
         {
-            KBModel kbModel = UIServices.KB.CurrentModel;
+            KnowledgeBase kbModel = UIServices.KB.CurrentKB;
             IOutputService output = CommonServices.Output;
-            KBDoctorCore.Sources.API.CleanKBObjects(kbModel, output);
+            KBDoctorCore.Sources.API.CleanKBObjects(kbModel, kbModel.DesignModel.Objects.GetAll(), output);
             return true;
         }
 

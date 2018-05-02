@@ -55,9 +55,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             CleanKB.CleanObject(obj, output);
         }
         //
-        public static void CleanKBObjects(KBModel kbmodel, IOutputService output)
+        public static void CleanKBObjects(KnowledgeBase kb, IEnumerable<KBObject> kbojs, IOutputService output)
         {
-            CleanKB.CleanObjects(kbmodel, output);
+            CleanKB.CleanObjects(kb,kbojs,output);
         }
         //
         public static void RemoveObjectsNotCalled(KBModel kbmodel, IOutputService output, out List<string[]> lineswriter)
@@ -75,6 +75,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         public static void CompareWSDL(KnowledgeBase KB, IOutputService output)
         {
             Navigation.CompareWSDLDirectories(KB, output);
+        }
+        public static List<KBObject> ObjectsWithoutINOUT(KnowledgeBase KB, IOutputService output)
+        {
+            return Objects.ParmWOInOut(KB, output);
+        }
+        public static void CleanProcess(KnowledgeBase KB, IOutputService output, IEnumerable<KBObject> objs)
+        {
+            //    CleanKBObjects(KB, objs, output);
         }
     }
 }

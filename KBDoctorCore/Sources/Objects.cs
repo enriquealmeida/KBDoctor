@@ -1,4 +1,6 @@
-﻿using Artech.Architecture.Common.Objects;
+﻿using Artech.Architecture.Common.Collections;
+using Artech.Architecture.Common.Objects;
+using Artech.Architecture.Common.Services;
 using Artech.Architecture.Language.ComponentModel;
 using Artech.Architecture.Language.Parser;
 using Artech.Architecture.Language.Services;
@@ -426,6 +428,59 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 paramstring += accessor + ":" + parameter.Item1.ToString() + " ";
             }
             return paramstring.TrimEnd();
+        }
+
+        internal static List<KBObject> ParmWOInOut(KnowledgeBase KB, IOutputService output)
+        {
+            // Object with parm() rule without in: out: or inout:
+            string title = "KBDoctor - Object with parameters without IN:/OUT:/INOUT:";
+
+            output.StartSection(title);
+
+            int numObj = 0;
+            int objWithProblems = 0;
+            List<KBObject> objectsWithProblems = new List<KBObject>();
+            foreach (KBObject obj in KB.DesignModel.Objects.GetAll())
+            {
+                ICallableObject callableObject = obj as ICallableObject;
+
+                if (callableObject != null)
+                {
+                    numObj += 1;
+                    if ((numObj % 100) == 0)
+                        output.AddLine("Processing " + obj.Name);
+                    foreach (Signature signature in callableObject.GetSignatures())
+                    {
+                        Boolean someInOut = false;
+                        foreach (Parameter parm in signature.Parameters)
+                        {
+                            if (parm.Accessor.ToString() == "PARM_INOUT")
+                            {
+                                someInOut = true;
+                                break;
+                            }
+                        }
+                        if (someInOut)
+                        {
+                            string ruleParm = Utility.ExtractRuleParm(obj);
+                            if (ruleParm != "")
+                            {
+                                int countparms = ruleParm.Split(new char[] { ',' }).Length;
+                                int countsemicolon = ruleParm.Split(new char[] { ':' }).Length - 1;
+                                if (countparms != countsemicolon)
+                                {
+                                    objWithProblems += 1;
+                                    objectsWithProblems.Add(obj);
+                                    output.AddWarningLine("-- Parámetros sin IN/OUT/INOUT en: "  + obj.Name);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            bool success = true;
+            output.EndSection(title, success);
+            return objectsWithProblems;
         }
     }
 }

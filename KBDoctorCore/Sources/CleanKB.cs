@@ -102,26 +102,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         /// <summary>
         /// Clean and destroy objects. Initizlize objects 
         /// </summary>
-        public static void CleanObjects(KBModel kbmodel, IOutputService output)
+        public static void CleanObjects(KnowledgeBase kb, IEnumerable<KBObject> kbojs, IOutputService output)
         {
 
-            IKBService kB = UIServices.KB;
-            if (kB != null && kB.CurrentModel != null)
+            output.StartSection("Cleaning objects");
+            foreach (KBObject obj in kbojs)
             {
-                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                selectObjectOption.MultipleSelection = true;
-                output.StartSection("Cleaning objects");
-
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-                {
-                    CleanObject(obj, output);
-                }
-                output.EndSection("Cleaning objects", true);
+                CleanObject(obj, output);
             }
+            output.EndSection("Cleaning objects", true);
+
         }
 
         public static void CleanObject(KBObject obj, IOutputService output)
@@ -210,7 +200,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             string isGeneratedstr = (Utility.isGenerated(obj) ? "Yes" : string.Empty);
                             if (!Utility.isMain(obj))
                             {
-
                                 if (remove != "")
                                 {
                                     try

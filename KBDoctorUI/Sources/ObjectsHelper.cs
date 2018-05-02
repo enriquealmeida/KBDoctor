@@ -258,77 +258,36 @@ namespace Concepto.Packages.KBDoctor
 
         public static void ParmWOInOut()
         {
-            // Object with parm() rule without in: out: or inout:
+
+            // Object with parm() rule without in: out: or inout
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            string title = "KBDoctor - Object with parameters without IN:/OUT:/INOUT:";
+            List<KBObject> objectsWithProblems = API.ObjectsWithoutINOUT(UIServices.KB.CurrentKB, output);
 
-            output.StartSection(title);
+            string title = "KBDoctor - Object with parameters without IN:/OUT:/INOUT:";
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            int numObj = 0;
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Folder", "Object", "Description", "Param rule", "Timestamp", "Mains" });
 
-            int objWithProblems = 0;
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            foreach (KBObject obj in objectsWithProblems)
             {
-                ICallableObject callableObject = obj as ICallableObject;
+                string ruleParm = Functions.ExtractRuleParm(obj);
+                string objNameLink = Functions.linkObject(obj);
 
-                if (callableObject != null)
-                {
-                    numObj += 1;
-                    if ((numObj % 100) == 0)
-                        output.AddLine("Processing " + obj.Name);
-                    foreach (Signature signature in callableObject.GetSignatures())
-                    {
-                        Boolean someInOut = false;
-                        foreach (Parameter parm in signature.Parameters)
-                        {
-                            if (parm.Accessor.ToString() == "PARM_INOUT")
-                            {
-                                someInOut = true;
-                                break;
-                            }
-                        }
-                        if (someInOut)
-                        {
-                            string ruleParm = Functions.ExtractRuleParm(obj);
-                            if (ruleParm != "")
-                            {
-                                int countparms = ruleParm.Split(new char[] { ',' }).Length;
-                                int countsemicolon = ruleParm.Split(new char[] { ':' }).Length - 1;
-                                if (countparms != countsemicolon)
-                                {
-                                    objWithProblems += 1;
-                                    string objNameLink = Functions.linkObject(obj);
+                KBObjectCollection objColl = new KBObjectCollection();
+                string callTree = "";
+                // string  mainss = KbStats.MainsOf(obj, objColl, callTree);
+                string mainss = "";
 
-                                    KBObjectCollection objColl = new KBObjectCollection();
-                                    string callTree = "";
-                                    // string  mainss = KbStats.MainsOf(obj, objColl, callTree);
-                                    string mainss = "";
-
-                                    writer.AddTableData(new string[] { obj.Parent.Name, objNameLink, obj.Description, ruleParm, obj.Timestamp.ToString(), mainss });
-                                }
-                            }
-                        }
-                    }
-
-
-
-
-                }
-
+                writer.AddTableData(new string[] { obj.Parent.Name, objNameLink, obj.Description, ruleParm, obj.Timestamp.ToString(), mainss });
             }
-            writer.AddTableData(new string[] { "#Objects with problems ", objWithProblems.ToString(), "", "" });
+            
+            writer.AddTableData(new string[] { "#Objects with problems ", objectsWithProblems.Count.ToString(), "", "" });
 
             writer.AddFooter();
             writer.Close();
-
-            bool success = true;
-            output.EndSection(title, success);
-
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
 
@@ -2139,14 +2098,13 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
         }
 
 
-         
+        
         public static void ObjectsRefactoringCandidates()
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Refactoring candidates";
             string outputFile = Functions.CreateOutputFile(kbserv, title);
-
 
             output.StartSection(title);
 
@@ -2162,7 +2120,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
                 {
-
                     if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                     {
                         output.AddLine(obj.Name);
@@ -2178,12 +2135,9 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                         CountCommentsLines(source, sourceWOComments, out linesSource, out linesComment, out PercentComment);
 
-
-
                         int MaxCodeBlock = Functions.MaxCodeBlock(sourceWOComments);
                         int MaxNestLevel = Functions.MaxNestLevel(sourceWOComments);
                         int ComplexityLevel = Functions.ComplexityLevel(sourceWOComments);
-
 
                         string ParmINOUT = Functions.ValidateINOUTinParm(obj) ? "Error" : "";
                         int parametersCount = ParametersCountObject(obj);
@@ -2206,15 +2160,11 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, obj.Module.Name , folder, ParmINOUT, parametersCount.ToString(), codeCommented, PercentComment.ToString("0"), linesComment.ToString(), linesSource.ToString(), MaxNestLevel.ToString(), MaxCodeBlock.ToString(), ComplexityLevel.ToString(), Candidate, ComplexityIndex.ToString() });
                         ObjectsTotal += 1;
                         ComplexityIndexTotal += ComplexityIndex;
-
                     }
-
                 }
-
             }
             writer.AddTableFooterOnly();
             writer.AddTableFooterOnly();
-
 
             int Average = ComplexityIndexTotal / ObjectsTotal;
             writer.AddTableHeader(new string[] { "Totals Objects= ", ObjectsTotal.ToString(), " Complexity Index Sum= ", ComplexityIndexTotal.ToString(), " Complexity Index Average= " + Average.ToString() });

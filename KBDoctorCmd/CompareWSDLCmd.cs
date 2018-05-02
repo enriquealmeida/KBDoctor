@@ -14,6 +14,7 @@ namespace KBDoctorCmd
             Stopwatch watch = null;
             OutputSubscribe();
             IOutputService output = CommonServices.Output;
+            output.StartSection("Compare WSDL");
             try
             {
                 watch = new Stopwatch();
