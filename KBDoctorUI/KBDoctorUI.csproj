@@ -111,6 +111,9 @@
     <Reference Include="Artech.Packages.Patterns">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Packages.Patterns.dll</HintPath>
     </Reference>
+    <Reference Include="Artech.Packages.TeamDevClient.UI">
+      <HintPath>..\..\..\..\Program Files (x86)\GeneXus\GeneXus15\Packages\Artech.Packages.TeamDevClient.UI.dll</HintPath>
+    </Reference>
     <Reference Include="Artech.Template.Base">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Template.Base.dll</HintPath>
     </Reference>
@@ -152,6 +155,10 @@
     </Reference>
     <Reference Include="GxDataLayer">
       <HintPath>$(GX_SDK_DIR)\bin\GxDataLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Shared.v11.1, Version=11.1.20111.2042, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb" />
+    <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1">
+      <HintPath>..\..\..\..\Program Files (x86)\GeneXus\GeneXus15\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>

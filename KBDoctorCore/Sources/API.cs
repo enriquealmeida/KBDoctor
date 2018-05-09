@@ -64,25 +64,56 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             CleanKB.RemoveObjectsNotCalled(kbmodel, output, out lineswriter);
         }
+        //
         public static void SaveObjectsWSDLSource(KnowledgeBase KB, IOutputService output)
         {
             Navigation.SaveObjectsWSDL(KB, output, true);
         }
+        //
         public static void SaveObjectsWSDL(KnowledgeBase KB, IOutputService output)
         {
             Navigation.SaveObjectsWSDL(KB, output, false);
         }
+        //
         public static void CompareWSDL(KnowledgeBase KB, IOutputService output)
         {
             Navigation.CompareWSDLDirectories(KB, output);
         }
+        //
         public static List<KBObject> ObjectsWithoutINOUT(KnowledgeBase KB, IOutputService output)
         {
             return Objects.ParmWOInOut(KB, output);
         }
-        public static void CleanProcess(KnowledgeBase KB, IOutputService output, IEnumerable<KBObject> objs)
+        //
+        public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
         {
-            //    CleanKBObjects(KB, objs, output);
+            output.StartSection("Procesar objetos pendientes");
+            foreach (KBObject obj in objs)
+            {
+                if (Utility.isRunable(obj)) { 
+                    output.AddLine("Procesando objeto: " + obj.Name);
+                    List<KBObject> objlist = new List<KBObject>();
+                    objlist.Add(obj);
+
+                    //Check objects with parameteres without inout
+                    Objects.ParmWOInOut(objlist, output);
+
+                    //Clean variables not used
+                    CleanKB.CleanKBObjectVariables(obj, output);
+
+                    //Check complexity metrics
+                    //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
+                    Objects.CheckComplexityMetrics(objlist, output, 6, 30, 500, 6);
+
+                    //Check commit on exit
+                    Objects.CommitOnExit(objlist, output);
+
+                    //Is in module
+                    Objects.isInModule(objlist, output);
+                }
+            }
+
+            output.EndSection("Procesar objetos pendientes", true);
         }
     }
 }

@@ -81,6 +81,7 @@
     <CommandDefinition id="GenerateLocationXML" />
     <CommandDefinition id="KBInterfaces" /> 
     <CommandDefinition id="UDPCallables" />
+    <CommandDefinition id="PreprocessPendingObjects" />
 
     <!-- Acciones sobre atributos -->
     <CommandDefinition id="AssignDomainToAttribute" />
@@ -144,7 +145,13 @@
 		</Group>
 	</Groups>
    -->
-
+  <Groups>
+    <Group type="Context" refid='CommitGroup' package='319fb05a-2f9a-47c5-b133-acc33f0b95d7' context='selection'>
+      <Group id='KBDoctor' context='selection' >
+        <Command refid='PreprocessPendingObjects' initVisible='true' context='selection'/>
+      </Group>
+    </Group>
+  </Groups>
   <Menus>
     <Menu type="menubar">
       <Popup refid='ToolsMenu' name='Tools' >
@@ -306,7 +313,7 @@
              
             </Popup>
           </Group>
-
+          
           <Group id="AboutKBDoctor" >
             <Command refid="AboutKBDoctor"  />
             <Command refid="HelpKBDoctor" />
@@ -324,15 +331,13 @@
         </Popup>
       </Menu>
 
-      <Menu type='context' id='EnvironmentContext' package='4703F0A9-2AEB-4469-9466-25E2A56C7B6D'>
-        <Popup id='GXPowerCommandEnvPopUp' name='PowerCommands' context='selection' dynamic='true' autoManageVisibility='true' insertBefore=''>
+    <Menu type='context' id='EnvironmentContext' package='4703F0A9-2AEB-4469-9466-25E2A56C7B6D'>
+      <Popup id='GXPowerCommandEnvPopUp' name='PowerCommands' context='selection' dynamic='true' autoManageVisibility='true' insertBefore=''>
           <Command refid='CommandPromptEnv' initVisible='true'/>
           <Command refid='ExploreEnv' initVisible='true'/>
         </Popup>
       </Menu>
 
-    
-    
   </Menus>
 
 </Package>

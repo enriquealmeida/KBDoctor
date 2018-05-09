@@ -170,8 +170,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        
-
         internal static void ReplaceModulesInNVGFiles(KnowledgeBase KB, IOutputService output)
         {
             string pathNvg = Path.Combine(Utility.SpcDirectory(KB), "NvgComparer");
@@ -337,7 +335,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             if (File.Exists(copydir + ".zip"))
                 File.Delete(copydir + ".zip");
         }
-
 
         private static void CopyDifferences(List<string> filenames, string path1, string path2, string name)
         {

@@ -180,19 +180,23 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey GenerateGraph { get { return generateGraph; } }
 
 
+
         // Acciones sobre objetos
         private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");
         private static CommandKey openObject = new CommandKey(Package.guid, "OpenObject");
         private static CommandKey assignDomainToVariable = new CommandKey(Package.guid, "AssignDomainToVariable");
         private static CommandKey assignAttributeToVariable = new CommandKey(Package.guid, "AssignAttributeToVariable");
         private static CommandKey renameAttributesAndTables =  new CommandKey(Package.guid, "RenameAttributesAndTables");
-                
+        private static CommandKey preprocessPendingObjects = new CommandKey(Package.guid, "PreprocessPendingObjects");
+
         public static CommandKey RemoveObject { get { return removeObject; } }
         public static CommandKey OpenObject { get { return openObject; } }
         public static CommandKey AssignDomainToVariable { get { return assignDomainToVariable; } }
         public static CommandKey AssignAttributeToVariable { get { return assignAttributeToVariable; } }
 
         public static CommandKey RenameAttributesAndTables { get { return renameAttributesAndTables; } }
+
+        public static CommandKey PreprocessPendingObjects { get { return preprocessPendingObjects; } }
 
         //Surgery
         private static CommandKey procedureSDT = new CommandKey(Package.guid, "ProcedureSDT");

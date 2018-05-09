@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+using System.Linq;
 using Artech.Architecture.UI.Framework.Helper;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Common.Framework.Commands;
@@ -14,7 +15,7 @@ using Artech.Architecture.Common.Services;
 using Artech.Common.Framework.Selection;
 using Artech.Architecture.UI.Framework.Controls;
 using Concepto.Packages.KBDoctorCore;
-
+using Infragistics.Win.UltraWinGrid;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -126,6 +127,7 @@ namespace Concepto.Packages.KBDoctor
 
             AddCommand(CommandKeys.ListLastReports, new ExecHandler(ExecListLastReports), new QueryHandler(QueryKBDoctor));
 
+            AddCommand(CommandKeys.PreprocessPendingObjects, new ExecHandler(ExecPreprocessPendingObjects), new QueryHandler(QueryKBDoctor));
      
             AddCommand(CommandKeys.AboutKBDoctor, new ExecHandler(ExecAboutKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             AddCommand(CommandKeys.HelpKBDoctor, new ExecHandler(ExecHelpKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
@@ -428,6 +430,32 @@ namespace Concepto.Packages.KBDoctor
         #endregion
 
         #region Objetos
+
+        public bool ExecPreprocessPendingObjects(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            SelectedRowsCollection selrows = cmdData.Context as SelectedRowsCollection;
+            List<KBObjectHistory> kbohList = GetGenericHistoryObjects(selrows);
+            KBModel model = UIServices.KB.CurrentModel;
+            List<KBObject> selectedObjects = new List<KBObject>();
+            foreach (KBObjectHistory kboh in kbohList)
+            {
+                KBObject obj = model.Objects.Get(kboh.Key);
+                if (obj != null) { 
+                    selectedObjects.Add(obj);
+                }
+            }
+            KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects);
+            return true;
+        }
+
+        public static List<KBObjectHistory> GetGenericHistoryObjects(SelectedRowsCollection rows)
+        {
+            return (from UltraGridRow row in rows
+                    where !row.IsGroupByRow // Quitamos las rows de grupo.
+                    select (KBObjectHistory)row.Cells["KBObjectHistory"].Value).ToList();
+        }
+
         public bool ExecObjNotReacheable(CommandData cmdData)
         {
             Thread t = new Thread(new ThreadStart(ObjectsHelper.Unreachables));
@@ -929,7 +957,8 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
-        private bool QueryIsModuleSelected(CommandData data, ref CommandStatus status)
+
+            private bool QueryIsModuleSelected(CommandData data, ref CommandStatus status)
         {
             status.State = CommandState.Disabled;
             if (UIServices.KB != null && UIServices.KB.CurrentKB != null)
@@ -946,6 +975,8 @@ namespace Concepto.Packages.KBDoctor
             }
             return true;
         }
+
+
         #endregion
 
 
