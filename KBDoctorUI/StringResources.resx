@@ -398,6 +398,6 @@
     <value>Objects With Constants</value>
   </data>
   <data name="PreprocessPendingObjects" xml:space="preserve">
-    <value>Preprocesar objetos pendientes</value>
+    <value>Object Review</value>
   </data>
 </root>

@@ -445,7 +445,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         internal static List<KBObject> ParmWOInOut(List<KBObject> objs, IOutputService output)
         {
             // Object with parm() rule without in: out: or inout:
-            string title = "KBDoctor - Objects with parameters without IN:/OUT:/INOUT:";
 
             List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output);
             bool success = true;
@@ -488,7 +487,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 {
                                     objWithProblems += 1;
                                     objectsWithProblems.Add(obj);
-                                    output.AddWarningLine(obj.Name + "> Parámetros sin IN/OUT/INOUT");
+                                    output.AddWarningLine(Utility.linkObject(obj) + "> Parameters without IN/OUT/INOUT");
                                 }
                             }
                         }
@@ -581,20 +580,20 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         int parametersCount = ParametersCountObject(obj);
                         if (NestLevel > maxNestLevel)
                         {
-                            output.AddWarningLine(obj.Name + "> Nivel de indentación demasiado alto (" + NestLevel.ToString() + "). Máximo recomendado: " + maxNestLevel.ToString());
+                            output.AddWarningLine(obj.Name + "> Nested level to high (" + NestLevel.ToString() + "). Recommended max: " + maxNestLevel.ToString());
 
                         }
                         if (ComplexityLevel > maxComplexityLevel)
                         {
-                            output.AddWarningLine(obj.Name + "> Nivel de complejidad demasiado alta (" + ComplexityLevel.ToString() + "). Máximo recomendado: " + maxComplexityLevel.ToString());
+                            output.AddWarningLine(obj.Name + "> Complexity too high (" + ComplexityLevel.ToString() + "). Recommended max:  " + maxComplexityLevel.ToString());
                         }
                         if (CodeBlock > maxCodeBlock)
                         {
-                            output.AddWarningLine(obj.Name + "> Bloque de código demasiado largo (" + CodeBlock.ToString() + "). Máximo recomendado: " + maxCodeBlock.ToString());
+                            output.AddWarningLine(obj.Name + "> Code block too large (" + CodeBlock.ToString() + "). Recommended max: " + maxCodeBlock.ToString());
                         }
                         if (parametersCount > maxParametersCount)
                         {
-                            output.AddWarningLine(obj.Name + "> Demasiada cantidad de parámetros (" + parametersCount.ToString() + "). Máximo recomendado: " + maxParametersCount.ToString());
+                            output.AddWarningLine(obj.Name + "> Too many parameters (" + parametersCount.ToString() + "). Recommended max: " + maxParametersCount.ToString());
                         }
                     }
                 }
@@ -607,7 +606,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (obj.Module.Description == "Root Module")
                 {
-                    output.AddWarningLine(obj.Name + "> Objeto sin módulo");
+                    output.AddWarningLine(obj.Name + "> Object without module");
                 }
             }
         }

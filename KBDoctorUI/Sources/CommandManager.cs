@@ -680,7 +680,7 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
         #endregion
-
+        
 
 
         #region Acciones sobre objetos

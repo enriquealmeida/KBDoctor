@@ -87,11 +87,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
         {
-            output.StartSection("Procesar objetos pendientes");
+            output.StartSection("Object review");
             foreach (KBObject obj in objs)
             {
                 if (Utility.isRunable(obj)) { 
-                    output.AddLine("Procesando objeto: " + obj.Name);
+                    output.AddLine("Processing object: " + obj.Name);
                     List<KBObject> objlist = new List<KBObject>();
                     objlist.Add(obj);
 
@@ -113,7 +113,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
             }
 
-            output.EndSection("Procesar objetos pendientes", true);
+            output.EndSection("Object review", true);
         }
     }
 }
