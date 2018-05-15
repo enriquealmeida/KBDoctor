@@ -49,27 +49,32 @@
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.MsBuild.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Utilities.v3.5" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="KBDoctorCore">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\KBDoctorCore\bin\Debug\KBDoctorCore.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CleanProcess.cs" />
+    <Compile Include="ObjectsWithoutInOutCmd.cs" />
     <Compile Include="CleanAllKBObjectVariablesCmd.cs" />
     <Compile Include="CompareNavigationsCmd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PrepareCompareNavigationsCmd.cs" />
     <Compile Include="RemoveAttributesWithoutTableCmd.cs" />
     <Compile Include="RemoveObjectsNotReferencedCmd.cs" />
+    <Compile Include="CompareWSDLCmd.cs" />
+    <Compile Include="UpdateSourceObjectsWSDLCmd.cs" />
+    <Compile Include="SaveObjectsWSDLCmd.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj">
+      <Project>{280a5263-3efa-4585-86dd-ea8fd5310a4f}</Project>
+      <Name>KBDoctorCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj">
       <Project>{280a5263-3efa-4585-86dd-ea8fd5310a4f}</Project>
       <Name>KBDoctorCore</Name>

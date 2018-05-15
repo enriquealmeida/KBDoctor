@@ -258,77 +258,36 @@ namespace Concepto.Packages.KBDoctor
 
         public static void ParmWOInOut()
         {
-            // Object with parm() rule without in: out: or inout:
+
+            // Object with parm() rule without in: out: or inout
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            string title = "KBDoctor - Object with parameters without IN:/OUT:/INOUT:";
+            List<KBObject> objectsWithProblems = API.ObjectsWithoutINOUT(UIServices.KB.CurrentKB, output);
 
-            output.StartSection(title);
+            string title = "KBDoctor - Object with parameters without IN:/OUT:/INOUT:";
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            int numObj = 0;
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Folder", "Object", "Description", "Param rule", "Timestamp", "Mains" });
 
-            int objWithProblems = 0;
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            foreach (KBObject obj in objectsWithProblems)
             {
-                ICallableObject callableObject = obj as ICallableObject;
+                string ruleParm = Functions.ExtractRuleParm(obj);
+                string objNameLink = Functions.linkObject(obj);
 
-                if (callableObject != null)
-                {
-                    numObj += 1;
-                    if ((numObj % 100) == 0)
-                        output.AddLine("Processing " + obj.Name);
-                    foreach (Signature signature in callableObject.GetSignatures())
-                    {
-                        Boolean someInOut = false;
-                        foreach (Parameter parm in signature.Parameters)
-                        {
-                            if (parm.Accessor.ToString() == "PARM_INOUT")
-                            {
-                                someInOut = true;
-                                break;
-                            }
-                        }
-                        if (someInOut)
-                        {
-                            string ruleParm = Functions.ExtractRuleParm(obj);
-                            if (ruleParm != "")
-                            {
-                                int countparms = ruleParm.Split(new char[] { ',' }).Length;
-                                int countsemicolon = ruleParm.Split(new char[] { ':' }).Length - 1;
-                                if (countparms != countsemicolon)
-                                {
-                                    objWithProblems += 1;
-                                    string objNameLink = Functions.linkObject(obj);
+                KBObjectCollection objColl = new KBObjectCollection();
+                string callTree = "";
+                // string  mainss = KbStats.MainsOf(obj, objColl, callTree);
+                string mainss = "";
 
-                                    KBObjectCollection objColl = new KBObjectCollection();
-                                    string callTree = "";
-                                    // string  mainss = KbStats.MainsOf(obj, objColl, callTree);
-                                    string mainss = "";
-
-                                    writer.AddTableData(new string[] { obj.Parent.Name, objNameLink, obj.Description, ruleParm, obj.Timestamp.ToString(), mainss });
-                                }
-                            }
-                        }
-                    }
-
-
-
-
-                }
-
+                writer.AddTableData(new string[] { obj.Parent.Name, objNameLink, obj.Description, ruleParm, obj.Timestamp.ToString(), mainss });
             }
-            writer.AddTableData(new string[] { "#Objects with problems ", objWithProblems.ToString(), "", "" });
+            
+            writer.AddTableData(new string[] { "#Objects with problems ", objectsWithProblems.Count.ToString(), "", "" });
 
             writer.AddFooter();
             writer.Close();
-
-            bool success = true;
-            output.EndSection(title, success);
-
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
 
@@ -2038,7 +1997,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             return newString;
 
         }
-        
+
         public static void ObjectsWithConstants()
         {
             IKBService kbserv = UIServices.KB;
@@ -2053,24 +2012,18 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Object", "Description", "Line", "Constant" });
 
-
-
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
 
             ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
-           // IParserEngine parser = parserSrv.CreateEngine();
 
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
 
             ParserInfo parserInfo;
 
-
-
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
-               
                 Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
                 Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
 
@@ -2078,36 +2031,80 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 {
                     parserInfo = new ParserInfo(source);
 
-                    
-                     var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
-                    if (parser.Validate(info, source.Source))
-                    {
-                        Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source,  vp , info);
-                    }
-
-                    foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
-                    {
-                        if (token.Token == 3 && token.Word.Length > 3)
-                            writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, token.Row.ToString(), token.Word });
-
-                    }
                 }
             }
-            writer.AddFooter();
+        }
+
+
+        public static void CountTableAccess()
+        {
+            IKBService kbserv = UIServices.KB;
+            KBModel model = kbserv.CurrentModel;
+            IOutputService output = CommonServices.Output;
+            string title = "KBDoctor - Count Table Access per Object";
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+
+            output.StartSection(title);
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module", "Inserts", "Updates", "Delete", "Read", "Total" });
+
+
+
+            foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+            {
+                if (Functions.isRunable(obj))
+
+                {
+                    output.AddLine(obj.Name);
+                    int updaters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                     where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                     where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
+                                     select model.Objects.Get(r.To)).ToList().Count;
+                    int inserters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                    where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                    where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
+                                    select model.Objects.Get(r.To)).ToList().Count;
+                    int deleters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                     where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                     where ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo)
+                                     select model.Objects.Get(r.To)).ToList().Count;
+                    int readers = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                    where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                    where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
+                                    select model.Objects.Get(r.To)).ToList().Count;
+                    int total = updaters + inserters + deleters + readers; 
+                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.TypeDescriptor.Name, obj.Description, obj.Module.Name, updaters.ToString(), inserters.ToString(), deleters.ToString(), readers.ToString() , total.ToString()});
+
+                }
+
+            }
+            writer.AddTableFooterOnly();
+
+                    
+               
+                
+         
+
 
             writer.Close();
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
             output.EndSection(title, success);
-         }
+
+        }
+
+
+        
         public static void ObjectsRefactoringCandidates()
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Refactoring candidates";
             string outputFile = Functions.CreateOutputFile(kbserv, title);
-
 
             output.StartSection(title);
 
@@ -2123,7 +2120,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
                 {
-
                     if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                     {
                         output.AddLine(obj.Name);
@@ -2139,12 +2135,9 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                         CountCommentsLines(source, sourceWOComments, out linesSource, out linesComment, out PercentComment);
 
-
-
                         int MaxCodeBlock = Functions.MaxCodeBlock(sourceWOComments);
                         int MaxNestLevel = Functions.MaxNestLevel(sourceWOComments);
                         int ComplexityLevel = Functions.ComplexityLevel(sourceWOComments);
-
 
                         string ParmINOUT = Functions.ValidateINOUTinParm(obj) ? "Error" : "";
                         int parametersCount = ParametersCountObject(obj);
@@ -2167,15 +2160,11 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, obj.Module.Name , folder, ParmINOUT, parametersCount.ToString(), codeCommented, PercentComment.ToString("0"), linesComment.ToString(), linesSource.ToString(), MaxNestLevel.ToString(), MaxCodeBlock.ToString(), ComplexityLevel.ToString(), Candidate, ComplexityIndex.ToString() });
                         ObjectsTotal += 1;
                         ComplexityIndexTotal += ComplexityIndex;
-
                     }
-
                 }
-
             }
             writer.AddTableFooterOnly();
             writer.AddTableFooterOnly();
-
 
             int Average = ComplexityIndexTotal / ObjectsTotal;
             writer.AddTableHeader(new string[] { "Totals Objects= ", ObjectsTotal.ToString(), " Complexity Index Sum= ", ComplexityIndexTotal.ToString(), " Complexity Index Average= " + Average.ToString() });

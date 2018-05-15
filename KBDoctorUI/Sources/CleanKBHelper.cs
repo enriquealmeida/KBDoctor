@@ -8,7 +8,7 @@ using Artech.Architecture.UI.Framework.Services;
 using Artech.Genexus.Common;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Parts;
-using Artech.Architecture.Common.Collections;
+using Artech.Architecture.Common.Collections;  
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;

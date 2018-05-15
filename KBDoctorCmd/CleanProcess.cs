@@ -1,23 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-
+using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.MsBuild.Common;
 using Concepto.Packages.KBDoctorCore.Sources;
-using System.Collections.Generic;
+
 
 namespace KBDoctorCmd
 {
-    public class RemoveAttributesWithoutTableCmd : ArtechTask
+    public class CleanProcess : ArtechTask
     {
+        private string m_Objects;
+
+        public string Objects
+        {
+            get
+            {
+                return this.m_Objects;
+            }
+            set
+            {
+                this.m_Objects = value;
+            }
+        }
+
         public override bool Execute()
         {
             bool isSuccess = true;
             Stopwatch watch = null;
             OutputSubscribe();
             IOutputService output = CommonServices.Output;
-            output.StartSection("Remove attributes without table");
+            output.StartSection("Clean process");
             try
             {
                 watch = new Stopwatch();
@@ -25,16 +40,14 @@ namespace KBDoctorCmd
 
                 if (KB == null)
                 {
-                    output.AddErrorLine("No hay ninguna KB abierta en el contexto actual.");
+                    output.AddErrorLine("No hay ninguna KB abierta en el contexto actual, asegúrese de incluír la tarea OpenKnowledgeBase antes de ejecutar la comparación de navegaciones.");
                     isSuccess = false;
                 }
                 else
                 {
-                    CommonServices.Output.AddLine(string.Format(KB.Name, KB.Location));
-                    List<string[]> list = new List<string[]>();
-                    API.RemoveAttributesWithoutTable(KB.DesignModel, output, out list);
+                    CommonServices.Output.AddLine(Objects);
+                    //API.PreProcessPendingObjects(KB, output, CodigoGX.GetObjects(base.KB.DesignModel, this.Objects));   
                 }
-
             }
             catch (Exception e)
             {
@@ -43,7 +56,7 @@ namespace KBDoctorCmd
             }
             finally
             {
-                output.EndSection("Remove attributes without table", isSuccess);
+                output.EndSection("Clean process", isSuccess);
                 OutputUnsubscribe();
             }
             return isSuccess;

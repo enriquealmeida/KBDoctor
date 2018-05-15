@@ -9,6 +9,7 @@ using System.Xml.Xsl;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.IO.Compression;
 using Microsoft.VisualBasic.FileIO;
 
 using Artech.Genexus.Common;
@@ -24,6 +25,7 @@ using Artech.Common.Framework.Commands;
 using Artech.Genexus.Common.Entities;
 using Artech.Genexus.Common.Collections;
 using Artech.Architecture.Common.Descriptors;
+using System.Net;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -43,7 +45,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 Directory.CreateDirectory(newDir);
                 Utility.WriteXSLTtoDir(KB);
-                foreach (string d in Directory.GetDirectories(Utility.SpcDirectory(KB), "NVG", System.IO.SearchOption.AllDirectories))
+                string pathspcdir = Utility.SpcDirectory(KB);
+                string[] paths = Directory.GetDirectories(Utility.SpcDirectory(KB), "NVG", System.IO.SearchOption.AllDirectories);
+                foreach (string d in paths)
                 {
                     output.AddLine("Procesando directorio: " + d);
                     string generator = d.Replace(Utility.SpcDirectory(KB), "");
@@ -62,7 +66,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                     ts.Hours, ts.Minutes, ts.Seconds,
                     ts.Milliseconds / 10);
-
+                
                 output.AddLine(title + " elepsed time: " + elapsedTime);
                 output.EndSection(title, true);
             }
@@ -113,10 +117,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 DateTime newestDate = new DateTime(1891,09,28);
                 List<string> paths = (List<string>)colisiones[name];
                 List<FileInfo> oldfiles = new List<FileInfo>();
-                output.AddLine("Colisión en archivos: ");
                 foreach (string path in paths)
                 {
-                    output.AddLine("-- -- -- -- -- -- -- -" + path);
+         
                     FileInfo file = new FileInfo(path);
                     if(file.LastWriteTime >= newestDate)
                     {
@@ -146,21 +149,26 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
                 {
-                    output.AddLine("Procesando archivo: " + x);
-                    string xTxt = newDir + generator + Path.GetFileNameWithoutExtension(x) + ".nvg";
+                    try
+                    {
+                        string xTxt = newDir + generator + Path.GetFileNameWithoutExtension(x) + ".nvg";
 
-                    string xmlstring = Utility.AddXMLHeader(x);
+                        string xmlstring = Utility.AddXMLHeader(x);
 
-                    string newXmlFile = x.Replace(".xml", ".xxx");
-                    File.WriteAllText(newXmlFile, xmlstring);
+                        string newXmlFile = x.Replace(".xml", ".xxx");
+                        File.WriteAllText(newXmlFile, xmlstring);
 
-                    xslTransform.Transform(newXmlFile, xTxt);
-                    File.Delete(newXmlFile);
+                        xslTransform.Transform(newXmlFile, xTxt);
+                        File.Delete(newXmlFile);
+                    }
+                    catch(Exception e)
+                    {
+                        output.AddErrorLine(e);
+                    }
+                    
                 }
             }
         }
-
-        
 
         internal static void ReplaceModulesInNVGFiles(KnowledgeBase KB, IOutputService output)
         {
@@ -196,6 +204,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Encoding enc = sr.CurrentEncoding;
                 sr.Close();
 
+    
                 DeleteFirstLines(2, filePath);
 
                 string text = File.ReadAllText(filePath);
@@ -213,8 +222,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                 }
                 File.WriteAllText(filePath, dataline + "\r\n" + nameline + "\r\n" + text, enc);
-                if (contains)
-                    output.AddLine("Module names replaced in: " + filePath);
             }
         }
 
@@ -251,19 +258,23 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (Diffs.Count > 0)
                     {
                         output.AddLine("-- Se encontraron diferencias en las navegaciones de los siguientes objetos:");
+                        List<string> FilesDiff = new List<string>();
                         foreach (string x in Diffs)
                         {
                             string[] objectnametype = Utility.ReadQnameTypeFromNVGFile(x, output);
+                            string filename = Path.GetFileName(x);
                             string objtype = objectnametype[0];
                             string objmodule = objectnametype[1];
                             string objname = objectnametype[2];
                             KBObjectDescriptor kbod = KBObjectDescriptor.Get(objtype);
                             QualifiedName qname = new QualifiedName(objmodule, objname);
+                            //Null in HCIHisMo
                             KBObject obj = KB.DesignModel.Objects.Get(kbod.Id,qname);
                             if (obj != null)
                             {
                                 if (obj.Timestamp <= Utility.GetDateTimeNVGDirectory(Last2directories[1].ToString()))
                                 {
+                                    FilesDiff.Add(filename);
                                     if (objmodule != "")
                                     {
                                         output.AddLine("-- ERROR " + objmodule + '.' + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
@@ -292,9 +303,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 output.AddLine("-- NO SE ENCONTRO EL OBJETO: " + qname.ToString());
                             }
                         }
+                        CopyDifferences(FilesDiff,Last2directories[0],Last2directories[1],"NvgErrors");
                     }
                     else
                     {
+                        DeleteDifferenceDir(KB);
                         output.AddLine("No se encontraron diferencias en las navegaciones");
                     }
                 }
@@ -310,9 +323,52 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static string[] GetLast2Directorys(string[] Files, IOutputService output)
+        private static void DeleteDifferenceDir(KnowledgeBase KB)
         {
-            
+            string pathnvg = Utility.NvgComparerDirectory(KB);
+            string pathdiff = Directory.GetParent(pathnvg).FullName;
+            string copydir = Path.Combine(pathdiff, "NvgErrors");
+
+            if (Directory.Exists(copydir))
+                Directory.Delete(copydir, true);
+
+            if (File.Exists(copydir + ".zip"))
+                File.Delete(copydir + ".zip");
+        }
+
+        private static void CopyDifferences(List<string> filenames, string path1, string path2, string name)
+        {
+            string nvgdir = Directory.GetParent(path1).FullName;
+            string spcdir = Directory.GetParent(nvgdir).FullName;
+            string copydir = Path.Combine(spcdir, name);
+
+            if (Directory.Exists(copydir))
+                Directory.Delete(copydir, true);
+
+            if (File.Exists(copydir + ".zip"))
+                File.Delete(copydir + ".zip");
+
+            Directory.CreateDirectory(copydir);
+            string olddir = Path.Combine(copydir, "Old");
+            string newdir = Path.Combine(copydir, "New");
+            Directory.CreateDirectory(olddir);
+            Directory.CreateDirectory(newdir);
+            foreach (string file in filenames)
+            {
+                File.Copy(Path.Combine(path1, file), Path.Combine(olddir, file));
+                File.Copy(Path.Combine(path2, file), Path.Combine(newdir, file));
+            }
+
+            CompressDir(copydir);
+        }
+
+        private static void CompressDir(string Dir)
+        {
+            ZipFile.CreateFromDirectory(Dir, Dir + ".zip");
+        }
+
+        private static string[] GetLast2Directorys(string[] Files, IOutputService output)
+        {   
             DateTime FechaMax = new DateTime(1830,1,1);
             DateTime FechaMaxSec = new DateTime(1830,1,1);
             string DirectoryMax = "";
@@ -354,7 +410,32 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return last2directories;
         }
 
-        
+        private static List<string> EqualWSDLDirectories(string pathSource, string pathNew, IOutputService output)
+        {
+            string fileWildcard = @"*.*";
+            var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
+            string[] FilesDirectorySource = System.IO.Directory.GetFiles(pathSource, fileWildcard, searchSubDirsArg);
+            List<string> Diffs = new List<string>();
+            foreach (string fileSourcePath in FilesDirectorySource)
+            {
+                string fileNewPath = Path.Combine(pathNew, Path.GetFileName(fileSourcePath));
+                if (File.Exists(fileNewPath))
+                {
+                    FileInfo fileNew = new FileInfo(fileNewPath);
+                    FileInfo fileSource = new FileInfo(fileSourcePath);
+                    if (!Utility.FilesAreEqual(fileSource, fileNew))
+                    {
+                        Diffs.Add(fileSourcePath);
+                    }
+                }
+                else
+                {
+                    output.AddLine("-- No existe: " + fileNewPath);
+                }
+            }
+            return Diffs;
+        }
+
         private static List<string> EqualNavigationDirectories(string pathSource, string pathNew, IOutputService output)
         {
             string fileWildcard = @"*.*";
@@ -395,7 +476,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         File.WriteAllText(fileSourcePath, datalineSource + "\r\n" + namelineSource + "\r\n" + textsource, encSource);
                     }
 
-                    
                 }
                 else
                 {
@@ -403,6 +483,88 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
             }
             return Diffs;
+        }
+
+        public static void SaveObjectsWSDL(KnowledgeBase KB, IOutputService output, bool isSource)
+        {
+            
+            IEnumerable<KBObject> soapobjs = Utility.GetObjectsSOAP(KB);
+            string urlbase = Utility.GetWebRootProperty(KB, "Default"); 
+            foreach (KBObject obj in soapobjs)
+            {
+                string objqname = obj.QualifiedName.ModuleName.ToLower() + ".a" + obj.QualifiedName.ObjectName.ToLower();
+                string path =  objqname + ".aspx?wsdl";
+                string absolutePath = urlbase + path;
+
+                var http = (HttpWebRequest)WebRequest.Create(absolutePath);
+                var response = http.GetResponse();
+                var stream = response.GetResponseStream();
+                var sr = new StreamReader(stream);
+                var content = sr.ReadToEnd();
+                string responseuri = response.ResponseUri.ToString();
+                string wsdldir = Utility.WsdlDir(KB, isSource);
+
+                sr.Dispose();
+                stream.Dispose();
+                response.Dispose();
+                
+                if (responseuri  == urlbase + path)
+                {
+                    output.AddLine(absolutePath + ": OK");
+                    string filename = wsdldir + "\\" + objqname + ".wsdl";
+                    if (File.Exists(filename))
+                    {
+                        File.Delete(filename);
+                    }
+                    File.AppendAllText(filename, content);
+                }
+                else
+                {
+                    output.AddLine(absolutePath + ": Requiere login");
+                }
+            }
+        }
+
+        public static void CompareWSDLDirectories(KnowledgeBase KB, IOutputService output)
+        {
+            string source = Utility.WsdlDir(KB, true);
+            string last = GetLastWSDLDir(KB);
+            List<string> diffs = EqualWSDLDirectories(source, last, output);
+            List<string> FilesDiff = new List<string>();
+            if (diffs.Count > 0)
+            {
+                output.AddLine("- Diferencias: ");
+                foreach (string diff in diffs)
+                {
+                    string filename = Path.GetFileName(diff);
+                    FilesDiff.Add(filename);
+                    output.AddErrorLine("- " + diff);
+                }
+                CopyDifferences(FilesDiff, source, last, "WSDLErrors");
+            }
+            else
+            {
+                output.AddLine("- No se encontraron diferencias. ");
+            }
+            
+        }
+
+        internal static string GetLastWSDLDir(KnowledgeBase KB)
+        {
+            string wsdldir = Utility.WsdlComparerDirectory(KB);
+            string[] dirs = Directory.GetDirectories(wsdldir,@"WSDL*");
+            DateTime max = new DateTime(1830, 01, 01);
+            string maxdir = "";
+            foreach(string dir in dirs)
+            {
+                DateTime actual = Utility.GetDateTimeWSDLDirectory(dir);
+                if (DateTime.Compare(actual, max) > 0)
+                {
+                    max = actual;
+                    maxdir = dir;
+                }
+            }
+            return maxdir;
         }
     }
 }

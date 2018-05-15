@@ -16,6 +16,7 @@ namespace KBDoctorCmd
             Stopwatch watch = null;
             OutputSubscribe();
             IOutputService output = CommonServices.Output;
+            output.StartSection("Prepare compare navigations");
             try
             {
                 watch = new Stopwatch();

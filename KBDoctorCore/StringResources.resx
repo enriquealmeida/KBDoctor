@@ -219,6 +219,10 @@
   <data name="ObjectsRefactoringCandidates" xml:space="preserve">
     <value>Calculate KBDoctor complexity index</value>
   </data>
+
+  <data name="CountTableAccess" xml:space="preserve">
+    <value>#Table access x object</value>
+  </data>
   <data name="ObjectsDiagnostics" xml:space="preserve">
     <value>Objects Diagnostics</value>
   </data>

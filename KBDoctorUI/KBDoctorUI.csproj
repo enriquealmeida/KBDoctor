@@ -38,12 +38,12 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <StartAction>Program</StartAction>
-    <StartProgram>C:\Program Files (x86)\Artech\GeneXus\GeneXusXEv3\GeneXus.exe</StartProgram>
+    <StartProgram>C:\Program Files (x86)\GeneXus\GeneXus15\GeneXus.exe</StartProgram>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;EVO3</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>1</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -153,9 +153,17 @@
     <Reference Include="GxDataLayer">
       <HintPath>$(GX_SDK_DIR)\bin\GxDataLayer.dll</HintPath>
     </Reference>
+    <Reference Include="Artech.Packages.TeamDevClient.UI">
+      <HintPath>c:\Program Files (x86)\GeneXus\GeneXus15\Packages\Artech.Packages.TeamDevClient.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Shared.v11.1, Version=11.1.20111.2042, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb" />
+    <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1">
+      <HintPath>c:\Program Files (x86)\GeneXus\GeneXus15\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
       <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
     </Reference>
@@ -244,6 +252,7 @@
     <Content Include="Documentacion\Cambios.txt" />
     <Content Include="Documentacion\HowTo.txt" />
     <Content Include="Documentacion\LoQueFaltaHacer.txt" />
+    <Content Include="Resources\Icons\file-find.ico" />
     <None Include="Resources\Replace.txt" />
     <None Include="Resources\MeneesDiffUtils.dll" />
     <None Include="Resources\Menees.dll" />

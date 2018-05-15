@@ -130,8 +130,8 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey editLegacyCodeToReplace = new CommandKey(Package.guid, "EditLegacyCodeToReplace");
 
         private static CommandKey objectsRefactoringCandidates = new CommandKey(Package.guid, "ObjectsRefactoringCandidates");
+        private static CommandKey countTableAccess = new CommandKey(Package.guid, "CountTableAccess");
         private static CommandKey objectsWithConstants = new CommandKey(Package.guid, "ObjectsWithConstants");
-
         private static CommandKey objectsDiagnostics = new CommandKey(Package.guid, "ObjectsDiagnostics");
 
         private static CommandKey objectsWIWEB = new CommandKey(Package.guid, "ObjectsWINWEB");
@@ -166,8 +166,11 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey TreeCommit { get { return treeCommit; } }
         public static CommandKey EditLegacyCodeToReplace { get { return editLegacyCodeToReplace; } }
         public static CommandKey ObjectsRefactoringCandidates { get { return objectsRefactoringCandidates; } }
+
+        public static CommandKey CountTableAccess { get { return countTableAccess; } }
+
         public static CommandKey ObjectsWithConstants { get { return objectsWithConstants; } }
-        
+
         public static CommandKey ObjectsDiagnostics { get { return objectsDiagnostics; } }
         public static CommandKey ObjectsWINWEB { get { return objectsWIWEB; } }
         public static CommandKey ListProcedureCallWebpanelTransaction { get { return listProcedureCallWebpanelTransaction; } }
@@ -177,19 +180,27 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey GenerateGraph { get { return generateGraph; } }
 
 
+
         // Acciones sobre objetos
         private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");
         private static CommandKey openObject = new CommandKey(Package.guid, "OpenObject");
         private static CommandKey assignDomainToVariable = new CommandKey(Package.guid, "AssignDomainToVariable");
         private static CommandKey assignAttributeToVariable = new CommandKey(Package.guid, "AssignAttributeToVariable");
         private static CommandKey renameAttributesAndTables =  new CommandKey(Package.guid, "RenameAttributesAndTables");
-                
+
+
         public static CommandKey RemoveObject { get { return removeObject; } }
         public static CommandKey OpenObject { get { return openObject; } }
         public static CommandKey AssignDomainToVariable { get { return assignDomainToVariable; } }
         public static CommandKey AssignAttributeToVariable { get { return assignAttributeToVariable; } }
 
         public static CommandKey RenameAttributesAndTables { get { return renameAttributesAndTables; } }
+
+        private static CommandKey preprocessPendingObjects = new CommandKey(Package.guid, "PreprocessPendingObjects");
+        public static CommandKey PreprocessPendingObjects { get { return preprocessPendingObjects; } }
+
+        private static CommandKey reviewObjects = new CommandKey(Package.guid, "ReviewObjects");
+        public static CommandKey ReviewObjects { get { return reviewObjects; } }
 
         //Surgery
         private static CommandKey procedureSDT = new CommandKey(Package.guid, "ProcedureSDT");

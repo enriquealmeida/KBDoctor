@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using System.Threading.Tasks;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
-    class KBDMatrix
+   /* class KBDMatrix
     {
         private readonly double[,] _matrix;
 
@@ -55,5 +54,5 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return resultMatrix;
         }
         
-    }
+    }*/
 }

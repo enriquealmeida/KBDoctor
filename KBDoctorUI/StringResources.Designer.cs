@@ -322,6 +322,15 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Count table access.
+        /// </summary>
+        internal static string CountTableAccess {
+            get {
+                return ResourceManager.GetString("CountTableAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Edit  code to replace.
         /// </summary>
         internal static string EditLegacyCodeToReplace {
@@ -736,6 +745,15 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Object Review.
+        /// </summary>
+        internal static string PreprocessPendingObjects {
+            get {
+                return ResourceManager.GetString("PreprocessPendingObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Generate Get/Set Procedures.
         /// </summary>
         internal static string ProcedureGetSet {
@@ -804,6 +822,15 @@ namespace Concepto.Packages.KBDoctor {
         internal static string ResetWINForm {
             get {
                 return ResourceManager.GetString("ResetWINForm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Review Objects.
+        /// </summary>
+        internal static string ReviewObjects {
+            get {
+                return ResourceManager.GetString("ReviewObjects", resourceCulture);
             }
         }
         

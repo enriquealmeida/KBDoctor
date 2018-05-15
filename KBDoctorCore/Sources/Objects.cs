@@ -1,9 +1,12 @@
-﻿using Artech.Architecture.Common.Objects;
+﻿using Artech.Architecture.Common.Collections;
+using Artech.Architecture.Common.Objects;
+using Artech.Architecture.Common.Services;
 using Artech.Architecture.Language.ComponentModel;
 using Artech.Architecture.Language.Parser;
 using Artech.Architecture.Language.Services;
 using Artech.Genexus.Common.CustomTypes;
 using Artech.Genexus.Common.Objects;
+using Artech.Genexus.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -233,6 +236,30 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static KBDAST ParseSourceIntoAST(Artech.Genexus.Common.Parts.ProcedurePart source)
         {
+
+            /* if (source != null)
+             {
+                 Stack stk;
+                 ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
+                 IParserEngine parser = parserSrv.CreateEngine();
+                 ParserInfo parserInfo = new ParserInfo(source);
+                 foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
+                 {
+                     if (token.Token >= 100)
+                     {
+                         //Command   
+                         List<TokensIds>[] IndentTokens = GetIndentationTokens()
+                     }
+                     else
+                     {
+                         //Token
+
+                     }
+                 }
+             }*/
+            return null;
+
+
             if (source != null)
             {
                 Stack stk;
@@ -255,6 +282,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                
             }
             return null;
+
         }
 
         private static List<TokensIds>[] GetIndentationTokens()
@@ -370,10 +398,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static string GetParametersString(KBObject obj)
         {
-            //TODO - ARREGLAR TUPLE 
-            string paramstring = "";
-            /* 
-             * Tuple<int, string> type_access;
+            
+            Tuple<int, string> type_access;
             List<Tuple<int, string>> parameters = new List<Tuple<int, string>>();
             ICallableObject callableObject = obj as ICallableObject;
             foreach (Signature signature in callableObject.GetSignatures())
@@ -402,8 +428,187 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 paramstring += accessor + ":" + parameter.Item1.ToString() + " ";
             }
-            */
             return paramstring.TrimEnd();
+        }
+
+        internal static List<KBObject> ParmWOInOut(KnowledgeBase KB, IOutputService output)
+        {
+            string title = "KBDoctor - Objects with parameters without IN:/OUT:/INOUT:";
+            output.StartSection(title);
+
+            List<KBObject> objectsWithProblems = GetObjectsWithProblems((List<KBObject>)KB.DesignModel.Objects.GetAll(), output);
+            bool success = true;
+            output.EndSection(title, success);
+            return objectsWithProblems;
+        }
+
+        internal static List<KBObject> ParmWOInOut(List<KBObject> objs, IOutputService output)
+        {
+            // Object with parm() rule without in: out: or inout:
+
+            List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output);
+            bool success = true;
+            return objectsWithProblems;
+        }
+
+        private static List<KBObject> GetObjectsWithProblems(List<KBObject> objs, IOutputService output)
+        {
+            int numObj = 0;
+            int objWithProblems = 0;
+            List<KBObject> objectsWithProblems = new List<KBObject>();
+            foreach (KBObject obj in objs)
+            {
+                ICallableObject callableObject = obj as ICallableObject;
+
+                if (callableObject != null)
+                {
+                    numObj += 1;
+                    if ((numObj % 100) == 0)
+                        output.AddLine("Processing " + obj.Name);
+                    foreach (Signature signature in callableObject.GetSignatures())
+                    {
+                        Boolean someInOut = false;
+                        foreach (Parameter parm in signature.Parameters)
+                        {
+                            if (parm.Accessor.ToString() == "PARM_INOUT")
+                            {
+                                someInOut = true;
+                                break;
+                            }
+                        }
+                        if (someInOut)
+                        {
+                            string ruleParm = Utility.ExtractRuleParm(obj);
+                            if (ruleParm != "")
+                            {
+                                int countparms = ruleParm.Split(new char[] { ',' }).Length;
+                                int countsemicolon = ruleParm.Split(new char[] { ':' }).Length - 1;
+                                if (countparms != countsemicolon)
+                                {
+                                    objWithProblems += 1;
+                                    objectsWithProblems.Add(obj);
+                                    output.AddWarningLine(Utility.linkObject(obj) + "> Parameters without IN/OUT/INOUT");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return objectsWithProblems;
+        }
+
+        private static bool isGeneratedbyPattern(KBObject obj)
+        {
+            if (!(obj == null))
+            { return obj.GetPropertyValue<bool>(KBObjectProperties.IsGeneratedObject); }
+            else
+            { return true; }
+
+        }
+
+        private static bool isGenerated(KBObject obj)
+        {
+            if (obj is DataSelector)  //Los Dataselector no tienen la propiedad de generarlos o no , por lo que siempre devuelven falso y sin son referenciados se generan. 
+                return true;
+            object aux = obj.GetPropertyValue(Artech.Genexus.Common.Properties.TRN.GenerateObject);
+            return ((aux != null) && (aux.ToString() == "True"));
+
+        }
+
+        private static int CalculateComplexityIndex(int MaxCodeBlock, int MaxNestLevel, int ComplexityLevel, string ParmINOUT)
+        {
+            int ComplexityIndex = 0;
+            if (ParmINOUT == "Error") ComplexityIndex += 100;
+            ComplexityIndex += MaxNestLevel * MaxNestLevel;
+            ComplexityIndex += ComplexityLevel * 10;
+            ComplexityIndex += MaxCodeBlock * 2;
+            return ComplexityIndex;
+        }
+
+        private static int ParametersCountObject(KBObject obj)
+        {
+            int countparm = 0;
+            ICallableObject callableObject = obj as ICallableObject;
+            if (callableObject != null)
+            {
+                foreach (Signature signature in callableObject.GetSignatures())
+                {
+                    countparm = signature.ParametersCount;
+                }
+            }
+            return countparm;
+        }
+
+        internal static void CommitOnExit(List<KBObject> objs, IOutputService output)
+        {
+            bool commitOnExit;
+            foreach (KBObject obj in objs)
+            {
+                if (obj is Procedure) { 
+                    object aux = obj.GetPropertyValue("CommitOnExit");
+                    if (aux != null)
+                    {
+                        commitOnExit = aux.ToString() == "Yes";
+                        if (commitOnExit)
+                        {
+                            output.AddWarningLine(obj.Name + "> Commit on Exit = YES");
+                        }
+                    }
+                }
+            }
+        }
+
+        internal static void CheckComplexityMetrics(List<KBObject> objs, IOutputService output, int maxNestLevel, int maxComplexityLevel, int maxCodeBlock, int maxParametersCount)
+        {
+            foreach (KBObject obj in objs)
+            {
+                if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
+                {
+                    if (isGenerated(obj) && !isGeneratedbyPattern(obj))
+                    {
+                        string source = Utility.ObjectSourceUpper(obj);
+                        source = Utility.RemoveEmptyLines(source);
+
+                        string sourceWOComments = Utility.ExtractComments(source);
+                        sourceWOComments = Utility.RemoveEmptyLines(sourceWOComments);
+
+                        int CodeBlock = Utility.MaxCodeBlock(sourceWOComments);
+                        int NestLevel = Utility.MaxNestLevel(sourceWOComments);
+                        int ComplexityLevel = Utility.ComplexityLevel(sourceWOComments);
+
+                        int parametersCount = ParametersCountObject(obj);
+                        if (NestLevel > maxNestLevel)
+                        {
+                            output.AddWarningLine(obj.Name + "> Nested level to high (" + NestLevel.ToString() + "). Recommended max: " + maxNestLevel.ToString());
+
+                        }
+                        if (ComplexityLevel > maxComplexityLevel)
+                        {
+                            output.AddWarningLine(obj.Name + "> Complexity too high (" + ComplexityLevel.ToString() + "). Recommended max:  " + maxComplexityLevel.ToString());
+                        }
+                        if (CodeBlock > maxCodeBlock)
+                        {
+                            output.AddWarningLine(obj.Name + "> Code block too large (" + CodeBlock.ToString() + "). Recommended max: " + maxCodeBlock.ToString());
+                        }
+                        if (parametersCount > maxParametersCount)
+                        {
+                            output.AddWarningLine(obj.Name + "> Too many parameters (" + parametersCount.ToString() + "). Recommended max: " + maxParametersCount.ToString());
+                        }
+                    }
+                }
+            }
+        }
+
+        internal static void isInModule(List<KBObject> objs, IOutputService output)
+        {
+            foreach(KBObject obj in objs)
+            {
+                if (obj.Module.Description == "Root Module")
+                {
+                    output.AddWarningLine(obj.Name + "> Object without module");
+                }
+            }
         }
     }
 }

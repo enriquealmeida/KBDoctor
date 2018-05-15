@@ -77,6 +77,7 @@
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -87,6 +88,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Sources\CodigoGX.cs" />
     <Compile Include="Sources\GraphSimilarity.cs" />
     <Compile Include="Sources\KBDAST.cs" />
     <Compile Include="Sources\KBDoctorXMLWriter.cs" />

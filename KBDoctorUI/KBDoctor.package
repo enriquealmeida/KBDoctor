@@ -60,6 +60,7 @@
     <CommandDefinition id="TreeCommit" />
     <CommandDefinition id="EditLegacyCodeToReplace" /> 
     <CommandDefinition id="ObjectsRefactoringCandidates" />
+    <CommandDefinition id="CountTableAccess"  />
     <CommandDefinition id="ObjectsWithConstants" />
     <CommandDefinition id="ObjectsDiagnostics" />
     <CommandDefinition id="ObjectsWINWEB" />
@@ -80,6 +81,8 @@
     <CommandDefinition id="GenerateLocationXML" />
     <CommandDefinition id="KBInterfaces" /> 
     <CommandDefinition id="UDPCallables" />
+    <CommandDefinition id="PreprocessPendingObjects" />
+    <CommandDefinition id ="ReviewObjects"   image="file-find" imageType="ico" />
 
     <!-- Acciones sobre atributos -->
     <CommandDefinition id="AssignDomainToAttribute" />
@@ -143,7 +146,13 @@
 		</Group>
 	</Groups>
    -->
-
+  <Groups>
+    <Group type="Context" refid='CommitGroup' package='319fb05a-2f9a-47c5-b133-acc33f0b95d7' context='selection'>
+      <Group id='KBDoctor' context='selection' >
+        <Command refid='PreprocessPendingObjects' initVisible='true' context='selection'/>
+      </Group>
+    </Group>
+  </Groups>
   <Menus>
     <Menu type="menubar">
       <Popup refid='ToolsMenu' name='Tools' >
@@ -190,6 +199,7 @@
             <Command refid="BuildObjectAndReferences"/>
             <Command refid="BuildObjectWithProperty"/>
             <Command refid="TreeCommit" />
+            <Command refid="ReviewObjects"/>
             <Group>
               <Command refid="ChangeLegacyCode" />
               <Command refid="EditLegacyCodeToReplace" />
@@ -250,8 +260,9 @@
             <Popup name ="KB stats">
               <Command refid="CountGeneratedByPattern"  />
               <Command refid="ObjectsRefactoringCandidates" />
+               <Command refid="CountTableAccess" />
+               <Command refid="ListModulesStatistics" />
               <Command refid="ObjectsWithConstants" />
-              <Command refid="ListModulesStatistics" />
             </Popup>
           </Group>
           <Group id="CleanKB" >
@@ -304,7 +315,7 @@
              
             </Popup>
           </Group>
-
+          
           <Group id="AboutKBDoctor" >
             <Command refid="AboutKBDoctor"  />
             <Command refid="HelpKBDoctor" />
@@ -322,15 +333,13 @@
         </Popup>
       </Menu>
 
-      <Menu type='context' id='EnvironmentContext' package='4703F0A9-2AEB-4469-9466-25E2A56C7B6D'>
-        <Popup id='GXPowerCommandEnvPopUp' name='PowerCommands' context='selection' dynamic='true' autoManageVisibility='true' insertBefore=''>
+    <Menu type='context' id='EnvironmentContext' package='4703F0A9-2AEB-4469-9466-25E2A56C7B6D'>
+      <Popup id='GXPowerCommandEnvPopUp' name='PowerCommands' context='selection' dynamic='true' autoManageVisibility='true' insertBefore=''>
           <Command refid='CommandPromptEnv' initVisible='true'/>
           <Command refid='ExploreEnv' initVisible='true'/>
         </Popup>
       </Menu>
 
-    
-    
   </Menus>
 
 </Package>

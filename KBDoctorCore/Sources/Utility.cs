@@ -18,6 +18,8 @@ using Artech.Common.Helpers.Structure;
 using Artech.Genexus.Common.Parts.SDT;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Udm.Framework;
+using Artech.Common.Properties;
+using Artech.Genexus.Common.Entities;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -65,6 +67,28 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return DateTimeDir;
         }
 
+        internal static DateTime GetDateTimeWSDLDirectory(string FileName)
+        {
+            string WSDLDirectory = Path.GetFileName(FileName);
+            int posanio = 5;
+            string StringAnio = WSDLDirectory.Substring(posanio, 4);
+            int Anio = Int32.Parse(StringAnio);
+            string StringMes = WSDLDirectory.Substring(posanio + 5, 2);
+            int Mes = Int32.Parse(StringMes);
+            string StringDia = WSDLDirectory.Substring(posanio + 8, 2);
+            int Dia = Int32.Parse(StringDia);
+            string StringHora = WSDLDirectory.Substring(posanio + 11, 2);
+            int Hora = Int32.Parse(StringHora);
+            string StringMinutos = WSDLDirectory.Substring(posanio + 13, 2);
+            int Minutos = Int32.Parse(StringMinutos);
+            DateTime DateTimeDir = new DateTime();
+            if (ValidoAtributosDateTime(Anio, Mes, Dia, Hora, Minutos, 0))
+            {
+                DateTimeDir = new DateTime(Anio, Mes, Dia, Hora, Minutos, 0);
+            }
+            return DateTimeDir;
+        }
+
         private static bool ValidoAtributosDateTime(int Anio, int Mes, int Dia, int Hora, int Minutos, int Segundos)
         {
             if (Anio >= 2000 && Mes > 0 && Mes <= 12 && Dia <= 31 && Dia > 0 && Hora >= 0 && Hora <= 23 && Minutos >= 0 && Minutos <= 60 && Segundos >= 0 && Segundos <= 60)
@@ -83,6 +107,40 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Directory.CreateDirectory(dir);
             }
             catch (Exception e) { }
+
+            return dir;
+        }
+
+        internal static string WsdlComparerDirectory(KnowledgeBase KB)
+        {
+
+            GxModel gxModel = KB.DesignModel.Environment.TargetModel.GetAs<GxModel>();
+            string dir = Path.Combine(SpcDirectory(KB), "WsdlComparer");
+            try
+            {
+                Directory.CreateDirectory(dir);
+            }
+            catch (Exception e) { }
+
+            return dir;
+        }
+
+        internal static string WsdlDir(KnowledgeBase KB, bool isSource)
+        {
+            string dir;
+            string comparedir = WsdlComparerDirectory(KB);
+            if (isSource)
+            {
+                dir = Path.Combine(comparedir, "Source");
+            }
+            else
+            {
+                string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
+                dir =  comparedir + @"\WSDL-" + fechahora + @"\";
+            }
+
+            if(!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
 
             return dir;
         }
@@ -453,8 +511,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         }
                     }
                 }
-               
-               
             }
         }
 
@@ -542,7 +598,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         sdtItem.Signed = signed;
 
                     }
-
                 }
             }
         }
@@ -746,6 +801,37 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             string outputFile = KB.UserDirectory + @"\KBdoctorEv2.xslt";
             File.WriteAllText(outputFile, StringResources.specXEv2);
+        }
+
+        internal static IEnumerable<KBObject> GetObjectsSOAP(KnowledgeBase KB)
+        {
+            IEnumerable<KBObject> objects = KB.DesignModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "SOAP");
+            return objects;
+        }
+        internal static string GetWebRootProperty(KnowledgeBase KB, string GeneratorName)
+        {
+            KBModel targetmodel = KB.DesignModel.Environment.TargetModel;
+            GxModel arg = targetmodel.GetAs<GxModel>();
+            PropertiesObject propertiesObject = null;
+            GxEnvironment environment;
+            foreach (GxEnvironment current in arg.Environments)
+            {
+                if ( current.EnvironmentCategory.Name.ToLower().Trim() == GeneratorName.ToLower().Trim())
+                {
+                    environment = current;
+                    propertiesObject = PropertiesObject.GetFrom(current);
+                }
+            }
+            string salida;
+            if (propertiesObject == null)
+            {
+               salida = "";
+            }
+            else
+            {
+                salida = propertiesObject.GetPropertyValueString("WebRoot");
+            }
+            return salida;
         }
     }
 }
