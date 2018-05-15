@@ -128,7 +128,9 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ListLastReports, new ExecHandler(ExecListLastReports), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.PreprocessPendingObjects, new ExecHandler(ExecPreprocessPendingObjects), new QueryHandler(QueryKBDoctor));
-     
+
+            AddCommand(CommandKeys.ReviewObjects, new ExecHandler(ExecReviewObjects), new QueryHandler(QueryKBDoctor));
+
             AddCommand(CommandKeys.AboutKBDoctor, new ExecHandler(ExecAboutKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             AddCommand(CommandKeys.HelpKBDoctor, new ExecHandler(ExecHelpKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             //Labs
@@ -448,6 +450,28 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects);
             return true;
         }
+
+        public bool ExecReviewObjects(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+            KBModel kbModel = UIServices.KB.CurrentModel;
+
+            List<KBObject> selectedObjects = new List<KBObject>();
+
+            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            {
+                if (obj != null)
+                {
+                    selectedObjects.Add(obj);
+                }
+            }
+            KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects);
+            return true;
+        }
+
 
         public static List<KBObjectHistory> GetGenericHistoryObjects(SelectedRowsCollection rows)
         {

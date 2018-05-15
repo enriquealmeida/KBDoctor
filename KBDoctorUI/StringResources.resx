@@ -400,4 +400,7 @@
   <data name="PreprocessPendingObjects" xml:space="preserve">
     <value>Object Review</value>
   </data>
+  <data name="ReviewObjects" xml:space="preserve">
+    <value>Review Objects</value>
+  </data>
 </root>

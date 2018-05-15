@@ -82,6 +82,7 @@
     <CommandDefinition id="KBInterfaces" /> 
     <CommandDefinition id="UDPCallables" />
     <CommandDefinition id="PreprocessPendingObjects" />
+    <CommandDefinition id ="ReviewObjects"   image="file-find" imageType="ico" />
 
     <!-- Acciones sobre atributos -->
     <CommandDefinition id="AssignDomainToAttribute" />
@@ -198,6 +199,7 @@
             <Command refid="BuildObjectAndReferences"/>
             <Command refid="BuildObjectWithProperty"/>
             <Command refid="TreeCommit" />
+            <Command refid="ReviewObjects"/>
             <Group>
               <Command refid="ChangeLegacyCode" />
               <Command refid="EditLegacyCodeToReplace" />

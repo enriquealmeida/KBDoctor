@@ -111,7 +111,6 @@
     <Reference Include="Artech.Packages.Patterns">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Packages.Patterns.dll</HintPath>
     </Reference>
-
     <Reference Include="Artech.Template.Base">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Template.Base.dll</HintPath>
     </Reference>
@@ -154,7 +153,7 @@
     <Reference Include="GxDataLayer">
       <HintPath>$(GX_SDK_DIR)\bin\GxDataLayer.dll</HintPath>
     </Reference>
-	    <Reference Include="Artech.Packages.TeamDevClient.UI">
+    <Reference Include="Artech.Packages.TeamDevClient.UI">
       <HintPath>c:\Program Files (x86)\GeneXus\GeneXus15\Packages\Artech.Packages.TeamDevClient.UI.dll</HintPath>
     </Reference>
     <Reference Include="Infragistics2.Shared.v11.1, Version=11.1.20111.2042, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb" />
@@ -253,6 +252,7 @@
     <Content Include="Documentacion\Cambios.txt" />
     <Content Include="Documentacion\HowTo.txt" />
     <Content Include="Documentacion\LoQueFaltaHacer.txt" />
+    <Content Include="Resources\Icons\file-find.ico" />
     <None Include="Resources\Replace.txt" />
     <None Include="Resources\MeneesDiffUtils.dll" />
     <None Include="Resources\Menees.dll" />

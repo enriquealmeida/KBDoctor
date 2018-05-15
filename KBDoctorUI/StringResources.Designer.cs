@@ -826,6 +826,15 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Review Objects.
+        /// </summary>
+        internal static string ReviewObjects {
+            get {
+                return ResourceManager.GetString("ReviewObjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Search and Replace in Objects.
         /// </summary>
         internal static string SearchAndReplace {

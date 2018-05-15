@@ -187,7 +187,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey assignDomainToVariable = new CommandKey(Package.guid, "AssignDomainToVariable");
         private static CommandKey assignAttributeToVariable = new CommandKey(Package.guid, "AssignAttributeToVariable");
         private static CommandKey renameAttributesAndTables =  new CommandKey(Package.guid, "RenameAttributesAndTables");
-        private static CommandKey preprocessPendingObjects = new CommandKey(Package.guid, "PreprocessPendingObjects");
+
 
         public static CommandKey RemoveObject { get { return removeObject; } }
         public static CommandKey OpenObject { get { return openObject; } }
@@ -196,7 +196,11 @@ namespace Concepto.Packages.KBDoctor
 
         public static CommandKey RenameAttributesAndTables { get { return renameAttributesAndTables; } }
 
+        private static CommandKey preprocessPendingObjects = new CommandKey(Package.guid, "PreprocessPendingObjects");
         public static CommandKey PreprocessPendingObjects { get { return preprocessPendingObjects; } }
+
+        private static CommandKey reviewObjects = new CommandKey(Package.guid, "ReviewObjects");
+        public static CommandKey ReviewObjects { get { return reviewObjects; } }
 
         //Surgery
         private static CommandKey procedureSDT = new CommandKey(Package.guid, "ProcedureSDT");
