@@ -1829,7 +1829,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             bool success = true;
 
             Regex[] re4 = new Regex[9]
-{
+                {
                 new Regex(@"([\b]*)([^.])([c][a][l][l][(])([\s]*[a-z][0-9a-z_]+)[\s]*[,]", RegexOptions.Compiled | RegexOptions.IgnoreCase ),
                 new Regex(@"([\b]*)([^.])([u][d][p][(])([\s]*[a-z][0-9a-z_]+)[\s]*[,]" , RegexOptions.Compiled | RegexOptions.IgnoreCase ),
                 new Regex(@"([\b]*)([^.])([c][r][e][a][t][e][(])([\s]*[a-z][0-9a-z_]+)[\s]*[,]" , RegexOptions.Compiled | RegexOptions.IgnoreCase),
@@ -1841,7 +1841,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 new Regex(@"([\b]*)([^.])([l][i][n][k][(])([\s]*[a-z][0-9a-z_]+)[\s]*[,]", RegexOptions.Compiled | RegexOptions.IgnoreCase),
 
                 new Regex(@"^([c][a][l][l][(])([\s]*[a-z][0-9a-z_]+)(,|\))", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline)
-};
+                };
             string[] re4Replace = new string[9]
                 {
                 @"$1$2$4.$3",@"$1$2$4.$3",@"$1$2$4.$3",@"$1$2$4.$3",
@@ -1886,15 +1886,15 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         string newSource = source;
 
                         output.AddLine("Object " + obj.Name);
-                        /*
+                        
                         string callers = ChangeUDPCallWhenNecesary(obj);
-                        CleanKBHelper.CleanKBObjectVariables(obj);
+                       // CleanKBHelper.CleanKBObjectVariables(obj);
                         //Cambio expresiones regulares
                         for (int i = 0; i < 9; i++)
                         {
                             newSource = re4[i].Replace(newSource, re4Replace[i]);
                         }
-                        */
+                        
                         //Solo cambio si NO tiene codigo nativo. Cambiar codigo nativo puede traer lios. 
                         if (!(newSource.ToLower().Contains("java") || newSource.ToLower().Contains("csharp")))
                         {

@@ -364,7 +364,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static void CompressDir(string Dir)
         {
-            ZipFile.CreateFromDirectory(Dir, Dir + ".zip");
+            //ZipFile.CreateFromDirectory(Dir, Dir + ".zip");
         }
 
         private static string[] GetLast2Directorys(string[] Files, IOutputService output)
@@ -506,7 +506,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                 sr.Dispose();
                 stream.Dispose();
-                response.Dispose();
+                //response.Dispose();
                 
                 if (responseuri  == urlbase + path)
                 {

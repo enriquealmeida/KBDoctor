@@ -154,16 +154,17 @@
       <HintPath>$(GX_SDK_DIR)\bin\GxDataLayer.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Packages.TeamDevClient.UI">
-      <HintPath>c:\Program Files (x86)\GeneXus\GeneXus15\Packages\Artech.Packages.TeamDevClient.UI.dll</HintPath>
+      <HintPath>$(GX_PROGRAM_DIR)\Packages\Artech.Packages.TeamDevClient.UI.dll</HintPath>
     </Reference>
     <Reference Include="Infragistics2.Shared.v11.1, Version=11.1.20111.2042, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb" />
     <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1">
-      <HintPath>c:\Program Files (x86)\GeneXus\GeneXus15\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
+      <HintPath>$(GX_PROGRAM_DIR)\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.Build.Tasks.v3.5" />
+    <Reference Include="Microsoft.Build.Utilities.v3.5" />
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
       <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
     </Reference>
