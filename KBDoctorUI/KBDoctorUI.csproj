@@ -163,8 +163,12 @@
     <Reference Include="log4net">
       <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Build.Tasks.v3.5" />
-    <Reference Include="Microsoft.Build.Utilities.v3.5" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Tasks.v3.5" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Utilities.v3.5" />
+	<Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.6' " Include="Microsoft.Build.Tasks.v4.0" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.6' " Include="Microsoft.Build.Utilities.v4.0" />
+	<Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7' " Include="Microsoft.Build.Tasks.v4.7" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7' " Include="Microsoft.Build.Utilities.v4.7" />
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
       <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
     </Reference>
