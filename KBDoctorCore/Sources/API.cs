@@ -111,6 +111,23 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     //Is in module
                     Objects.isInModule(objlist, output);
+
+                    //Code Commented?
+                    /*
+
+
+*Variables no basadas en atributos ni dominios?
+*Objeto alcanzable?
+*Usa atributos sin dominios?
+* Cambiar UDP por()
+*Cambiar call por()
+*Tiene todas las referencias?
+* Mas de un parametro de salida
+* Nombre "poco claro" / Descripcion "poco clara"
+* Bloque de codigo muy largo
+*/
+
+
                 }
             }
 
