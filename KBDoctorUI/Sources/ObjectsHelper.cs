@@ -2035,7 +2035,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             }
         }
 
-
         public static void CountTableAccess()
         {
             IKBService kbserv = UIServices.KB;
@@ -2089,9 +2088,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.EndSection(title, success);
 
         }
-
-
-        
+ 
         public static void ObjectsRefactoringCandidates()
         {
             IKBService kbserv = UIServices.KB;
@@ -3681,6 +3678,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             */
 
         }
+
         public static void ListAPIObjects()
         {
             IKBService kbserv = UIServices.KB;

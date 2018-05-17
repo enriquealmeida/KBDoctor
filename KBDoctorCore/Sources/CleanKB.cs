@@ -373,7 +373,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (kbObj.Validate(outputMessages))
                         {
                             kbObj.Save();
-                            output.AddLine("Object '" + kbObj.Name + "' cleaned successfully. Variables deleted: " + text2.Substring(2));
+                            output.AddLine("KBDoctor", "Object '" + kbObj.Name + "' cleaned successfully. Variables deleted: " + text2.Substring(2));
 
                         }
                         using (IEnumerator<BaseMessage> enumerator8 = outputMessages.GetEnumerator())
@@ -383,7 +383,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 BaseMessage current8 = enumerator8.Current;
                                 if (current8.Level == MessageLevel.Error)
                                 {
-                                    output.AddErrorLine(current8.Text);
+                                    output.AddErrorLine("KBDoctor", current8.Text);
                                 }
                             }
 
@@ -393,7 +393,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             catch (Exception ex)
             {
-                output.AddWarningLine("Object '" + kbObj.Name + "' was not cleaned because an error ocurred: " + ex.Message);
+                output.AddWarningLine("KBDoctor", "Object '" + kbObj.Name + "' was not cleaned because an error ocurred: " + ex.Message);
             }
         }
     }

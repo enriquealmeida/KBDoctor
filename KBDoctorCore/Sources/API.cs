@@ -88,7 +88,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
         {
-            output.StartSection("Object review");
+            output.StartSection("KBDoctor", "Object_review", "Object review");
             foreach (KBObject obj in objs)
             {
                 if (Utility.isRunable(obj)) {
@@ -111,10 +111,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     //Is in module
                     Objects.isInModule(objlist, output);
+
+                    //With variables not based on attributes
+                    Objects.ObjectsWithVarNotBasedOnAtt(objlist, output);
+
+                    //Code commented
+                    Objects.CodeCommented(objlist, output);
                 }
             }
-
-            output.EndSection("Object review", true);
+            output.EndSection("KBDoctor", "Object_review", "Object review", true);
         }
     }
 }

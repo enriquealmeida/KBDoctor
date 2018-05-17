@@ -467,7 +467,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     numObj += 1;
                     if ((numObj % 100) == 0)
-                        output.AddLine("Processing " + obj.Name);
+                        output.AddLine("KBDoctor", "Processing " + obj.Name);
                     foreach (Signature signature in callableObject.GetSignatures())
                     {
                         Boolean someInOut = false;
@@ -491,7 +491,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     objWithProblems += 1;
                                     objectsWithProblems.Add(obj);
                                     OutputError err = new OutputError("Parameter without IN/OUT/INOUT ", MessageLevel.Error, new  KBObjectPosition(obj.Parts.Get<RulesPart>()));
-                                    output.Add(err); 
+                                    output.Add("KBDoctor",err); 
                                 }
                             }
                         }
@@ -557,7 +557,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (commitOnExit)
                         {
                             OutputError wrn = new OutputError("Commit on EXIT = YES ", MessageLevel.Warning, new KBObjectAnyPosition(obj));
-                            output.Add(wrn);
+                            output.Add("KBDoctor", wrn);
                         }
                     }
                 }
@@ -588,24 +588,24 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (NestLevel > maxNestLevel)
                         {
                             OutputError err = new OutputError("Nested level too high (" + NestLevel.ToString() + "). Recommended max: " + maxNestLevel.ToString(), MessageLevel.Error, new KBObjectPosition(part));
-                            output.Add(err);
+                            output.Add("KBDoctor", err);
 
                         }
                         if (ComplexityLevel > maxComplexityLevel)
                         {
                             OutputError err = new OutputError(" Complexity too high(" + ComplexityLevel.ToString() + ").Recommended max: " + maxComplexityLevel.ToString(), MessageLevel.Error, new KBObjectPosition(part));
-                            output.Add(err); 
+                            output.Add("KBDoctor", err); 
                         }
 
                         if (CodeBlock > maxCodeBlock)
                         {
                             OutputError err = new OutputError("Code block too large(" + CodeBlock.ToString() + ").Recommended max: " + maxCodeBlock.ToString(), MessageLevel.Error, new KBObjectPosition(part));
-                            output.Add(err);
+                            output.Add("KBDoctor", err);
                         }
                         if (parametersCount > maxParametersCount)
                         {
                             OutputError err = new OutputError("Too many parameters (" + parametersCount.ToString() + ").Recommended max: " + maxParametersCount.ToString(), MessageLevel.Error, new KBObjectPosition(part));
-                            output.Add(err);
+                            output.Add("KBDoctor", err);
                         }
                     }
                 }
@@ -619,7 +619,62 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if (obj.Module.Description == "Root Module")
                 {
                     OutputError err = new OutputError("Object without module." , MessageLevel.Warning, new KBObjectAnyPosition(obj));
-                    output.Add(err);
+                    output.Add("KBDoctor", err);
+                }
+            }
+        }
+
+        internal static void ObjectsWithVarNotBasedOnAtt(List<KBObject> objs, IOutputService output)
+        {
+            foreach (KBObject obj in objs)
+            {
+                string vnames = "";
+                Boolean hasErrors = false;
+                Boolean SaveObj = false;
+                if (isGenerated(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel || obj is Procedure))
+                {
+                    string pic2 = (string)obj.GetPropertyValue("ATT_PICTURE");
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    if (vp != null)
+                    {
+                        foreach (Variable v in vp.Variables)
+                        {
+                            if ((!v.IsStandard) && v.Type != eDBType.Boolean && v.Type != eDBType.BITMAP && v.Type != eDBType.BINARY && v.Type != eDBType.GX_SDT && v.Type != eDBType.GX_EXTERNAL_OBJECT && v.Type != eDBType.GX_USRDEFTYP) 
+                            {
+                                string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
+                                string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
+                                if (attname == "" && domname == "") 
+                                {
+                                    string vname = v.Name.ToLower();
+                                    vnames += vname + " ";
+                                    hasErrors = true;
+                                }
+                            }
+                        }
+                    }
+                    if (hasErrors)
+                    {
+                        OutputError err = new OutputError("Variables not based in attributes or domain: " + vnames, MessageLevel.Warning, new KBObjectPosition(vp));
+                        output.Add("KBDoctor", err);
+                    }
+                }
+            }
+        }
+
+        internal static void CodeCommented(List<KBObject> objs, IOutputService output)
+        {
+            foreach(KBObject obj in objs) { 
+                string source = Utility.ObjectSourceUpper(obj);
+                source = Utility.RemoveEmptyLines(source);
+                string codeCommented = Utility.CodeCommented(source);
+                codeCommented = codeCommented.Replace("'", "");
+                codeCommented = codeCommented.Replace(">", "");
+                codeCommented = codeCommented.Replace("<", "");
+                if (codeCommented != "")
+                {
+                    KBObjectPart part = Utility.ObjectSourcePart(obj);
+                    OutputError err = new OutputError("Commented code", MessageLevel.Warning, new KBObjectPosition(part));
+                    output.Add("KBDoctor", err);
                 }
             }
         }

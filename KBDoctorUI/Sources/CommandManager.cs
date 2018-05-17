@@ -436,6 +436,7 @@ namespace Concepto.Packages.KBDoctor
         public bool ExecPreprocessPendingObjects(CommandData cmdData)
         {
             IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
             SelectedRowsCollection selrows = cmdData.Context as SelectedRowsCollection;
             List<KBObjectHistory> kbohList = GetGenericHistoryObjects(selrows);
             KBModel model = UIServices.KB.CurrentModel;
@@ -447,14 +448,15 @@ namespace Concepto.Packages.KBDoctor
                     selectedObjects.Add(obj);
                 }
             }
-            KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects);
+            Thread thread = new Thread(() => KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects));
+            thread.Start();
             return true;
         }
 
         public bool ExecReviewObjects(CommandData cmdData)
         {
             IOutputService output = CommonServices.Output;
-
+            output.SelectOutput("KBDoctor");
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
             KBModel kbModel = UIServices.KB.CurrentModel;
@@ -468,7 +470,8 @@ namespace Concepto.Packages.KBDoctor
                     selectedObjects.Add(obj);
                 }
             }
-            KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects);
+            Thread thread = new Thread(() => KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects));
+            thread.Start();
             return true;
         }
 
