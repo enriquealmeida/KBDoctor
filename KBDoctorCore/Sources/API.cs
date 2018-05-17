@@ -117,6 +117,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     //Code commented
                     Objects.CodeCommented(objlist, output);
+                    /*
+
+*Objeto alcanzable?
+*Usa atributos sin dominios?
+* SDT sin domino o atributo
+*Tiene todas las referencias?
+* Mas de un parametro de salida
+* Nombre "poco claro" / Descripcion "poco clara"
+* Bloque de codigo muy largo
+*/
+
                 }
             }
             output.EndSection("KBDoctor", "Object_review", "Object review", true);
