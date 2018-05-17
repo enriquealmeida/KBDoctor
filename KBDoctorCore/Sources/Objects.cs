@@ -15,6 +15,9 @@ using System.Text;
 
 
 using System.Windows.Media;
+using Artech.Common.Diagnostics;
+using Artech.Architecture.Common.Location;
+using Artech.Genexus.Common.Parts;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -487,7 +490,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 {
                                     objWithProblems += 1;
                                     objectsWithProblems.Add(obj);
-                                    output.AddWarningLine(Utility.linkObject(obj) + "> Parameters without IN/OUT/INOUT");
+                                    OutputError err = new OutputError("Parameter without IN/OUT/INOUT ", MessageLevel.Error, new  KBObjectPosition(obj.Parts.Get<RulesPart>()));
+                                    output.Add(err); 
                                 }
                             }
                         }
@@ -552,7 +556,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         commitOnExit = aux.ToString() == "Yes";
                         if (commitOnExit)
                         {
-                            output.AddWarningLine(obj.Name + "> Commit on Exit = YES");
+                            OutputError wrn = new OutputError("Commit on EXIT = YES ", MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                            output.Add(wrn);
                         }
                     }
                 }
@@ -577,23 +582,30 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         int NestLevel = Utility.MaxNestLevel(sourceWOComments);
                         int ComplexityLevel = Utility.ComplexityLevel(sourceWOComments);
 
+                        KBObjectPart part = Utility.ObjectSourcePart(obj);
+
                         int parametersCount = ParametersCountObject(obj);
                         if (NestLevel > maxNestLevel)
                         {
-                            output.AddWarningLine(obj.Name + "> Nested level to high (" + NestLevel.ToString() + "). Recommended max: " + maxNestLevel.ToString());
+                            OutputError err = new OutputError("Nested level too high (" + NestLevel.ToString() + "). Recommended max: " + maxNestLevel.ToString(), MessageLevel.Error, new KBObjectPosition(part));
+                            output.Add(err);
 
                         }
                         if (ComplexityLevel > maxComplexityLevel)
                         {
-                            output.AddWarningLine(obj.Name + "> Complexity too high (" + ComplexityLevel.ToString() + "). Recommended max:  " + maxComplexityLevel.ToString());
+                            OutputError err = new OutputError(" Complexity too high(" + ComplexityLevel.ToString() + ").Recommended max: " + maxComplexityLevel.ToString(), MessageLevel.Error, new KBObjectPosition(part));
+                            output.Add(err); 
                         }
+
                         if (CodeBlock > maxCodeBlock)
                         {
-                            output.AddWarningLine(obj.Name + "> Code block too large (" + CodeBlock.ToString() + "). Recommended max: " + maxCodeBlock.ToString());
+                            OutputError err = new OutputError("Code block too large(" + CodeBlock.ToString() + ").Recommended max: " + maxCodeBlock.ToString(), MessageLevel.Error, new KBObjectPosition(part));
+                            output.Add(err);
                         }
                         if (parametersCount > maxParametersCount)
                         {
-                            output.AddWarningLine(obj.Name + "> Too many parameters (" + parametersCount.ToString() + "). Recommended max: " + maxParametersCount.ToString());
+                            OutputError err = new OutputError("Too many parameters (" + parametersCount.ToString() + ").Recommended max: " + maxParametersCount.ToString(), MessageLevel.Error, new KBObjectPosition(part));
+                            output.Add(err);
                         }
                     }
                 }
@@ -606,7 +618,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (obj.Module.Description == "Root Module")
                 {
-                    output.AddWarningLine(obj.Name + "> Object without module");
+                    OutputError err = new OutputError("Object without module." , MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                    output.Add(err);
                 }
             }
         }

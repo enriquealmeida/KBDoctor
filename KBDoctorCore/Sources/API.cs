@@ -6,7 +6,8 @@ using Artech.Architecture.Common.Objects;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Architecture.Common.Services;
 using System.Collections;
-
+using Artech.Common.Diagnostics;
+using Artech.Architecture.Common.Location;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -90,8 +91,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             output.StartSection("Object review");
             foreach (KBObject obj in objs)
             {
-                if (Utility.isRunable(obj)) { 
-                    output.AddLine("Processing object: " + obj.Name);
+                if (Utility.isRunable(obj)) {
+
+              
+                    OutputError err = new OutputError("Processing object:" + obj.Name , MessageLevel.Information, new KBObjectAnyPosition(obj));
+
+                    output.Add(err);
+                    
                     List<KBObject> objlist = new List<KBObject>();
                     objlist.Add(obj);
 

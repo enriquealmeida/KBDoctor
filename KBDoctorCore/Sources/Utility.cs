@@ -340,6 +340,24 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return source.ToUpper();
         }
 
+        internal static KBObjectPart ObjectSourcePart(KBObject obj)
+        {
+
+            try
+            {
+                if (obj is Procedure) return obj.Parts.Get<ProcedurePart>();
+
+                if (obj is Transaction) return obj.Parts.Get<EventsPart>();
+
+                if (obj is WorkPanel) return obj.Parts.Get<EventsPart>();
+
+                if (obj is WebPanel) return obj.Parts.Get<EventsPart>();
+            }
+            catch (Exception e) { }
+            return null;
+            
+        }
+
         internal static bool isRunable(KBObject obj)
         {
             return (obj is Transaction || obj is WorkPanel || obj is WebPanel

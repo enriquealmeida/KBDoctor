@@ -2082,13 +2082,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             }
             writer.AddTableFooterOnly();
-
-                    
-               
-                
-         
-
-
             writer.Close();
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
