@@ -92,11 +92,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             foreach (KBObject obj in objs)
             {
                 if (Utility.isRunable(obj)) {
-
-              
-                    OutputError err = new OutputError("Processing object:" + obj.Name , MessageLevel.Information, new KBObjectAnyPosition(obj));
-
-                    output.Add(err);
                     
                     List<KBObject> objlist = new List<KBObject>();
                     objlist.Add(obj);
