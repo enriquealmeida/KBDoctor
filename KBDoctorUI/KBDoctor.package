@@ -154,11 +154,13 @@
       </Group>
     </Group>
      
- <!--<Group refid='KBObjectGrp' package='98121D96-A7D8-468b-9310-B1F468F812AE' context='selection'>
+    <Group refid='KBObjectGrp' package='98121D96-A7D8-468b-9310-B1F468F812AE' context='selection'>
       <Group id='KBDoctor' context='selection' >
 				<Command refid='ReviewObject' initVisible='true' context='selection'/>
       </Group> 
-		</Group>-->
+		</Group>
+  
+  
   </Groups>
   <Menus>
     <Menu type="menubar">
@@ -332,7 +334,7 @@
       </Popup>
     </Menu>
 
-    
+    <!--
       <Menu type='context' id='KBConfigurationContext' package='4703F0A9-2AEB-4469-9466-25E2A56C7B6D'>
         <Popup id='GXPowerCommandKBPopUp' name='PowerCommands' context='selection' dynamic='true' autoManageVisibility='false' insertBefore=''>
           <Command refid='CommandPromptKB' initVisible='true'/>
@@ -346,6 +348,7 @@
           <Command refid='ExploreEnv' initVisible='true'/>
         </Popup>
       </Menu>
+      -->
 
   </Menus>
 

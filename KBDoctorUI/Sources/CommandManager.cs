@@ -16,6 +16,8 @@ using Artech.Common.Framework.Selection;
 using Artech.Architecture.UI.Framework.Controls;
 using Concepto.Packages.KBDoctorCore;
 using Infragistics.Win.UltraWinGrid;
+using static Artech.Architecture.Common.Objects.KnowledgeBase;
+using Artech.Genexus.Common.Objects;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -130,33 +132,33 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.PreprocessPendingObjects, new ExecHandler(ExecPreprocessPendingObjects), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ReviewObjects, new ExecHandler(ExecReviewObjects), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ReviewObject, new ExecHandler(ExecReviewObject), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ReviewObject, new ExecHandler(ExecReviewObject), new QueryHandler(QueryFolderOrObjectSelected));
 
             AddCommand(CommandKeys.AboutKBDoctor, new ExecHandler(ExecAboutKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             AddCommand(CommandKeys.HelpKBDoctor, new ExecHandler(ExecHelpKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             //Labs
-            AddCommand(CommandKeys.RenameAttributesAndTables, new ExecHandler(ExecRenameAttributesAndTables), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.CountGeneratedByPattern, new ExecHandler(ExecCountGeneratedByPattern), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.ReplaceNullCompatible, new ExecHandler(ExecReplaceNullCompatible), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.ListObj, new ExecHandler(ExecListObj), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.CreateDeployUnits, new ExecHandler(ExecCreateDeployUnits), new QueryHandler(QueryKBDoctorNoKB));
+            AddCommand(CommandKeys.RenameAttributesAndTables, new ExecHandler(ExecRenameAttributesAndTables), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.CountGeneratedByPattern, new ExecHandler(ExecCountGeneratedByPattern), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ReplaceNullCompatible, new ExecHandler(ExecReplaceNullCompatible), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListObj, new ExecHandler(ExecListObj), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.CreateDeployUnits, new ExecHandler(ExecCreateDeployUnits), new QueryHandler(QueryKBDoctor));
 
-            AddCommand(CommandKeys.MarkPublicObjects, new ExecHandler(ExecMarkPublicObjects), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.ListModules, new ExecHandler(ExecListModules), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.ListModulesStatistics, new ExecHandler(ExecListModulesStatistics), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.MoveTransactions, new ExecHandler(ExecMoveTransactions), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.ModuleDependencies, new ExecHandler(ExecModuleDependencies), new QueryHandler(QueryKBDoctorNoKB));
+            AddCommand(CommandKeys.MarkPublicObjects, new ExecHandler(ExecMarkPublicObjects), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListModules, new ExecHandler(ExecListModules), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListModulesStatistics, new ExecHandler(ExecListModulesStatistics), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.MoveTransactions, new ExecHandler(ExecMoveTransactions), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ModuleDependencies, new ExecHandler(ExecModuleDependencies), new QueryHandler(QueryKBDoctor));
 
-            AddCommand(CommandKeys.CalculateCheckSum, new ExecHandler(ExecCalculateCheckSum), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.GenerateLocationXML, new ExecHandler(ExecGenerateLocationXML), new QueryHandler(QueryKBDoctorNoKB));
+            AddCommand(CommandKeys.CalculateCheckSum, new ExecHandler(ExecCalculateCheckSum), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.GenerateLocationXML, new ExecHandler(ExecGenerateLocationXML), new QueryHandler(QueryKBDoctor));
 
-            AddCommand(CommandKeys.ListObjWarningsErrors, new ExecHandler(ExecListObjWarningsErrors), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.ListObjSimilarNavigation, new ExecHandler(ExecListObjSimilarNavigation), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.ListAPIObjects, new ExecHandler(ExecListAPIObjects), new QueryHandler(QueryKBDoctorNoKB));
+            AddCommand(CommandKeys.ListObjWarningsErrors, new ExecHandler(ExecListObjWarningsErrors), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListObjSimilarNavigation, new ExecHandler(ExecListObjSimilarNavigation), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListAPIObjects, new ExecHandler(ExecListAPIObjects), new QueryHandler(QueryKBDoctor));
 
-            AddCommand(CommandKeys.RecomendedModule, new ExecHandler(ExecRecomendedModule), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.SplitMainObject, new ExecHandler(ExecSplitMainObject), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.UDPCallables, new ExecHandler(ExecUDPCallables), new QueryHandler(QueryKBDoctorNoKB));
+            AddCommand(CommandKeys.RecomendedModule, new ExecHandler(ExecRecomendedModule), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.SplitMainObject, new ExecHandler(ExecSplitMainObject), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.UDPCallables, new ExecHandler(ExecUDPCallables), new QueryHandler(QueryKBDoctor));
 
         }
 
@@ -998,8 +1000,118 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        private bool QueryFolderOrObjectSelected(CommandData commandData, ref CommandStatus status)
+        {
+            status.State = CommandState.Enabled;
+            this.QueryKBOpened(commandData, ref status);
+            if (status.State == CommandState.Enabled)
+            {
+                this.QueryFolderSelected(commandData, ref status);
+                if (status.State != CommandState.Enabled)
+                {
+                    this.QueryIsKBObjectSelected(commandData, ref status);
+                }
+            }
+            return true;
+        }
 
-            private bool QueryIsModuleSelected(CommandData data, ref CommandStatus status)
+        private bool QueryKBOpened(CommandData commandData, ref CommandStatus status)
+        {
+            status.State = CommandState.Disabled;
+            if (UIServices.KB != null && UIServices.KB.CurrentKB != null)
+            {
+                status.State = CommandState.Enabled;
+            }
+            return true;
+        }
+
+        private bool QueryFolderSelected(CommandData commandData, ref CommandStatus status)
+        {
+            bool result;
+            try
+            {
+                this.QueryKBOpened(commandData, ref status);
+                if (status.State == CommandState.Enabled)
+                {
+                    status.State = CommandState.Disabled;
+                    ISelectionContainer selectionContainer = commandData.Context as ISelectionContainer;
+                    if (selectionContainer == null || selectionContainer.SelectedObjects == null || !(selectionContainer.SelectedObject is KBObject))
+                    {
+                        result = true;
+                        return result;
+                    }
+                    foreach (KBObject kBObject in selectionContainer.SelectedObjects)
+                    {
+                        if (kBObject.Type != typeof(Folder).GUID)
+                        {
+                            result = true;
+                            return result;
+                        }
+                    }
+                    status.State = CommandState.Enabled;
+                }
+            }
+            catch
+            {
+                status.State = CommandState.Disabled;
+            }
+            result = true;
+            return result;
+        }
+
+        private bool QueryIsKBObjectSelected(CommandData data, ref CommandStatus status)
+        {
+            this.QueryKBOpened(data, ref status);
+            bool result;
+            if (status.State == CommandState.Enabled)
+            {
+                status.State = CommandState.Invisible;
+                List<KBObject> objects = CommandManager.GetObjects(data);
+                if (objects.Count == 0)
+                {
+                    result = true;
+                    return result;
+                }
+                foreach (KBObject current in objects)
+                {
+                    if (current == null || !CommandManager.CanCleanKBObject(current))
+                    {
+                        result = true;
+                        return result;
+                    }
+                }
+                status.State = CommandState.Enabled;
+            }
+            result = true;
+            return result;
+        }
+
+        private static bool CanCleanKBObject(KBObject kbObj)
+        {
+            return kbObj.Type == typeof(Artech.Genexus.Common.Objects.Transaction).GUID || kbObj.Type == typeof(WebPanel).GUID || kbObj.Type == typeof(Procedure).GUID || kbObj.Type == typeof(DataProvider).GUID || kbObj.Type == typeof(WorkPanel).GUID ;
+        }
+
+        private static List<KBObject> GetObjects(CommandData data)
+        {
+            List<KBObject> list = new List<KBObject>();
+            ISelectionContainer selectionContainer = data.Context as ISelectionContainer;
+            if (selectionContainer != null)
+            {
+                if (selectionContainer.SelectedObjects != null)
+                {
+                    foreach (object current in selectionContainer.SelectedObjects)
+                    {
+                        list.Add(current as KBObject);
+                    }
+                }
+            }
+            else
+            {
+                list.Add(data.Context as KBObject);
+            }
+            return list;
+        }
+        private bool QueryIsModuleSelected(CommandData data, ref CommandStatus status)
         {
             status.State = CommandState.Disabled;
             if (UIServices.KB != null && UIServices.KB.CurrentKB != null)
