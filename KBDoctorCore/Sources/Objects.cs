@@ -18,6 +18,9 @@ using System.Windows.Media;
 using Artech.Common.Diagnostics;
 using Artech.Architecture.Common.Location;
 using Artech.Genexus.Common.Parts;
+using Artech.Common.Helpers.Structure;
+using Artech.Genexus.Common.Parts.SDT;
+using Artech.Udm.Framework;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -593,7 +596,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         }
                         if (ComplexityLevel > maxComplexityLevel)
                         {
-                            OutputError err = new OutputError(" Complexity too high(" + ComplexityLevel.ToString() + ").Recommended max: " + maxComplexityLevel.ToString(), MessageLevel.Error, new KBObjectPosition(part));
+                            OutputError err = new OutputError("Complexity too high(" + ComplexityLevel.ToString() + ").Recommended max: " + maxComplexityLevel.ToString(), MessageLevel.Error, new KBObjectPosition(part));
                             output.Add("KBDoctor", err); 
                         }
 
@@ -639,7 +642,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     {
                         foreach (Variable v in vp.Variables)
                         {
-                            if ((!v.IsStandard) && v.Type != eDBType.Boolean && v.Type != eDBType.BITMAP && v.Type != eDBType.BINARY && v.Type != eDBType.GX_SDT && v.Type != eDBType.GX_EXTERNAL_OBJECT && v.Type != eDBType.GX_USRDEFTYP) 
+                            if ((!v.IsStandard) && Utility.VarHasToBeInDomain(v)) 
                             {
                                 string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
                                 string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
@@ -654,7 +657,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                     if (hasErrors)
                     {
-                        OutputError err = new OutputError("Variables not based in attributes or domain: " + vnames, MessageLevel.Warning, new KBObjectPosition(vp));
+                        OutputError err = new OutputError("Variables not based in attributes or domain: " + vnames, MessageLevel.Error, new KBObjectPosition(vp));
                         output.Add("KBDoctor", err);
                     }
                 }
@@ -678,6 +681,58 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
             }
         }
+
+        internal static void AttributeHasDomain(List<KBObject> objs, IOutputService output)
+        {
+            foreach (KBObject obj in objs)
+            {
+                if (obj is Artech.Genexus.Common.Objects.Attribute)
+                {
+                    Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute) obj;
+                    string Picture = Utility.ReturnPicture(a);
+                    bool isSubtype = Utility.AttIsSubtype(a);
+
+                    if ((a.DomainBasedOn == null) && !isSubtype && Utility.AttHasToBeInDomain(a))
+                    {
+                        OutputError err = new OutputError("Attribute without domain: " + a.Name, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                        output.Add("KBDoctor", err);
+                    }
+                }
+
+            }
+        }
+
+        internal static void SDTBasedOnAttDomain(List<KBObject> objs, IOutputService output)
+        {
+            foreach(KBObject obj in objs)
+            {
+                if (obj is SDT)
+                {
+                    SDTStructurePart sdtstruct = obj.Parts.Get<SDTStructurePart>();
+                    bool hasItemNotBasedOn = false;
+                    string itemnames = "";
+                    foreach (IStructureItem structItem in sdtstruct.Root.Items)
+                    {
+                        if (structItem is SDTItem) {
+                            SDTItem sdtItem = (SDTItem)structItem;
+                            if (sdtItem.BasedOn == null && sdtItem.AttributeBasedOn == null && Utility.TypeHasToBeInDomain(sdtItem.Type))
+                            {
+                                hasItemNotBasedOn = true;
+                                itemnames += sdtItem.Name + " ";
+                            }
+                        }
+                    }
+                    if (hasItemNotBasedOn)
+                    {
+                        OutputError err = new OutputError("SDT with items without domain: " + itemnames, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                        output.Add("KBDoctor", err);
+                    }
+                }
+                
+            }
+        }
+
+
     }
 #if EVO3
     public class Tuple<T1, T2>

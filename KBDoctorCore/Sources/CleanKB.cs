@@ -255,6 +255,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
             }
 
+            // TODO: Atributos en dataviews
+
             foreach (Artech.Genexus.Common.Objects.Attribute a in attTodos)
             {
                 if (!Utility.AttIsSubtype(a))

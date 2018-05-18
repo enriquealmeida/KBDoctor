@@ -8,6 +8,7 @@ using Artech.Architecture.Common.Services;
 using System.Collections;
 using Artech.Common.Diagnostics;
 using Artech.Architecture.Common.Location;
+using Artech.Genexus.Common.Objects;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -91,11 +92,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             output.StartSection("KBDoctor", "Object_review", "Object review");
             foreach (KBObject obj in objs)
             {
+                List<KBObject> objlist = new List<KBObject>();
+                objlist.Add(obj);
                 if (Utility.isRunable(obj)) {
                     
-                    List<KBObject> objlist = new List<KBObject>();
-                    objlist.Add(obj);
-
                     //Check objects with parameteres without inout
                     Objects.ParmWOInOut(objlist, output);
 
@@ -117,17 +117,24 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     //Code commented
                     Objects.CodeCommented(objlist, output);
+
                     /*
-
-*Objeto alcanzable?
-*Usa atributos sin dominios?
-* SDT sin domino o atributo
-*Tiene todas las referencias?
-* Mas de un parametro de salida
-* Nombre "poco claro" / Descripcion "poco clara"
-* Bloque de codigo muy largo
-*/
-
+                    * Objeto alcanzable?
+                    * SDT sin domino o atributo
+                    * Tiene todas las referencias?
+                    * Mas de un parametro de salida
+                    * Nombre "poco claro" / Descripcion "poco clara"
+                    */
+                }
+                if(obj is Artech.Genexus.Common.Objects.Attribute)
+                {
+                    //Attribute Has Domain
+                    Objects.AttributeHasDomain(objlist, output);
+                }
+                if (obj is SDT)
+                {
+                    //SDTItems Has Domain
+                    Objects.SDTBasedOnAttDomain(objlist, output);
                 }
             }
             output.EndSection("KBDoctor", "Object_review", "Object review", true);

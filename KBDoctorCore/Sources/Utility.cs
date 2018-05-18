@@ -851,5 +851,27 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             return salida;
         }
+
+        internal static bool VarHasToBeInDomain(Variable v)
+        {
+            return TypeHasToBeInDomain(v.Type);
+        }
+
+        internal static bool AttHasToBeInDomain(Artech.Genexus.Common.Objects.Attribute a)
+        {
+            return TypeHasToBeInDomain(a.Type);
+        }
+
+        internal static bool TypeHasToBeInDomain(eDBType type)
+        {
+            if (type != eDBType.Boolean && type != eDBType.BITMAP && type != eDBType.BINARY && type != eDBType.GX_SDT && type != eDBType.GX_EXTERNAL_OBJECT && type != eDBType.GX_USRDEFTYP)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
