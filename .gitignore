@@ -303,3 +303,15 @@ $RECYCLE.BIN/
 *.lnk
 KBDoctorCmd/SeteoVariables_Evo3_ealmeida.cmd
 KBDoctorCmd/RunMsbuild_ealmeida.bat
+GX16/LouvainCommunityPL.dll
+GX16/KBDoctorCore.dll
+GX16/KBDoctorCmd.dll
+GX16/KBDoctor.dll
+GX15/LouvainCommunityPL.dll
+GX15/KBDoctorCore.dll
+GX15/KBDoctorCmd.dll
+GX15/KBDoctor.dll
+EVO3/LouvainCommunityPL.dll
+EVO3/KBDoctorCore.dll
+EVO3/KBDoctorCmd.dll
+EVO3/KBDoctor.dll
