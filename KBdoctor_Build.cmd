@@ -6,13 +6,11 @@ call SetEnvKBDoctor.cmd EVO3
 call PackKBDoctor.cmd EVO3
 
 ECHO -- BUILD DE KBDOCTOR GX15
-
 call SetEnvKBDoctor.cmd GX15
 %NETFRAMEWORK_DIR%\msbuild KBDoctor.sln  /t:Clean;LouvainCommunityPL;KBDoctorCore;KBDoctorCmd;KBDoctorUI
 call PackKBDoctor.cmd GX15
 
 ECHO -- BUILD DE KBDOCTOR GX16
-
 call SetEnvKBDoctor.cmd GX16
 %NETFRAMEWORK_DIR%\msbuild KBDoctor.sln  /t:Clean;LouvainCommunityPL;KBDoctorCore;KBDoctorCmd;KBDoctorUI
 call PackKBDoctor.cmd GX16
