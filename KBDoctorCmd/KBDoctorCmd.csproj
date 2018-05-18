@@ -53,8 +53,8 @@
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Utilities.v3.5" />
 	<Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.6' " Include="Microsoft.Build.Tasks.v4.0" />
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.6' " Include="Microsoft.Build.Utilities.v4.0" />
-	<Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7' " Include="Microsoft.Build.Tasks.v4.7" />
-    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7' " Include="Microsoft.Build.Utilities.v4.7" />
+	<Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7.1' " Include="Microsoft.Build.Tasks.v4.0" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7.1' " Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
