@@ -3,6 +3,7 @@ cd %~dp0
 ECHO -- BUILD DE KBDOCTOR EVO3
 call SetEnvKBDoctor.cmd EVO3
 %NETFRAMEWORK_DIR%\msbuild KBDoctor.sln  /t:Clean;LouvainCommunityPL;KBDoctorCore;KBDoctorCmd;KBDoctorUI
+pause
 call PackKBDoctor.cmd EVO3
 pause
 
