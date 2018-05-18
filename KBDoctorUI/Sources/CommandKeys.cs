@@ -202,6 +202,9 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey reviewObjects = new CommandKey(Package.guid, "ReviewObjects");
         public static CommandKey ReviewObjects { get { return reviewObjects; } }
 
+        private static CommandKey reviewObject = new CommandKey(Package.guid, "ReviewObject");
+        public static CommandKey ReviewObject { get { return reviewObject; } }
+
         //Surgery
         private static CommandKey procedureSDT = new CommandKey(Package.guid, "ProcedureSDT");
         public static CommandKey ProcedureSDT { get { return procedureSDT; } }

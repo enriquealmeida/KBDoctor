@@ -90,11 +90,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
         {
             output.StartSection("KBDoctor", "Object_review", "Object review");
+            List<KBObject> atts = new List<KBObject>();
             foreach (KBObject obj in objs)
             {
                 List<KBObject> objlist = new List<KBObject>();
                 objlist.Add(obj);
-                if (Utility.isRunable(obj)) {
+                if (Utility.isRunable(obj) && !Utility.IsGeneratedByPattern(obj)) {
                     
                     //Check objects with parameteres without inout
                     Objects.ParmWOInOut(objlist, output);
@@ -119,15 +120,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     Objects.CodeCommented(objlist, output);
 
                     /*
-                    * Objeto alcanzable?
-                    * SDT sin domino o atributo
                     * Tiene todas las referencias?
+                    * Tiene calls que pueden ser UDP
                     * Mas de un parametro de salida
+                    * Constantes en el código
                     * Nombre "poco claro" / Descripcion "poco clara"
                     */
                 }
                 if(obj is Artech.Genexus.Common.Objects.Attribute)
                 {
+                    atts.Add(obj);
                     //Attribute Has Domain
                     Objects.AttributeHasDomain(objlist, output);
                 }
@@ -137,7 +139,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     Objects.SDTBasedOnAttDomain(objlist, output);
                 }
             }
+            if (atts.Count > 0)
+            {
+                // Attributes without table
+                Objects.AttributeWithoutTable(atts, output);
+            }
             output.EndSection("KBDoctor", "Object_review", "Object review", true);
         }
+
     }
 }

@@ -1816,7 +1816,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string filename = kbserv.CurrentKB.UserDirectory + @"\Replace.txt";
             if (!File.Exists(filename))
             {
-                File.WriteAllText(filename, Comparer.Replace);
+                File.WriteAllText(filename, Comparer..Replace);
             }
 
             return filename;

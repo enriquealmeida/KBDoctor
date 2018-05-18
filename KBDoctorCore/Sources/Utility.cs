@@ -20,6 +20,10 @@ using Artech.Architecture.Common.Descriptors;
 using Artech.Udm.Framework;
 using Artech.Common.Properties;
 using Artech.Genexus.Common.Entities;
+using Artech.Packages.Patterns.Definition;
+using Artech.Packages.Patterns.Engine;
+using Artech.Packages.Patterns;
+using Artech.Packages.Patterns.Objects;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -867,6 +871,28 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             if (type != eDBType.Boolean && type != eDBType.BITMAP && type != eDBType.BINARY && type != eDBType.GX_SDT && type != eDBType.GX_EXTERNAL_OBJECT && type != eDBType.GX_USRDEFTYP)
             {
                 return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        internal static bool IsGeneratedByPattern(KBObject obj)
+        {
+            Boolean isGeneratedWithPattern = false;
+            PatternDefinition pattern;
+            if (InstanceManager.IsInstanceObject(obj, out pattern))
+                isGeneratedWithPattern = true;
+            bool isParentPattern = false;
+            foreach (PatternDefinition p in PatternEngine.Patterns)
+            {
+                if (PatternInstance.Get(obj, p.Id) != null)
+                    isParentPattern = true;
+            }
+            if (isGeneratedWithPattern || isParentPattern)
+            {
+                return true; 
             }
             else
             {

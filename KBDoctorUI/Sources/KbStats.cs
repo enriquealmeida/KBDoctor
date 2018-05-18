@@ -77,10 +77,10 @@ namespace Concepto.Packages.KBDoctor
                     //El objeto tiene algun pattern asociado? En caso de transacciones y webpanels del WW+
                     bool isParentPattern = false;
                     foreach (PatternDefinition p in PatternEngine.Patterns)
-                            {
-                                if (PatternInstance.Get(obj, p.Id) != null)
-                                                                    isParentPattern = true;
-                            }
+                    {
+                        if (PatternInstance.Get(obj, p.Id) != null)
+                                                            isParentPattern = true;
+                    }
                      
                     if (!isGeneratedWithPattern && !isParentPattern)
                     {

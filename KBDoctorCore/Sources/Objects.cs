@@ -21,6 +21,7 @@ using Artech.Genexus.Common.Parts;
 using Artech.Common.Helpers.Structure;
 using Artech.Genexus.Common.Parts.SDT;
 using Artech.Udm.Framework;
+using Artech.Udm.Framework.References;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -732,6 +733,39 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+        internal static void AttributeWithoutTable(List<KBObject> objs, IOutputService output)
+        {
+            List<Artech.Genexus.Common.Objects.Attribute> attTodos = new List<Artech.Genexus.Common.Objects.Attribute>();
+
+            KBModel model = null;
+            foreach (KBObject obj in objs)
+            {
+                model = obj.Model;
+                if (obj is Artech.Genexus.Common.Objects.Attribute)
+                {
+                    attTodos.Add((Artech.Genexus.Common.Objects.Attribute)obj);
+                }
+            }
+            if (model != null) { 
+                foreach (Table t in Table.GetAll(model))
+                {
+                    foreach (EntityReference reference in t.GetReferences(LinkType.UsedObject))
+                    {
+                        KBObject objRef = KBObject.Get(model, reference.To);
+                        if (objRef is Artech.Genexus.Common.Objects.Attribute)
+                        {
+                            Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute)objRef;
+                            attTodos.Remove(a);
+                        }
+                    }
+                }
+            }
+            foreach(Artech.Genexus.Common.Objects.Attribute att in attTodos)
+            {
+                OutputError err = new OutputError("Attribute without table: " + att.Name, MessageLevel.Error, new KBObjectAnyPosition(att));
+                output.Add("KBDoctor", err);
+            }
+        }
 
     }
 #if EVO3
