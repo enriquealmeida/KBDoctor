@@ -132,7 +132,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.PreprocessPendingObjects, new ExecHandler(ExecPreprocessPendingObjects), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ReviewObjects, new ExecHandler(ExecReviewObjects), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ReviewObject, new ExecHandler(ExecReviewObject), new QueryHandler(QueryFolderOrObjectSelected));
+            AddCommand(CommandKeys.ReviewObject, new ExecHandler(ExecReviewObject), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.AboutKBDoctor, new ExecHandler(ExecAboutKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             AddCommand(CommandKeys.HelpKBDoctor, new ExecHandler(ExecHelpKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
@@ -482,12 +482,10 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            object obj = cmdData.Context;
+            List<KBObject> selectedObjects = GetObjects(cmdData);
 
-
-
-           // Thread thread = new Thread(() => KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects));
-            //thread.Start();
+            Thread thread = new Thread(() => KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects));
+            thread.Start();
             return true;
         }
 
