@@ -355,14 +355,14 @@
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
-  </Target>
+  </Target>  -->
   <Target Name="AfterBuild">
+    <Message Text="Version = $(Major).$(Minor).$(Build).$(Revision)" Importance="high" />
   </Target>
-  -->
   <PropertyGroup>
     <PostBuildEvent>xcopy kbdoctor*.*  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
-xcopy ..\..\..\KBDoctorCore\bin\Debug\KBDoctorCore.dll "%25GX_PROGRAM_DIR%25\Packages" /q /Y
-xcopy louvain*.dll  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
+xcopy KBDoctorCore.* "%25GX_PROGRAM_DIR%25\Packages" /q /Y
+xcopy louvain*.*  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
 "%25GX_PROGRAM_DIR%25\genexus.exe" /install</PostBuildEvent>
   </PropertyGroup>
 </Project>
