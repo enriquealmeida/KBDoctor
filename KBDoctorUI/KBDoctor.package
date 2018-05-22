@@ -82,7 +82,7 @@
     <CommandDefinition id="KBInterfaces" /> 
     <CommandDefinition id="UDPCallables" />
     <CommandDefinition id="PreprocessPendingObjects" image="Hand3" imageType="ico" />
-    <CommandDefinition id="ReviewObject" image="Hand3" imageType="ico" />
+    <CommandDefinition id="ReviewObject" context="selection" image="Hand3" imageType="ico" />
     <CommandDefinition id="ReviewObjects"   image="Hand3" imageType="ico" />
 
     <!-- Acciones sobre atributos -->
@@ -154,13 +154,10 @@
       </Group>
     </Group>
      
-    <Group refid='KBObjectGrp' package='98121D96-A7D8-468b-9310-B1F468F812AE' context='selection'>
-      <Group id='KBDoctor' context='selection' >
-				<Command refid='ReviewObject' initVisible='true' context='selection'/>
-      </Group> 
-		</Group>
-  
-  
+    <Group refid='KBObjectGrp' package='98121D96-A7D8-468b-9310-B1F468F812AE'>
+      <Group id='KBDoctor'></Group>
+      <Command refid='ReviewObject' initVisible='true'/>
+    </Group>
   </Groups>
   <Menus>
     <Menu type="menubar">
