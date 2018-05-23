@@ -89,8 +89,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
         {
-            output.StartSection("KBDoctor", "KBDoctor3", false);
-          
+            // output.StartSection("KBDoctor", "Review Objects" , "Review Objects");
+            output.Clear();
+            output.SelectOutput("KBDoctor");
+            output.StartSection("KBDoctor", "Review_Objects", "Review Objects");
+
             List<KBObject> atts = new List<KBObject>();
             foreach (KBObject obj in objs)
             {
@@ -148,7 +151,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 // Attributes without table
                 Objects.AttributeWithoutTable(atts, output);
             }
-            output.EndSection("KBDoctor","KBDoctor3", true); // "Object_review", "Object review", true);
+
+              output.EndSection("KBDoctor","Review_Objects" , true ); // "Object_review", "Object review", true);
         }
 
     }

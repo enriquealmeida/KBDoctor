@@ -403,4 +403,7 @@
   <data name="ReviewObjects" xml:space="preserve">
     <value>Review Objects</value>
   </data>
+  <data name="ReviewObject" xml:space="preserve">
+    <value>Review Object by KBDoctor</value>
+  </data>
 </root>
