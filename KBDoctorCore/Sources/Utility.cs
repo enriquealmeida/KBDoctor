@@ -868,7 +868,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static bool TypeHasToBeInDomain(eDBType type)
         {
-            if (type != eDBType.Boolean && type != eDBType.BITMAP && type != eDBType.BINARY && type != eDBType.GX_SDT && type != eDBType.GX_EXTERNAL_OBJECT && type != eDBType.GX_USRDEFTYP)
+            if (type != eDBType.Boolean && type != eDBType.BITMAP && type != eDBType.BINARY && type != eDBType.GX_SDT && 
+                type != eDBType.GX_EXTERNAL_OBJECT && type != eDBType.GX_USRDEFTYP && type != eDBType.GX_BUSCOMP && type != eDBType.GX_BUSCOMP_LEVEL)
             {
                 return true;
             }

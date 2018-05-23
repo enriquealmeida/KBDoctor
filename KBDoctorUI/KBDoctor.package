@@ -148,9 +148,9 @@
 	</Groups>
    -->
   <Groups>
-    <Group type="Context" refid='CommitGroup' package='319fb05a-2f9a-47c5-b133-acc33f0b95d7' context='selection'>
-      <Group id='KBDoctor' context='selection' >
-        <Command refid='PreprocessPendingObjects' initVisible='true' context='selection'/>
+    <Group  refid='CommitGroup' package='319fb05a-2f9a-47c5-b133-acc33f0b95d7' >
+      <Group id='KBDoctor'  >
+        <Command refid='PreprocessPendingObjects' initVisible='true' />
       </Group>
     </Group>
      

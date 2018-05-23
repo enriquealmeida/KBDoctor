@@ -606,10 +606,19 @@ namespace Concepto.Packages.KBDoctor
                     UpdateInsertDelete = CleanKBHelper.ObjectUpdateDB(objRef) ? "YES" : "";
 
                     Procedure prc = (Procedure)objRef;
-                    if (Functions.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper()).Contains("COMMIT"))
-                        commitInSource = "YES ";
-                    else
-                        commitInSource = "";
+                    try
+                    {
+                        if (Functions.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper()).Contains("COMMIT"))
+                            commitInSource = "YES ";
+                        else
+                            commitInSource = "";
+                    }
+                    catch (Exception e)
+                        { output.AddErrorLine(e.Message); }
+                    finally
+                        { commitInSource = ""; };
+                    
+
 
                     if (UpdateInsertDelete == "" & commitOnExit == "YES")
                     {

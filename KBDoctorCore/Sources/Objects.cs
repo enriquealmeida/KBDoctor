@@ -788,5 +788,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return tuple;
         }
     }
+#else
+    //Nothing
 #endif
 }

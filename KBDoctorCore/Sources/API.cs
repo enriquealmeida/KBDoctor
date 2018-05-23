@@ -89,7 +89,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
         {
-            output.StartSection("KBDoctor", "Object_review", "Object review");
+            output.StartSection("KBDoctor", "KBDoctor3", false);
+          
             List<KBObject> atts = new List<KBObject>();
             foreach (KBObject obj in objs)
             {
@@ -125,6 +126,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     * Mas de un parametro de salida
                     * Constantes en el código
                     * Nombre "poco claro" / Descripcion "poco clara"
+                    * Si es modulo, revisar que no tenga objetos publicos no llamados
+                    * Si es modulo, revisar que no tenga objetos privados llamados desde fuera
+                    * Si es modulo, Valor de la propiedad ObjectVisibility <> Private
                     */
                 }
                 if(obj is Artech.Genexus.Common.Objects.Attribute)
@@ -144,7 +148,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 // Attributes without table
                 Objects.AttributeWithoutTable(atts, output);
             }
-            output.EndSection("KBDoctor", "Object_review", "Object review", true);
+            output.EndSection("KBDoctor","KBDoctor3", true); // "Object_review", "Object review", true);
         }
 
     }
