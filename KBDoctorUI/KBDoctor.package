@@ -81,9 +81,10 @@
     <CommandDefinition id="GenerateLocationXML" />
     <CommandDefinition id="KBInterfaces" /> 
     <CommandDefinition id="UDPCallables" />
-    <CommandDefinition id="PreprocessPendingObjects" image="Hand3" imageType="ico" />
+    <CommandDefinition id="PreprocessPendingObjects" context="selection" image="Hand3" imageType="ico" />
     <CommandDefinition id="ReviewObject" context="selection" image="Hand3" imageType="ico" />
-    <CommandDefinition id="ReviewObjects"   image="Hand3" imageType="ico" />
+    <CommandDefinition id="ReviewObjects" image="Hand3" imageType="ico" />
+    <CommandDefinition id="ReviewModuleOrFolder" context="selection" image="Hand3" imageType="ico" />
 
     <!-- Acciones sobre atributos -->
     <CommandDefinition id="AssignDomainToAttribute" />
@@ -158,7 +159,13 @@
       <Group id='KBDoctor'></Group>
       <Command refid='ReviewObject' initVisible='true'/>
     </Group>
+    <Group refid='KBObjectGrp' package='98121D96-A7D8-468b-9310-B1F468F812AE'>
+      <Group id='KBDoctor'></Group>
+      <Command refid='ReviewModuleOrFolder' initVisible='true'/>
+    </Group>
   </Groups>
+
+  
   <Menus>
     <Menu type="menubar">
       <Popup refid='ToolsMenu' name='Tools' >

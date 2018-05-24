@@ -24,6 +24,7 @@ using Artech.Packages.Patterns.Definition;
 using Artech.Packages.Patterns.Engine;
 using Artech.Packages.Patterns;
 using Artech.Packages.Patterns.Objects;
+using Artech.Genexus.Common.Helpers;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -898,6 +899,68 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             else
             {
                 return false;
+            }
+        }
+
+        public static List<KBObject> ModuleObjects(Module module)
+        {
+            {
+                List<KBObject> objectsModule = new List<KBObject>();
+                foreach (KBObject obj in module.GetAllMembers())
+                {
+                    if (obj is Folder)
+                    {
+                        List<KBObject> objectsAux = new List<KBObject>();
+                        objectsAux = FolderObjects((Folder)obj);
+                        foreach (KBObject objAux in objectsAux)
+                        {
+                            objectsModule.Add(objAux);
+                        }
+                    }
+                    else
+                    {
+                        if(obj is Module)
+                        {
+                            List<KBObject> objectsAux = new List<KBObject>();
+                            objectsAux = ModuleObjects((Module)obj);
+                            foreach(KBObject objAux in objectsAux)
+                            {
+                                objectsModule.Add(objAux);
+                            }
+                        }
+                        else
+                        {
+                            if (!objectsModule.Contains(obj))
+                                objectsModule.Add(obj);
+                        }
+                    }
+                }
+                return objectsModule;
+            }
+        }
+
+        public static List<KBObject> FolderObjects(Folder folder)
+        {
+            {
+                List<KBObject> objectsFolder = new List<KBObject>();
+                foreach (KBObject obj in folder.AllObjects)
+                {
+                    if (obj is Folder)
+                    {
+                        List<KBObject> objectsAux = new List<KBObject>();
+                        objectsAux = FolderObjects((Folder)obj);
+                        foreach(KBObject objAux in objectsAux)
+                        {
+                            objectsFolder.Add(objAux);
+                        }
+                    }
+                    else
+                    {
+                        if (!objectsFolder.Contains(obj))
+                            objectsFolder.Add(obj);
+                    }   
+                }
+                return objectsFolder;
             }
         }
     }

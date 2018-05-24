@@ -132,7 +132,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.PreprocessPendingObjects, new ExecHandler(ExecPreprocessPendingObjects), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ReviewObjects, new ExecHandler(ExecReviewObjects), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ReviewObject, new ExecHandler(ExecReviewObject), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ReviewModuleOrFolder, new ExecHandler(ExecReviewModuleOrFolder), new QueryHandler(QueryIsModuleOrFolderSelected));
+            AddCommand(CommandKeys.ReviewObject, new ExecHandler(ExecReviewObject), new QueryHandler(QueryIsKBObjectSelected));
 
             AddCommand(CommandKeys.AboutKBDoctor, new ExecHandler(ExecAboutKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             AddCommand(CommandKeys.HelpKBDoctor, new ExecHandler(ExecHelpKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
@@ -447,8 +448,30 @@ namespace Concepto.Packages.KBDoctor
             foreach (KBObjectHistory kboh in kbohList)
             {
                 KBObject obj = model.Objects.Get(kboh.Key);
-                if (obj != null) { 
-                    selectedObjects.Add(obj);
+                if (obj != null) {
+                    List<KBObject> objsInContainer = new List<KBObject>();
+                    if (obj is Artech.Architecture.Common.Objects.Module)
+                    {
+                        objsInContainer = KBDoctorCore.Sources.Utility.ModuleObjects((Artech.Architecture.Common.Objects.Module)obj);
+                    }
+                    else
+                    {
+                        if (obj is Folder)
+                        {
+                            objsInContainer = KBDoctorCore.Sources.Utility.FolderObjects((Folder)obj);
+                        }
+                        else
+                        {
+                            selectedObjects.Add(obj);
+                        }
+                    }
+                    foreach (KBObject objSelected in objsInContainer)
+                    {
+                        if (!selectedObjects.Contains(objSelected))
+                        {
+                            selectedObjects.Add(objSelected);
+                        }
+                    }
                 }
             }
             Thread thread = new Thread(() => KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects));
@@ -489,6 +512,38 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecReviewModuleOrFolder(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            List<KBObject> selectedModulesFolders = GetObjects(cmdData);
+            List<KBObject> selectedObjects = new List<KBObject>();
+            foreach (KBObject obj in selectedModulesFolders)
+            {
+                List<KBObject> objsInContainer = new List<KBObject>();
+                if(obj is Artech.Architecture.Common.Objects.Module)
+                {
+                    objsInContainer = KBDoctorCore.Sources.Utility.ModuleObjects((Artech.Architecture.Common.Objects.Module)obj);
+                }
+                else { 
+                    if(obj is Folder)
+                    {
+                        objsInContainer = KBDoctorCore.Sources.Utility.FolderObjects((Folder)obj);
+                    }
+                }
+                foreach(KBObject objSelected in objsInContainer)
+                {
+                    if (!selectedObjects.Contains(objSelected))
+                    {
+                        selectedObjects.Add(objSelected);
+                    }
+                }
+            }
+
+            Thread thread = new Thread(() => KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects));
+            thread.Start();
+            return true;
+        }
 
         public static List<KBObjectHistory> GetGenericHistoryObjects(SelectedRowsCollection rows)
         {
@@ -1031,7 +1086,7 @@ namespace Concepto.Packages.KBDoctor
                 this.QueryKBOpened(commandData, ref status);
                 if (status.State == CommandState.Enabled)
                 {
-                    status.State = CommandState.Disabled;
+                    status.State = CommandState.Invisible;
                     ISelectionContainer selectionContainer = commandData.Context as ISelectionContainer;
                     if (selectionContainer == null || selectionContainer.SelectedObjects == null || !(selectionContainer.SelectedObject is KBObject))
                     {
@@ -1051,7 +1106,7 @@ namespace Concepto.Packages.KBDoctor
             }
             catch
             {
-                status.State = CommandState.Disabled;
+                status.State = CommandState.Invisible;
             }
             result = true;
             return result;
@@ -1072,7 +1127,7 @@ namespace Concepto.Packages.KBDoctor
                 }
                 foreach (KBObject current in objects)
                 {
-                    if (current == null || !CommandManager.CanCleanKBObject(current))
+                    if (current == null || !CommandManager.CanReviewKBObject(current))
                     {
                         result = true;
                         return result;
@@ -1084,9 +1139,9 @@ namespace Concepto.Packages.KBDoctor
             return result;
         }
 
-        private static bool CanCleanKBObject(KBObject kbObj)
+        private static bool CanReviewKBObject(KBObject kbObj)
         {
-            return kbObj.Type == typeof(Artech.Genexus.Common.Objects.Transaction).GUID || kbObj.Type == typeof(WebPanel).GUID || kbObj.Type == typeof(Procedure).GUID || kbObj.Type == typeof(DataProvider).GUID || kbObj.Type == typeof(WorkPanel).GUID ;
+            return kbObj.Type == typeof(Artech.Genexus.Common.Objects.Transaction).GUID || kbObj.Type == typeof(WebPanel).GUID || kbObj.Type == typeof(Procedure).GUID || kbObj.Type == typeof(DataProvider).GUID || kbObj.Type == typeof(WorkPanel).GUID || kbObj.Type == typeof(SDT).GUID;
         }
 
         private static List<KBObject> GetObjects(CommandData data)
@@ -1109,9 +1164,10 @@ namespace Concepto.Packages.KBDoctor
             }
             return list;
         }
+
         private bool QueryIsModuleSelected(CommandData data, ref CommandStatus status)
         {
-            status.State = CommandState.Disabled;
+            status.State = CommandState.Invisible;
             if (UIServices.KB != null && UIServices.KB.CurrentKB != null)
             {
                 IModelTree tree = data.Context as IModelTree;
@@ -1123,6 +1179,21 @@ namespace Concepto.Packages.KBDoctor
                         return true;
 
                 status.State = CommandState.Enabled;
+            }
+            return true;
+        }
+
+        private bool QueryIsModuleOrFolderSelected(CommandData data, ref CommandStatus status)
+        {
+            status.State = CommandState.Enabled;
+            this.QueryKBOpened(data, ref status);
+            if (status.State == CommandState.Enabled)
+            {
+                this.QueryFolderSelected(data, ref status);
+                if (status.State != CommandState.Enabled)
+                {
+                    this.QueryIsModuleSelected(data, ref status);
+                }
             }
             return true;
         }

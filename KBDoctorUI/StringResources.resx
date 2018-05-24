@@ -398,12 +398,15 @@
     <value>Objects With Constants</value>
   </data>
   <data name="PreprocessPendingObjects" xml:space="preserve">
-    <value>Object Review</value>
+    <value>Review Object by KBDoctor</value>
   </data>
   <data name="ReviewObjects" xml:space="preserve">
     <value>Review Objects</value>
   </data>
   <data name="ReviewObject" xml:space="preserve">
     <value>Review Object by KBDoctor</value>
+  </data>
+  <data name="ReviewModuleOrFolder" xml:space="preserve">
+    <value>Review Objects by KBDoctor</value>
   </data>
 </root>
