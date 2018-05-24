@@ -128,6 +128,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey changeCommitOnExit = new CommandKey(Package.guid, "ChangeCommitOnExit");
         private static CommandKey treeCommit = new CommandKey(Package.guid, "TreeCommit");
         private static CommandKey editLegacyCodeToReplace = new CommandKey(Package.guid, "EditLegacyCodeToReplace");
+        private static CommandKey editReviewObjects = new CommandKey(Package.guid, "EditReviewObjects");
 
         private static CommandKey objectsRefactoringCandidates = new CommandKey(Package.guid, "ObjectsRefactoringCandidates");
         private static CommandKey countTableAccess = new CommandKey(Package.guid, "CountTableAccess");
@@ -165,6 +166,7 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey ChangeCommitOnExit { get { return changeCommitOnExit; } }
         public static CommandKey TreeCommit { get { return treeCommit; } }
         public static CommandKey EditLegacyCodeToReplace { get { return editLegacyCodeToReplace; } }
+        public static CommandKey EditReviewObjects { get { return editReviewObjects; } }
         public static CommandKey ObjectsRefactoringCandidates { get { return objectsRefactoringCandidates; } }
 
         public static CommandKey CountTableAccess { get { return countTableAccess; } }

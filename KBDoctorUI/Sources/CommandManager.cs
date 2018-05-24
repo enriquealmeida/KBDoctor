@@ -90,6 +90,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ChangeLegacyCode, new ExecHandler(ExecChangeLegacyCode), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.EditLegacyCodeToReplace, new ExecHandler(ExecEditLegacyCodeToReplace), new QueryHandler(QueryKBDoctor));
 
+
             AddCommand(CommandKeys.ObjectsRefactoringCandidates, new ExecHandler(ExecObjectsRefactoringCandidates), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CountTableAccess, new ExecHandler(ExecCountTableAccess), new QueryHandler(QueryKBDoctor));
 
@@ -134,6 +135,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ReviewObjects, new ExecHandler(ExecReviewObjects), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ReviewModuleOrFolder, new ExecHandler(ExecReviewModuleOrFolder), new QueryHandler(QueryIsModuleOrFolderSelected));
             AddCommand(CommandKeys.ReviewObject, new ExecHandler(ExecReviewObject), new QueryHandler(QueryIsKBObjectSelected));
+            AddCommand(CommandKeys.EditReviewObjects, new ExecHandler(ExecEditReviewObjects), new QueryHandler(QueryKBDoctor));
+
 
             AddCommand(CommandKeys.AboutKBDoctor, new ExecHandler(ExecAboutKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             AddCommand(CommandKeys.HelpKBDoctor, new ExecHandler(ExecHelpKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
@@ -679,6 +682,14 @@ namespace Concepto.Packages.KBDoctor
             ObjectsHelper.EditLegacyCodeToReplace();
             return true;
         }
+
+        public bool ExecEditReviewObjects(CommandData cmdData)
+        {
+
+            ObjectsHelper.EditReviewObjects();
+            return true;
+        }
+
 
         public bool ExecChangeLegacyCode(CommandData cmdData)
         {

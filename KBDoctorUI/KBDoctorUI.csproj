@@ -160,6 +160,9 @@
     <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1">
       <HintPath>$(GX_PROGRAM_DIR)\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
     </Reference>
+    <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
+      <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>
     </Reference>
@@ -258,6 +261,7 @@
     <Content Include="Documentacion\HowTo.txt" />
     <Content Include="Documentacion\LoQueFaltaHacer.txt" />
     <Content Include="Resources\Icons\file-find.ico" />
+    <None Include="packages.config" />
     <None Include="Resources\Replace.txt" />
     <None Include="Resources\MeneesDiffUtils.dll" />
     <None Include="Resources\Menees.dll" />

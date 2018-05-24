@@ -409,4 +409,7 @@
   <data name="ReviewModuleOrFolder" xml:space="preserve">
     <value>Review Objects by KBDoctor</value>
   </data>
+  <data name="EditReviewObjects" xml:space="preserve">
+    <value>Edit review objects ini file</value>
+  </data>
 </root>

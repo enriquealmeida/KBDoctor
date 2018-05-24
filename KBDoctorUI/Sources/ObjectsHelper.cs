@@ -1818,6 +1818,13 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
         }
 
+        public static void EditReviewObjects()
+        {
+            API.InitializeIniFile(UIServices.KB.CurrentKB);
+            string filename = UIServices.KB.CurrentKB.UserDirectory + "\\KBDoctor.ini"   ;
+            Process.Start("notepad.exe", filename);
+
+        }
         private static string CreateFileWithTextToTeplace()
         {
             IKBService kbserv = UIServices.KB;

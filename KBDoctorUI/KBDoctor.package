@@ -85,7 +85,7 @@
     <CommandDefinition id="ReviewObject" context="selection" image="Hand3" imageType="ico" />
     <CommandDefinition id="ReviewObjects" image="Hand3" imageType="ico" />
     <CommandDefinition id="ReviewModuleOrFolder" context="selection" image="Hand3" imageType="ico" />
-
+    <CommandDefinition id="EditReviewObjects" /> 
     <!-- Acciones sobre atributos -->
     <CommandDefinition id="AssignDomainToAttribute" />
     <CommandDefinition id="AssignDeionToAttribute" />
@@ -212,7 +212,10 @@
             <Command refid="BuildObjectAndReferences"/>
             <Command refid="BuildObjectWithProperty"/>
             <Command refid="TreeCommit" />
-            <Command refid="ReviewObjects"/>
+            <Group>
+              <Command refid="ReviewObjects" />
+              <Command refid="EditReviewObjects" />
+            </Group>
             <Group>
               <Command refid="ChangeLegacyCode" />
               <Command refid="EditLegacyCodeToReplace" />
