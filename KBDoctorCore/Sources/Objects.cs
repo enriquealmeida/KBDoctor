@@ -443,7 +443,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string title = "KBDoctor - Objects with parameters without IN:/OUT:/INOUT:";
             output.StartSection(title);
 
-            List<KBObject> objectsWithProblems = GetObjectsWithProblems((List<KBObject>)KB.DesignModel.Objects.GetAll(), output);
+            List < KBObject >objs= KB.DesignModel.Objects.GetAll().ToList();
+            List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output);
             bool success = true;
             output.EndSection(title, success);
             return objectsWithProblems;

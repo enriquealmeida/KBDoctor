@@ -708,7 +708,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     output.AddLine("Procesing  " + obj.Name);
 
-                    IEnumerable<int> generatorTypes = KbStats.GetObjectGenerators(obj.Key);
+                 //   IEnumerable<int> generatorTypes = KbStats.GetObjectGenerators(obj.Key);
 
                     string objNamePrior = "";
                     KBObjectCollection objColl = new KBObjectCollection();
