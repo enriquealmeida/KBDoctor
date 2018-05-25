@@ -48,15 +48,13 @@
   </PropertyGroup>
   -->
   <ItemGroup>
-    <Reference Include="Artech.Architecture.BL.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Artech.Architecture.BL.Framework">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.BL.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.Common">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.Language">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Language.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.UI.Framework">
