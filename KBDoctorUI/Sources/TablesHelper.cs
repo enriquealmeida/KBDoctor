@@ -781,12 +781,13 @@ namespace Concepto.Packages.KBDoctor
             GenerateCopyTestData(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
             writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
             
+            /*
             Check = "Check Referential Integrity Numeric3";
             Name = Functions.CleanFileName(Check);
             FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
             GenerateCheckReferentialIntegrityN3(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
             writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-
+            */
 
 
             writer.AddFooter();
