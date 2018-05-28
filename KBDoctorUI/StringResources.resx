@@ -160,7 +160,7 @@
     <value>Clean variables not used</value>
   </data>
   <data name="IndexWithNotRefAtt" xml:space="preserve">
-    <value>With not referenced attributes</value>
+    <value>Index with not referenced attributes</value>
   </data>
   <data name="ObjectsNotCalled" xml:space="preserve">
     <value>Remove not referenced objects</value>

@@ -412,7 +412,7 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a With not referenced attributes.
+        ///   Busca una cadena traducida similar a Index with not referenced attributes.
         /// </summary>
         internal static string IndexWithNotRefAtt {
             get {
