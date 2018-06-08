@@ -40,9 +40,10 @@ using Artech.Architecture.Language.ComponentModel;
 using Artech.Udm.Framework;
 using Concepto.Packages.KBDoctorCore.Sources;
 
+
 namespace Concepto.Packages.KBDoctor
 {
-    static class ObjectsHelper
+     class ObjectsHelper 
     {
 
         public static void Unreachables()
@@ -291,12 +292,7 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
 
-        public static bool isMain(KBObject obj)
-        {
-            object aux = obj.GetPropertyValue("isMain");
-            return ((aux != null) && (aux.ToString() == "True"));
 
-        }
 
         public static bool isGenerated(KBObject obj)
         {
@@ -409,9 +405,9 @@ namespace Concepto.Packages.KBDoctor
                                 remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
                             }
                             string objNameLink = Functions.linkObject(obj);
-                            string isMainstr = (isMain(obj) ? "Main" : string.Empty);
+                            string isMainstr = (Utility.IsMain(obj) ? "Main" : string.Empty);
                             string isGeneratedstr = (isGenerated(obj) ? "Yes" : string.Empty);
-                            if (!isMain(obj))
+                            if (!Utility.IsMain(obj))
                             {
 
                                 if (remove != "")
@@ -1156,7 +1152,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if ((objRef != null) && !objMarked.Contains(objRef))
                 {
-                    if (isMain(objRef))
+                    if (Utility.IsMain(objRef))
                         return;
                     if ((reference.ReferenceType == ReferenceType.WeakExternal) && (objRef is Table))
                     {
@@ -1689,7 +1685,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if ((objRef != null) && !objMarked.Contains(objRef))
                 {
-                    if (isMain(objRef))
+                    if (Utility.IsMain(objRef))
                         return;
                     if (objRef is Transaction || objRef is WorkPanel || objRef is WebPanel || objRef is Menubar || objRef is Procedure || objRef is DataProvider || objRef is DataSelector)
                         WriteCopyObject(output, objRef, tableOperation, objMarked, mainstr, Dircopia);
@@ -2041,7 +2037,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
                 Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
-                Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+         //       Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
 
                 if (source != null)
                 {
@@ -2919,42 +2915,52 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                
 
                 Boolean SaveObj = false;
-                if (isGenerated(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel || obj is Procedure))
+                if (isGenerated(obj) && (/*obj is Transaction || obj is WebPanel || obj is WorkPanel ||*/ obj is Procedure))
                 {
                     output.AddLine("Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
                     string pic2 = (string) obj.GetPropertyValue("ATT_PICTURE");
-                   /*  if (pic2 == "@!")
-                    {
-                        Console.WriteLine(obj.Name);
-                    }*/
+      
 
-                    //string variables = VariablesNotBasedAttributesOrDomain(obj);
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     if (vp != null)
                     {
                         foreach (Variable v in vp.Variables)
                         {
-                              if ((!v.IsStandard) && v.Length == 3 ) //&& (v.Type == eDBType.NUMERIC) )
-                          //  if ((!v.IsStandard) && (v.Type != eDBType.CHARACTER))
+                              if ((!v.IsStandard))
                             {
                                 string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
                                 string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
 
                                 string picture = (string) v.GetPropertyValue("ATT_PICTURE");
 
-                               // if (picture=="@!")
-                               if (attname == "" && domname == "" ) //&& (v.Name.Contains("PUE") || v.Name.Contains("PAI")))
+                                if (attname == "" && domname == "")
+                                { 
 
-                                {
-                                    string vname = v.Name.ToLower();
-                                    writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), v.Name, picture, attname, domname });
+                               if ( v.Name.ToLower() == "archivo" && v.Type == eDBType.CHARACTER && v.Length == 50)
+                                    v.DomainBasedOn = Functions.DomainByName("Archivo");
+
+                                if ( v.Name.ToLower() == "in" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
+                                    v.DomainBasedOn = Functions.DomainByName("XMLContenido");
+
+                                if ( v.Name.ToLower() == "out" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
+                                    v.DomainBasedOn = Functions.DomainByName("XMLContenido");
+
+                                if (v.DomainBasedOn != null)
+                                    {
+                                        string vname = v.Name.ToLower();
+                                        writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), v.Name, picture, attname, domname });
+                                        SaveObj = true;
+                                    }
                                 }
                             }
                         }
                     }
 
+                    if (SaveObj)
+                        obj.Save();
 
                 }
+
             }
             writer.AddFooter();
             writer.Close();

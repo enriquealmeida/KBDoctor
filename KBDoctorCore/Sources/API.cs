@@ -16,6 +16,8 @@ using Artech.Architecture.BL.Framework.Services;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.Diagnostics;
 using System.IO;
+using Microsoft.Practices.CompositeUI.EventBroker;
+using Artech.Architecture.Common.Events;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -25,6 +27,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             return;
         }
+
+
         //
         public static void PrepareCompareNavigations(KnowledgeBase KB, IOutputService output)
         {
@@ -96,13 +100,31 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
         {
+            //PRUEBA /////////////////////////////////////////
+            /*
+                        const string KBDOCTOR_OUTPUTID = "KBDoctor";
+                        output.SelectOutput(KBDOCTOR_OUTPUTID);
+                        output.StartSection(KBDOCTOR_OUTPUTID, "Review_Objects", true); // "Review Objects");
+
+                        OutputError err = new OutputError("Error !! ", MessageLevel.Error);
+                        output.Add(KBDOCTOR_OUTPUTID, err);
+
+                        OutputError wrn = new OutputError("Warning!!", MessageLevel.Warning);
+                        output.Add(KBDOCTOR_OUTPUTID, wrn);
+
+                        output.EndSection(KBDOCTOR_OUTPUTID, "Review_Objects", true);
+                        output.UnselectOutput(KBDOCTOR_OUTPUTID);
+
+                        return;
+                        */
+
+            const string KBDOCTOR_OUTPUTID = "KBDoctor";
+            output.SelectOutput(KBDOCTOR_OUTPUTID);
+
+           // output.Clear();
+          //  output.StartSection(KBDOCTOR_OUTPUTID, "Review_Objects", "Review Objects");
+
             FileIniDataParser fileIniData = new FileIniDataParser();
-
-            output.Clear();
-            output.SelectOutput("KBDoctor");
-            output.StartSection("KBDoctor", "Review_Objects", "Review Objects");
-
-
             InitializeIniFile(KB);
 
             IniData parsedData = fileIniData.ReadFile(KB.UserDirectory + "\\KBDoctor.ini");
@@ -139,6 +161,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (parsedData[SectionName]["CodeCommented"].ToLower() == "true")
                         Objects.CodeCommented(objlist, output);
 
+                    //Code commented
+                    if (parsedData[SectionName]["SubsNotInvoked"].ToLower() == "true")
+                        Objects.SubsNotInvoked(objlist, output);
+
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
                     int maxNestLevel = 7;
@@ -166,6 +192,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     * Si es modulo, revisar que no tenga objetos publicos no llamados
                     * Si es modulo, revisar que no tenga objetos privados llamados desde fuera
                     * Si es modulo, Valor de la propiedad ObjectVisibility <> Private
+                    * Atributo Varchar que debe ser char
+                    * Atributo Char que debe ser varchar
+                    * Column Title muy ancho para el ancho del atributo
+                    * Nombre del Control en pantalla por Default
+                    * Todas las subrutinas son usadas
+                    * Todos los eventos son invocados
+                    *
                     */
                 }
                 if (obj is Artech.Genexus.Common.Objects.Attribute && parsedData[SectionName]["AttributeBasedOnDomain"].ToLower() == "true")
@@ -186,7 +219,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Objects.AttributeWithoutTable(atts, output);
             }
 
-            output.EndSection("KBDoctor", "Review_Objects", true); 
+            //output.EndSection(KBDOCTOR_OUTPUTID, "Review Objects", true);
+            output.AddText("KBDoctor", "KBDoctor Review Object finished");
+          //  output.SelectOutput(KBDOCTOR_OUTPUTID);
+            output.UnselectOutput(KBDOCTOR_OUTPUTID);
+            output.SelectOutput("General");
+            output.AddText("General", "KBDoctor Review Object finished");
+
+
+            
         }
 
         public static void InitializeIniFile(KnowledgeBase KB)
@@ -208,6 +249,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 AddKeyToIni(data, SectionName, "CheckCommitOnExit", "true", "Check if property Commit on exit = YES");
                 AddKeyToIni(data, SectionName, "CheckModule", "true", "Use of modules is required");
                 AddKeyToIni(data, SectionName, "CodeCommented", "true", "Code commented is marked as error");
+                AddKeyToIni(data, SectionName, "SubsNotInvoked", "true", "All sub are invoked ?");
+
                 AddKeyToIni(data, SectionName, "VariablesBasedAttOrDomain", "true", "Variables must be based on Attributes or Domains");
                 AddKeyToIni(data, SectionName, "AttributeBasedOnDomain", "true", "Attributes must be based on domains");
                 AddKeyToIni(data, SectionName, "SDTBasedAttOrDomain", "true", "SDT items must be based on attributes or domains");

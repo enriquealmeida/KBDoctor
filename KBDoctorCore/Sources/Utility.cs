@@ -411,10 +411,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static string CodeCommented(string source)
         {
-
+            string source2 = source.Replace("//\n", "####\n");
             var codeComments = @"[^\/](\/\*)([\b\s]*(msg|do|call|udp|where|if|else|endif|endfor|for|defined by|while|enddo|&[A-Za-z0-9_\-.\s]*=))(\*(?!\/)|[^*])*(\*\/)|(\/\/)[\b\s]*((msg|do|call|udp|where|if|else|endif|endfor|for|defined by|while|enddo|&[A-Za-z0-9_\-.\s]*=)([^\r\n]+)?)";
 
-            return Regex.Match(source, codeComments).Value;
+            return Regex.Match(source2, codeComments).Value;
 
         }
 
@@ -937,6 +937,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 return objectsModule;
             }
+        }
+
+        public static bool IsMain(KBObject obj)
+        {
+            object aux = obj.GetPropertyValue("isMain");
+            return ((aux != null) && (aux.ToString() == "True"));
+
         }
 
         public static List<KBObject> FolderObjects(Folder folder)
