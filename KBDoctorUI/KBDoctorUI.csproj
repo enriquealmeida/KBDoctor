@@ -160,9 +160,6 @@
     <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1">
       <HintPath>$(GX_PROGRAM_DIR)\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
     </Reference>
-    <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
-      <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>
     </Reference>
@@ -346,6 +343,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IniFileParser\INIFileParser.csproj">
+      <Project>{5e46dcf4-c473-4171-9f9b-f3910b5ec407}</Project>
+      <Name>INIFileParser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj">
       <Project>{280a5263-3efa-4585-86dd-ea8fd5310a4f}</Project>
       <Name>KBDoctorCore</Name>

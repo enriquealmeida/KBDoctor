@@ -156,8 +156,6 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy KBDoctorCore.* "%25GX_PROGRAM_DIR%25\Packages" /q /Y
 
-xcopy ..\..\INIFileParser.dll   "%25GX_PROGRAM_DIR%25" /q /Y
-
 
 </PostBuildEvent>
   </PropertyGroup>
