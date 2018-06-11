@@ -161,10 +161,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (parsedData[SectionName]["CodeCommented"].ToLower() == "true")
                         Objects.CodeCommented(objlist, output);
 
-                    //Code commented
-                    if (parsedData[SectionName]["SubsNotInvoked"].ToLower() == "true")
-                        Objects.SubsNotInvoked(objlist, output);
-
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
                     int maxNestLevel = 7;
@@ -196,7 +192,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     * Atributo Char que debe ser varchar
                     * Column Title muy ancho para el ancho del atributo
                     * Nombre del Control en pantalla por Default
-                    * Todas las subrutinas son usadas
                     * Todos los eventos son invocados
                     *
                     */

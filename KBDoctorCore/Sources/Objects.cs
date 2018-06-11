@@ -689,26 +689,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
             }
         }
-        internal static void SubNotInvoked(List<KBObject> objs, IOutputService output)
-        {
-            foreach (KBObject obj in objs)
-            {
-                string source = Utility.ObjectSourceUpper(obj);
-                source = Utility.RemoveEmptyLines(source);
-                string codeCommented = Utility.CodeCommented(source);
-                codeCommented = codeCommented.Replace("'", "");
-                codeCommented = codeCommented.Replace(">", "");
-                codeCommented = codeCommented.Replace("<", "");
-                if (codeCommented != "")
-                {
-                    string snippet = (codeCommented.Length > 30) ? codeCommented.Substring(1, 30) + "..." : codeCommented;
-                    KBObjectPart part = Utility.ObjectSourcePart(obj);
-                    OutputError err = new OutputError("Commented code [" + snippet + "]", MessageLevel.Warning, new KBObjectPosition(part));
-                    output.Add("KBDoctor", err);
-                }
-            }
 
-        }
         internal static void AttributeHasDomain(List<KBObject> objs, IOutputService output)
         {
             foreach (KBObject obj in objs)
