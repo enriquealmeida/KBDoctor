@@ -273,7 +273,7 @@
             <Command refid="AboutKBDoctor"  />
             <Command refid="HelpKBDoctor" />
           </Group>
-          <!-- 
+          <!-- -->
           <Group id="LABS" >
             <Popup name ="Labs">
               <Command refid="AddINParmRule"/>
@@ -336,7 +336,7 @@
 
 
           </Group>
-               ff -->
+          <!-- -->    
       </Popup>
 
       </Popup>
