@@ -34,7 +34,7 @@
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <StartAction>Program</StartAction>
-        <StartProgram>C:\Program Files (x86)\GeneXus\GeneXus16\GeneXus.exe</StartProgram>
+        <StartProgram>C:\Program Files (x86)\Artech\GeneXus\GeneXusXEv3\GeneXus.exe</StartProgram>
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
         <Optimize>false</Optimize>
