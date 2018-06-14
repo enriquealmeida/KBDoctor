@@ -11,6 +11,7 @@ if %1%a==a goto nada
 
 :nada
 pushd %targetDir%
-"C:\Program Files\7-Zip\7z.exe" a %1%.zip  KBDoctorCmd.dll  KBDoctorCore.dll IniFileParser.dll LouvainCommunityPL.dll KBDoctor.dll KBDoctorCmd.Tasks.targets
+"C:\Program Files\7-Zip\7z.exe" a KBDoctor_%1%.zip  KBDoctorCmd.dll  KBDoctorCore.dll IniFileParser.dll LouvainCommunityPL.dll KBDoctor.dll KBDoctorCmd.Tasks.targets
+move KBDoctor_%1%.zip ..\..\_KBDoctorPack\
 popd 
 pause
