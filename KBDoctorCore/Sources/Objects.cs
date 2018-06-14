@@ -291,7 +291,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     }
                 }
-               
+
             }
             return null;
 
@@ -410,7 +410,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static string GetParametersString(KBObject obj)
         {
-            
+
             Tuple<int, string> type_access;
             List<Tuple<int, string>> parameters = new List<Tuple<int, string>>();
             ICallableObject callableObject = obj as ICallableObject;
@@ -448,7 +448,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string title = "KBDoctor - Objects with parameters without IN:/OUT:/INOUT:";
             output.StartSection(title);
 
-            List < KBObject >objs= KB.DesignModel.Objects.GetAll().ToList();
+            List<KBObject> objs = KB.DesignModel.Objects.GetAll().ToList();
             List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output);
             bool success = true;
             output.EndSection(title, success);
@@ -500,8 +500,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 {
                                     objWithProblems += 1;
                                     objectsWithProblems.Add(obj);
-                                    OutputError err = new OutputError("Parameter without IN/OUT/INOUT ", MessageLevel.Error, new  KBObjectPosition(obj.Parts.Get<RulesPart>()));
-                                    output.Add("KBDoctor",err); 
+                                    OutputError err = new OutputError("Parameter without IN/OUT/INOUT ", MessageLevel.Error, new KBObjectPosition(obj.Parts.Get<RulesPart>()));
+                                    output.Add("KBDoctor", err);
                                 }
                             }
                         }
@@ -559,7 +559,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             bool commitOnExit;
             foreach (KBObject obj in objs)
             {
-                if (obj is Procedure) { 
+                if (obj is Procedure) {
                     object aux = obj.GetPropertyValue("CommitOnExit");
                     if (aux != null)
                     {
@@ -604,7 +604,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (ComplexityLevel > maxComplexityLevel)
                         {
                             OutputError err = new OutputError("Complexity too high(" + ComplexityLevel.ToString() + ").Recommended max: " + maxComplexityLevel.ToString(), MessageLevel.Error, new KBObjectPosition(part));
-                            output.Add("KBDoctor", err); 
+                            output.Add("KBDoctor", err);
                         }
 
                         if (CodeBlock > maxCodeBlock)
@@ -624,11 +624,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void isInModule(List<KBObject> objs, IOutputService output)
         {
-            foreach(KBObject obj in objs)
+            foreach (KBObject obj in objs)
             {
                 if (obj.Module.Description == "Root Module" && !Utility.IsMain(obj))
                 {
-                    OutputError err = new OutputError("Object without module." , MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                    OutputError err = new OutputError("Object without module.", MessageLevel.Warning, new KBObjectAnyPosition(obj));
                     output.Add("KBDoctor", err);
                 }
             }
@@ -649,11 +649,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     {
                         foreach (Variable v in vp.Variables)
                         {
-                            if ((!v.IsStandard) && Utility.VarHasToBeInDomain(v)) 
+                            if ((!v.IsStandard) && Utility.VarHasToBeInDomain(v))
                             {
                                 string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
                                 string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
-                                if (attname == "" && domname == "") 
+                                if (attname == "" && domname == "")
                                 {
                                     string vname = v.Name.ToLower();
                                     vnames += vname + " ";
@@ -673,7 +673,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void CodeCommented(List<KBObject> objs, IOutputService output)
         {
-            foreach(KBObject obj in objs) { 
+            foreach (KBObject obj in objs) {
                 string source = Utility.ObjectSourceUpper(obj);
                 source = Utility.RemoveEmptyLines(source);
                 string codeCommented = Utility.CodeCommented(source);
@@ -696,7 +696,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (obj is Artech.Genexus.Common.Objects.Attribute)
                 {
-                    Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute) obj;
+                    Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute)obj;
                     string Picture = Utility.ReturnPicture(a);
                     bool isSubtype = Utility.AttIsSubtype(a);
 
@@ -712,7 +712,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void SDTBasedOnAttDomain(List<KBObject> objs, IOutputService output)
         {
-            foreach(KBObject obj in objs)
+            foreach (KBObject obj in objs)
             {
                 if (obj is SDT)
                 {
@@ -736,7 +736,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         output.Add("KBDoctor", err);
                     }
                 }
-                
+
             }
         }
 
@@ -753,7 +753,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     attTodos.Add((Artech.Genexus.Common.Objects.Attribute)obj);
                 }
             }
-            if (model != null) { 
+            if (model != null) {
                 foreach (Table t in Table.GetAll(model))
                 {
                     foreach (EntityReference reference in t.GetReferences(LinkType.UsedObject))
@@ -767,13 +767,78 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                 }
             }
-            foreach(Artech.Genexus.Common.Objects.Attribute att in attTodos)
+            foreach (Artech.Genexus.Common.Objects.Attribute att in attTodos)
             {
                 OutputError err = new OutputError("Attribute without table: " + att.Name, MessageLevel.Error, new KBObjectAnyPosition(att));
                 output.Add("KBDoctor", err);
             }
         }
 
+        public static List<KBObject> ObjectsUpdateAttribute(KBObject att, IOutputService output)
+        {
+            if (att is Artech.Genexus.Common.Objects.Attribute) {
+                foreach (EntityReference reference in att.GetReferencesTo(LinkType.UsedObject))
+                {
+                    KBObject objRef = KBObject.Get(att.Model, reference.From);
+                    if (objRef is Procedure)
+                    {
+                        string name = objRef.Name;
+                       if(ProcedureUpdateAttribute(objRef, att))
+                        {
+                            output.AddLine(objRef.Name);
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public static bool ProcedureUpdateAttribute(KBObject proc, KBObject att)
+        {
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+            ParserInfo parserInfo;
+            Artech.Genexus.Common.Parts.ProcedurePart source = proc.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+            Artech.Genexus.Common.Parts.VariablesPart vp = proc.Parts.Get<VariablesPart>();
+
+            if (source != null)
+            {
+                parserInfo = new ParserInfo(source);
+
+                var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+                if (parser.Validate(info, source.Source))
+                {
+                    Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                }
+                bool InAssign = false;
+                bool Equal = false;
+                bool HasAttribute = false;
+                foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
+                {
+                    if (InAssign && token.Token > 100) //Command
+                    {
+                        InAssign = false;
+                        Equal = false;
+                        HasAttribute = false;
+                    }
+                    if (token.Token == 107) //Assignment 
+                    {
+                        InAssign = true; 
+                    }
+                    if (InAssign && token.Token == 10) //Relational Oper =
+                    {
+                        if (HasAttribute)
+                            return true;
+                        Equal = true;
+                    }
+                    if (InAssign && (!Equal) && token.Token == 2 && token.Word == att.Name) //Estoy dentro de un Assign, antes del operador = y el atributo es el que estoy buscando.
+                    {
+                        HasAttribute = true;
+                    }
+
+                }
+            }
+            return false;
+        }
     }
 #if EVO3
     public class Tuple<T1, T2>

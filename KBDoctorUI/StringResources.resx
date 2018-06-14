@@ -412,4 +412,7 @@
   <data name="EditReviewObjects" xml:space="preserve">
     <value>Edit review objects ini file</value>
   </data>
+  <data name="ObjectsUpdateAttribute" xml:space="preserve">
+    <value>Procedures that updates attributes</value>
+  </data>
 </root>

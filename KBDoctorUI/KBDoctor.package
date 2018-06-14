@@ -43,6 +43,7 @@
     <CommandDefinition id="ObjectsNotReacheable" image="Hand3" imageType="ico"/>
     <CommandDefinition id="ObjectsWithoutInOut" />
     <CommandDefinition id="ObjectsMainCalled" />
+    <CommandDefinition id="ObjectsUpdateAttribute" />
     <CommandDefinition id="ObjectsReferenced" />
     <CommandDefinition id="ObjectsWithVarNotBasedOnAtt" />
     <CommandDefinition id="RenameVariables" />
@@ -273,11 +274,11 @@
             <Command refid="AboutKBDoctor"  />
             <Command refid="HelpKBDoctor" />
           </Group>
-          <!-- 
           <Group id="LABS" >
             <Popup name ="Labs">
               <Command refid="AddINParmRule"/>
               <Command refid="ProcedureSDT"/>
+              <Command refid="ObjectsUpdateAttribute"/>
               <Command refid="ProcedureGetSet"/>
               <Command refid="CreateDeployUnits" />
               <Command refid="GenerateSimpleTransactionFromNotGeneratedTransactions" />
@@ -333,10 +334,7 @@
               <Command refid="ListTableAttributesUsingDomain"/>
               <Command refid ="TablesWidth"/>
             </Popup>
-
-
           </Group>
-               ff -->
       </Popup>
 
       </Popup>

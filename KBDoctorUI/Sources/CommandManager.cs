@@ -18,6 +18,7 @@ using Concepto.Packages.KBDoctorCore;
 using Infragistics.Win.UltraWinGrid;
 using static Artech.Architecture.Common.Objects.KnowledgeBase;
 using Artech.Genexus.Common.Objects;
+using Artech.Architecture.Common.Descriptors;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -82,6 +83,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ObjectsWithVarsNotUsed, new ExecHandler(ExecObjectsWithVarsNotUsed), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ResetWINForm, new ExecHandler(ExecResetWINForm), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsComplex, new ExecHandler(ExecObjectsComplex), new QueryHandler(QueryKBDoctor));
+
+            AddCommand(CommandKeys.ObjectsUpdateAttribute, new ExecHandler(ExecProceduresThatUpdatesAttributes), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ChangeCommitOnExit, new ExecHandler(ExecChangeCommitOnExit), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.TreeCommit, new ExecHandler(ExecTreeCommit), new QueryHandler(QueryKBDoctor));
@@ -620,9 +623,31 @@ namespace Concepto.Packages.KBDoctor
         public bool ExecRenameVariables(CommandData cmdData)
         {
             // Cambiar las variables para que se basen en atributos o dominios.
+            Thread t = new Thread(new ThreadStart(CleanKBHelper.RenameVariables));
+            t.Start();
+            return true;
+        }
+
+        public bool ExecProceduresThatUpdatesAttributes(CommandData cmdData)
+        {
+            // Cambiar las variables para que se basen en atributos o dominios.
             /*   Thread t = new Thread(new ThreadStart(CleanKBHelper.RenameVariables));
                t.Start();*/
-            ObjectsHelper.TestParser();
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = false;
+            KBModel kbModel = UIServices.KB.CurrentModel;
+
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Attribute>());
+
+            List<KBObject> selectedObjects = new List<KBObject>();
+            output.StartSection("Procedures that updates attribute");
+            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            {
+                KBDoctorCore.Sources.API.ObjectsUpdateAttribute(obj, output);
+            }
             return true;
         }
 

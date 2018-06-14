@@ -268,5 +268,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             key.Comments.Add(Comment);
             data[SectionName].AddKey(key);
         }
+
+        public static void ObjectsUpdateAttribute(KBObject att, IOutputService output)
+        {
+            Objects.ObjectsUpdateAttribute(att, output);
+        }
     }
 }

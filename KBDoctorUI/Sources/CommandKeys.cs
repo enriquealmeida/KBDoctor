@@ -143,7 +143,6 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey generateSQLScripts  = new CommandKey(Package.guid, "GenerateSQLScripts");
         private static CommandKey generateGraph = new CommandKey(Package.guid, "GenerateGraph");
 
-
         public static CommandKey ObjNotReacheable { get { return objNotReacheable; } }
         public static CommandKey ObjectsWithoutInOut { get { return objectsWithoutInOut; } }
         public static CommandKey ObjectsMainCalled { get { return objectsMainCalled; } }
@@ -172,6 +171,9 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey CountTableAccess { get { return countTableAccess; } }
 
         public static CommandKey ObjectsWithConstants { get { return objectsWithConstants; } }
+
+        private static CommandKey objectsUpdateAttribute = new CommandKey(Package.guid, "ObjectsUpdateAttribute");
+        public static CommandKey ObjectsUpdateAttribute { get { return objectsUpdateAttribute; } }
 
         public static CommandKey ObjectsDiagnostics { get { return objectsDiagnostics; } }
         public static CommandKey ObjectsWINWEB { get { return objectsWIWEB; } }

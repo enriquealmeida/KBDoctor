@@ -4113,29 +4113,38 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             selectObjectOption.MultipleSelection = true;
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
 
-            ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
-            IParserEngine parser = parserSrv.CreateEngine();
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
+            
             writer.AddTableHeader(new string[] {"OBJECT", "COMMAND", "TOKEN", "Id", "Row"});
 
 
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
-                writer.AddTableData(new string[] { obj.Name, "","",""});
                 Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+
                 if (source != null)
                 {
                     parserInfo = new ParserInfo(source);
+
+
+                    var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+                    if (parser.Validate(info, source.Source))
+                    {
+                        Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                    }
+
                     foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
                     {
-                        string meaning = token_meaning[(TokensIds)token.Token] as string;
+                            string meaning = token_meaning[(TokensIds)token.Token] as string;
                         if (token.Token >= 100)
                         {
-                            writer.AddTableData(new string[] { "", meaning, "", token.Token.ToString() });
+                            writer.AddTableData(new string[] { "", meaning + "(" + token.Word + ")", "", token.Token.ToString() });
                         }
                         else
-                        { 
-                            writer.AddTableData(new string[] { "", "", meaning, token.Token.ToString()});
+                        {
+                            writer.AddTableData(new string[] { "", "", meaning + "(" + token.Word + ")", token.Token.ToString() });
                         }
                     }
                 }
