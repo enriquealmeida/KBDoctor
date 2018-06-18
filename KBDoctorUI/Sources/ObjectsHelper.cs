@@ -3795,10 +3795,88 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             System.IO.File.WriteAllText(fileName2, sw2);
             output.AddLine("URL/URI file generated in " + fileName2);
             output.EndSection(title, success);
-
-
         }
 
+        public static void ObjectsUpdatingAttributes()
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = false;
+            IKBService kbserv = UIServices.KB;
+            KBModel kbModel = kbserv.CurrentModel;
+
+            string title = "KBDoctor - Objects updating attribute";
+            output.StartSection(title);
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+
+            writer.AddTableHeader(new string[] { "Table", "Transactions", "Objects updating table", "Objects updating attribute" });
+
+            AskAttributeandTable at = new AskAttributeandTable();
+            DialogResult dr = new DialogResult();
+            dr = at.ShowDialog();
+
+            if (dr == DialogResult.OK)
+            {
+                string tblName = at.tblName;
+                string attName = at.attName;
+
+                string trnstring = "";
+                string updatetablestring = "";
+                string updateattstring = ""; 
+                if(tblName != "" && attName != "") { 
+                    Table t = Table.Get(kbModel, tblName);
+                    Artech.Genexus.Common.Objects.Attribute att = Artech.Genexus.Common.Objects.Attribute.Get(kbModel, attName);
+                    if(att != null  && t != null) { 
+                        List<KBObject> updaters = API.ObjectsUpdatingTable(t, output);
+
+                        List<KBObject> updatersAtt = API.ObjectsUpdateAttribute(updaters, att, output);
+
+                        foreach (KBObject obj in updaters)
+                        {
+                            if(obj is Transaction)
+                            {
+                                
+                                trnstring += Functions.linkObject(obj) + " ";
+                            }
+                            else
+                            {
+                                updatetablestring += Functions.linkObject(obj) + " ";
+                            }
+                            //output.AddLine(obj.Name);
+                        }
+
+                        foreach (KBObject obj in updatersAtt)
+                        {
+                            updateattstring += Functions.linkObject(obj) + " ";
+                            //output.AddLine(obj.Name);
+                        }
+
+                        writer.AddTableData(new string[] { Functions.linkObject(t), trnstring, updatetablestring, updateattstring});
+                        writer.AddFooter();
+                        writer.Close();
+
+                        KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+                        bool success = true;
+                        output.EndSection(title, success);
+                    }
+
+                }
+                else
+                {
+                    bool success = false;
+                    output.EndSection(title, success);
+                    writer.AddFooter();
+                    writer.Close();
+                }
+
+            }
+        }
         public static void ObjectsWithTheSameSignature()
         {
             // Object with parm() rule without in: out: or inout:

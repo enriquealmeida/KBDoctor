@@ -630,27 +630,11 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecProceduresThatUpdatesAttributes(CommandData cmdData)
         {
-            // Cambiar las variables para que se basen en atributos o dominios.
-            /*   Thread t = new Thread(new ThreadStart(CleanKBHelper.RenameVariables));
-               t.Start();*/
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = false;
-            KBModel kbModel = UIServices.KB.CurrentModel;
-
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Attribute>());
-
-            List<KBObject> selectedObjects = new List<KBObject>();
-            output.StartSection("Procedures that updates attribute");
-            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-            {
-                KBDoctorCore.Sources.API.ObjectsUpdateAttribute(obj, output);
-            }
+            //Thread t = new Thread(new ThreadStart());
+            ObjectsHelper.ObjectsUpdatingAttributes();
+            //t.Start();
             return true;
         }
-
 
         public bool ExecObjectsNotCalled(CommandData cmdData)
         {

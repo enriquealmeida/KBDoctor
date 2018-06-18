@@ -21,10 +21,13 @@ namespace Concepto.Packages.KBDoctor
 
         private void AskAttributeandTable_Load(object sender, EventArgs e)
         {
-                foreach (Table t in Artech.Genexus.Common.Objects.Table.GetAll(UIServices.KB.CurrentModel))
-                {
-                    comboBoxTable.Items.Add(t.Name);
-                }
+            List<string> names = new List<string>();
+            foreach (Table t in Artech.Genexus.Common.Objects.Table.GetAll(UIServices.KB.CurrentModel))
+            {
+                names.Add(t.Name);
+            }
+            names.Sort();
+            comboBoxTable.Items.AddRange(names.ToArray<string>());
         }
 
         private void comboBoxAtt_SelectedIndexChanged(object sender, EventArgs e)
@@ -36,19 +39,19 @@ namespace Concepto.Packages.KBDoctor
         {
             comboBoxAtt.Items.Clear();
             Table t = Artech.Genexus.Common.Objects.Table.Get(UIServices.KB.CurrentModel, comboBoxTable.SelectedItem.ToString());
+            List<string> names = new List<string>();
             foreach (TableAttribute attr in t.TableStructure.Attributes) 
             {
-                comboBoxAtt.Items.Add(attr.Name);
-
+                names.Add(attr.Name);
             }
+            names.Sort();
+            comboBoxAtt.Items.AddRange(names.ToArray<string>());
 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string tableName = comboBoxTable.SelectedItem.ToString();
-            string atrName = comboBoxAtt.SelectedItem.ToString();
-            if (tableName == "" || atrName == "")
+            if (comboBoxTable.SelectedItem != null || comboBoxAtt.SelectedItem != null)
             {
                 lblError.Text = "Select Table and Attribute";
             }
@@ -59,9 +62,26 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
-        public string tblName { get { return comboBoxTable.SelectedItem.ToString(); } }
-        public string attName { get { return comboBoxAtt.SelectedItem.ToString(); } }
+        public string tblName { get {
+                if (comboBoxTable.SelectedItem != null)
+                    return comboBoxTable.SelectedItem.ToString();
+                else
+                    return "";
+            } }
+        public string attName
+        {
+            get
+            {
+                if (comboBoxAtt.SelectedItem != null)
+                    return comboBoxAtt.SelectedItem.ToString();
+                else
+                    return "";
+            }
+        }
 
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
 
+        }
     }
 }

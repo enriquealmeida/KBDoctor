@@ -269,9 +269,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             data[SectionName].AddKey(key);
         }
 
-        public static void ObjectsUpdateAttribute(KBObject att, IOutputService output)
+        public static List<KBObject> ObjectsUpdateAttribute(List<KBObject> updaters, Artech.Genexus.Common.Objects.Attribute att, IOutputService output)
         {
-            Objects.ObjectsUpdateAttribute(att, output);
+            return Objects.ObjectsUpdateAttribute(updaters, att, output);
+        }
+
+        public static List<KBObject> ObjectsUpdatingTable(Table Table, IOutputService output)
+        {
+            return Objects.ObjectsUpdatingTable(Table);
         }
     }
 }

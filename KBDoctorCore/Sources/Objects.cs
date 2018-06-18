@@ -774,26 +774,34 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        public static List<KBObject> ObjectsUpdateAttribute(KBObject att, IOutputService output)
+        public static List<KBObject> ObjectsUpdateAttribute(List<KBObject> updaters, Artech.Genexus.Common.Objects.Attribute att, IOutputService output)
         {
-            if (att is Artech.Genexus.Common.Objects.Attribute) {
-                foreach (EntityReference reference in att.GetReferencesTo(LinkType.UsedObject))
+            List<KBObject> retobjs = new List<KBObject>(); 
+                foreach (KBObject obj in updaters)
                 {
-                    KBObject objRef = KBObject.Get(att.Model, reference.From);
-                    if (objRef is Procedure)
+                    if (obj is Procedure)
                     {
-                        string name = objRef.Name;
-                       if(ProcedureUpdateAttribute(objRef, att))
+                       string name = obj.Name;
+                       if(ProcedureUpdateAttribute(obj, att))
                         {
-                            output.AddLine(objRef.Name);
+                            retobjs.Add(obj);
                         }
                     }
                 }
-            }
-            return null;
+            return retobjs;
         }
 
-        public static bool ProcedureUpdateAttribute(KBObject proc, KBObject att)
+        public static List<KBObject> ObjectsUpdatingTable(Table t)
+        {
+            KBModel model = t.Model;
+            List<KBObject> updaters = (from r in model.GetReferencesTo(t.Key, LinkType.UsedObject)
+                                        where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                        where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
+                                        select model.Objects.Get(r.From)).ToList();
+            return updaters;
+        }
+
+        private static bool ProcedureUpdateAttribute(KBObject proc, KBObject att)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
