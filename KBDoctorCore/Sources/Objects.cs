@@ -781,6 +781,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     if (obj is Procedure)
                     {
+                        output.AddLine(obj.Name);
                        string name = obj.Name;
                        if(ProcedureUpdateAttribute(obj, att))
                         {

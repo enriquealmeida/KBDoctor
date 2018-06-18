@@ -630,9 +630,9 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecProceduresThatUpdatesAttributes(CommandData cmdData)
         {
-            //Thread t = new Thread(new ThreadStart());
-            ObjectsHelper.ObjectsUpdatingAttributes();
-            //t.Start();
+            Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsUpdatingAttributes));
+            t.SetApartmentState(System.Threading.ApartmentState.STA);
+            t.Start();
             return true;
         }
 
