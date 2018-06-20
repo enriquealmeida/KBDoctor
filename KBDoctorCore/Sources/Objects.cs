@@ -241,10 +241,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             DTREDUNDANCY = 397, // Used to give redundancy info to the specifier
         };
 
-        internal static void SubsNotInvoked(List<KBObject> objlist, IOutputService output)
-        {
-            throw new NotImplementedException();
-        }
+
 
         internal static KBDAST ParseSourceIntoAST(Artech.Genexus.Common.Parts.ProcedurePart source)
         {
@@ -594,7 +591,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                         KBObjectPart part = Utility.ObjectSourcePart(obj);
 
-                        int parametersCount = ParametersCountObject(obj);
                         if (NestLevel > maxNestLevel)
                         {
                             OutputError err = new OutputError("Nested level too high (" + NestLevel.ToString() + "). Recommended max: " + maxNestLevel.ToString(), MessageLevel.Error, new KBObjectPosition(part));
@@ -612,9 +608,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             OutputError err = new OutputError("Code block too large(" + CodeBlock.ToString() + ").Recommended max: " + maxCodeBlock.ToString(), MessageLevel.Error, new KBObjectPosition(part));
                             output.Add("KBDoctor", err);
                         }
+
+                        int parametersCount = ParametersCountObject(obj);
                         if (parametersCount > maxParametersCount)
                         {
-                            OutputError err = new OutputError("Too many parameters (" + parametersCount.ToString() + ").Recommended max: " + maxParametersCount.ToString(), MessageLevel.Error, new KBObjectPosition(part));
+                            KBObjectPart rpart = Utility.ObjectRulesPart(obj);
+                            OutputError err = new OutputError("Too many parameters (" + parametersCount.ToString() + ").Recommended max: " + maxParametersCount.ToString(), MessageLevel.Error, new KBObjectPosition(rpart));
                             output.Add("KBDoctor", err);
                         }
                     }

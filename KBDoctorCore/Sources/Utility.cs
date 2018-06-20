@@ -363,6 +363,24 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             
         }
 
+        internal static KBObjectPart ObjectRulesPart(KBObject obj)
+        {
+
+            try
+            {
+                if (obj is Procedure) return obj.Parts.Get<RulesPart>();
+
+                if (obj is Transaction) return obj.Parts.Get<RulesPart>();
+
+                if (obj is WorkPanel) return obj.Parts.Get<RulesPart>();
+
+                if (obj is WebPanel) return obj.Parts.Get<RulesPart>();
+            }
+            catch (Exception e) { }
+            return null;
+
+        }
+
         internal static bool isRunable(KBObject obj)
         {
             return (obj is Transaction || obj is WorkPanel || obj is WebPanel

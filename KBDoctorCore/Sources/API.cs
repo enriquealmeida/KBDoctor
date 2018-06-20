@@ -244,7 +244,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 AddKeyToIni(data, SectionName, "CheckCommitOnExit", "true", "Check if property Commit on exit = YES");
                 AddKeyToIni(data, SectionName, "CheckModule", "true", "Use of modules is required");
                 AddKeyToIni(data, SectionName, "CodeCommented", "true", "Code commented is marked as error");
-                AddKeyToIni(data, SectionName, "SubsNotInvoked", "true", "All sub are invoked ?");
 
                 AddKeyToIni(data, SectionName, "VariablesBasedAttOrDomain", "true", "Variables must be based on Attributes or Domains");
                 AddKeyToIni(data, SectionName, "AttributeBasedOnDomain", "true", "Attributes must be based on domains");
