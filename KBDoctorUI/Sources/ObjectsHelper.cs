@@ -3847,13 +3847,13 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                             {
                                 updatetablestring += Functions.linkObject(obj) + " ";
                             }
-                            //output.AddLine(obj.Name);
+                            output.AddLine(obj.Name);
                         }
 
                         foreach (KBObject obj in updatersAtt)
                         {
                             updateattstring += Functions.linkObject(obj) + " ";
-                            //output.AddLine(obj.Name);
+                           // output.AddLine(obj.Name);
                         }
 
                         writer.AddTableData(new string[] { Functions.linkObject(t), trnstring, updatetablestring, updateattstring});
@@ -3863,7 +3863,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
                         bool success = true;
-                        output.EndSection(title, success);
+                        //output.EndSection(title, success);
                     }
 
                 }

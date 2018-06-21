@@ -241,10 +241,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             DTREDUNDANCY = 397, // Used to give redundancy info to the specifier
         };
 
-        internal static void SubsNotInvoked(List<KBObject> objlist, IOutputService output)
-        {
-            throw new NotImplementedException();
-        }
+
 
         internal static KBDAST ParseSourceIntoAST(Artech.Genexus.Common.Parts.ProcedurePart source)
         {
@@ -598,7 +595,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                         KBObjectPart part = Utility.ObjectSourcePart(obj);
 
-                        int parametersCount = ParametersCountObject(obj);
                         if (NestLevel > maxNestLevel)
                         {
                             string recommend = "Nested level too high (" + NestLevel.ToString() + "). Recommended max: " + maxNestLevel.ToString();
@@ -622,10 +618,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             recommendations += recommend + "<br>";
                             output.Add("KBDoctor", err);
                         }
+
+                        int parametersCount = ParametersCountObject(obj);
                         if (parametersCount > maxParametersCount)
                         {
                             string recommend = "Too many parameters (" + parametersCount.ToString() + ").Recommended max: " + maxParametersCount.ToString();
-                            OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(part));
+                            KBObjectPart rpart = Utility.ObjectRulesPart(obj);
+                            OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(rpart));
                             recommendations += recommend + "<br>";
                             output.Add("KBDoctor", err);
                         }
