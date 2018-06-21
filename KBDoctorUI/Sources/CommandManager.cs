@@ -19,6 +19,7 @@ using Infragistics.Win.UltraWinGrid;
 using static Artech.Architecture.Common.Objects.KnowledgeBase;
 using Artech.Genexus.Common.Objects;
 using Artech.Architecture.Common.Descriptors;
+using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -445,16 +446,35 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecPreprocessPendingObjects(CommandData cmdData)
         {
+            Thread thread = new Thread(() => PreprocessPendingObjects(cmdData));
+            thread.Start();
+            return true;
+        }
+
+        private static void PreprocessPendingObjects(CommandData cmdData)
+        {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
             SelectedRowsCollection selrows = cmdData.Context as SelectedRowsCollection;
             List<KBObjectHistory> kbohList = GetGenericHistoryObjects(selrows);
+            IKBService kbserv = UIServices.KB;
+
+
+            string title = "KBDoctor - Review Objects";
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Problems" });
+            List<string[]> lineswriter = new List<string[]>(); ;
+
+
             KBModel model = UIServices.KB.CurrentModel;
             List<KBObject> selectedObjects = new List<KBObject>();
             foreach (KBObjectHistory kboh in kbohList)
             {
                 KBObject obj = model.Objects.Get(kboh.Key);
-                if (obj != null) {
+                if (obj != null)
+                {
                     List<KBObject> objsInContainer = new List<KBObject>();
                     if (obj is Artech.Architecture.Common.Objects.Module)
                     {
@@ -480,18 +500,39 @@ namespace Concepto.Packages.KBDoctor
                     }
                 }
             }
-            Thread thread = new Thread(() => KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects));
+            KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter);
+            foreach (string[] line in lineswriter)
+            {
+                writer.AddTableData(line);
+            }
+            writer.AddFooter();
+            writer.Close();
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+        }
+
+        public bool ExecReviewObjects(CommandData cmdData)
+        {
+            Thread thread = new Thread(() => ReviewObjects());
             thread.Start();
             return true;
         }
 
-        public bool ExecReviewObjects(CommandData cmdData)
+        private static void ReviewObjects()
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
-            KBModel kbModel = UIServices.KB.CurrentModel;
+            IKBService kbserv = UIServices.KB;
+            KBModel kbModel = kbserv.CurrentModel;
+
+            List<string[]> lineswriter = new List<string[]>(); ;
+
+            string title = "KBDoctor - Review Objects";
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Problems" });
 
             List<KBObject> selectedObjects = new List<KBObject>();
 
@@ -502,42 +543,83 @@ namespace Concepto.Packages.KBDoctor
                     selectedObjects.Add(obj);
                 }
             }
-            Thread thread = new Thread(() => KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects));
-            thread.Start();
-            return true;
+            string rec = "";
+            KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter);
+            foreach (string[] line in lineswriter)
+            {
+                writer.AddTableData(line);
+            }
+            writer.AddFooter();
+            writer.Close();
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
 
         public bool ExecReviewObject(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
-            List<KBObject> selectedObjects = GetObjects(cmdData);
-
-            Thread thread = new Thread(() => KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects));
+            Thread thread = new Thread(() => ReviewObject(cmdData));
             thread.Start();
             return true;
         }
 
-        public bool ExecReviewModuleOrFolder(CommandData cmdData)
+        private static void ReviewObject(CommandData cmdData)
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
+            string title = "KBDoctor - Review Objects";
+            IKBService kbserv = UIServices.KB;
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            List<string[]> lineswriter = new List<string[]>();
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Problems" });
+            List<KBObject> selectedObjects = GetObjects(cmdData);
+            KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter);
+            foreach (string[] line in lineswriter)
+            {
+                writer.AddTableData(line);
+            }
+            writer.AddFooter();
+            writer.Close();
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+        }
+
+        public bool ExecReviewModuleOrFolder(CommandData cmdData)
+        {
+            Thread thread = new Thread(() => ReviewModuleOrFolder(cmdData));
+            thread.Start();
+            return true;
+        }
+
+        private static void ReviewModuleOrFolder(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            string title = "KBDoctor - Review Objects";
+            output.SelectOutput("KBDoctor");
             List<KBObject> selectedModulesFolders = GetObjects(cmdData);
             List<KBObject> selectedObjects = new List<KBObject>();
+
+            List<string[]> lineswriter = new List<string[]>();
+
+            IKBService kbserv = UIServices.KB;
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Problems" });
             foreach (KBObject obj in selectedModulesFolders)
             {
                 List<KBObject> objsInContainer = new List<KBObject>();
-                if(obj is Artech.Architecture.Common.Objects.Module)
+                if (obj is Artech.Architecture.Common.Objects.Module)
                 {
                     objsInContainer = KBDoctorCore.Sources.Utility.ModuleObjects((Artech.Architecture.Common.Objects.Module)obj);
                 }
-                else { 
-                    if(obj is Folder)
+                else
+                {
+                    if (obj is Folder)
                     {
                         objsInContainer = KBDoctorCore.Sources.Utility.FolderObjects((Folder)obj);
                     }
                 }
-                foreach(KBObject objSelected in objsInContainer)
+                foreach (KBObject objSelected in objsInContainer)
                 {
                     if (!selectedObjects.Contains(objSelected))
                     {
@@ -546,9 +628,14 @@ namespace Concepto.Packages.KBDoctor
                 }
             }
 
-            Thread thread = new Thread(() => KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects));
-            thread.Start();
-            return true;
+            KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter);
+            foreach (string[] line in lineswriter)
+            {
+                writer.AddTableData(line);
+            }
+            writer.AddFooter();
+            writer.Close();
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
 
         public static List<KBObjectHistory> GetGenericHistoryObjects(SelectedRowsCollection rows)

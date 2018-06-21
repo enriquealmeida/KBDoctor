@@ -281,7 +281,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        internal static void CleanKBObjectVariables(KBObject kbObj, IOutputService output)
+        internal static void CleanKBObjectVariables(KBObject kbObj, IOutputService output, ref string recomendations)
         {
             try
             {
@@ -375,7 +375,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (kbObj.Validate(outputMessages))
                         {
                             kbObj.Save();
-                            output.AddLine("KBDoctor", "Object '" + kbObj.Name + "' cleaned successfully. Variables deleted: " + text2.Substring(2));
+                            string recommend = "Object '" + kbObj.Name + "' cleaned successfully. Variables deleted: " + text2.Substring(2);
+                            output.AddLine(recommend);
+                            recomendations += recommend + "<br>";
 
                         }
                         using (IEnumerator<BaseMessage> enumerator8 = outputMessages.GetEnumerator())

@@ -447,24 +447,24 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             string title = "KBDoctor - Objects with parameters without IN:/OUT:/INOUT:";
             output.StartSection(title);
-
+            string rec = ""; 
             List<KBObject> objs = KB.DesignModel.Objects.GetAll().ToList();
-            List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output);
+            List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output, ref rec);
             bool success = true;
             output.EndSection(title, success);
             return objectsWithProblems;
         }
 
-        internal static List<KBObject> ParmWOInOut(List<KBObject> objs, IOutputService output)
+        internal static List<KBObject> ParmWOInOut(List<KBObject> objs, IOutputService output, ref string recommendations)
         {
             // Object with parm() rule without in: out: or inout:
 
-            List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output);
+            List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output, ref recommendations);
             bool success = true;
             return objectsWithProblems;
         }
 
-        private static List<KBObject> GetObjectsWithProblems(List<KBObject> objs, IOutputService output)
+        private static List<KBObject> GetObjectsWithProblems(List<KBObject> objs, IOutputService output, ref string recommendations)
         {
             int numObj = 0;
             int objWithProblems = 0;
@@ -500,7 +500,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 {
                                     objWithProblems += 1;
                                     objectsWithProblems.Add(obj);
-                                    OutputError err = new OutputError("Parameter without IN/OUT/INOUT ", MessageLevel.Error, new KBObjectPosition(obj.Parts.Get<RulesPart>()));
+                                    string recommend = "Parameter without IN/OUT/INOUT ";
+                                    OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(obj.Parts.Get<RulesPart>()));
+                                    recommendations += recommend +  "<br>";
                                     output.Add("KBDoctor", err);
                                 }
                             }
@@ -554,7 +556,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return countparm;
         }
 
-        internal static void CommitOnExit(List<KBObject> objs, IOutputService output)
+        internal static void CommitOnExit(List<KBObject> objs, IOutputService output, ref string recommendations)
         {
             bool commitOnExit;
             foreach (KBObject obj in objs)
@@ -566,7 +568,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         commitOnExit = aux.ToString() == "Yes";
                         if (commitOnExit)
                         {
-                            OutputError wrn = new OutputError("Commit on EXIT = YES ", MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                            string recommend = "Commit on EXIT = YES ";
+                            OutputError wrn = new OutputError(recommend, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                            recommendations += recommend + "<br>";
                             output.Add("KBDoctor", wrn);
                         }
                     }
@@ -574,7 +578,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        internal static void CheckComplexityMetrics(List<KBObject> objs, IOutputService output, int maxNestLevel, int maxComplexityLevel, int maxCodeBlock, int maxParametersCount)
+        internal static void CheckComplexityMetrics(List<KBObject> objs, IOutputService output, int maxNestLevel, int maxComplexityLevel, int maxCodeBlock, int maxParametersCount, ref string recommendations)
         {
             foreach (KBObject obj in objs)
             {
@@ -597,24 +601,32 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         int parametersCount = ParametersCountObject(obj);
                         if (NestLevel > maxNestLevel)
                         {
-                            OutputError err = new OutputError("Nested level too high (" + NestLevel.ToString() + "). Recommended max: " + maxNestLevel.ToString(), MessageLevel.Error, new KBObjectPosition(part));
+                            string recommend = "Nested level too high (" + NestLevel.ToString() + "). Recommended max: " + maxNestLevel.ToString();
+                            OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(part));
+                            recommendations += recommend + "<br>";
                             output.Add("KBDoctor", err);
 
                         }
                         if (ComplexityLevel > maxComplexityLevel)
                         {
-                            OutputError err = new OutputError("Complexity too high(" + ComplexityLevel.ToString() + ").Recommended max: " + maxComplexityLevel.ToString(), MessageLevel.Error, new KBObjectPosition(part));
+                            string recommend = "Complexity too high(" + ComplexityLevel.ToString() + ").Recommended max: " + maxComplexityLevel.ToString();
+                            OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(part));
+                            recommendations += recommend + "<br>";
                             output.Add("KBDoctor", err);
                         }
 
                         if (CodeBlock > maxCodeBlock)
                         {
-                            OutputError err = new OutputError("Code block too large(" + CodeBlock.ToString() + ").Recommended max: " + maxCodeBlock.ToString(), MessageLevel.Error, new KBObjectPosition(part));
+                            string recommend = "Code block too large(" + CodeBlock.ToString() + ").Recommended max: " + maxCodeBlock.ToString();
+                            OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(part));
+                            recommendations += recommend + "<br>";
                             output.Add("KBDoctor", err);
                         }
                         if (parametersCount > maxParametersCount)
                         {
-                            OutputError err = new OutputError("Too many parameters (" + parametersCount.ToString() + ").Recommended max: " + maxParametersCount.ToString(), MessageLevel.Error, new KBObjectPosition(part));
+                            string recommend = "Too many parameters (" + parametersCount.ToString() + ").Recommended max: " + maxParametersCount.ToString();
+                            OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(part));
+                            recommendations += recommend + "<br>";
                             output.Add("KBDoctor", err);
                         }
                     }
@@ -622,19 +634,21 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        internal static void isInModule(List<KBObject> objs, IOutputService output)
+        internal static void isInModule(List<KBObject> objs, IOutputService output, ref string recommendations)
         {
             foreach (KBObject obj in objs)
             {
                 if (obj.Module.Description == "Root Module" && !Utility.IsMain(obj))
                 {
-                    OutputError err = new OutputError("Object without module.", MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                    string recommend = "Object without module.";
+                    OutputError err = new OutputError(recommend, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                    recommendations += recommend + "<br>";
                     output.Add("KBDoctor", err);
                 }
             }
         }
 
-        internal static void ObjectsWithVarNotBasedOnAtt(List<KBObject> objs, IOutputService output)
+        internal static void ObjectsWithVarNotBasedOnAtt(List<KBObject> objs, IOutputService output, ref string recommendations)
         {
             foreach (KBObject obj in objs)
             {
@@ -664,14 +678,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                     if (hasErrors)
                     {
-                        OutputError err = new OutputError("Variables not based in attributes or domain: " + vnames, MessageLevel.Error, new KBObjectPosition(vp));
+                        string recommend = "Variables not based in attributes or domain: " + vnames;
+                        OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(vp));
+                        recommendations += recommend + "<br>";
                         output.Add("KBDoctor", err);
                     }
                 }
             }
         }
 
-        internal static void CodeCommented(List<KBObject> objs, IOutputService output)
+        internal static void CodeCommented(List<KBObject> objs, IOutputService output, ref string recommendations)
         {
             foreach (KBObject obj in objs) {
                 string source = Utility.ObjectSourceUpper(obj);
@@ -684,13 +700,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     string snippet = (codeCommented.Length > 30) ? codeCommented.Substring(1, 30) + "..." : codeCommented;
                     KBObjectPart part = Utility.ObjectSourcePart(obj);
-                    OutputError err = new OutputError("Commented code [" + snippet + "]", MessageLevel.Warning, new KBObjectPosition(part));
+                    string recommend = "Commented code [" + snippet + "]";
+                    OutputError err = new OutputError(recommend, MessageLevel.Warning, new KBObjectPosition(part));
+                    recommendations += recommend + "<br>";
                     output.Add("KBDoctor", err);
                 }
             }
         }
 
-        internal static void AttributeHasDomain(List<KBObject> objs, IOutputService output)
+        internal static void AttributeHasDomain(List<KBObject> objs, IOutputService output, ref string recommendations)
         {
             foreach (KBObject obj in objs)
             {
@@ -702,7 +720,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     if ((a.DomainBasedOn == null) && !isSubtype && Utility.AttHasToBeInDomain(a))
                     {
-                        OutputError err = new OutputError("Attribute without domain: " + a.Name, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                        string recommend = "Attribute without domain: " + a.Name;
+                        OutputError err = new OutputError(recommend, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                        recommendations += recommend + "<br>";
                         output.Add("KBDoctor", err);
                     }
                 }
@@ -710,7 +730,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        internal static void SDTBasedOnAttDomain(List<KBObject> objs, IOutputService output)
+        internal static void SDTBasedOnAttDomain(List<KBObject> objs, IOutputService output, ref string recommendations)
         {
             foreach (KBObject obj in objs)
             {
@@ -732,7 +752,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                     if (hasItemNotBasedOn)
                     {
-                        OutputError err = new OutputError("SDT with items without domain: " + itemnames, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                        string recommend = "SDT with items without domain: " + itemnames;
+                        OutputError err = new OutputError(recommend, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                        recommendations += recommend + "<br>";
                         output.Add("KBDoctor", err);
                     }
                 }
@@ -769,7 +791,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             foreach (Artech.Genexus.Common.Objects.Attribute att in attTodos)
             {
-                OutputError err = new OutputError("Attribute without table: " + att.Name, MessageLevel.Error, new KBObjectAnyPosition(att));
+                string recommend = "Attribute without table: " + att.Name;
+                OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectAnyPosition(att));
                 output.Add("KBDoctor", err);
             }
         }

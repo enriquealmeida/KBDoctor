@@ -49,13 +49,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void CleanKBObjectVariables(KBObject obj, IOutputService output)
         {
-            CleanKB.CleanKBObjectVariables(obj, output);
+            string rec = "";
+            CleanKB.CleanKBObjectVariables(obj, output, ref rec);
         }
         //
         public static void CleanAllKBObjectVariables(KnowledgeBase KB, IOutputService output)
         {
+            string rec = "";
             foreach (KBObject kbo in KB.DesignModel.Objects.GetAll())
-                CleanKB.CleanKBObjectVariables(kbo, output);
+                CleanKB.CleanKBObjectVariables(kbo, output, ref rec);
         }
         //
         public static void RemoveAttributesWithoutTable(KBModel kbmodel, IOutputService output, out List<string[]> lineswriter)
@@ -98,7 +100,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return Objects.ParmWOInOut(KB, output);
         }
         //
-        public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
+        public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs, out List<string[]> lineswriter)
         {
             //PRUEBA /////////////////////////////////////////
             /*
@@ -120,46 +122,48 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
             const string KBDOCTOR_OUTPUTID = "KBDoctor";
             output.SelectOutput(KBDOCTOR_OUTPUTID);
-
-           // output.Clear();
-          //  output.StartSection(KBDOCTOR_OUTPUTID, "Review_Objects", "Review Objects");
+            // output.Clear();
+            //  output.StartSection(KBDOCTOR_OUTPUTID, "Review_Objects", "Review Objects");
 
             FileIniDataParser fileIniData = new FileIniDataParser();
             InitializeIniFile(KB);
 
             IniData parsedData = fileIniData.ReadFile(KB.UserDirectory + "\\KBDoctor.ini");
             string SectionName = "ReviewObject";
+            
+            List<Tuple<KBObject, string>> recommended_list = new List<Tuple<KBObject, string>>(); 
 
             List<KBObject> atts = new List<KBObject>();
             foreach (KBObject obj in objs)
             {
+                string recommendations = "";
                 List<KBObject> objlist = new List<KBObject>();
                 objlist.Add(obj);
                 if (Utility.isRunable(obj) && !Utility.IsGeneratedByPattern(obj))
                 {
                     //Check objects with parameteres without inout
                     if (parsedData[SectionName]["ParamINOUT"].ToLower() == "true")
-                           Objects.ParmWOInOut(objlist, output);
+                           Objects.ParmWOInOut(objlist, output, ref recommendations);
 
                     //Clean variables not used
                     if (parsedData[SectionName]["CleanUnusedVariables"].ToLower() == "true") 
-                        CleanKB.CleanKBObjectVariables(obj, output);
+                        CleanKB.CleanKBObjectVariables(obj, output, ref recommendations);
 
                     //Check commit on exit
                     if (parsedData[SectionName]["CheckCommitOnExit"].ToLower() == "true")
-                        Objects.CommitOnExit(objlist, output);
+                        Objects.CommitOnExit(objlist, output, ref recommendations);
 
                     //Is in module
                     if (parsedData[SectionName]["CheckModule"].ToLower() == "true")
-                        Objects.isInModule(objlist, output);
+                        Objects.isInModule(objlist, output, ref recommendations);
 
                     //With variables not based on attributes
                     if (parsedData[SectionName]["VariablesBasedAttOrDomain"].ToLower() == "true")
-                        Objects.ObjectsWithVarNotBasedOnAtt(objlist, output);
+                        Objects.ObjectsWithVarNotBasedOnAtt(objlist, output, ref recommendations);
 
                     //Code commented
                     if (parsedData[SectionName]["CodeCommented"].ToLower() == "true")
-                        Objects.CodeCommented(objlist, output);
+                        Objects.CodeCommented(objlist, output, ref recommendations);
 
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
@@ -175,9 +179,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     int maxParametersCount = 6;
                     maxParametersCount = Int32.Parse(parsedData[SectionName]["MaxParameterCount"]);
 
-                    Objects.CheckComplexityMetrics(objlist, output, maxNestLevel, complexityLevel, maxCodeBlock, maxParametersCount);
-
-
+                    Objects.CheckComplexityMetrics(objlist, output, maxNestLevel, complexityLevel, maxCodeBlock, maxParametersCount, ref recommendations);
 
                     /*
                     * Tiene todas las referencias?
@@ -200,12 +202,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     atts.Add(obj);
                     //Attribute Has Domain
-                    Objects.AttributeHasDomain(objlist, output);
+                    Objects.AttributeHasDomain(objlist, output, ref recommendations);
                 }
                 if (obj is SDT && parsedData[SectionName]["SDTBasedAttOrDomain"].ToLower() == "true")
                 {
                     //SDTItems Has Domain
-                     Objects.SDTBasedOnAttDomain(objlist, output);
+                     Objects.SDTBasedOnAttDomain(objlist, output, ref recommendations);
+                }
+                if(recommendations != "")
+                {
+                    Tuple<KBObject, string> recommend_tuple = new Tuple<KBObject, string>(obj, recommendations);
+                    recommended_list.Add(recommend_tuple);
                 }
             }
             if (atts.Count > 0 && parsedData[SectionName]["AttributeWithoutTable"].ToLower() == "true")
@@ -220,9 +227,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             output.UnselectOutput(KBDOCTOR_OUTPUTID);
             output.SelectOutput("General");
             output.AddText("General", "KBDoctor Review Object finished");
-
-
+            lineswriter = new List<string[]>();
             
+            foreach (Tuple<KBObject, string> item in recommended_list)
+            {
+                string[] line = new string[] {Utility.linkObject(item.Item1),item.Item2};
+                lineswriter.Add(line);
+            }
+            
+
+
         }
 
         public static void InitializeIniFile(KnowledgeBase KB)
