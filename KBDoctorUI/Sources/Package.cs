@@ -30,11 +30,12 @@ namespace Concepto.Packages.KBDoctor
             AddCommandTarget(new CommandManager());
         }
     
-        [EventSubscription(ArchitectureEvents.BeforeSaveKBObject)]
+   /*     [EventSubscription(ArchitectureEvents.BeforeSaveKBObject)]
         private void OnBeforeSaveKBObject(object sender, KBObjectEventArgs args)
         {
             CommonServices.Output.SelectOutput("General");
         }
+        */
 
     }
 }

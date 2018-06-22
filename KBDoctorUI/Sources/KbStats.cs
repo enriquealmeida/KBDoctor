@@ -50,7 +50,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
 
            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -107,7 +107,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
 
         }
@@ -125,12 +125,12 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
 
-            output.AddLine("Listing objects...");
+            output.AddLine("KBDoctor","Listing objects...");
             writer.AddTableHeader(new string[] { "Tipo", "Object", "Description", "Last Update", "Timestamp" });
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
@@ -141,7 +141,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -155,7 +155,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -194,7 +194,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
         
@@ -210,14 +210,14 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             int numObj = 0;
 
             DateTime limite = new DateTime(2017, 06, 30);
-            output.AddLine("Fecha Limite : " + limite.ToString());
+            output.AddLine("KBDoctor","Fecha Limite : " + limite.ToString());
 
 
             writer.AddTableHeader(new string[] { "Type", "Object", "Description", "Module", "Public", "Last Update", "Is Main", "TimeStamp","Is Generated","Protocol", "AppLocation" });
@@ -245,7 +245,7 @@ namespace Concepto.Packages.KBDoctor
                     
                     numObj += 1;
                     if ((numObj % 200) == 0)
-                        output.AddLine(obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
+                        output.AddLine("KBDoctor",obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                 }
             }
             writer.AddFooter();
@@ -253,7 +253,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
         
@@ -270,7 +270,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -296,7 +296,7 @@ namespace Concepto.Packages.KBDoctor
                                 obj.Module.Name, obj.IsPublic.ToString(), objAppGenerator, objProtocol, obj.LastUpdate.ToShortDateString()});
                     
 
-                        output.AddLine(obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
+                        output.AddLine("KBDoctor",obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                 }
             }
             writer.AddFooter();
@@ -304,7 +304,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -322,7 +322,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -348,7 +348,7 @@ namespace Concepto.Packages.KBDoctor
                                 obj.Module.Name, obj.IsPublic.ToString(), "", "", obj.LastUpdate.ToShortDateString()});
 
 
-                    output.AddLine(obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
+                    output.AddLine("KBDoctor",obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                 }
             }
             writer.AddFooter();
@@ -356,7 +356,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -431,8 +431,8 @@ namespace Concepto.Packages.KBDoctor
 
                 if (location == objLocation)
                 {
-                    output.AddLine("set DESTINO=" + objLocation);
-                    output.AddLine("XCOPY " + Dircopia + obj.Name + ".dll %DESTINO%");
+                    output.AddLine("KBDoctor","set DESTINO=" + objLocation);
+                    output.AddLine("KBDoctor","XCOPY " + Dircopia + obj.Name + ".dll %DESTINO%");
 
                     if (obj is Procedure)
                         letra = "a";
@@ -441,7 +441,7 @@ namespace Concepto.Packages.KBDoctor
                     if (obj is Transaction)
                         letra = "";
 
-                    output.AddLine("XCOPY " + Dircopia + letra + obj.Name + ".dll %DESTINO%");
+                    output.AddLine("KBDoctor","XCOPY " + Dircopia + letra + obj.Name + ".dll %DESTINO%");
                     AddReferencedObj(objColl, obj, "");
 
                 }
@@ -467,7 +467,7 @@ namespace Concepto.Packages.KBDoctor
                     if ((objRef != null) && !(objColl.Contains(objRef)) && (reference.ReferenceType == ReferenceType.Hard) && (ObjectsHelper.IsCallalable(objRef)))
                     {
                         if (!(objRef is Procedure))
-                            output.AddLine(tabs + "XCOPY " + objRef.Name + ".DLL %DESTINO% "); //+ " (" + obj.TypeDescriptor.Name + ")" );
+                            output.AddLine("KBDoctor",tabs + "XCOPY " + objRef.Name + ".DLL %DESTINO% "); //+ " (" + obj.TypeDescriptor.Name + ")" );
 
                         AddReferencedObj(objColl, objRef, RefTabs);
 
@@ -507,7 +507,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
 
            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -518,7 +518,7 @@ namespace Concepto.Packages.KBDoctor
 
                 if (obj is Procedure || obj is Transaction)
                 {
-                    output.AddLine("Procesing up " + obj.Name);
+                    output.AddLine("KBDoctor","Procesing up " + obj.Name);
                     IEnumerable<int> generatorTypes = GetObjectGenerators(obj.Key);
 
                     string objNamePrior = "";
@@ -532,7 +532,7 @@ namespace Concepto.Packages.KBDoctor
                         KBObjectCollection objColl = new KBObjectCollection();
                         string mainss = "";
 
-                        output.AddLine("Procesing down " + obj.Name);
+                        output.AddLine("KBDoctor","Procesing down " + obj.Name);
                         foreach (EntityReference reference in obj.GetReferences())
                         {
                             KBObject objRef = KBObject.Get(obj.Model, reference.To);
@@ -556,7 +556,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
 
         }
@@ -668,9 +668,9 @@ namespace Concepto.Packages.KBDoctor
             {
                 string title = "KBDoctor - Compare files";
                 IOutputService output = CommonServices.Output;
-                output.StartSection(title);
+                output.StartSection("KBDoctor",title);
                 output.AddErrorLine("There isn't two directory to compare in " + dir + ". You must generate files first and then compare ");
-                output.EndSection(title, true);
+                output.EndSection("KBDoctor", title, true);
 
             }
             else
@@ -706,7 +706,7 @@ namespace Concepto.Packages.KBDoctor
 
                 if (obj != null)
                 {
-                    output.AddLine("Procesing  " + obj.Name);
+                    output.AddLine("KBDoctor","Procesing  " + obj.Name);
 
                  //   IEnumerable<int> generatorTypes = KbStats.GetObjectGenerators(obj.Key);
 

@@ -51,7 +51,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Replace attribute with Compatible with NO ";
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             KBDoctorXMLWriter writer = new  KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -77,7 +77,7 @@ namespace Concepto.Packages.KBDoctor
 
                         foreach (TransactionAttribute a in LVL.Structure.GetAttributes())
                         {
-                            output.AddLine(a.Name);
+                            output.AddLine("KBDoctor",a.Name);
                             writer.AddTableData(new string[] { Functions.linkObject(trn), trn.Description, Functions.linkObject(a), a.Attribute.Description, a.IsForeignKey.ToString(), a.IsNullable.ToString() });
                             if (!a.IsForeignKey && !a.IsKey && (a.IsNullable == TableAttribute.IsNullableValue.Compatible || a.IsNullable == TableAttribute.IsNullableValue.True))
                                 {
@@ -88,7 +88,7 @@ namespace Concepto.Packages.KBDoctor
                     }
                     if (saveObj)
                     {
-                        output.AddLine("Saving ." + trn.Name);
+                        output.AddLine("KBDoctor","Saving ." + trn.Name);
                         trn.Save();
                     }
                 }
@@ -99,7 +99,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
         }
     }
 }

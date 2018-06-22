@@ -369,7 +369,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void CleanVariablesBasedInAttribute(Artech.Genexus.Common.Objects.Attribute a, IOutputService output, KBObject objRef)
         {
-            output.AddLine("Cleaning variables references to " + a.Name + " in " + objRef.Name);
+            output.AddLine("KBDoctor","Cleaning variables references to " + a.Name + " in " + objRef.Name);
 
             VariablesPart vp = objRef.Parts.Get<VariablesPart>();
 
@@ -379,7 +379,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     if (!v.IsStandard && ((v.AttributeBasedOn != null) && (a.Name == v.AttributeBasedOn.Name)))
                     {
-                        output.AddLine("&" + v.Name + " based on  " + a.Name);
+                        output.AddLine("KBDoctor","&" + v.Name + " based on  " + a.Name);
                         eDBType type = v.Type;
                         int length = v.Length;
                         bool signed = v.Signed;
@@ -426,7 +426,7 @@ namespace Concepto.Packages.KBDoctor
 
             if (objRef is SDT)
             {
-                output.AddLine("Cleaning SDT references to " + a.Name + " in " + objRef.Name);
+                output.AddLine("KBDoctor","Cleaning SDT references to " + a.Name + " in " + objRef.Name);
                 SDTStructurePart  sdtstruct  = objRef.Parts.Get<SDTStructurePart>();
 
                 foreach (IStructureItem structItem in sdtstruct.Root.Items)
@@ -440,7 +440,7 @@ namespace Concepto.Packages.KBDoctor
                         if (sdtItem.BasedOn != null && myKey == a.Key)
                         {
 
-                            output.AddLine("..." + sdtItem.Name + " based on  " + a.Name);
+                            output.AddLine("KBDoctor","..." + sdtItem.Name + " based on  " + a.Name);
                             eDBType type = sdtItem.Type;
                             int length = sdtItem.Length;
                             bool signed = sdtItem.Signed;

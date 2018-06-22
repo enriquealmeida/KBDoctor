@@ -45,7 +45,7 @@ namespace KBDoctorCmd
                 }
                 else
                 {
-                    CommonServices.Output.AddLine(Objects);
+                    output.AddLine("KBDoctor",Objects);
                     //API.PreProcessPendingObjects(KB, output, CodigoGX.GetObjects(base.KB.DesignModel, this.Objects));   
                 }
             }

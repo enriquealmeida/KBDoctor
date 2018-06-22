@@ -116,7 +116,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         public static void CleanObject(KBObject obj, IOutputService output)
         {
             int totalvarremoved = 0;
-            output.AddLine("Cleaning object " + obj.Name);
+            output.AddLine("KBDoctor","Cleaning object " + obj.Name);
             if (obj is Transaction)
             {
                 KBDoctorCore.Sources.API.CleanKBObjectVariables(obj, output);
@@ -159,7 +159,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             catch (Exception e)
             {
-                output.AddLine("Can't clean " + obj.Name + " Message: " + e.Message + "--" + e.StackTrace);
+                output.AddLine("KBDoctor","Can't clean " + obj.Name + " Message: " + e.Message + "--" + e.StackTrace);
             }
         }
 
@@ -204,7 +204,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     try
                                     {
                                         obj.Delete();
-                                        output.AddLine("REMOVING..." + obj.Name);
+                                        output.AddLine("KBDoctor","REMOVING..." + obj.Name);
                                         remove = "REMOVED!";
                                         objNameLink = obj.Name;
                                         continuar = true;
@@ -266,7 +266,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     try
                     {
                         a.Delete();
-                        output.AddLine("Atribute deleted: " + a.Name);
+                        output.AddLine("KBDoctor","Atribute deleted: " + a.Name);
                     }
                     catch (Exception e)
                     {
@@ -376,7 +376,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             kbObj.Save();
                             string recommend = "Object '" + kbObj.Name + "' cleaned successfully. Variables deleted: " + text2.Substring(2);
-                            output.AddLine(recommend);
+                            output.AddLine("KBDoctor",recommend);
                             recomendations += recommend + "<br>";
 
                         }

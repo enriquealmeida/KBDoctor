@@ -40,7 +40,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
@@ -133,7 +133,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -154,7 +154,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     
                     if ((numFiles % 200) == 0 )
-                            output.AddLine(x);
+                            output.AddLine("KBDoctor",x);
                     numFiles += 1;
 
                     string xmlstring = AddXMLHeader(x);
@@ -231,7 +231,7 @@ namespace Concepto.Packages.KBDoctor
                             {
                                 //IMPRIMO EL LEVEL ANTERIOR
                                 //      if (LevelType!="") 
-                                //             output.AddLine(String.Format("OBJECT= {0} EVENTNAME= {1} ROW= {2} LEVELTYPE= {3} TABLES= {4} ATTRIBUTES= {5} ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
+                                //             output.AddLine("KBDoctor",String.Format("OBJECT= {0} EVENTNAME= {1} ROW= {2} LEVELTYPE= {3} TABLES= {4} ATTRIBUTES= {5} ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
                                 reader.Read();
                                 LevelType = reader.Value;
                                 //VACIO TABLAS Y ATRIBUTOS PUES CAMBIO DE LEVEL
@@ -284,7 +284,7 @@ namespace Concepto.Packages.KBDoctor
                                 //Cuento Cantidad de tablas. 
                                 hash = TableNames.Count(Char.IsWhiteSpace).ToString("D2") + hash;
 
-                               // output.AddLine(String.Format("{0} ,  {1} ,  {2} ,  {3} , {4}, {5}  ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
+                               // output.AddLine("KBDoctor",String.Format("{0} ,  {1} ,  {2} ,  {3} , {4}, {5}  ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
                                // writer.AddTableData(new string[] { hash, Functions.linkObject(obj), EventName, LevelRow, LevelType, TableNames, AttNames });
                                 writer2.WriteLine( LevelType +  "," + TableNames + ","  + AttNames + "," +  Functions.linkObject(obj) + "," + EventName + "," + LevelRow.PadLeft(10,' '));
                                 LevelType = "";
@@ -308,7 +308,7 @@ namespace Concepto.Packages.KBDoctor
 
             string title = "KBDoctor - Prepare Comparer Navigation Files";
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -339,8 +339,8 @@ namespace Concepto.Packages.KBDoctor
                 ts.Hours, ts.Minutes, ts.Seconds,
                 ts.Milliseconds / 10);
 
-            output.AddLine(title + " elepsed time: " + elapsedTime);
-            output.EndSection(title, true);
+            output.AddLine("KBDoctor",title + " elepsed time: " + elapsedTime);
+            output.EndSection("KBDoctor", title, true);
         }
 
         private static void WriteXSLTtoDir()
@@ -369,7 +369,7 @@ namespace Concepto.Packages.KBDoctor
 
                 if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
                 {
-                    output.AddLine(x);
+                    output.AddLine("KBDoctor",x);
                     string xTxt = newDir + generator + Path.GetFileNameWithoutExtension(x) + ".nvg";
 
                    
@@ -397,7 +397,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
@@ -435,13 +435,13 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
         private static void SearchNVGFiles(IOutputService output, KBDoctorXMLWriter writer, string[] fileWildcardsArg, string directoryArg, System.IO.SearchOption searchSubDirsArg, string containsTextArg, bool ignoreCaseArg, List<string> objWarnErr)
         {
-            output.AddLine(">>Searching for " + containsTextArg);
+            output.AddLine("KBDoctor",">>Searching for " + containsTextArg);
             foreach (string file in FindInFiles(directoryArg, containsTextArg, ignoreCaseArg, searchSubDirsArg, (string[])fileWildcardsArg))
             {
                 if (!objWarnErr.Contains(file))
@@ -455,7 +455,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void AddFileWithWarningsErrors(IOutputService output, KBDoctorXMLWriter writer, string containsTextArg, string file)
         {
-            output.AddLine(file);
+            output.AddLine("KBDoctor",file);
             string objName = Path.GetFileNameWithoutExtension(file);
             containsTextArg = containsTextArg.Replace("<", "");
             containsTextArg = containsTextArg.Replace(">", "");
@@ -608,7 +608,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
            
 
             AskAttributeandTable at = new AskAttributeandTable();
@@ -637,10 +637,10 @@ namespace Concepto.Packages.KBDoctor
 
                 foreach (string x in xFiles)
                 {
-                    // output.AddLine(x);
+                    // output.AddLine("KBDoctor",x);
                     IndFiles += 1;
                     if (IndFiles % 100 == 0)
-                        output.AddLine(" Procesing " + IndFiles.ToString() + " navigation files.");
+                        output.AddLine("KBDoctor"," Procesing " + IndFiles.ToString() + " navigation files.");
 
                     string filename = Path.GetFileNameWithoutExtension(x);
 
@@ -669,7 +669,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection(title, success);
+                output.EndSection("KBDoctor", title, success);
             }
         }
             

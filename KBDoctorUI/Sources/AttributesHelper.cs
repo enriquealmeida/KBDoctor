@@ -30,7 +30,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor", title);
 
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -79,7 +79,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -92,7 +92,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor", title);
 
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -109,11 +109,11 @@ namespace Concepto.Packages.KBDoctor
                 Formula formula = a.Formula;
                 if (formula == null)
                 {
-                    //  output.AddLine(a.Name);
+                    //  output.AddLine("KBDoctor",a.Name);
                 }
                 else {
 
-                    output.AddLine("Formula " + a.Name);
+                    output.AddLine("KBDoctor","Formula " + a.Name);
                     string Picture = Functions.ReturnPicture(a);
                     string attNameLink = Functions.linkObject(a); 
                     string redundantInTables = "";
@@ -164,7 +164,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -212,7 +212,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor", title);
 
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -226,7 +226,7 @@ namespace Concepto.Packages.KBDoctor
                 if ((a.DomainBasedOn == null) && !isSubtype)
                 {
                     // search for domains with the same data type
-                    output.AddLine("Procesing " + a.Name);
+                    output.AddLine("KBDoctor","Procesing " + a.Name);
                     string suggestedDomains = "";
                     string value = "";
                     /*
@@ -250,7 +250,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -284,7 +284,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -298,7 +298,7 @@ namespace Concepto.Packages.KBDoctor
                     string domLink = DomainLinkFromAttribute(a);
 
                     string attNameLink = "";
-                    attNameLink = Functions.linkObject(a); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
+                    attNameLink = Functions.linkObject(a); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name="output.EndSection("KBDoctor", title, + a.Guid.ToString() + "\">" + a.Name + "</a>";
 
                     writer.AddTableData(new string[] { attNameLink, a.Description, Picture, domLink });
                 }
@@ -309,7 +309,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -336,7 +336,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -362,7 +362,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -375,7 +375,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -387,7 +387,7 @@ namespace Concepto.Packages.KBDoctor
                 string Picture = Functions.ReturnPicture(a);
                 string domlink = a.DomainBasedOn == null ? " ": Functions.linkObject(a.DomainBasedOn);
                 string superTypeName = a.SuperTypeKey==null? " ": a.SuperType.Name;
-                output.AddLine("Procesing " + a.Name);
+                output.AddLine("KBDoctor","Procesing " + a.Name);
                 string isFormula = a.Formula == null ? "" : "*";
                 writer.AddTableData(new string[] { Functions.linkObject(a), a.Description, Picture, domlink ,  superTypeName, a.Title, a.ColumnTitle, a.ContextualTitleProperty,isFormula});
             }
@@ -397,7 +397,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
         }
 
         public static void ListKeyVarchar()
@@ -408,7 +408,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -416,7 +416,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (Table t in Table.GetAll(kbserv.CurrentModel))
             {
-                output.AddLine("Processing... " + t.Name);
+                output.AddLine("KBDoctor","Processing... " + t.Name);
                 string objNameLink = Functions.linkObject(t); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + t.Guid.ToString() + "\">" + t.Name + "</a>";
 
 
@@ -424,7 +424,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     if ((attr.Attribute.Type == Artech.Genexus.Common.eDBType.VARCHAR) || (attr.Attribute.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR))
                     {
-                        output.AddLine("Processing " + attr.Name);
+                        output.AddLine("KBDoctor","Processing " + attr.Name);
                         if (!Functions.AttIsSubtype(attr))
                         {
                             string domLink = DomainLinkFromAttribute(attr);
@@ -441,7 +441,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -456,7 +456,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             string tabla = "";
             string atributo = "";
@@ -512,7 +512,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -687,7 +687,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -695,18 +695,18 @@ namespace Concepto.Packages.KBDoctor
             writer.AddTableHeader(new string[] { "Attribute", "can delete", "Description", "Data type", "Tables", "Transactions" });
 
             // grabo todos los atributos en una colección
-            output.AddLine("Loading attributes..");
+            output.AddLine("KBDoctor","Loading attributes..");
             List<Artech.Genexus.Common.Objects.Attribute> attTodos = new List<Artech.Genexus.Common.Objects.Attribute>();
             foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
             {
                 attTodos.Add(a);
             }
 
-            output.AddLine("Procesiong objects..");
+            output.AddLine("KBDoctor","Procesiong objects..");
 
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
-                // output.AddLine("Procesing .. " + obj.Name);
+                // output.AddLine("KBDoctor","Procesing .. " + obj.Name);
 
                 if ((!(obj is Transaction) && !(obj is Table) && !(obj is SDT)) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT"))
                 {
@@ -725,7 +725,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (Artech.Genexus.Common.Objects.Attribute a in attTodos)
             {
-                output.AddLine("Procesing .. " + a.Name);
+                output.AddLine("KBDoctor","Procesing .. " + a.Name);
 
                 string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
                 string Picture = Functions.ReturnPicture(a);
@@ -742,7 +742,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 
@@ -761,7 +761,7 @@ namespace Concepto.Packages.KBDoctor
 
             if (dr == DialogResult.OK)
             {
-                output.StartSection(title);
+                output.StartSection("KBDoctor",title);
                 Domain od = Functions.DomainByName(rd.originalDomainName);
                 Domain ud = Functions.DomainByName(rd.destDomainName);
                 if (od != null && ud != null)
@@ -770,7 +770,7 @@ namespace Concepto.Packages.KBDoctor
                     foreach (EntityReference reference in od.GetReferencesTo()) // LinkType.UsedObject))
                     {
                         KBObject objRef = KBObject.Get(UIServices.KB.CurrentModel, reference.From);
-                        output.AddLine("Procesing " + objRef.Name);
+                        output.AddLine("KBDoctor","Procesing " + objRef.Name);
                         if (objRef is Artech.Genexus.Common.Objects.Attribute)
                         {
 
@@ -794,7 +794,7 @@ namespace Concepto.Packages.KBDoctor
                             }
                             else
                             {
-                                output.AddLine("Replace " + od.Name + " domain manually in object " + objRef.Name);
+                                output.AddLine("KBDoctor","Replace " + od.Name + " domain manually in object " + objRef.Name);
                                 success = false;
                             }
 
@@ -802,7 +802,7 @@ namespace Concepto.Packages.KBDoctor
                         }
                     }
                 }
-                output.EndSection(title,success);
+                output.EndSection("KBDoctor", title,success);
             }
 
             
@@ -816,7 +816,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -846,7 +846,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
         }
 
 

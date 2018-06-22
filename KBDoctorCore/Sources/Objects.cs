@@ -443,12 +443,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         internal static List<KBObject> ParmWOInOut(KnowledgeBase KB, IOutputService output)
         {
             string title = "KBDoctor - Objects with parameters without IN:/OUT:/INOUT:";
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
             string rec = ""; 
             List<KBObject> objs = KB.DesignModel.Objects.GetAll().ToList();
             List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output, ref rec);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
             return objectsWithProblems;
         }
 
@@ -803,7 +803,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     if (obj is Procedure)
                     {
-                        output.AddLine(obj.Name);
+                        output.AddLine("KBDoctor",obj.Name);
                        string name = obj.Name;
                        if(ProcedureUpdateAttribute(obj, att))
                         {

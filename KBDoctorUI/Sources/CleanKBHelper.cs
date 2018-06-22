@@ -57,7 +57,7 @@ namespace Concepto.Packages.KBDoctor
                 }
 
                 ProcessObjectsInCategory(output, UnreachableCategory);
-                output.AddLine("Finish");
+                output.AddLine("KBDoctor","Finish");
 
             }
         }
@@ -69,14 +69,14 @@ namespace Concepto.Packages.KBDoctor
             int borrados = 0;
             do
             {
-                output.AddLine("Pass number " + pasada.ToString() + ". Cleaned objects: " + borrados.ToString());
+                output.AddLine("KBDoctor","Pass number " + pasada.ToString() + ". Cleaned objects: " + borrados.ToString());
                 stay = false;
 
                 foreach (KBObject obj in Category.AllMembers)
                 {
                     if ((obj is Transaction) || (obj is Table) || (obj is Image) || (obj is Artech.Genexus.Common.Objects.Group) || (obj is DataView))
                     {
-                        output.AddLine("Skipping " + obj.Name);
+                        output.AddLine("KBDoctor","Skipping " + obj.Name);
 
                     }
                     else
@@ -84,13 +84,13 @@ namespace Concepto.Packages.KBDoctor
                         try
                         {
                             obj.Delete();
-                            output.AddLine("Removing : " + obj.Name);
+                            output.AddLine("KBDoctor","Removing : " + obj.Name);
                             stay = true;
                             borrados += 1;
                         }
                         catch
                         {
-                            output.AddLine("ERROR: Can't remove :" + obj.Name);
+                            output.AddLine("KBDoctor","ERROR: Can't remove :" + obj.Name);
 
                         }
 
@@ -114,7 +114,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -134,7 +134,7 @@ namespace Concepto.Packages.KBDoctor
                 if (!ThemeClasses.Contains(sd))
                 {
                     writer.AddTableData(new string[] { "", sd, "Application Class not in theme" });
-                    output.AddLine("Application Class not in theme " + sd);
+                    output.AddLine("KBDoctor","Application Class not in theme " + sd);
 
                 }
                 else
@@ -149,12 +149,12 @@ namespace Concepto.Packages.KBDoctor
                 if (!UsedClasses.Contains(ss))
                 {
                     writer.AddTableData(new string[] { "", ss, "Class not referenced" });
-                    output.AddLine("Class not referenced in application " + ss);
+                    output.AddLine("KBDoctor","Class not referenced in application " + ss);
                 }
             writer.AddTableData(new string[] { "-------", "-----------------", "--------------" });
             writer.AddFooter();
             writer.Close();
-            output.EndSection(title, true);
+            output.EndSection("KBDoctor", title, true);
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
@@ -184,7 +184,7 @@ namespace Concepto.Packages.KBDoctor
         {
             foreach (Theme thm in Theme.GetAll(kbserv.CurrentModel))
             {
-                output.AddLine("Procesing theme .." + thm.Name);
+                output.AddLine("KBDoctor","Procesing theme .." + thm.Name);
                 ThemeStylesPart part = thm.Parts.Get<ThemeStylesPart>();
                 foreach (Artech.Genexus.Common.Objects.Themes.ThemeStyle thmclass in part.GetAllStyles())
                 {
@@ -207,7 +207,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - ADD IN: to Parm() rule";
 
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
@@ -236,8 +236,8 @@ namespace Concepto.Packages.KBDoctor
             writer.Close();
 
             bool success = true;
-            output.EndSection(title, success);
-            output.AddLine("Object changed " + cantObjChanged.ToString());
+            output.EndSection("KBDoctor", title, success);
+            output.AddLine("KBDoctor","Object changed " + cantObjChanged.ToString());
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
@@ -271,7 +271,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Domain to change";
 
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
@@ -439,7 +439,7 @@ namespace Concepto.Packages.KBDoctor
                 rulPart.Source = newRules;
 
             }
-                catch (Exception e) { output.AddLine(e.Message); };
+                catch (Exception e) { output.AddLine("KBDoctor",e.Message); };
             
 
             try
@@ -448,7 +448,7 @@ namespace Concepto.Packages.KBDoctor
             }
             catch (Exception e)
             {
-                output.AddLine("Error SAVING " + obj.Name + " New parm rule " + newParm + " " + e.Message);
+                output.AddLine("KBDoctor","Error SAVING " + obj.Name + " New parm rule " + newParm + " " + e.Message);
             }
         }
 
@@ -460,7 +460,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -471,7 +471,7 @@ namespace Concepto.Packages.KBDoctor
             //All useful objects are added to a collection
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
-                output.AddLine("Procesing.... " + obj.Name + " - " + obj.Type.ToString());
+                output.AddLine("KBDoctor","Procesing.... " + obj.Name + " - " + obj.Type.ToString());
                 Boolean SaveObj = false;
 
                 if (Utility.isGenerated(obj) &&  !ObjectsHelper.isGeneratedbyPattern(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel))
@@ -500,7 +500,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
         }
 
 
@@ -644,7 +644,7 @@ namespace Concepto.Packages.KBDoctor
 
             string mensaje = "";
             string title = "Search and replace";
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
             if (kB != null && kB.CurrentModel != null)
             {
 
@@ -682,7 +682,7 @@ namespace Concepto.Packages.KBDoctor
                             if ((objtotales % 100) == 0)
                             {
 
-                                output.AddLine("Searching in " + objtotales + " objects ");
+                                output.AddLine("KBDoctor","Searching in " + objtotales + " objects ");
                             }
 
                             StringBuilder buffer = new StringBuilder();
@@ -700,7 +700,7 @@ namespace Concepto.Packages.KBDoctor
                                 try
                                 {
                                     obj.Save();
-                                    output.AddLine("Changed >> '" + txtfind + "' to '" + txtreplace + "' in object " + obj.Name);
+                                    output.AddLine("KBDoctor","Changed >> '" + txtfind + "' to '" + txtreplace + "' in object " + obj.Name);
                                     objcambiados += 1;
                                 }
                                 catch (Exception e)
@@ -714,7 +714,7 @@ namespace Concepto.Packages.KBDoctor
 
                         }
                         title = "Changed objects " + objcambiados.ToString();
-                        output.EndSection(title, true);
+                        output.EndSection("KBDoctor", title, true);
                     }
                 }
             }
@@ -746,7 +746,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Object referenced by object ";
 
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -809,7 +809,7 @@ namespace Concepto.Packages.KBDoctor
             writer.Close();
 
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
@@ -942,7 +942,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 if ((cant % 100) == 0)
                 {
-                    output.AddLine("Procesing.." + cant.ToString() + " objects ");
+                    output.AddLine("KBDoctor","Procesing.." + cant.ToString() + " objects ");
                 }
                 cant += 1;
                 if (((obj is Transaction) || (obj is WebPanel)) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
@@ -980,7 +980,7 @@ namespace Concepto.Packages.KBDoctor
                                             if (!classEstaEnElTheme)
                                             {
                                                 string objName = obj.Name;
-                                                output.AddLine(" Object : " + obj.Name + " reference class " + miclstr + " which not exist in Theme");
+                                                output.AddLine("KBDoctor"," Object : " + obj.Name + " reference class " + miclstr + " which not exist in Theme");
                                                 string objNameLink = Functions.linkObject(obj);
                                                 writer.AddTableData(new string[] { objNameLink, miclstr, " does not exist in theme" });
                                             }
@@ -1004,7 +1004,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 if ((cant % 100) == 0)
                 {
-                    output.AddLine("Procesing.." + cant.ToString() + " objects ");
+                    output.AddLine("KBDoctor","Procesing.." + cant.ToString() + " objects ");
 
                 }
                 cant += 1;
@@ -1012,7 +1012,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     WebFormPart webForm = obj.Parts.Get<WebFormPart>();
 
-                    output.AddLine(" Object : " + obj.Name);
+                    output.AddLine("KBDoctor"," Object : " + obj.Name);
 
                     foreach (IWebTag tag in WebFormHelper.EnumerateWebTag(webForm))
                     {
@@ -1056,7 +1056,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -1072,7 +1072,7 @@ namespace Concepto.Packages.KBDoctor
             {
 
                 writer.AddTableData(new string[] { sd, "" });
-                output.AddLine("Application Class used " + sd);
+                output.AddLine("KBDoctor","Application Class used " + sd);
 
             }
 
@@ -1080,7 +1080,7 @@ namespace Concepto.Packages.KBDoctor
 
             writer.AddFooter();
             writer.Close();
-            output.EndSection(title, true);
+            output.EndSection("KBDoctor", title, true);
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
@@ -1113,14 +1113,14 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddTableHeader(new string[] { "Type", "Object", "Description" });
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection(title);
+                output.StartSection("KBDoctor",title);
 
                 foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
                     Boolean SaveObj = false;
                     if ((obj is Artech.Genexus.Common.Objects.Attribute) && (obj.Name.Length > ATTNAME_LEN))
                     {
-                        output.AddLine("RENAMING ATTRIBUTE " + obj.Name + " to " + obj.Name.Substring(0, ATTNAME_LEN));
+                        output.AddLine("KBDoctor","RENAMING ATTRIBUTE " + obj.Name + " to " + obj.Name.Substring(0, ATTNAME_LEN));
                         obj.Name = obj.Name.Substring(0, ATTNAME_LEN);
                         SaveObj = true;
                     }
@@ -1128,7 +1128,7 @@ namespace Concepto.Packages.KBDoctor
                     {
                         if (((obj is Table) || (obj is Index)) && (obj.Name.Length > TBLNAME_LEN))
                         {
-                            output.AddLine("RENAMING TABLE/INDEX " + obj.Name + " to " + obj.Name.Substring(0, TBLNAME_LEN));
+                            output.AddLine("KBDoctor","RENAMING TABLE/INDEX " + obj.Name + " to " + obj.Name.Substring(0, TBLNAME_LEN));
                             obj.Name = obj.Name.Substring(0, TBLNAME_LEN);
                             SaveObj = true;
                         }
@@ -1136,7 +1136,7 @@ namespace Concepto.Packages.KBDoctor
                         {
                             if ((obj.Name.Length > OBJNAME_LEN) && ObjectsHelper.isGeneratedbyPattern(obj))
                             {
-                                output.AddLine("RENAMING OBJECT " + obj.Name + " to " + obj.Name.Substring(0, OBJNAME_LEN));
+                                output.AddLine("KBDoctor","RENAMING OBJECT " + obj.Name + " to " + obj.Name.Substring(0, OBJNAME_LEN));
                                 obj.Name = obj.Name.Substring(0, OBJNAME_LEN);
                                 SaveObj = true;
                             }
@@ -1152,7 +1152,7 @@ namespace Concepto.Packages.KBDoctor
                         }
                         catch (Exception e)
                         {
-                            output.AddLine("ERROR saving  .. " + obj.Name + " - " + e.Message);
+                            output.AddLine("KBDoctor","ERROR saving  .. " + obj.Name + " - " + e.Message);
                         }
                     }
                 }
@@ -1161,7 +1161,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection(title, success);
+                output.EndSection("KBDoctor", title, success);
             }
         }
 
@@ -1173,7 +1173,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
 
             List<string[]> lineswriter;
             KBDoctorCore.Sources.API.RemoveAttributesWithoutTable(kbserv.CurrentModel, output, out lineswriter);
@@ -1190,7 +1190,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
         }
 

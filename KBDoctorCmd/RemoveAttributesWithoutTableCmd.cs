@@ -30,7 +30,7 @@ namespace KBDoctorCmd
                 }
                 else
                 {
-                    CommonServices.Output.AddLine(string.Format(KB.Name, KB.Location));
+                    output.AddLine("KBDoctor",string.Format(KB.Name, KB.Location));
                     List<string[]> list = new List<string[]>();
                     API.RemoveAttributesWithoutTable(KB.DesignModel, output, out list);
                 }

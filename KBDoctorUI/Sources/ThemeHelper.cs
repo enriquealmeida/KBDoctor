@@ -31,7 +31,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
             
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -42,13 +42,13 @@ namespace Concepto.Packages.KBDoctor
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
 
-                output.AddLine("Procesing.." + obj.Name);
+                output.AddLine("KBDoctor","Procesing.." + obj.Name);
                 if ((obj is Transaction) || (obj is WebPanel))
                 {
                     WebFormPart webForm = obj.Parts.Get<WebFormPart>();
                     foreach (IWebTag current in WebFormHelper.EnumerateWebTag(webForm))
                     {
-                        output.AddLine("Procesing.." + obj.Name + "-" );
+                        output.AddLine("KBDoctor","Procesing.." + obj.Name + "-" );
                     }
                     
                  }
@@ -59,7 +59,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection(title, success);
+            output.EndSection("KBDoctor", title, success);
 
             /*   
             type = obj.TypeDescriptor.Description;

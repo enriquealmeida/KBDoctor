@@ -52,35 +52,35 @@ namespace Concepto.Packages.KBDoctor
 
                     string title = "KBDoctor - Generating Get/Set/Insert/Delete for table " + tabla.Name;
                     IOutputService output = CommonServices.Output;
-                    output.StartSection(title);
+                    output.StartSection("KBDoctor",title);
 
                     try
                     {
 
-                        output.AddLine(" Generating SDT");
+                        output.AddLine("KBDoctor"," Generating SDT");
                         SDT Sdt = GenerateSdt(tabla);
 
-                        output.AddLine(" Generating Procedure GET");
+                        output.AddLine("KBDoctor"," Generating Procedure GET");
                         GenerateGetProcedure(kbModel, tabla, Sdt);
 
-                        output.AddLine(" Generating Procedure SET");
+                        output.AddLine("KBDoctor"," Generating Procedure SET");
                         GenerateSetProcedure(kbModel, tabla, Sdt);
 
-                        output.AddLine(" Generating Procedure INSERT");
+                        output.AddLine("KBDoctor"," Generating Procedure INSERT");
                         GenerateInsertProcedure(kbModel, tabla, Sdt);
 
-                        output.AddLine(" Generating DataProvider");
+                        output.AddLine("KBDoctor"," Generating DataProvider");
                         GenerateDataProvider(kbModel, tabla, Sdt);
 
-                        output.AddLine(" Generating Exist");
+                        output.AddLine("KBDoctor"," Generating Exist");
                         GenerateExistProcedure(kbModel, tabla, Sdt);
                     }
                     catch (Exception ex)
                     {
-                        output.AddErrorLine(ex);
+                        output.AddErrorLine("KBDoctor",ex);
                     }
                     Application.DoEvents();
-                    output.EndSection(title, true);
+                    output.EndSection("KBDoctor", title, true);
 
                 }
 

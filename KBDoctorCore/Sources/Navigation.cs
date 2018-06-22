@@ -34,7 +34,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         internal static void PrepareComparerNavigation(KnowledgeBase KB, IOutputService output)
         {
             string title = "KBDoctor - Prepare Comparer Navigation Files";
-            output.StartSection(title);
+            output.StartSection("KBDoctor",title);
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             string directoryArg = Utility.NvgComparerDirectory(KB);
@@ -49,7 +49,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string[] paths = Directory.GetDirectories(Utility.SpcDirectory(KB), "NVG", System.IO.SearchOption.AllDirectories);
                 foreach (string d in paths)
                 {
-                    output.AddLine("Procesando directorio: " + d);
+                    output.AddLine("KBDoctor","Procesando directorio: " + d);
                     string generator = d.Replace(Utility.SpcDirectory(KB), "");
                     generator = generator.Replace("NVG_", "");
                     generator = @"\" + generator.Replace(@"\", "_") + "_";
@@ -67,8 +67,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     ts.Hours, ts.Minutes, ts.Seconds,
                     ts.Milliseconds / 10);
                 
-                output.AddLine(title + " elepsed time: " + elapsedTime);
-                output.EndSection(title, true);
+                output.AddLine("KBDoctor",title + " elepsed time: " + elapsedTime);
+                output.EndSection("KBDoctor", title, true);
             }
             catch (Exception e){
                 output.AddErrorLine(e.Message);
@@ -80,9 +80,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string outputFile = KB.UserDirectory + @"\KBdoctorEv2.xslt";
             XslTransform xslTransform = new XslTransform();
 
-            output.AddLine("Cargando archivo xslt: " + outputFile);
+            output.AddLine("KBDoctor","Cargando archivo xslt: " + outputFile);
             xslTransform.Load(outputFile);
-            output.AddLine("Archivo xslt cargado correctamente.");
+            output.AddLine("KBDoctor","Archivo xslt cargado correctamente.");
             string fileWildcard = @"*.xml";
             var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
             string[] xFiles = System.IO.Directory.GetFiles(directoryArg, fileWildcard, searchSubDirsArg);
@@ -250,14 +250,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 else
                 {
-                    output.AddLine("Se utilizarán los siguientes directorios para comparar:");
-                    output.AddLine("-- " + Last2directories[0].ToString());
-                    output.AddLine("-- " + Last2directories[1].ToString());
+                    output.AddLine("KBDoctor","Se utilizarán los siguientes directorios para comparar:");
+                    output.AddLine("KBDoctor","-- " + Last2directories[0].ToString());
+                    output.AddLine("KBDoctor","-- " + Last2directories[1].ToString());
                     List<string> Diffs = EqualNavigationDirectories(Last2directories[0], Last2directories[1], output);
-                    output.AddLine("-- Los directorios se procesaron correctamente.");
+                    output.AddLine("KBDoctor","-- Los directorios se procesaron correctamente.");
                     if (Diffs.Count > 0)
                     {
-                        output.AddLine("-- Se encontraron diferencias en las navegaciones de los siguientes objetos:");
+                        output.AddLine("KBDoctor","-- Se encontraron diferencias en las navegaciones de los siguientes objetos:");
                         List<string> FilesDiff = new List<string>();
                         foreach (string x in Diffs)
                         {
@@ -277,11 +277,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     FilesDiff.Add(filename);
                                     if (objmodule != "")
                                     {
-                                        output.AddLine("-- ERROR " + objmodule + '.' + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
+                                        output.AddLine("KBDoctor","-- ERROR " + objmodule + '.' + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
                                     }
                                     else
                                     {
-                                        output.AddLine("-- ERROR " + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
+                                        output.AddLine("KBDoctor","-- ERROR " + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
                                     }
                                     
                                     isSuccess = false;
@@ -291,16 +291,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 {
                                     if (objmodule != "")
                                     {
-                                        output.AddLine("-- -- OK " + objmodule + '.' + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
+                                        output.AddLine("KBDoctor","-- -- OK " + objmodule + '.' + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
                                     }
                                     else {
-                                        output.AddLine("-- -- OK " + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
+                                        output.AddLine("KBDoctor","-- -- OK " + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
                                     }
                                 }
                             }
                             else
                             {
-                                output.AddLine("-- NO SE ENCONTRO EL OBJETO: " + qname.ToString());
+                                output.AddLine("KBDoctor","-- NO SE ENCONTRO EL OBJETO: " + qname.ToString());
                             }
                         }
                         CopyDifferences(FilesDiff,Last2directories[0],Last2directories[1],"NvgErrors");
@@ -308,7 +308,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     else
                     {
                         DeleteDifferenceDir(KB);
-                        output.AddLine("No se encontraron diferencias en las navegaciones");
+                        output.AddLine("KBDoctor","No se encontraron diferencias en las navegaciones");
                     }
                 }
                 if (cant_error > 0){
@@ -318,7 +318,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             catch (Exception e)
             {
-                output.AddLine(e.Message);
+                output.AddLine("KBDoctor",e.Message);
                 return false;
             }
         }
@@ -430,7 +430,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 else
                 {
-                    output.AddLine("-- No existe: " + fileNewPath);
+                    output.AddLine("KBDoctor","-- No existe: " + fileNewPath);
                 }
             }
             return Diffs;
@@ -479,7 +479,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 else
                 {
-                    output.AddLine("-- Nuevo: " + fileNewPath);
+                    output.AddLine("KBDoctor","-- Nuevo: " + fileNewPath);
                 }
             }
             return Diffs;
@@ -510,7 +510,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 
                 if (responseuri  == urlbase + path)
                 {
-                    output.AddLine(absolutePath + ": OK");
+                    output.AddLine("KBDoctor",absolutePath + ": OK");
                     string filename = wsdldir + "\\" + objqname + ".wsdl";
                     if (File.Exists(filename))
                     {
@@ -520,7 +520,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 else
                 {
-                    output.AddLine(absolutePath + ": Requiere login");
+                    output.AddLine("KBDoctor",absolutePath + ": Requiere login");
                 }
             }
         }
@@ -533,7 +533,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             List<string> FilesDiff = new List<string>();
             if (diffs.Count > 0)
             {
-                output.AddLine("- Diferencias: ");
+                output.AddLine("KBDoctor","- Diferencias: ");
                 foreach (string diff in diffs)
                 {
                     string filename = Path.GetFileName(diff);
@@ -544,7 +544,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             else
             {
-                output.AddLine("- No se encontraron diferencias. ");
+                output.AddLine("KBDoctor","- No se encontraron diferencias. ");
             }
             
         }

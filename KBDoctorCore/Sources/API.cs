@@ -222,11 +222,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
 
             //output.EndSection(KBDOCTOR_OUTPUTID, "Review Objects", true);
-            output.AddText("KBDoctor", "KBDoctor Review Object finished");
-          //  output.SelectOutput(KBDOCTOR_OUTPUTID);
+            output.AddLine("KBDoctor", "KBDoctor Review Object finished");
+            //  output.SelectOutput(KBDOCTOR_OUTPUTID);
             output.UnselectOutput(KBDOCTOR_OUTPUTID);
             output.SelectOutput("General");
-            output.AddText("General", "KBDoctor Review Object finished");
+         //   output.AddText("General", "KBDoctor Review Object finished");
             lineswriter = new List<string[]>();
             
             foreach (Tuple<KBObject, string> item in recommended_list)
