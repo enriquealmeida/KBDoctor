@@ -212,6 +212,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
             output.StartSection("KBDoctor", title);
 
 
@@ -229,7 +230,7 @@ namespace Concepto.Packages.KBDoctor
                     output.AddLine("KBDoctor","Procesing " + a.Name);
                     string suggestedDomains = "";
                     string value = "";
-                    /*
+                    
                     //busco el 
                     if (myDict.TryGetValue(Picture, out value))
                     {
@@ -238,8 +239,9 @@ namespace Concepto.Packages.KBDoctor
                     else
                     {
                         suggestedDomains = SuggestedDomains(kbserv, a);
+                        myDict.Add(Picture, suggestedDomains);
                     }
-                    */
+                    
                     string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
                     writer.AddTableData(new string[] { attNameLink, a.Description, Picture, suggestedDomains });
                 }
