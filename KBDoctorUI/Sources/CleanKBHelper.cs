@@ -277,16 +277,17 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Domain", "Table", "Description", "Attribute" ,"Descripcion" });
+            writer.AddTableHeader(new string[] { "Domain", "Table", "Description", "Attribute" ,"Descripcion", "Module" });
             int cantObjChanged = 0;
 
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Domain>());
 
+            //Pido dominios
             foreach (KBObject dom in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
-               
+               //Atributos con ese dominio
                 foreach (EntityReference reference in dom.GetReferencesTo())
                 {
                     KBObject att = KBObject.Get(dom.Model, reference.From);
@@ -300,8 +301,7 @@ namespace Concepto.Packages.KBDoctor
 
                             if ((tbl != null) && (tbl is Table))
                             {
-
-                                writer.AddTableData(new string[] { Functions.linkObject(dom), Functions.linkObject(tbl), tbl.Description, Functions.linkObject(att), att.Description });
+                                writer.AddTableData(new string[] { Functions.linkObject(dom), Functions.linkObject(tbl), tbl.Description, Functions.linkObject(att), att.Description, ModulesHelper.ObjectModuleName(tbl) });
                             }
                         }
                     }
@@ -313,7 +313,25 @@ namespace Concepto.Packages.KBDoctor
 
             }
 
-            writer.AddFooter();
+            //Agrego Atributos sin dominios
+            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+            {
+                if (a.DomainBasedOn==null )
+                {
+                    foreach (EntityReference reference2 in a.GetReferencesTo())
+                    {
+                        KBObject tbl = KBObject.Get(a.Model, reference2.From);
+
+                        if ((tbl != null) && (tbl is Table))
+                        {
+                            writer.AddTableData(new string[] { Functions.ReturnPicture(a), Functions.linkObject(tbl), tbl.Description, Functions.linkObject(a), a.Description , ModulesHelper.ObjectModuleName(tbl) });
+                        }
+                    }
+
+                }
+            }
+
+                writer.AddFooter();
             writer.Close();
 
             bool success = true;

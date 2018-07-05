@@ -469,7 +469,7 @@ namespace Concepto.Packages.KBDoctor
         public static string ReturnPicture(Artech.Genexus.Common.Objects.Attribute a)
         {
             string Picture = "";
-            if (a.Type == eDBType.BINARY || a.Type == eDBType.Boolean)
+            if (a.Type == eDBType.BINARY || a.Type == eDBType.Boolean || a.Type == eDBType.BITMAP)
                 Picture = a.Type.ToString();
             else
                 Picture = a.Type.ToString() + "(" + a.Length.ToString() + (a.Decimals > 0 ? "." + a.Decimals.ToString() : "") + ")" + (a.Signed ? "-" : "");

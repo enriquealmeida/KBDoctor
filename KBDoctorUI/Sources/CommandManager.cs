@@ -89,7 +89,7 @@ namespace Concepto.Packages.KBDoctor
 
             AddCommand(CommandKeys.ChangeCommitOnExit, new ExecHandler(ExecChangeCommitOnExit), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.TreeCommit, new ExecHandler(ExecTreeCommit), new QueryHandler(QueryKBDoctor));
-
+            
             AddCommand(CommandKeys.ObjectsLegacyCode, new ExecHandler(ExecObjectsLegacyCode), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ChangeLegacyCode, new ExecHandler(ExecChangeLegacyCode), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.EditLegacyCodeToReplace, new ExecHandler(ExecEditLegacyCodeToReplace), new QueryHandler(QueryKBDoctor));

@@ -39,11 +39,14 @@ using Artech.Architecture.Language.ComponentModel;
 
 using Artech.Udm.Framework;
 using Concepto.Packages.KBDoctorCore.Sources;
+using Artech.Genexus.Common.AST;
+using Artech.Architecture.Common.Location;
+using Artech.Genexus.Common.Types;
 
 
 namespace Concepto.Packages.KBDoctor
 {
-     class ObjectsHelper 
+    class ObjectsHelper
     {
 
         public static void Unreachables()
@@ -52,7 +55,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             bool success = true;
             string title = "KBDoctor - Unreachable Objects";
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
             // UIServices.ToolWindows.ShowToolWindow(new Guid("59CE53BC-F419-402b-AC09-AC275ED21AB9"));
 
             string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -82,7 +85,7 @@ namespace Concepto.Packages.KBDoctor
             //saco los objetos alcanzables. 
             unreachablesObjects.RemoveAll(reachablesObjects);
             int cantUnObj = unreachablesObjects.Count;
-            output.AddLine("KBDoctor","(Re)creating KBDoctor.Unreachable category");
+            output.AddLine("KBDoctor", "(Re)creating KBDoctor.Unreachable category");
             KBCategory catR = KBCategory.Get(kbserv.CurrentModel, "KBDoctor.UnReachable");
             if (catR == null)
             {
@@ -96,7 +99,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (KBObject obj in catR.AllMembers)
             {
-                output.AddLine("KBDoctor","Removing " + obj.Name + " from  KBDoctor.Unreachable category");
+                output.AddLine("KBDoctor", "Removing " + obj.Name + " from  KBDoctor.Unreachable category");
                 obj.RemoveCategory(catR);
                 if (!obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject) && (obj is Procedure | obj is WebPanel | obj is WorkPanel | obj is Transaction | obj is DataProvider | obj is Menubar))
                 {
@@ -144,7 +147,7 @@ namespace Concepto.Packages.KBDoctor
                     {
                         try
                         {
-                            output.AddLine("KBDoctor",obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable (SAVING) ");
+                            output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable (SAVING) ");
                             obj.Save();
                         }
                         catch
@@ -155,15 +158,15 @@ namespace Concepto.Packages.KBDoctor
                     }
                     else
                     {
-                        output.AddLine("KBDoctor",obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable ");
+                        output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable ");
                     }
                 }
 
 
             }
 
-            output.AddLine("KBDoctor","");
-            output.AddLine("KBDoctor","Total Objects:" + cantObj.ToString() + ". Unreachable Objects: " + cantUnObj.ToString());
+            output.AddLine("KBDoctor", "");
+            output.AddLine("KBDoctor", "Total Objects:" + cantObj.ToString() + ". Unreachable Objects: " + cantUnObj.ToString());
             output.EndSection("KBDoctor", title, success);
             writer.AddFooter();
             writer.Close();
@@ -185,7 +188,7 @@ namespace Concepto.Packages.KBDoctor
                     //    if (reference.ReferenceType == ReferenceType.Hard)
                     //      {
                     string objname = obj.Name;
-                    output.AddLine("KBDoctor",obj.Name + " reference to(" + reference.ReferenceType.ToString() + "):" + objRef.Name);
+                    output.AddLine("KBDoctor", obj.Name + " reference to(" + reference.ReferenceType.ToString() + "):" + objRef.Name);
                     MarkReachables(output, objRef, reachablesObjects);
                     //       }
 
@@ -200,7 +203,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void WriteOutputLine(IOutputService output, KBObject obj)
         {
-            output.AddLine("KBDoctor","Processing.. " + obj.TypeDescriptor.DefaultName + "-" + obj.Name + ".");
+            output.AddLine("KBDoctor", "Processing.. " + obj.TypeDescriptor.DefaultName + "-" + obj.Name + ".");
         }
 
         public static void ObjectsMainsCalled()
@@ -210,7 +213,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Object main called by others";
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
@@ -284,7 +287,7 @@ namespace Concepto.Packages.KBDoctor
 
                 writer.AddTableData(new string[] { obj.Parent.Name, objNameLink, obj.Description, ruleParm, obj.Timestamp.ToString(), mainss });
             }
-            
+
             writer.AddTableData(new string[] { "#Objects with problems ", objectsWithProblems.Count.ToString(), "", "" });
 
             writer.AddFooter();
@@ -312,7 +315,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Object with parameters and Commit on Exit = Yes";
             string objNameLink;
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
@@ -325,7 +328,7 @@ namespace Concepto.Packages.KBDoctor
                 ICallableObject callableObject = obj as ICallableObject;
                 if (callableObject != null)
                 {
-                    output.AddLine("KBDoctor","Processing " + obj.TypeDescriptor.Name + " " + obj.Name);
+                    output.AddLine("KBDoctor", "Processing " + obj.TypeDescriptor.Name + " " + obj.Name);
 
                     hasParameters = false;
                     foreach (Signature signature in callableObject.GetSignatures())
@@ -370,7 +373,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -415,7 +418,7 @@ namespace Concepto.Packages.KBDoctor
                                     try
                                     {
                                         obj.Delete();
-                                        output.AddLine("KBDoctor","REMOVING..." + obj.Name);
+                                        output.AddLine("KBDoctor", "REMOVING..." + obj.Name);
                                         remove = "REMOVED!";
                                         objNameLink = obj.Name;
                                         continuar = true;
@@ -458,7 +461,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -472,7 +475,7 @@ namespace Concepto.Packages.KBDoctor
 
                 if (!isGenerated(trn))
                 {
-                    output.AddLine("KBDoctor","Procesing... " + trn.Name);
+                    output.AddLine("KBDoctor", "Procesing... " + trn.Name);
                     bool isRemovable, isRemovableWithWarning;
                     string lstTrns, tblName;
                     KBObjectCollection attExclusive;
@@ -481,7 +484,7 @@ namespace Concepto.Packages.KBDoctor
 
                     if (isRemovable)
                     {
-                        output.AddLine("KBDoctor","Procesing... " + trn.Name + " REMOVABLE ");
+                        output.AddLine("KBDoctor", "Procesing... " + trn.Name + " REMOVABLE ");
                         remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
                         writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, "" });
                     }
@@ -489,7 +492,7 @@ namespace Concepto.Packages.KBDoctor
                         if (isRemovableWithWarning)
 
                     {
-                        output.AddLine("KBDoctor","Procesing... " + trn.Name + " REMOVABLE with warning ");
+                        output.AddLine("KBDoctor", "Procesing... " + trn.Name + " REMOVABLE with warning ");
                         remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
                         writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, lstTrns + " WHIT WARNING" });
                     }
@@ -545,7 +548,7 @@ namespace Concepto.Packages.KBDoctor
 
                     if (!attLvl.Contains(a))
                     {
-                        output.AddLine("KBDoctor","Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
+                        output.AddLine("KBDoctor", "Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
                             + a.Name + " not in any generated transaction");
                         isRemovable = false;
                         isLevelRemovable = false;
@@ -553,7 +556,7 @@ namespace Concepto.Packages.KBDoctor
 
                     if (!attLvlAll.Contains(a))
                     {
-                        output.AddLine("KBDoctor","Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
+                        output.AddLine("KBDoctor", "Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
                             + a.Name + " not in any other transaction");
                         isRemovableWithWarning = false;
                         isLevelRemovable = false;
@@ -577,12 +580,12 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Object referenced by object ";
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
-            
+
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Commit on Exit", "Update DB?", "Commit in Source", "Timestamp", "Last Update" });
 
@@ -610,10 +613,10 @@ namespace Concepto.Packages.KBDoctor
                             commitInSource = "";
                     }
                     catch (Exception e)
-                        { output.AddErrorLine(e.Message); }
+                    { output.AddErrorLine(e.Message); }
                     finally
-                        { commitInSource = ""; };
-                    
+                    { commitInSource = ""; };
+
 
 
                     if (UpdateInsertDelete == "" & commitOnExit == "YES")
@@ -646,7 +649,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Tree Commit  ";
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -740,11 +743,11 @@ namespace Concepto.Packages.KBDoctor
                 }
                 writer.AddTableData(new string[] { Anidacion + Functions.linkObject(obj), doCommit, obj.Description, ExecuteInNewLuw, UpdateInsertDelete, obj.Timestamp.ToShortDateString(), tblList });
 
-                
-               // Anidacion += "____";
+
+                // Anidacion += "____";
                 yaIncluido.Add(obj);
 
-                Parse(obj.Model, obj, Anidacion, yaIncluido,writer); 
+                Parse(obj.Model, obj, Anidacion, yaIncluido, writer);
 
             }
         }
@@ -771,235 +774,235 @@ namespace Concepto.Packages.KBDoctor
                     if (token.Token == (int)TokensIds.FOI)
                     {
                         FCIobjName = token.Word;
-                        CommonServices.Output.AddLine("KBDoctor",Anidacion + FCLobjClass.ToString() + "-" + FCIobjName);
+                        CommonServices.Output.AddLine("KBDoctor", Anidacion + FCLobjClass.ToString() + "-" + FCIobjName);
 
                         EntityKey objKey = new EntityKey(ObjClass.Procedure, token.Id);
                         KBObject objRef = KBObject.Get(obj.Model, objKey);
 
-                        GraboLlamado((Procedure) objRef, Anidacion + "____", yaIncluido, writer);
+                        GraboLlamado((Procedure)objRef, Anidacion + "____", yaIncluido, writer);
                         //Parse(obj.Model, objRef, Anidacion + "____");
                     }
                     if (token.Token == (int)TokensIds.DTCMM)
-                        writer.AddTableData(new string[] { Anidacion + " COMMIT ", "" , "Commit Explicito" , "", "" , "","", "" });
+                        writer.AddTableData(new string[] { Anidacion + " COMMIT ", "", "Commit Explicito", "", "", "", "", "" });
 
 
                 }
             }
         }
-        
+
         public enum TokensIds
- {
-  FNONE = -1,
- 
-///////////////////////////////////////////////////////////
-// TOKENS
-///////////////////////////////////////////////////////////
- 
-// 0
-  FOB = 0, // '(' Open Bracket
-  FFN,  // 'Function(' Fuction call
-  FNA,  // Name Attribute
-  FNC,  // Name Cconstant
-  FCB,  // ')' Close Bracket
-  FPL,  // '+''-' PLus MiNus oper.
-  FPR,  // '*''/' PRoduct DiVis. oper.
-  FCM,  // ',' CoMma separate parms.
-  FNT,  // 'NOT' NoT
-  FAN,  // 'AND' 'OR' ANd OR
-// 10
-  FRE,  // '<' '>' '=' RElational oper.
-  EXP,  // Expression
-  SUM,  // Sum
-  COU,  // Count
-  AVE,  // Average
-  MAX,  // Maximum
-  MIN,  // Minimum
-  FIF,  // IF ...
-  FSC,  // Semicolon ';'
-  FOT,  // Otherwise
-// 20
-  ERR_TOKEN,
-  FEN,  // EOExpression
-  FCO,  // COmment (//) for rules/commands
-  FUV,  // User Variable (&) for rules/commands
-  FUA,  // User Variable Array '&xx('
-  FCN,  // CoNtinuation Line / White spaces
-  FAM,  // String to replace '&' with '&&'
-  FCL,  // CLass id (used for calls)
-  FOI,  // Object Id (used for calls)
-  FCT,  // ConTrol ID/Name (for properties)
-// 30
-  FCI,  // Control type Id (combo/edit/etc.)
-  FMT,  // control id/name (for MeThods) (Used only in specifier)
-  FBI,  // BInary info in value (used to save bin data in obj_info)
-  FDC,  // Date constante (used only in dYNQ by now)
-  FCV,  // Control Variable (the var associated with the control (Used only in specifier)
-  FWH,  // WHEN (GXW) / WHERE (DKL) ...
-  FNS,  // Name space ...
-  FON,  // ON ...
-  FBC,  // Comentario de bloque
-  FOR,  // ORDER ...
-// 40
-  TKN_TRUE, // TRUE
-  TKN_FALSE, // FALSE
-  TKN_NONE, // NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR 
-  PRM,  // Parámetro, utilizado en DYNQ
-  FND,  // Name Domain
-  FLV,  // LEVEL token
-  TKN_NEW, // NEW token
-  FSDTCLS, // Structure Class
-  TKN_NULL, // NULL
-  TKN_IN,  // IN
-// 50
-  SSL,  // SUBSELECT : used by generators; reserved it for Gx.
-  FEX,  // Exception name
-  TMSGID,  // Message id
-  TNCNT,  // Token Name Constant NonTranslatable
-  TFOR,  // For token, defined to be used with Lookup Deklarit's rule
-  TDEPENDENCIES, // Dependencies token, new condition for rules.
-  TRULE,  // Rule token
-  TBY,  // 'By' token
-  TGIVEN,  // 'Given' token
-  TWHERE,  // 'Where' token -GeneXus, Deklarit uses FWH
-// 60
-  TDEFINEDBY, // 'Defined by' token
-  TSECTION, // [Web], [Win], [Web], [Text]
-  TINDP,  // Used for token 'in <dataselector>'
-  OPENSQUAREBRACKET,
-  CLOSESQUAREBRACKET,
-  OUTPUTNAME,
-  OUTPUTDYNAMICSYM,
-  INPUT,
-  OUTPUTPROPERTY,
-  OBJREFERENCE,
-// 70
-  TUSING,
-  TSIGN, // Now that rules supports comments, define the TSIGN token to specified the sign of an expression (e.g. "-1")
-  TEXO,
- 
-// ¡¡¡ UNTIL 99 !!!
-//  Commands codes starts at 100, See dedotcmd.h
- 
-///////////////////////////////////////////////////////////
-// COMMANDS
-///////////////////////////////////////////////////////////
- 
-// 100
-  DTEJE = 100, // 'Eject'
-  DTNSK,  // 'NoSkip'
-  DTLNN,  // 'Lineno'
-  DTPRC,
-  DTCLL,  // 'Call'
-  DTDBA,
-  DTCOB,
-  DTASG,  // Assignment
-  DTPRI,
-  DTIF,
-// 110
-  DTELS,  // 'Else'
-  DTEIF,  // 'Endif'
-  DTNPR,
-  DTDEL,  // 'Delete'
-  DTDO,  // 'Do'
-  DTEDO,  // 'Enddo'
-  DTWHE,
-  DTNEW,
-  DTRET,
-  DTHEA,
-// 120
-  DTBEG,
-  DTFOR,  // 'ForEach'
-  DTEND,
-  DTPL,
-  DTMT,
-  DTMB,
-  DTSRC,
-  DTENW,
-  DTEFO,  // 'EndFor'
-  DTWDU,  // 'When Duplicate'
-// 130
-  DTWNO,  // 'When None'
-  DTCP,
-  DTCMM,
-  DTXFE,
-  DTXFF,
-  DTXNW,
-  DTXEF,
-  DTXEN,
-  DTDBY,
-  DTEXF,  // 'Exit' from a 'Do While'
-// 140
-  DTEXD,
-  DTMSG,
-  DTFOO,
-  DTPRO, // 'Sub' <subroutine>
-  DTEPR, // 'EndSub'
-  DTDOP, // Do <subroutine>
-  DTEVT,
-  DTEEV,
-  DTREF,
-  DTFLN,
-// 150
-  DTEFL,
-  DTCNF,
-  DTDOC,
-  DTCAS,
-  DTECA,
-  DTLOA,
-  DTLVL,
-  DTRBK, // Comando ROLLBACK
-  DTSBM, // Comando SUBMIT
-  DTGRA,
-// 160
-  DTERH, // Commando Error_Handler
-  DTVB,  // Comando VB
-  DTFSL,
-  DTDMY, //Reserved for spec RPC
-  DTOTH,
-  DTEFS, // Reserved for End for each selected line
-  DTJAV, // Comando JAVA
-  DTSQL, // Comando SQL
-  DTFLS,
-  DTFSS,
-// 170
-  DTEFF,
-  DTLNK, // Comando LINK
-  DTAPL, // Asignación del tipo +=
-  DTAMI, // Asignación del tipo -=
-  DTAMU, // Asignación del tipo *=
-  DTADI, // Asignación del tipo /=
-  DTFIN, // FOR <var> IN <array>
-  DTEFI, // END // del token anterior
-  DTFFT, // FOR <var>=<exp> TO <exp> STEP <exp>
-  DTEFT, // END // del token anterior
-// 180
-  DTIN,  // Comando IN de FOR <var> IN <array>
-  DTTO,  // Comando TO de FOR EACH <var>=<exp> TO <exp>
-  DTSTP, // Comando STEP de FOR <var>=<exp> TO <exp> STEP <exp>
-  DTCSH, // Comando CSHARP
-  DTON,  // Comando ON
-  DTWHN, // Comando WHEN
-  DTOPD, // Comando OPTION DISTINCT
-  DTUSG, // Comando USING de FOR EACH ... ENDFOR
-  DTPOPUP, // Comando POPUP()
-  BLOCKING, // Comando BLOCKING
-// 190
-  OUTPUTELEMENT,
-  OPENCURLYBRACKET,
-  CLOSECURLYBRACKET,
-  PRINT,
-  INSERT,
-  SUBGROUP,
-  ENDSUBGROUP,
-  DTStub, // 'public sub'
-  DTJavaScript, // 'javascript' command - not implemented yet! - reserved number
-  DTEndStub,
-//200
-  DTCallStub,
-  DTRuby,  // Comando "RUBY <LINE>"
- 
-  DTREDUNDANCY = 397, // Used to give redundancy info to the specifier
- };
+        {
+            FNONE = -1,
+
+            ///////////////////////////////////////////////////////////
+            // TOKENS
+            ///////////////////////////////////////////////////////////
+
+            // 0
+            FOB = 0, // '(' Open Bracket
+            FFN,  // 'Function(' Fuction call
+            FNA,  // Name Attribute
+            FNC,  // Name Cconstant
+            FCB,  // ')' Close Bracket
+            FPL,  // '+''-' PLus MiNus oper.
+            FPR,  // '*''/' PRoduct DiVis. oper.
+            FCM,  // ',' CoMma separate parms.
+            FNT,  // 'NOT' NoT
+            FAN,  // 'AND' 'OR' ANd OR
+                  // 10
+            FRE,  // '<' '>' '=' RElational oper.
+            EXP,  // Expression
+            SUM,  // Sum
+            COU,  // Count
+            AVE,  // Average
+            MAX,  // Maximum
+            MIN,  // Minimum
+            FIF,  // IF ...
+            FSC,  // Semicolon ';'
+            FOT,  // Otherwise
+                  // 20
+            ERR_TOKEN,
+            FEN,  // EOExpression
+            FCO,  // COmment (//) for rules/commands
+            FUV,  // User Variable (&) for rules/commands
+            FUA,  // User Variable Array '&xx('
+            FCN,  // CoNtinuation Line / White spaces
+            FAM,  // String to replace '&' with '&&'
+            FCL,  // CLass id (used for calls)
+            FOI,  // Object Id (used for calls)
+            FCT,  // ConTrol ID/Name (for properties)
+                  // 30
+            FCI,  // Control type Id (combo/edit/etc.)
+            FMT,  // control id/name (for MeThods) (Used only in specifier)
+            FBI,  // BInary info in value (used to save bin data in obj_info)
+            FDC,  // Date constante (used only in dYNQ by now)
+            FCV,  // Control Variable (the var associated with the control (Used only in specifier)
+            FWH,  // WHEN (GXW) / WHERE (DKL) ...
+            FNS,  // Name space ...
+            FON,  // ON ...
+            FBC,  // Comentario de bloque
+            FOR,  // ORDER ...
+                  // 40
+            TKN_TRUE, // TRUE
+            TKN_FALSE, // FALSE
+            TKN_NONE, // NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR 
+            PRM,  // Parámetro, utilizado en DYNQ
+            FND,  // Name Domain
+            FLV,  // LEVEL token
+            TKN_NEW, // NEW token
+            FSDTCLS, // Structure Class
+            TKN_NULL, // NULL
+            TKN_IN,  // IN
+                     // 50
+            SSL,  // SUBSELECT : used by generators; reserved it for Gx.
+            FEX,  // Exception name
+            TMSGID,  // Message id
+            TNCNT,  // Token Name Constant NonTranslatable
+            TFOR,  // For token, defined to be used with Lookup Deklarit's rule
+            TDEPENDENCIES, // Dependencies token, new condition for rules.
+            TRULE,  // Rule token
+            TBY,  // 'By' token
+            TGIVEN,  // 'Given' token
+            TWHERE,  // 'Where' token -GeneXus, Deklarit uses FWH
+                     // 60
+            TDEFINEDBY, // 'Defined by' token
+            TSECTION, // [Web], [Win], [Web], [Text]
+            TINDP,  // Used for token 'in <dataselector>'
+            OPENSQUAREBRACKET,
+            CLOSESQUAREBRACKET,
+            OUTPUTNAME,
+            OUTPUTDYNAMICSYM,
+            INPUT,
+            OUTPUTPROPERTY,
+            OBJREFERENCE,
+            // 70
+            TUSING,
+            TSIGN, // Now that rules supports comments, define the TSIGN token to specified the sign of an expression (e.g. "-1")
+            TEXO,
+
+            // ¡¡¡ UNTIL 99 !!!
+            //  Commands codes starts at 100, See dedotcmd.h
+
+            ///////////////////////////////////////////////////////////
+            // COMMANDS
+            ///////////////////////////////////////////////////////////
+
+            // 100
+            DTEJE = 100, // 'Eject'
+            DTNSK,  // 'NoSkip'
+            DTLNN,  // 'Lineno'
+            DTPRC,
+            DTCLL,  // 'Call'
+            DTDBA,
+            DTCOB,
+            DTASG,  // Assignment
+            DTPRI,
+            DTIF,
+            // 110
+            DTELS,  // 'Else'
+            DTEIF,  // 'Endif'
+            DTNPR,
+            DTDEL,  // 'Delete'
+            DTDO,  // 'Do'
+            DTEDO,  // 'Enddo'
+            DTWHE,
+            DTNEW,
+            DTRET,
+            DTHEA,
+            // 120
+            DTBEG,
+            DTFOR,  // 'ForEach'
+            DTEND,
+            DTPL,
+            DTMT,
+            DTMB,
+            DTSRC,
+            DTENW,
+            DTEFO,  // 'EndFor'
+            DTWDU,  // 'When Duplicate'
+                    // 130
+            DTWNO,  // 'When None'
+            DTCP,
+            DTCMM,
+            DTXFE,
+            DTXFF,
+            DTXNW,
+            DTXEF,
+            DTXEN,
+            DTDBY,
+            DTEXF,  // 'Exit' from a 'Do While'
+                    // 140
+            DTEXD,
+            DTMSG,
+            DTFOO,
+            DTPRO, // 'Sub' <subroutine>
+            DTEPR, // 'EndSub'
+            DTDOP, // Do <subroutine>
+            DTEVT,
+            DTEEV,
+            DTREF,
+            DTFLN,
+            // 150
+            DTEFL,
+            DTCNF,
+            DTDOC,
+            DTCAS,
+            DTECA,
+            DTLOA,
+            DTLVL,
+            DTRBK, // Comando ROLLBACK
+            DTSBM, // Comando SUBMIT
+            DTGRA,
+            // 160
+            DTERH, // Commando Error_Handler
+            DTVB,  // Comando VB
+            DTFSL,
+            DTDMY, //Reserved for spec RPC
+            DTOTH,
+            DTEFS, // Reserved for End for each selected line
+            DTJAV, // Comando JAVA
+            DTSQL, // Comando SQL
+            DTFLS,
+            DTFSS,
+            // 170
+            DTEFF,
+            DTLNK, // Comando LINK
+            DTAPL, // Asignación del tipo +=
+            DTAMI, // Asignación del tipo -=
+            DTAMU, // Asignación del tipo *=
+            DTADI, // Asignación del tipo /=
+            DTFIN, // FOR <var> IN <array>
+            DTEFI, // END // del token anterior
+            DTFFT, // FOR <var>=<exp> TO <exp> STEP <exp>
+            DTEFT, // END // del token anterior
+                   // 180
+            DTIN,  // Comando IN de FOR <var> IN <array>
+            DTTO,  // Comando TO de FOR EACH <var>=<exp> TO <exp>
+            DTSTP, // Comando STEP de FOR <var>=<exp> TO <exp> STEP <exp>
+            DTCSH, // Comando CSHARP
+            DTON,  // Comando ON
+            DTWHN, // Comando WHEN
+            DTOPD, // Comando OPTION DISTINCT
+            DTUSG, // Comando USING de FOR EACH ... ENDFOR
+            DTPOPUP, // Comando POPUP()
+            BLOCKING, // Comando BLOCKING
+                      // 190
+            OUTPUTELEMENT,
+            OPENCURLYBRACKET,
+            CLOSECURLYBRACKET,
+            PRINT,
+            INSERT,
+            SUBGROUP,
+            ENDSUBGROUP,
+            DTStub, // 'public sub'
+            DTJavaScript, // 'javascript' command - not implemented yet! - reserved number
+            DTEndStub,
+            //200
+            DTCallStub,
+            DTRuby,  // Comando "RUBY <LINE>"
+
+            DTREDUNDANCY = 397, // Used to give redundancy info to the specifier
+        };
         /*
 private static void IsLevelRemovable(Transaction trn, Table tbl, out bool isRemovable, out bool isRemovableWithWarning)
 {
@@ -1100,7 +1103,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             }
             return attlist;
         }
-        
+
         public static void MainTableUsed()
         {
             IKBService kbserv = UIServices.KB;
@@ -1110,7 +1113,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -1122,8 +1125,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             {
                 StringCollection tableOperation = new StringCollection();
                 KBObjectCollection objMarked = new KBObjectCollection();
-                output.AddLine("KBDoctor"," ");
-                output.AddLine("KBDoctor"," =============================> " + obj.Name);
+                output.AddLine("KBDoctor", " ");
+                output.AddLine("KBDoctor", " =============================> " + obj.Name);
 
                 string mainstr = obj.Name + " " + obj.GetPropertyValueString("AppLocation");
                 TablesUsed(output, obj, tableOperation, objMarked, mainstr, writer);
@@ -1166,7 +1169,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                                 if (!tableOperation.Contains(linea))
                                 {
-                                    output.AddLine("KBDoctor",linea);
+                                    output.AddLine("KBDoctor", linea);
                                     tableOperation.Add(linea);
                                     writer.AddTableData(new string[] { mainstr, objRef.Name, "SELECT" });
                                 };
@@ -1176,7 +1179,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                 linea = mainstr + " , " + objRef.Name + " , " + "INSERT";
                                 if (!tableOperation.Contains(linea))
                                 {
-                                    output.AddLine("KBDoctor",linea);
+                                    output.AddLine("KBDoctor", linea);
                                     tableOperation.Add(linea);
                                     writer.AddTableData(new string[] { mainstr, objRef.Name, "INSERT" });
                                 };
@@ -1187,7 +1190,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                 linea = mainstr + " , " + objRef.Name + " , " + "UPDATE";
                                 if (!tableOperation.Contains(linea))
                                 {
-                                    output.AddLine("KBDoctor",linea);
+                                    output.AddLine("KBDoctor", linea);
                                     tableOperation.Add(linea);
                                     writer.AddTableData(new string[] { mainstr, objRef.Name, "UPDATE" });
                                 };
@@ -1198,7 +1201,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                 linea = mainstr + " , " + objRef.Name + " , " + "DELETE";
                                 if (!tableOperation.Contains(linea))
                                 {
-                                    output.AddLine("KBDoctor",linea);
+                                    output.AddLine("KBDoctor", linea);
                                     tableOperation.Add(linea);
                                     writer.AddTableData(new string[] { mainstr, objRef.Name, "DELETE" });
                                 };
@@ -1214,7 +1217,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             }
         }
-        
+
         public static void CreateDeployUnits()
         {
             IKBService kbserv = UIServices.KB;
@@ -1224,7 +1227,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -1263,8 +1266,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
 
                 KBObjectCollection objMarked = new KBObjectCollection();
-                output.AddLine("KBDoctor"," ");
-                output.AddLine("KBDoctor","ECHO  **** " + obj.Name + " ***** ");
+                output.AddLine("KBDoctor", " ");
+                output.AddLine("KBDoctor", "ECHO  **** " + obj.Name + " ***** ");
 
                 if (obj.GetPropertyValueString("AppLocation") == "")
                 {
@@ -1286,13 +1289,13 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 string mainstr = obj.GetPropertyValueString("AppLocation");
 
                 string linea = "XCOPY /y/d " + Dircopia + @"bin\" + letra + obj.Name + exts + " %" + mainstr + @"%\bin\";
-                output.AddLine("KBDoctor",linea);
+                output.AddLine("KBDoctor", linea);
                 objReferenced.Add(linea);
 
                 if (!(obj is Procedure) && !(obj is WorkPanel) && Dircopia == @".\Web\")
                 {
                     linea = "XCOPY /y/d " + Dircopia + letra + obj.Name + ".js %" + mainstr + "%";
-                    output.AddLine("KBDoctor",linea);
+                    output.AddLine("KBDoctor", linea);
                     objReferenced.Add(linea);
                 }
                 WriteCopyObject(output, obj, objReferenced, objMarked, mainstr, Dircopia);
@@ -1339,7 +1342,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 foreach (Artech.Common.Properties.Property prop in viejo.Properties)
                 {
                     if (!prop.IsDefault)
-                           nuevo.SetPropertyValue(prop.Name, prop.Value);
+                        nuevo.SetPropertyValue(prop.Name, prop.Value);
                 }
                 nuevo.SetPropertyValue("Name", objName);
                 nuevo.SetPropertyValue("isMain", true);
@@ -1351,7 +1354,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if (parm != "")
                 {
-                    nuevo.Rules.Source =  parm + ";";
+                    nuevo.Rules.Source = parm + ";";
 
                     parm2 = parm.ToLower();
                     parm2 = parm2.Replace("parm", "");
@@ -1363,33 +1366,33 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     //parm = parm.PadLeft().PadRight();
                 };
 
-                nuevo.ProcedurePart.Source =    objName + "_core.call(" + parm2 + ") ";
+                nuevo.ProcedurePart.Source = objName + "_core.call(" + parm2 + ") ";
 
                 foreach (Variable v in viejo.Variables.Variables)
                 {
                     if (!v.IsStandard)
-                             nuevo.Variables.Add(v);
+                        nuevo.Variables.Add(v);
                 }
                 try
                 {
                     output.AddWarningLine("Create new: " + nuevo.Name + " Protocol: " + callProtocol);
-                   // CleanKBHelper.CleanKBObjectVariables(nuevo);
+                    // CleanKBHelper.CleanKBObjectVariables(nuevo);
                     nuevo.Save();
                 }
                 catch (Exception e)
                 {
                     output.AddErrorLine(e.Message + " - " + e.InnerException);
                     output.AddErrorLine("Can't save object" + objName + ". Try to save commented");
-                    output.AddLine("KBDoctor","Parm = " + parm + " Parm2= " + parm2);
+                    output.AddLine("KBDoctor", "Parm = " + parm + " Parm2= " + parm2);
 
-                    nuevo.ProcedurePart.Source = "//"+ objName + "_core.call(" + parm2 + ") ";
+                    nuevo.ProcedurePart.Source = "//" + objName + "_core.call(" + parm2 + ") ";
                     nuevo.Rules.Source = "//" + parm + ";";
                     nuevo.Save();
 
 
                 };
             }
-            output.EndSection("Split Main Object",true);
+            output.EndSection("Split Main Object", true);
         }
 
         public static void CalculateCheckSum()
@@ -1399,7 +1402,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             SpecificationListHelper helper = new SpecificationListHelper(kbserv.CurrentModel.Environment.TargetModel);
 
             string title = "KBDoctor - Generate objects in text format";
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
             string newDir = KBDoctorHelper.ObjComparerDirectory(kbserv) + @"\OBJ-" + fechahora + @"\";
@@ -1418,7 +1421,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     iObj += 1;
                     if ((iObj % 200) == 0)
                     {
-                        output.AddLine("KBDoctor",obj.GetFullName());
+                        output.AddLine("KBDoctor", obj.GetFullName());
                     }
                     WriteObjectToTextFile(obj, newDir);
                 }
@@ -1441,8 +1444,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 File.Delete(outputFile);
             }
 
-            output.StartSection("KBDoctor",title);
-            output.AddLine("KBDoctor","Generate Location.xml template in " + outputFile);
+            output.StartSection("KBDoctor", title);
+            output.AddLine("KBDoctor", "Generate Location.xml template in " + outputFile);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.WriteStartElement("GXLocations");
@@ -1664,7 +1667,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             while (tabs-- > 0)
                 file.Write('\t');
         }
-        
+
         private static void WriteCopyObject(IOutputService output, KBObject obj, StringCollection tableOperation, KBObjectCollection objMarked, string mainstr, string Dircopia)
         {
             IKBService kbserv = UIServices.KB;
@@ -1672,8 +1675,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             if (!(obj is Procedure) && !(obj is WorkPanel) && !(tableOperation.Contains(linea)))
             {
-                output.AddLine("KBDoctor",linea);
-                output.AddLine("KBDoctor",String.Format(@"XCOPY /y/d {0}{1}.js  %{2}%\ ", Dircopia, obj.Name, mainstr));
+                output.AddLine("KBDoctor", linea);
+                output.AddLine("KBDoctor", String.Format(@"XCOPY /y/d {0}{1}.js  %{2}%\ ", Dircopia, obj.Name, mainstr));
                 tableOperation.Add(linea);
             }
 
@@ -1704,7 +1707,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -1728,7 +1731,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     if ((obj.Name == objName) && (length > 200000))
                     {
                         writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, length.ToString("N0") });
-                        output.AddLine("KBDoctor",fileName);
+                        output.AddLine("KBDoctor", fileName);
                     }
 
                 }
@@ -1765,7 +1768,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                     if (isGenerated(obj))
                     {
-                        output.AddLine("KBDoctor",obj.Name);
+                        output.AddLine("KBDoctor", obj.Name);
 
                         string source = ObjectSource(obj);
                         source = Functions.RemoveEmptyLines(source);
@@ -1817,7 +1820,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
         public static void EditReviewObjects()
         {
             API.InitializeIniFile(UIServices.KB.CurrentKB);
-            string filename = UIServices.KB.CurrentKB.UserDirectory + "\\KBDoctor.ini"   ;
+            string filename = UIServices.KB.CurrentKB.UserDirectory + "\\KBDoctor.ini";
             Process.Start("notepad.exe", filename);
 
         }
@@ -1897,16 +1900,16 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         string source = ObjectSource(obj);
                         string newSource = source;
 
-                        output.AddLine("KBDoctor","Object " + obj.Name);
-                        
+                        output.AddLine("KBDoctor", "Object " + obj.Name);
+
                         string callers = ChangeUDPCallWhenNecesary(obj);
-                       // CleanKBHelper.CleanKBObjectVariables(obj);
+                        // CleanKBHelper.CleanKBObjectVariables(obj);
                         //Cambio expresiones regulares
                         for (int i = 0; i < 9; i++)
                         {
                             newSource = re4[i].Replace(newSource, re4Replace[i]);
                         }
-                        
+
                         //Solo cambio si NO tiene codigo nativo. Cambiar codigo nativo puede traer lios. 
                         if (!(newSource.ToLower().Contains("java") || newSource.ToLower().Contains("csharp")))
                         {
@@ -1919,14 +1922,14 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                             {
                                 try
                                 {
-                                    output.AddLine("KBDoctor","..Saving.." + obj.Name);
+                                    output.AddLine("KBDoctor", "..Saving.." + obj.Name);
                                     SaveNewSource(obj, newSource);
                                 }
                                 catch (Exception e)
                                 {
                                     output.AddErrorLine(e.Message);
                                     output.AddErrorLine("========= newsource ===============");
-                                    output.AddLine("KBDoctor",newSource);
+                                    output.AddLine("KBDoctor", newSource);
                                     success = false;
                                 };
 
@@ -1976,7 +1979,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 p.Save();
             }
         }
-        
+
         private static string ReplaceOneLegacy(string myString, string v)
         {
             //IOutputService output = CommonServices.Output;
@@ -2013,13 +2016,12 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
         public static void ObjectsWithConstants()
         {
             IKBService kbserv = UIServices.KB;
-            IOutputService output = CommonServices.Output;
+         //   IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Objects with Constants";
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-
-            output.StartSection("KBDoctor",title);
-
+            KBDoctorOutput.StartSection(title);
+            
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Object", "Description", "Line", "Constant" });
@@ -2035,16 +2037,40 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             ParserInfo parserInfo;
 
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+
             {
                 Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
-         //       Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
 
                 if (source != null)
                 {
+                    
                     parserInfo = new ParserInfo(source);
 
+
+                    var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+                    if (parser.Validate(info, source.Source))
+                    {
+                        Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                        AttributeTree at = new AttributeTree(obj.Model);
+                        AttributeTree.Dependencies dep = new AttributeTree.Dependencies(obj.Model,at);
+                        AttributeTree.ParseSource(paramRootNode, obj.Model, dep);
+                        KBDoctorOutput.Message(dep.Items.ToString());
+                        //AttributeTree.ParseSource2(paramRootNode, obj.Model, dep);
+                    }
+
+                  /*  foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
+                    {
+                        if (token.Token == 3 && token.Word.Length > 3)
+                            writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, token.Row.ToString(), token.Word });
+
+                    }*/
+                    
+                   
                 }
             }
+            writer.AddFooter();
+            writer.Close();
         }
 
         public static void CountTableAccess()
@@ -2056,7 +2082,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -2069,25 +2095,25 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 if (Functions.isRunable(obj))
 
                 {
-                    output.AddLine("KBDoctor",obj.Name);
+                    output.AddLine("KBDoctor", obj.Name);
                     int updaters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
-                                     where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                     where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
-                                     select model.Objects.Get(r.To)).ToList().Count;
+                                    where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                    where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
+                                    select model.Objects.Get(r.To)).ToList().Count;
                     int inserters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
-                                    where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                    where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
-                                    select model.Objects.Get(r.To)).ToList().Count;
-                    int deleters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
                                      where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                     where ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo)
+                                     where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
                                      select model.Objects.Get(r.To)).ToList().Count;
-                    int readers = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                    int deleters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
                                     where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                    where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
+                                    where ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo)
                                     select model.Objects.Get(r.To)).ToList().Count;
-                    int total = updaters + inserters + deleters + readers; 
-                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.TypeDescriptor.Name, obj.Description, obj.Module.Name, updaters.ToString(), inserters.ToString(), deleters.ToString(), readers.ToString() , total.ToString()});
+                    int readers = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                   where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                   where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
+                                   select model.Objects.Get(r.To)).ToList().Count;
+                    int total = updaters + inserters + deleters + readers;
+                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.TypeDescriptor.Name, obj.Description, obj.Module.Name, updaters.ToString(), inserters.ToString(), deleters.ToString(), readers.ToString(), total.ToString() });
 
                 }
 
@@ -2100,7 +2126,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.EndSection("KBDoctor", title, success);
 
         }
- 
+
         public static void ObjectsRefactoringCandidates()
         {
             IKBService kbserv = UIServices.KB;
@@ -2108,11 +2134,11 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string title = "KBDoctor - Refactoring candidates";
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module","Folder", "Parm/IN:OUT:", "#Parameters", "Code commented?", "% Comments", "# Comments", "# Lines", "Max Nest", "Longest Code Block", "Cyclomatic Complexity", "Candidate", "Complexity Index" });
+            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module", "Folder", "Parm/IN:OUT:", "#Parameters", "Code commented?", "% Comments", "# Comments", "# Lines", "Max Nest", "Longest Code Block", "Cyclomatic Complexity", "Candidate", "Complexity Index" });
 
             int ComplexityIndexTotal = 0;
             int ObjectsTotal = 0;
@@ -2124,7 +2150,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 {
                     if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                     {
-                        output.AddLine("KBDoctor",obj.Name);
+                        output.AddLine("KBDoctor", obj.Name);
 
                         string source = Functions.ObjectSourceUpper(obj);
                         source = Functions.RemoveEmptyLines(source);
@@ -2159,7 +2185,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         codeCommented = codeCommented.Replace(">", "");
                         codeCommented = codeCommented.Replace("<", "");
 
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, obj.Module.Name , folder, ParmINOUT, parametersCount.ToString(), codeCommented, PercentComment.ToString("0"), linesComment.ToString(), linesSource.ToString(), MaxNestLevel.ToString(), MaxCodeBlock.ToString(), ComplexityLevel.ToString(), Candidate, ComplexityIndex.ToString() });
+                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, obj.Module.Name, folder, ParmINOUT, parametersCount.ToString(), codeCommented, PercentComment.ToString("0"), linesComment.ToString(), linesSource.ToString(), MaxNestLevel.ToString(), MaxCodeBlock.ToString(), ComplexityLevel.ToString(), Candidate, ComplexityIndex.ToString() });
                         ObjectsTotal += 1;
                         ComplexityIndexTotal += ComplexityIndex;
                     }
@@ -2204,7 +2230,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -2311,7 +2337,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             bool success = true;
             output.EndSection("KBDoctor", title, success);
         }
-        
+
         public static void ObjectsUDPCallables()
         {
             IKBService kbserv = UIServices.KB;
@@ -2321,7 +2347,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             string callers = "";
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -2339,7 +2365,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
-                output.AddLine("KBDoctor",obj.Name);
+                output.AddLine("KBDoctor", obj.Name);
                 callers = ChangeUDPCallWhenNecesary(obj);
 
                 if (callers != "")
@@ -2408,7 +2434,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 if (sourceWOComments.Contains(callAux))
                 {
                     isInvokedWithCall = true;
-                    output.AddLine("KBDoctor",objRef.Name + " ---> " + obj.Name);
+                    output.AddLine("KBDoctor", objRef.Name + " ---> " + obj.Name);
                     callers += " " + Functions.linkObject(objRef);
 
                     ReplaceCallForUdpInObject(objRef, obj.Name);
@@ -2432,8 +2458,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             if (source != sourcemodified)
             {
                 SaveNewSource(obj, sourcemodified);
-                output.AddLine("KBDoctor","=====================================");
-                output.AddLine("KBDoctor","Modified .. " + obj.Name);
+                output.AddLine("KBDoctor", "=====================================");
+                output.AddLine("KBDoctor", "Modified .. " + obj.Name);
                 //output.AddLine("KBDoctor",sourcemodified);
                 modified = true;
             }
@@ -2524,7 +2550,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                 for (int i = 0; i < interfazCallerObject.Count; i++)
                                 {
                                     if (interfazCallerObject[i] != interfazCalledObject[i])
-                                        output.AddLine("KBDoctor","Diferencia: " + line + " Parametro: " + i.ToString() + " - " + interfazCallerObject[i] + "-" + interfazCalledObject[i]);
+                                        output.AddLine("KBDoctor", "Diferencia: " + line + " Parametro: " + i.ToString() + " - " + interfazCallerObject[i] + "-" + interfazCalledObject[i]);
                                 }
                             }
                         }
@@ -2577,7 +2603,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                 //output.AddLine("KBDoctor","__________x______________" + TypeOfAttribute((Artech.Genexus.Common.Objects.Attribute)att));
                                 if (type == "")
                                 {
-                                    output.AddLine("KBDoctor","__________no se pudo______________" + substring);
+                                    output.AddLine("KBDoctor", "__________no se pudo______________" + substring);
                                 }
                             }
                         }
@@ -2657,7 +2683,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             return typeOfParm;
         }
-        
+
         private static int CalculateComplexityIndex(int MaxCodeBlock, int MaxNestLevel, int ComplexityLevel, string ParmINOUT)
         {
             int ComplexityIndex = 0;
@@ -2767,7 +2793,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 MaxCodeBlock = (MaxCodeBlock <= countLine) ? countLine : MaxCodeBlock;
             }
         }
-        
+
         public static void ListProcedureCallWebPanelTransaction()
         {
             IKBService kbserv = UIServices.KB;
@@ -2776,7 +2802,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -2792,7 +2818,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         if ((objRef != null) && (objRef is Transaction || objRef is WorkPanel || objRef is WebPanel))
                         {
                             writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, Functions.linkObject(objRef), objRef.Description });
-                            output.AddLine("KBDoctor",obj.Name + " => " + objRef.Name);
+                            output.AddLine("KBDoctor", obj.Name + " => " + objRef.Name);
                         }
                     }
                 }
@@ -2892,7 +2918,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 }
             }
         }
-        
+
         public static void ObjectsWithVarNotBasedOnAtt()
         {
             IKBService kbserv = UIServices.KB;
@@ -2901,51 +2927,51 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Picture" , "Attribute", "Domain" });
+            writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Picture", "Attribute", "Domain" });
             string type = "";
             string name = "";
 
             //All useful objects are added to a collection
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
-               
+
 
                 Boolean SaveObj = false;
                 if (isGenerated(obj) && (/*obj is Transaction || obj is WebPanel || obj is WorkPanel ||*/ obj is Procedure))
                 {
-                    output.AddLine("KBDoctor","Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
-                    string pic2 = (string) obj.GetPropertyValue("ATT_PICTURE");
-      
+                    output.AddLine("KBDoctor", "Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
+                    string pic2 = (string)obj.GetPropertyValue("ATT_PICTURE");
+
 
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     if (vp != null)
                     {
                         foreach (Variable v in vp.Variables)
                         {
-                              if ((!v.IsStandard))
+                            if ((!v.IsStandard))
                             {
                                 string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
                                 string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
 
-                                string picture = (string) v.GetPropertyValue("ATT_PICTURE");
+                                string picture = (string)v.GetPropertyValue("ATT_PICTURE");
 
                                 if (attname == "" && domname == "")
-                                { 
+                                {
 
-                               if ( v.Name.ToLower() == "archivo" && v.Type == eDBType.CHARACTER && v.Length == 50)
-                                    v.DomainBasedOn = Functions.DomainByName("Archivo");
+                                    if (v.Name.ToLower() == "archivo" && v.Type == eDBType.CHARACTER && v.Length == 50)
+                                        v.DomainBasedOn = Functions.DomainByName("Archivo");
 
-                                if ( v.Name.ToLower() == "in" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
-                                    v.DomainBasedOn = Functions.DomainByName("XMLContenido");
+                                    if (v.Name.ToLower() == "in" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
+                                        v.DomainBasedOn = Functions.DomainByName("XMLContenido");
 
-                                if ( v.Name.ToLower() == "out" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
-                                    v.DomainBasedOn = Functions.DomainByName("XMLContenido");
+                                    if (v.Name.ToLower() == "out" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
+                                        v.DomainBasedOn = Functions.DomainByName("XMLContenido");
 
-                                if (v.DomainBasedOn != null)
+                                    if (v.DomainBasedOn != null)
                                     {
                                         string vname = v.Name.ToLower();
                                         writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), v.Name, picture, attname, domname });
@@ -2969,7 +2995,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             bool success = true;
             output.EndSection("KBDoctor", title, success);
         }
-        
+
         public static string VariablesNotBasedAttributesOrDomain(KBObject obj)
         {
             IKBService kbserv = UIServices.KB;
@@ -2993,7 +3019,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             }
             return variables;
         }
-        
+
         public static void AssignDomainToVariable(object[] parameters)
         {
             IKBService kbserv = UIServices.KB;
@@ -3121,7 +3147,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
 
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -3342,7 +3368,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string varname = "";
             string remove = "";
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
@@ -3356,7 +3382,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if ((vp != null) && isGenerated(obj))
                 {
-                    output.AddLine("KBDoctor","Procesing.." + obj.Name);
+                    output.AddLine("KBDoctor", "Procesing.." + obj.Name);
                     varsNotUsed = "";
                     foreach (Variable v in vp.Variables)
                     {
@@ -3440,7 +3466,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 Regex paramReg = new Regex(varName + @"\W+", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 reglas = myReg.Replace(reglas, "");
                 reglas = myReg2.Replace(reglas, "");
-                Match match = paramReg.Match(reglas);
+                System.Text.RegularExpressions.Match match = paramReg.Match(reglas);
                 if (match.Success)
                 {
                     usedvar = true;
@@ -3462,7 +3488,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
         {
             string title = "KBDoctor - Clean variables not used by DVelop Software.";
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             int totalvarremoved = 0;
             KBDoctorCore.Sources.API.CleanAllKBObjectVariables(UIServices.KB.CurrentKB, output);
@@ -3503,7 +3529,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string varname = "";
             string remove = "";
 
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
@@ -3515,7 +3541,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             {
                 if (isGenerated(obj))
                 {
-                    output.AddLine("KBDoctor","Procesing.." + obj.Name);
+                    output.AddLine("KBDoctor", "Procesing.." + obj.Name);
 
                     List<KBObjectPart> parts = new List<KBObjectPart>() { obj.Parts[typeof(WinFormPart).GUID] };
                     parts.ForEach(part =>
@@ -3544,7 +3570,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.EndSection("KBDoctor", title, success);
 
         }
-        
+
         public static void BuildObjectAndReferences()
         {
             IKBService kbserv = UIServices.KB;
@@ -3553,7 +3579,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             bool success = true;
             string title = "KBDoctor - Build Objects with references";
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -3572,7 +3598,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if (KBObjectHelper.IsSpecifiable(obj))
                 {
-            //        lista += obj.Name + ";";
+                    //        lista += obj.Name + ";";
                     //output.Add(obj.QualifiedName.ObjectName.ToString() + ";");
 
                     if (!objToBuild.Contains(obj))
@@ -3587,7 +3613,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             foreach (KBObject obj2 in objToBuild)
             { lista += obj2.Name + ";"; };
 
-           
+
             writer.AddTableData(new string[] { lista });
             writer.AddFooter();
             writer.Close();
@@ -3600,7 +3626,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 Application.DoEvents();
             } while (GenexusUIServices.Build.IsBuilding);
 
-            output.AddLine("KBDoctor",lista);
+            output.AddLine("KBDoctor", lista);
             output.EndSection("KBDoctor", title, true);
 
 
@@ -3608,7 +3634,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
         public static void BuildObjectWithProperty()
         {
-          
+
 
             IKBService kbserv = UIServices.KB;
             KBModel kbModel = UIServices.KB.CurrentModel;
@@ -3616,7 +3642,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             bool success = true;
             string title = "KBDoctor - Build Objects with property";
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             // Procedure proc = new 
@@ -3638,22 +3664,22 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                        output.AddLine("KBDoctor",obj.Name);
             }
             */
-            output.AddLine("KBDoctor","===== ENCRYPT URL PARAMETERS ========");
+            output.AddLine("KBDoctor", "===== ENCRYPT URL PARAMETERS ========");
             foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("USE_ENCRYPTION", "SITE"))
             {
-                output.AddLine("KBDoctor",obj.Name);
+                output.AddLine("KBDoctor", obj.Name);
             }
 
-            output.AddLine("KBDoctor","===== SOAP ========");
+            output.AddLine("KBDoctor", "===== SOAP ========");
             foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "SOAP"))
             {
-                output.AddLine("KBDoctor",obj.Name);
+                output.AddLine("KBDoctor", obj.Name);
             }
 
-            output.AddLine("KBDoctor","===== HTTP ========");
+            output.AddLine("KBDoctor", "===== HTTP ========");
             foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "HTTP"))
             {
-                output.AddLine("KBDoctor",obj.Name);
+                output.AddLine("KBDoctor", obj.Name);
             }
 
             //pd.GetByPropertyValue wbp in WebPanel.GetPropertiesReferences() .GetByPropertyValue)
@@ -3711,12 +3737,12 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
 
-            string sw="" , sw2 = "";
+            string sw = "", sw2 = "";
             SortedDictionary<string, string> sw3 = new SortedDictionary<string, string>();
-       //     KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-       //     writer.AddHeader(title);
+            //     KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            //     writer.AddHeader(title);
             int numObj = 0;
 
             //writer.AddTableHeader(new string[] { "Type", "Object", "Module", "Parm" });
@@ -3730,7 +3756,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     bool tieneInterfaz = false;
                     if (obj is DataProvider && obj.GetPropertyValue<bool>("idISWEBSERVICE"))
                         tieneInterfaz = true;
-                    if (obj is Transaction || obj is WebPanel ) 
+                    if (obj is Transaction || obj is WebPanel)
                         tieneInterfaz = true;
                     if (obj.TypeDescriptor.Name == "MasterPage")
                         tieneInterfaz = false;
@@ -3739,9 +3765,9 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     bool isMain = obj.GetPropertyValue<bool>("IsMain");
                     if (obj is Procedure && isMain)
                     {
-                        qualifiedName = obj.QualifiedName.ModuleName + (obj.QualifiedName.ModuleName == ""?"a":".a")  + obj.QualifiedName.ObjectName; 
+                        qualifiedName = obj.QualifiedName.ModuleName + (obj.QualifiedName.ModuleName == "" ? "a" : ".a") + obj.QualifiedName.ObjectName;
                         tieneInterfaz = true;
-                    }   
+                    }
                     if (obj is WorkPanel && isMain)
                         tieneInterfaz = true;
 
@@ -3749,33 +3775,33 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         tieneInterfaz = true;
 
 
-                  //  string ruleparm = Functions.ExtractRuleParm(obj);
-                  //  ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
-                   // ruleparm = ruleparm.Replace(" ", "");
+                    //  string ruleparm = Functions.ExtractRuleParm(obj);
+                    //  ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
+                    // ruleparm = ruleparm.Replace(" ", "");
                     string callprotocol = obj.GetPropertyValueString("CALL_PROTOCOL");
                     if (callprotocol == "")
-                             callprotocol="Internal";
+                        callprotocol = "Internal";
 
                     if (tieneInterfaz)
                     {
-                       // if (obj is Procedure && isMain)
+                        // if (obj is Procedure && isMain)
 
-                     //   writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, ruleparm });
+                        //   writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, ruleparm });
                         //sw += obj.TypeDescriptor.Name + "\t" + obj.QualifiedName + "\t" + callprotocol  + "\t"  + ruleparm + "\r\n";
-                  //      sw2 += callprotocol+ "\t" + obj.Name + "\t" + qualifiedName + "\r\n";
+                        //      sw2 += callprotocol+ "\t" + obj.Name + "\t" + qualifiedName + "\r\n";
                         sw3[callprotocol + "\t" + obj.Name] = qualifiedName;
                     }
                     numObj += 1;
                     if ((numObj % 100) == 0)
-                        output.AddLine("KBDoctor",obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
+                        output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                 }
             }
-       //     writer.AddFooter();
-       //     writer.Close();
+            //     writer.AddFooter();
+            //     writer.Close();
 
             //KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-          
+
 
             string directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
             string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
@@ -3784,16 +3810,16 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             // System.IO.File.WriteAllText(fileName, sw);
 
 
- 
-           foreach (KeyValuePair<string, string> entry in sw3)
+
+            foreach (KeyValuePair<string, string> entry in sw3)
             {
                 sw2 += entry.Value + "\r\n";
             }
-            
+
 
             string fileName2 = directoryArg + @"\API3-" + fechahora + ".txt";
             System.IO.File.WriteAllText(fileName2, sw2);
-            output.AddLine("KBDoctor","URL/URI file generated in " + fileName2);
+            output.AddLine("KBDoctor", "URL/URI file generated in " + fileName2);
             output.EndSection("KBDoctor", title, success);
         }
 
@@ -3808,7 +3834,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             KBModel kbModel = kbserv.CurrentModel;
 
             string title = "KBDoctor - Objects updating attribute";
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -3827,36 +3853,38 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 string trnstring = "";
                 string updatetablestring = "";
-                string updateattstring = ""; 
-                if(tblName != "" && attName != "") { 
+                string updateattstring = "";
+                if (tblName != "" && attName != "")
+                {
                     Table t = Table.Get(kbModel, tblName);
                     Artech.Genexus.Common.Objects.Attribute att = Artech.Genexus.Common.Objects.Attribute.Get(kbModel, attName);
-                    if(att != null  && t != null) { 
+                    if (att != null && t != null)
+                    {
                         List<KBObject> updaters = API.ObjectsUpdatingTable(t, output);
 
                         List<KBObject> updatersAtt = API.ObjectsUpdateAttribute(updaters, att, output);
 
                         foreach (KBObject obj in updaters)
                         {
-                            if(obj is Transaction)
+                            if (obj is Transaction)
                             {
-                                
+
                                 trnstring += Functions.linkObject(obj) + " ";
                             }
                             else
                             {
                                 updatetablestring += Functions.linkObject(obj) + " ";
                             }
-                            output.AddLine("KBDoctor",obj.Name);
+                            output.AddLine("KBDoctor", obj.Name);
                         }
 
                         foreach (KBObject obj in updatersAtt)
                         {
                             updateattstring += Functions.linkObject(obj) + " ";
-                           // output.AddLine("KBDoctor",obj.Name);
+                            // output.AddLine("KBDoctor",obj.Name);
                         }
 
-                        writer.AddTableData(new string[] { Functions.linkObject(t), trnstring, updatetablestring, updateattstring});
+                        writer.AddTableData(new string[] { Functions.linkObject(t), trnstring, updatetablestring, updateattstring });
                         writer.AddFooter();
                         writer.Close();
 
@@ -3884,7 +3912,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IOutputService output = CommonServices.Output;
 
             string title = "KBDoctor - Objects with the same signature";
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -3934,7 +3962,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IOutputService output = CommonServices.Output;
 
             string title = "KBDoctor - Objects with the same signature associated to a transaction";
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -4181,20 +4209,20 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IOutputService output = CommonServices.Output;
 
             string title = "KBDoctor - TESTEO DE PARSER ";
-            output.StartSection("KBDoctor",title);
+            output.StartSection("KBDoctor", title);
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
-           
+
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
 
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
-            
-            writer.AddTableHeader(new string[] {"OBJECT", "COMMAND", "TOKEN", "Id", "Row"});
+
+            writer.AddTableHeader(new string[] { "OBJECT", "COMMAND", "TOKEN", "Id", "Row" });
 
 
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
@@ -4213,6 +4241,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
                     }
 
+                    /*
                     foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
                     {
                             string meaning = token_meaning[(TokensIds)token.Token] as string;
@@ -4224,7 +4253,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         {
                             writer.AddTableData(new string[] { "", "", meaning + "(" + token.Word + ")", token.Token.ToString() });
                         }
-                    }
+                    }*/
                 }
             }
             writer.AddFooter();
@@ -4233,7 +4262,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.EndSection("KBDoctor", title, success);
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
+
+
+        
     }
-
-
 }

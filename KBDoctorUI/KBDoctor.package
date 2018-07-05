@@ -185,12 +185,12 @@
               <Command refid="AttKeyVarchar"/>
             </Group>
           </Popup>
-           <Popup name ="Domains">
+          <Popup name ="Domains">
             <Group>
               <Command refid="ListDomain"/>
               <Command refid="ReplaceDomain"/>
             </Group>
-            </Popup>
+          </Popup>
 
           <Popup name ="Tables">
             <Command refid="ListTables" />
@@ -212,7 +212,7 @@
               <Command refid="ReviewObjects" />
               <Command refid="EditReviewObjects" />
             </Group>
- 
+
             <Group >
               <Command refid="CalculateCheckSum"  />
               <Command refid="CompareLastOBJDirectory" />
@@ -253,14 +253,14 @@
           <Group id="KBstats" >
             <Popup name ="KB stats">
               <Command refid="ObjectsRefactoringCandidates" />
-               <Command refid="CountTableAccess" />
-               <Command refid="ListModulesStatistics" />
+              <Command refid="CountTableAccess" />
+              <Command refid="ListModulesStatistics" />
             </Popup>
           </Group>
           <Group id="CleanKB" >
             <Popup name ="Clean KB">
               <Command refid="AttWithoutBaseTable" />
-              <Command refid="ObjectsNotCalled"/>        
+              <Command refid="ObjectsNotCalled"/>
 
               <Command refid="CleanVarsNotUsed" />
               <Command refid="RemovableTransactions"/>
@@ -269,11 +269,12 @@
           <Group id="LastReports" >
             <Command refid="ListLastReports"  />
           </Group>
-          
+
           <Group id="AboutKBDoctor" >
             <Command refid="AboutKBDoctor"  />
             <Command refid="HelpKBDoctor" />
           </Group>
+
           <Group id="LABS" >
             <Popup name ="Labs">
               <Command refid="AddINParmRule"/>
@@ -299,46 +300,54 @@
               <Command refid="ResetWINForm"/>
               <Command refid="ObjectsNotReacheable"/>
               <Command refid="CleanKBAsMuchAsPossible"/>
-
-              <Command refid="ChangeCommitOnExit" />
-              <Command refid="ObjectsDiagnostics" />
-
-              <Popup name ="Themes" >
-                <Group>
-                  <Command refid="ClassNotInTheme" />
-                  <Command refid="ClassUsed" />
-                  <Command refid="ListClassUsed" />
-                </Group>
-              </Popup>
-              <Command refid="CountGeneratedByPattern"  />
-              <Command refid="ObjectsWithConstants" />
-              <Command refid="RenameAttributesAndTables"  />
-              <Command refid="GenerateSQLScripts"/>
-              <Command refid="GenerateGraph"/>
-              <Command refid="GenerateLocationXML" />
-              <Command refid="CleanObjects" />
-
-              <Command refid="AttUpdated"/>
-              <Command refid="ObjectsComplex" />
-              <Group>
-                <Command refid="GenerateGraph"/>
-              </Group>
-
-              <Command refid="ObjectsMainCalled"/>
-              <Group>
-                <Command refid="ChangeLegacyCode" />
-                <Command refid="EditLegacyCodeToReplace" />
-                <Command refid="UDPCallables"/>
-              </Group>
-              <Command refid="ReplaceNullCompatible"  />
               <Command refid="ListTableAttributesUsingDomain"/>
-              <Command refid ="TablesWidth"/>
+              <Command refid="ObjectsWithConstants" />
             </Popup>
           </Group>
-      </Popup>
+          <!--
+          <Group id="LABS2" >
+              <Popup>
+                <Command refid="ChangeCommitOnExit" />
+                <Command refid="ObjectsDiagnostics" />
+            
+                <Popup name ="Themes" >
+                  <Group>
+                    <Command refid="ClassNotInTheme" />
+                    <Command refid="ClassUsed" />
+                    <Command refid="ListClassUsed" />
+                  </Group>
+                </Popup>
+                <Command refid="CountGeneratedByPattern"  />
+                <Command refid="ObjectsWithConstants" />
+                <Command refid="RenameAttributesAndTables"  />
+                <Command refid="GenerateSQLScripts"/>
+                <Command refid="GenerateGraph"/>
+                <Command refid="GenerateLocationXML" />
+                <Command refid="CleanObjects" />
 
+                <Command refid="AttUpdated"/>
+                <Command refid="ObjectsComplex" />
+                <Group>
+                  <Command refid="GenerateGraph"/>
+                  <Command refid="ObjectsMainCalled"/>
+                  <Command refid="ChangeLegacyCode" />
+                  <Command refid="EditLegacyCodeToReplace" />
+                  <Command refid="UDPCallables"/>
+                </Group>
+                <Command refid="ReplaceNullCompatible"  />
+
+                <Command refid ="TablesWidth"/>
+              </Popup>
+
+          </Group>
+          -->
       </Popup>
+    </Popup>
     </Menu>
+  </Menus>
+
+</Package>
+     
 
     <!--
       <Menu type='context' id='KBConfigurationContext' package='4703F0A9-2AEB-4469-9466-25E2A56C7B6D'>
@@ -356,7 +365,5 @@
       </Menu>
       -->
 
-  </Menus>
 
-</Package>
 
