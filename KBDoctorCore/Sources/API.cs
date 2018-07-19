@@ -28,7 +28,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return;
         }
 
-
         //
         public static void PrepareCompareNavigations(KnowledgeBase KB, IOutputService output)
         {
@@ -102,28 +101,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs, out List<string[]> lineswriter)
         {
-            //PRUEBA /////////////////////////////////////////
-            /*
-                        const string KBDOCTOR_OUTPUTID = "KBDoctor";
-                        output.SelectOutput(KBDOCTOR_OUTPUTID);
-                        output.StartSection(KBDOCTOR_OUTPUTID, "Review_Objects", true); // "Review Objects");
-
-                        OutputError err = new OutputError("Error !! ", MessageLevel.Error);
-                        output.Add(KBDOCTOR_OUTPUTID, err);
-
-                        OutputError wrn = new OutputError("Warning!!", MessageLevel.Warning);
-                        output.Add(KBDOCTOR_OUTPUTID, wrn);
-
-                        output.EndSection(KBDOCTOR_OUTPUTID, "Review_Objects", true);
-                        output.UnselectOutput(KBDOCTOR_OUTPUTID);
-
-                        return;
-                        */
 
             const string KBDOCTOR_OUTPUTID = "KBDoctor";
             output.SelectOutput(KBDOCTOR_OUTPUTID);
-            // output.Clear();
-            //  output.StartSection(KBDOCTOR_OUTPUTID, "Review_Objects", "Review Objects");
 
             FileIniDataParser fileIniData = new FileIniDataParser();
             InitializeIniFile(KB);
@@ -290,6 +270,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         public static List<KBObject> ObjectsUpdatingTable(Table Table, IOutputService output)
         {
             return Objects.ObjectsUpdatingTable(Table);
+        }
+
+        public static bool ThemeClassesNotUsed(KnowledgeBase KB, IOutputService output, ThemeClass themeclass)
+        {
+            return Objects.ThemeClassesNotUsed(KB, output, themeclass);
         }
     }
 }

@@ -144,6 +144,9 @@ namespace Concepto.Packages.KBDoctor
 
             AddCommand(CommandKeys.AboutKBDoctor, new ExecHandler(ExecAboutKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             AddCommand(CommandKeys.HelpKBDoctor, new ExecHandler(ExecHelpKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
+            AddCommand(CommandKeys.ThemeClassesNotUsed, new ExecHandler(ExecThemeClassesNotUsed), new QueryHandler(QueryKBDoctorNoKB));
+
+
             //Labs
             AddCommand(CommandKeys.RenameAttributesAndTables, new ExecHandler(ExecRenameAttributesAndTables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CountGeneratedByPattern, new ExecHandler(ExecCountGeneratedByPattern), new QueryHandler(QueryKBDoctor));
@@ -1057,6 +1060,11 @@ namespace Concepto.Packages.KBDoctor
         {
             ObjectsHelper.CleanVarsNotUsed();
             return true;
+        }
+
+        public bool ExecThemeClassesNotUsed(CommandData cmdData)
+        {
+            return ObjectsHelper.ThemeClassesNotUsed();
         }
         #endregion
 
