@@ -2047,30 +2047,68 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     
                     parserInfo = new ParserInfo(source);
 
-
+                    /*
                     var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
                     if (parser.Validate(info, source.Source))
                     {
                         Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
                         AttributeTree at = new AttributeTree(obj.Model);
-                        AttributeTree.Dependencies dep = new AttributeTree.Dependencies(obj.Model,at);
-                        AttributeTree.ParseSource(paramRootNode, obj.Model, dep);
-                        KBDoctorOutput.Message(dep.Items.ToString());
+                        AttributeTree.CallTree dep = new AttributeTree.CallTree(obj.Model, at);
+                        AttributeTree.ParseSource2(paramRootNode, obj.Model, dep);
+                        // KBDoctorOutput.Message(dep.Items.ToString());
+
+                        dep.m_AttributeTree.ScanDependencies(obj.Model);
+                        foreach (AttributeTree.Dependency d in dep.Items)
+                            KBDoctorOutput.Message(d.ObjectName + " - " + d.Name + " type=" +d.Type);
                         //AttributeTree.ParseSource2(paramRootNode, obj.Model, dep);
                     }
-
-                  /*  foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
+                    */
+                   foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
                     {
-                        if (token.Token == 3 && token.Word.Length > 3)
+                        if (TokenIsConstant(token) ) 
+                        {
                             writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, token.Row.ToString(), token.Word });
-
-                    }*/
+                            KBDoctorOutput.Message(obj.Name + " has constant " + token.Word);
+                        }
+                    }
                     
                    
                 }
             }
+            KBDoctorOutput.EndSection(title);
+            
             writer.AddFooter();
             writer.Close();
+
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+        }
+
+        private static bool TokenIsConstant(TokenData token)
+        {
+            string tokenword = token.Word;
+
+
+            if (token.Token == 3 && token.Word.Length > 3 && (tokenword.Contains('"') || tokenword.Contains("'")))
+            {
+                return true;
+            }
+            else
+            {
+                decimal myDec;
+                var Result = decimal.TryParse(tokenword, out myDec);
+                if (Result)
+                {
+                    if (myDec > 9)
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
         }
 
         public static void CountTableAccess()

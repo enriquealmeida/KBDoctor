@@ -28,7 +28,7 @@ namespace Concepto.Packages.KBDoctor
 {
     public class AttributeTree 
     {
-        private Dependencies m_MyDependencies;
+        private CallTree m_MyDependencies;
         private Dictionary<EntityKey, bool> m_ParsedObjects;
         private HashSet<Artech.Genexus.Common.Objects.Attribute> m_AnalyzedAttributes;
         private HashSet<Artech.Genexus.Common.Objects.Attribute> m_AttributesToAnalyze;
@@ -163,7 +163,7 @@ namespace Concepto.Packages.KBDoctor
             }
         }
         */
-        private static void Analyze(Dependency m_Dependency, KBModel m_Model, Dependencies m_Dependencies, Dictionary<EntityKey, bool> m_ParsedObjects) //, K2BThreading Worker)
+        private static void Analyze(Dependency m_Dependency, KBModel m_Model, CallTree m_Dependencies, Dictionary<EntityKey, bool> m_ParsedObjects) //, K2BThreading Worker)
         {
             if (m_Dependency.KBObject == null)
                 return;
@@ -196,7 +196,7 @@ namespace Concepto.Packages.KBDoctor
         }
 
         private const int MaxParsedObjects = 10000;
-        private static void ParseObject(EntityKey entityKey, KBModel model, Dependencies dependencies, Dictionary<EntityKey, bool> parsedObjects, bool AnalyzeCallers)
+        private static void ParseObject(EntityKey entityKey, KBModel model, CallTree dependencies, Dictionary<EntityKey, bool> parsedObjects, bool AnalyzeCallers)
         {
             if (parsedObjects.ContainsKey(entityKey))
                 return;
@@ -241,9 +241,9 @@ namespace Concepto.Packages.KBDoctor
                 }
         }
 
-        private void DumpAllToFile(Dependencies Dependencies)
+        private void DumpAllToFile(CallTree Dependencies)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(Dependencies));
+            XmlSerializer serializer = new XmlSerializer(typeof(CallTree));
             TextWriter writer = new StreamWriter(@"c:\temp\kk.xml");
             serializer.Serialize(writer, Dependencies);
             writer.Close();
@@ -447,7 +447,7 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
-        private static void ParseAttribute(Artech.Genexus.Common.Objects.Attribute Attribute, KBModel model, Dependencies dependencies)
+        private static void ParseAttribute(Artech.Genexus.Common.Objects.Attribute Attribute, KBModel model, CallTree dependencies)
         {
             Dependency leftItem = dependencies.AddItem(new Dependency(Attribute, dependencies.m_AttributeTree));
             if (Attribute.Formula != null)
@@ -481,7 +481,7 @@ namespace Concepto.Packages.KBDoctor
                         dependencies.AddDependency(leftItem, rightItem, new KBObjectPosition(dv.DataViewStructure));
                     }
         }
-
+        /*
         public static void ParseSource(AbstractNode AbstractNode, KBModel model, Dependencies dependencies)
         {
             if (AbstractNode == null || AbstractNode.Node == null)
@@ -547,8 +547,75 @@ namespace Concepto.Packages.KBDoctor
                     break;
             }
         }
+        */
+        
+        public static void ParseSource2(AbstractNode AbstractNode, KBModel model, CallTree calltree)
+        {
+            if (AbstractNode == null || AbstractNode.Node == null)
+                return;
 
-        private static void CallStatement(AbstractNode AbstractNode, KBModel model, Dependencies dependencies)
+            switch (AbstractNode.Node.Token)
+            {
+                case (int)TokensIds.DTCLL: // Call object
+                    CallStatement(AbstractNode, model, calltree);
+                    break;
+                case (int)TokensIds.DTASG: // X = Y (Assignment)
+                case (int)TokensIds.DTAPL: // X += Y (Assignment plus)
+                case (int)TokensIds.DTAMI: // X -= Y (Assignment minus)
+                    AssignmentStatement((AssignmentNode)AbstractNode, model, calltree);
+                    break;
+
+                case (int)TokensIds.DTFIN: // for &x in collection
+                    {
+                        CommandBlockNode CmdBlock = (CommandBlockNode)AbstractNode;
+                        VariableNameNode VariableNode = (VariableNameNode)CmdBlock.LineParameters[0];
+                        AbstractNode CollectionNode = CmdBlock.LineParameters[1].Children.First();
+
+                        Artech.Genexus.Common.Variable Variable = VariableNode.Variable;
+
+                        if (CollectionNode is VariableNameNode || CollectionNode is ObjectPropertyNode)
+                        {
+                            ExpandStructureDependencies(GetStructureTypeReference(VariableNode, model), model, calltree, CollectionNode, GetNodeText(VariableNode), Dependency.Types.Variable, VariableNode.Part.KBObject, GetNodeText(CollectionNode), Dependency.Types.Variable, VariableNode.Part.KBObject);
+                            ExpandStructureDependencies(GetStructureTypeReference(VariableNode, model), model, calltree, VariableNode, GetNodeText(CollectionNode), Dependency.Types.Variable, VariableNode.Part.KBObject, GetNodeText(VariableNode), Dependency.Types.Variable, VariableNode.Part.KBObject);
+                        }
+                        else
+                        {
+                            // This code tries to avoid sending a warning when the GetMessages() method is invoked in a for/in loop
+                            string FunctionName = null;
+                            if (CollectionNode.ChildrenCount > 1)
+                            {
+                                CollectionNode = CollectionNode.Children.Skip(1).First();
+                                while (CollectionNode is ObjectPropertyNode || CollectionNode is ObjectMethodNode)
+                                    CollectionNode = CollectionNode.Children.First();
+                                if (CollectionNode is FunctionNode)
+                                    FunctionName = ((FunctionNode)CollectionNode).FunctionName;
+                                else if (CollectionNode is VariableNameNode)
+                                {
+                                    Artech.Genexus.Common.Variable CollectionVariable = ((VariableNameNode)CollectionNode).Variable;
+                                    if (CollectionVariable != null && CollectionVariable.Type == eDBType.GX_BUSCOMP)
+                                    {
+                                        if (CollectionNode.Children.Skip(1).First() is FunctionNode)
+                                            FunctionName = ((FunctionNode)CollectionNode.Children.Skip(1).First()).FunctionName;
+                                    }
+                                }
+                            }
+                            if (FunctionName != "getmessages")
+                                KBDoctorOutput.Warning(string.Format("Do not know how to handle collection '{1}' in '{0}' code block.", CmdBlock.Name, CollectionNode.Text), new SourcePosition(CollectionNode.Part, CollectionNode.Node.Row, CollectionNode.Node.CharPosition));
+                        }
+
+                        foreach (AbstractNode child in AbstractNode.Children)
+                            ParseSource2(child, model, calltree);
+                        break;
+                    }
+
+                default:
+                    foreach (AbstractNode child in AbstractNode.Children)
+                        ParseSource2(child, model, calltree);
+                    break;
+            }
+        }
+        
+        private static void CallStatement(AbstractNode AbstractNode, KBModel model, CallTree calltree)
         {
             bool CallVariable = false;
             KBObject program = null;
@@ -652,6 +719,125 @@ namespace Concepto.Packages.KBDoctor
                             Accessor = signatures[0].Parameters.Skip(parmNo - 1).First().Accessor;
 
                         if (Accessor == RuleDefinition.ParameterAccess.PARM_IN)
+                            ExpandStructureDependencies(parm, model, calltree, parmNo.ToString(), Dependency.Types.ProgramParameter, program, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject);
+                        else if (Accessor == RuleDefinition.ParameterAccess.PARM_OUT)
+                            ExpandStructureDependencies(parm, model, calltree, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject, parmNo.ToString(), Dependency.Types.ProgramParameter, program);
+                        else
+                        {
+                            ExpandStructureDependencies(parm, model, calltree, parmNo.ToString(), Dependency.Types.ProgramParameter, program, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject);
+                            ExpandStructureDependencies(parm, model, calltree, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject, parmNo.ToString(), Dependency.Types.ProgramParameter, program);
+                        }
+                    }
+                }
+            }
+            else if (!CallVariable)
+                KBDoctorOutput.Warning(string.Format("Unhandled call format: {0}.", AbstractNode.Text), new SourcePosition(AbstractNode.Part, AbstractNode.Node.Row, AbstractNode.Node.CharPosition));
+        }
+        /*
+        private static void CallStatement2(AbstractNode AbstractNode, KBModel model, CallTree calltree)
+        {
+            bool CallVariable = false;
+            KBObject program = null;
+            IEnumerable<AbstractNode> parameters = null;
+
+            KBDoctorOutput.StartSection("CallStatement");
+            if (AbstractNode is FunctionNode)
+            {
+                if (((FunctionNode)AbstractNode).FunctionName == "call")
+                {
+                    if (AbstractNode.Children.First().Node.Tag is KBObject)
+                    {
+                        // Call(pgmname[,params])
+                        program = (KBObject)AbstractNode.Children.First().Node.Tag;
+                        parameters = AbstractNode.Children.Skip(1);
+                    }
+                    else if (AbstractNode.Children.First() is VariableNameNode)
+                        CallVariable = true;
+                }
+                else
+                {
+                    // PgmName([params])
+                    program = (KBObject)(((FunctionNode)AbstractNode).Element.Name.Tag);
+                    parameters = AbstractNode.Children;
+                }
+            }
+            else if (AbstractNode is AssignmentNode || AbstractNode is ObjectMethodNode)
+            {
+                // Module1.Module2...XXXX([params])
+                // Module1.Module2...XXXX.Call([params])
+                // XXXX.Call([params])
+                AbstractNode stmt = AbstractNode.Children.Skip(1).First();
+                while (stmt is ObjectPropertyNode || stmt is ObjectMethodNode)
+                {
+                    if (stmt.Children.Skip(1).First().Text.ToLower() == "call")
+                    {
+                        parameters = stmt.Children.Skip(1).First().Children;
+                        stmt = stmt.Children.First();
+                    }
+                    else
+                        stmt = stmt.Children.Skip(1).First();
+                }
+                if (stmt is FunctionNode)
+                {
+                    FunctionNode FunctionNode = (FunctionNode)stmt;
+                    if (FunctionNode.FunctionName == "call")
+                    {
+                        AbstractNode pgm = AbstractNode.Children.First();
+                        while (pgm is ObjectPropertyNode || pgm is ObjectMethodNode)
+                        {
+                            if (pgm.Children.Skip(1).First().Text.ToLower() == "call")
+                            {
+                                parameters = pgm.Children.Skip(1).First().Children;
+                                pgm = pgm.Children.First();
+                            }
+                            else
+                                pgm = pgm.Children.Skip(1).First();
+                        }
+                        if (pgm is UnknownNode)
+                            program = (KBObject)(((UnknownNode)pgm).Element.Tag);
+                        else if (pgm is AttributeNameNode)
+                            program = (KBObject)(((AttributeNameNode)pgm).Node.Tag);
+                    }
+                    else
+                        program = (KBObject)FunctionNode.Element.Name.Tag;
+                    parameters = stmt.Children;
+                }
+                else if (stmt is AttributeNameNode)
+                    program = (KBObject)(((AttributeNameNode)stmt).Node.Tag);
+                else if (stmt is UnknownNode)
+                    program = (KBObject)(((UnknownNode)stmt).Node.Tag);
+            }
+            else if (AbstractNode is RuleNode)
+            {
+                program = (KBObject)(((RuleNode)AbstractNode).Element.Name.Tag);
+                parameters = AbstractNode.Children;
+            }
+
+            if (program != null && parameters != null)
+            {
+                List<Signature> signatures = new List<Signature>();
+                if (!SourceHelper.LoadSignature(program.Parts.Get<RulesPart>(), signatures) || signatures.Count < 1)
+                {
+                    //K2BOutput.Message(new OutputWarning(new Message(string.Format("Cannot get parameter definition for {0} or no parameter definition found.", program.GetFullName())), new SourcePosition(AbstractNode.Part, AbstractNode.Node.Row, AbstractNode.Node.CharPosition)));
+                    signatures = new List<Signature>();
+                    signatures.Add(new Signature(program, new RuleDefinition("")));
+                }
+                int parmNo = 0;
+                foreach (AbstractNode parm in parameters)
+                {
+                    parmNo++;
+                    if (Dependency.DependableNode(parm))
+                    {
+                        AbstractNode ReferenceNode = LeftMostNode(parm);
+                        Dependency.Types ReferenceNodeType = (Dependency.Types)ReferenceNode.Node.Token;
+
+                        SourcePosition SourcePosition = new SourcePosition(ReferenceNode.Part, ReferenceNode.Node.Row, ReferenceNode.Node.CharPosition);
+
+                        RuleDefinition.ParameterAccess Accessor = RuleDefinition.ParameterAccess.PARM_INOUT;
+                        if (signatures[0].ParametersCount >= parmNo)
+                            Accessor = signatures[0].Parameters.Skip(parmNo - 1).First().Accessor;
+                        
+                        if (Accessor == RuleDefinition.ParameterAccess.PARM_IN)
                             ExpandStructureDependencies(parm, model, dependencies, parmNo.ToString(), Dependency.Types.ProgramParameter, program, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject);
                         else if (Accessor == RuleDefinition.ParameterAccess.PARM_OUT)
                             ExpandStructureDependencies(parm, model, dependencies, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject, parmNo.ToString(), Dependency.Types.ProgramParameter, program);
@@ -660,19 +846,21 @@ namespace Concepto.Packages.KBDoctor
                             ExpandStructureDependencies(parm, model, dependencies, parmNo.ToString(), Dependency.Types.ProgramParameter, program, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject);
                             ExpandStructureDependencies(parm, model, dependencies, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject, parmNo.ToString(), Dependency.Types.ProgramParameter, program);
                         }
+                        
                     }
                 }
             }
             else if (!CallVariable)
                 KBDoctorOutput.Warning(string.Format("Unhandled call format: {0}.", AbstractNode.Text), new SourcePosition(AbstractNode.Part, AbstractNode.Node.Row, AbstractNode.Node.CharPosition));
         }
+        */
 
-        private static void ParseFormula(AbstractNode AbstractNode, AbstractNode AttributeNode, KBModel model, Dependencies dependencies)
+        private static void ParseFormula(AbstractNode AbstractNode, AbstractNode AttributeNode, KBModel model, CallTree dependencies)
         {
             AssignmentStatement(AttributeNode, AbstractNode, model, dependencies);
         }
 
-        private static void ParseRules(AbstractNode AbstractNode, KBModel model, Dependencies dependencies)
+        private static void ParseRules(AbstractNode AbstractNode, KBModel model, CallTree dependencies)
         {
             if (AbstractNode == null)
                 return;
@@ -770,7 +958,7 @@ namespace Concepto.Packages.KBDoctor
                 ParseRules(child, model, dependencies);
         }
 
-        private static void AssignmentStatement(AbstractNode LeftNode, AbstractNode RightNode, KBModel model, Dependencies dependencies)
+        private static void AssignmentStatement(AbstractNode LeftNode, AbstractNode RightNode, KBModel model, CallTree dependencies)
         {
             Dependency.Types LeftType;
             StructureTypeReference LeftStructureTypeReference = GetStructureTypeReference(LeftNode, model, out LeftType);
@@ -814,7 +1002,7 @@ namespace Concepto.Packages.KBDoctor
                 ExpandStructureDependencies(LeftStructureTypeReference, model, dependencies, RightNode, GetNodeText(LeftNode), LeftType, LeftNode.Part.KBObject, GetNodeText(RightNode), Dependency.Types.Variable, LeftNode.Part.KBObject);
         }
 
-        private static void UDPAssignment(AbstractNode RightNode, AbstractNode LeftNode, StructureTypeReference LeftStructureTypeReference, KBModel model, Dependencies dependencies)
+        private static void UDPAssignment(AbstractNode RightNode, AbstractNode LeftNode, StructureTypeReference LeftStructureTypeReference, KBModel model, CallTree dependencies)
         {
             AbstractNode UdpObjectNode = RightNode;
             IEnumerable<AbstractNode> UdpParameters = RightNode.Children;
@@ -856,7 +1044,7 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
-        private static void AssignmentStatement(AssignmentNode assgn, KBModel model, Dependencies dependencies)
+        private static void AssignmentStatement(AssignmentNode assgn, KBModel model, CallTree dependencies)
         {
             AbstractNode LeftNode, RightNode;
             if (assgn.Left.Node == null)
@@ -964,17 +1152,17 @@ namespace Concepto.Packages.KBDoctor
             return Token;
         }
 
-        private static void ExpandStructureDependencies(AbstractNode Node, KBModel model, Dependencies dependencies, string left, Dependency.Types? leftType, KBObject leftObject, string right, Dependency.Types? rightType, KBObject rightObject)
+        private static void ExpandStructureDependencies(AbstractNode Node, KBModel model, CallTree dependencies, string left, Dependency.Types? leftType, KBObject leftObject, string right, Dependency.Types? rightType, KBObject rightObject)
         {
             ExpandStructureDependencies(GetStructureTypeReference(Node, model), model, dependencies, left, leftType, leftObject, right, rightType, rightObject, Node.Part, Node.Node.Row, Node.Node.CharPosition);
         }
 
-        private static void ExpandStructureDependencies(StructureTypeReference StructureReference, KBModel model, Dependencies dependencies, AbstractNode Node, string left, Dependency.Types? leftType, KBObject leftObject, string right, Dependency.Types? rightType, KBObject rightObject)
+        private static void ExpandStructureDependencies(StructureTypeReference StructureReference, KBModel model, CallTree dependencies, AbstractNode Node, string left, Dependency.Types? leftType, KBObject leftObject, string right, Dependency.Types? rightType, KBObject rightObject)
         {
             ExpandStructureDependencies(StructureReference, model, dependencies, left, leftType, leftObject, right, rightType, rightObject, Node.Part, Node.Node.Row, Node.Node.CharPosition);
         }
 
-        private static void ExpandStructureDependencies(StructureTypeReference StructureReference, KBModel model, Dependencies dependencies, string left, Dependency.Types? leftType, KBObject leftObject, string right, Dependency.Types? rightType, KBObject rightObject, KBObjectPart part, int row, int col)
+        private static void ExpandStructureDependencies(StructureTypeReference StructureReference, KBModel model, CallTree dependencies, string left, Dependency.Types? leftType, KBObject leftObject, string right, Dependency.Types? rightType, KBObject rightObject, KBObjectPart part, int row, int col)
         {
             Dependency leftItem = dependencies.AddItem(new Dependency(left, leftType, leftObject, dependencies.m_AttributeTree));
             Dependency rightItem = dependencies.AddItem(new Dependency(right, rightType, rightObject, dependencies.m_AttributeTree));
@@ -1139,12 +1327,12 @@ namespace Concepto.Packages.KBDoctor
             return LeftMostNode(Token.Children.First());
         }
 
-        public class Dependencies
+        public class CallTree
         {
             private KBModel m_Model;
             public readonly AttributeTree m_AttributeTree;
 
-            public Dependencies(KBModel model, AttributeTree AttributeTree)
+            public CallTree(KBModel model, AttributeTree AttributeTree)
             {
                 m_Model = model;
                 this.m_AttributeTree = AttributeTree;
@@ -1616,6 +1804,7 @@ namespace Concepto.Packages.KBDoctor
             public XMLObject(KBObject kbobject)
             {
                 m_KBObject = kbobject;
+                
             }
             private XMLObject() { }
 
@@ -1952,5 +2141,9 @@ namespace Concepto.Packages.KBDoctor
                 UdpParameter,
             }
         }
+    }
+
+    public class CallTree
+    {
     }
 }

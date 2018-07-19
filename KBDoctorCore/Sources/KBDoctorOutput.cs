@@ -13,20 +13,20 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(section);
         }
 
-        internal static void Error(string v)
+        public static void Error(string v)
         {
             IOutputService output = NewKBDoctorOutput();
             output.AddErrorLine(v);
         }
 
-        internal static void InternalError(string v, Exception e)
+        public static void InternalError(string v, Exception e)
         {
             IOutputService output = NewKBDoctorOutput();
             output.AddErrorLine("Internal error: + v " + e.Message  );
             output.AddErrorLine(e.StackTrace);
         }
 
-        internal static void EndSection(string section)
+        public static void EndSection(string section)
         {
             IOutputService output = NewKBDoctorOutput();
             output.EndSection(section, true);
@@ -40,7 +40,7 @@ namespace Concepto.Packages.KBDoctor
         }
 
 
-        internal static void Warning(string v, SourcePosition sourcePosition)
+        public static void Warning(string v, SourcePosition sourcePosition)
         {
             IOutputService output = NewKBDoctorOutput();
             output.AddLine(v);
