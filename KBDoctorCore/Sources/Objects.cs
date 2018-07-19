@@ -443,8 +443,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         internal static List<KBObject> ParmWOInOut(KnowledgeBase KB, IOutputService output)
         {
             string title = "KBDoctor - Objects with parameters without IN:/OUT:/INOUT:";
-            output.StartSection("KBDoctor",title);
-            string rec = ""; 
+            output.StartSection("KBDoctor", title);
+            string rec = "";
             List<KBObject> objs = KB.DesignModel.Objects.GetAll().ToList();
             List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output, ref rec);
             bool success = true;
@@ -499,7 +499,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     objectsWithProblems.Add(obj);
                                     string recommend = "Parameter without IN/OUT/INOUT ";
                                     OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(obj.Parts.Get<RulesPart>()));
-                                    recommendations += recommend +  "<br>";
+                                    recommendations += recommend + "<br>";
                                     output.Add("KBDoctor", err);
                                 }
                             }
@@ -558,7 +558,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             bool commitOnExit;
             foreach (KBObject obj in objs)
             {
-                if (obj is Procedure) {
+                if (obj is Procedure)
+                {
                     object aux = obj.GetPropertyValue("CommitOnExit");
                     if (aux != null)
                     {
@@ -688,7 +689,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void CodeCommented(List<KBObject> objs, IOutputService output, ref string recommendations)
         {
-            foreach (KBObject obj in objs) {
+            foreach (KBObject obj in objs)
+            {
                 string source = Utility.ObjectSourceUpper(obj);
                 source = Utility.RemoveEmptyLines(source);
                 string codeCommented = Utility.CodeCommented(source);
@@ -740,7 +742,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     string itemnames = "";
                     foreach (IStructureItem structItem in sdtstruct.Root.Items)
                     {
-                        if (structItem is SDTItem) {
+                        if (structItem is SDTItem)
+                        {
                             SDTItem sdtItem = (SDTItem)structItem;
                             if (sdtItem.BasedOn == null && sdtItem.AttributeBasedOn == null && Utility.TypeHasToBeInDomain(sdtItem.Type))
                             {
@@ -774,7 +777,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     attTodos.Add((Artech.Genexus.Common.Objects.Attribute)obj);
                 }
             }
-            if (model != null) {
+            if (model != null)
+            {
                 foreach (Table t in Table.GetAll(model))
                 {
                     foreach (EntityReference reference in t.GetReferences(LinkType.UsedObject))
@@ -798,19 +802,19 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static List<KBObject> ObjectsUpdateAttribute(List<KBObject> updaters, Artech.Genexus.Common.Objects.Attribute att, IOutputService output)
         {
-            List<KBObject> retobjs = new List<KBObject>(); 
-                foreach (KBObject obj in updaters)
+            List<KBObject> retobjs = new List<KBObject>();
+            foreach (KBObject obj in updaters)
+            {
+                if (obj is Procedure)
                 {
-                    if (obj is Procedure)
+                    output.AddLine("KBDoctor", obj.Name);
+                    string name = obj.Name;
+                    if (ProcedureUpdateAttribute(obj, att))
                     {
-                        output.AddLine("KBDoctor",obj.Name);
-                       string name = obj.Name;
-                       if(ProcedureUpdateAttribute(obj, att))
-                        {
-                            retobjs.Add(obj);
-                        }
+                        retobjs.Add(obj);
                     }
                 }
+            }
             return retobjs;
         }
 
@@ -818,9 +822,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             KBModel model = t.Model;
             List<KBObject> updaters = (from r in model.GetReferencesTo(t.Key, LinkType.UsedObject)
-                                        where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                        where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
-                                        select model.Objects.Get(r.From)).ToList();
+                                       where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                       where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
+                                       select model.Objects.Get(r.From)).ToList();
             return updaters;
         }
 
@@ -853,7 +857,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                     if (token.Token == 107) //Assignment 
                     {
-                        InAssign = true; 
+                        InAssign = true;
                     }
                     if (InAssign && token.Token == 10) //Relational Oper =
                     {
@@ -870,7 +874,24 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             return false;
         }
-    }
+        internal static bool ThemeClassesNotUsed(KnowledgeBase KB, IOutputService output, ThemeClass themeclass)
+        {
+
+            KBModel model = KB.DesignModel;
+
+            foreach (var entityRef in themeclass.GetReferencesTo())
+            {
+                entityRef.From.Id.ToString();
+                entityRef.To.Id.ToString();
+            }
+            IEnumerable<EntityReference> references = themeclass.GetReferencesTo();
+            if (references.Count<EntityReference>() == 0)
+            {
+                output.AddLine(themeclass.Name);
+            }
+            return true;
+        }
+
 #if EVO3
     public class Tuple<T1, T2>
     {
@@ -892,6 +913,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
     }
 #else
-    //Nothing
+        //Nothing
 #endif
+    }
 }

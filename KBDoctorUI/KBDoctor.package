@@ -103,6 +103,7 @@
     <CommandDefinition id="CleanVarsNotUsed" />
     <CommandDefinition id="CleanObjects" />
     <CommandDefinition id="ResetWINForm" />
+    <CommandDefinition id="ThemeClassesNotUsed" />
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
     <CommandDefinition id="CountGeneratedByPattern" />
@@ -302,6 +303,7 @@
               <Command refid="CleanKBAsMuchAsPossible"/>
               <Command refid="ListTableAttributesUsingDomain"/>
               <Command refid="ObjectsWithConstants" />
+              <Command refid="ThemeClassesNotUsed"/>
             </Popup>
           </Group>
           <!--

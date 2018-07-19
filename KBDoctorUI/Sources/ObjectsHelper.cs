@@ -4022,6 +4022,23 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
 
+        public static bool ThemeClassesNotUsed()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<ThemeClass>());
+            foreach (ThemeClass themeclass in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            {
+                KBDoctorCore.Sources.API.ThemeClassesNotUsed(kbserv.CurrentKB, output, themeclass);
+            }
+            output.AddErrorLine("KBDoctor", "No theme was selected");
+
+
+            return true;
+        }
+
         public static void TestParser()
         {
 
