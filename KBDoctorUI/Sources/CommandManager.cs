@@ -75,6 +75,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ObjectsWithVarNotBasedOnAtt, new ExecHandler(ExecObjectsWithVarNotBasedOnAtt), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.RenameVariables, new ExecHandler(ExecRenameVariables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildModule, new ExecHandler(ExecBuildModule), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.AssignTypeComparer, new ExecHandler(ExecAssignTypeComparer), new QueryHandler(QueryKBDoctor));
+
       //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectWithProperty, new ExecHandler(ExecBuildObjectWithProperty), new QueryHandler(QueryKBDoctor));
@@ -1237,7 +1239,11 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
-
+        public bool ExecAssignTypeComparer(CommandData cmdData)
+        {
+            ObjectsHelper.AssignTypesComparer();
+            return true;
+        }
         public bool ExecListModulesStatistics(CommandData cmdData)
         {
             IOutputService output = CommonServices.Output;

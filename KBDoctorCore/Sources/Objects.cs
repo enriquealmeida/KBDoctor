@@ -22,6 +22,8 @@ using Artech.Common.Helpers.Structure;
 using Artech.Genexus.Common.Parts.SDT;
 using Artech.Udm.Framework;
 using Artech.Udm.Framework.References;
+using Concepto.Packages.KBDoctor;
+using Artech.Genexus.Common.AST;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -874,6 +876,172 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             return false;
         }
+
+        internal static bool AssignTypeComparer(KBObject obj, IOutputService output)
+        {
+            
+            if (obj is Procedure)
+            {
+                Artech.Genexus.Common.Parts.ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();  
+                if (procpart != null)
+                {
+                    ProccessAssignmentsInSource(procpart, vp, output);
+                }
+            }
+            else
+            {
+                if (obj is WebPanel || obj is Transaction)
+                {
+                    Artech.Genexus.Common.Parts.EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
+                    Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    if (eventspart != null)
+                    {
+                        ProccessAssignmentsInSource(eventspart, vp, output);
+                    }
+                }
+            }
+            
+
+           
+
+           
+            return false;
+        }
+
+        private static void ProccessAssignmentsInSource(SourcePart procpart, VariablesPart vp, IOutputService output)
+        {
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+            ParserInfo parserInfo;
+            parserInfo = new ParserInfo(procpart);
+
+            var info = new Artech.Architecture.Language.Parser.ParserInfo(procpart);
+            if (parser.Validate(info, procpart.Source))
+            {
+                Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, procpart, vp, info);
+                List<AbstractNode> assigns = getAssignmentsInSource(paramRootNode);
+                foreach(AssignmentNode assign in assigns)
+                {
+                    if(assign.Left is VariableNameNode)
+                    {
+                        VariableNameNode vn = (VariableNameNode) assign.Left;
+                        Variable varL = vp.GetVariable(vn.VarName);
+                        if(varL != null)
+                        {
+                            string picture = Utility.ReturnPictureVariable(varL);
+
+                            CompareAssignTypes(vp, output, assign, picture);
+                        }
+                    }
+                    if (assign.Left is AttributeNameNode)
+                    {
+                        AttributeNameNode an = (AttributeNameNode)assign.Left;
+                        Artech.Genexus.Common.Objects.Attribute att = an.Attribute;
+                        if (att != null)
+                        {
+                            string picture = Utility.ReturnPicture(att);
+
+                            CompareAssignTypes(vp, output, assign, picture);
+                        }
+                        
+                    }
+                    if(assign.Left is ObjectPropertyNode)
+                    {
+
+                        ObjectPropertyNode op = (ObjectPropertyNode)assign.Left;
+
+                        if(op.Target is VariableNameNode)
+                        {
+                           /* AttCustomType CustomType = ((VariableNameNode)op).Variable).GetPropertyValue<AttCustomType>(Artech.Genexus.Common.Properties.ATT.DataType);
+                            VariableNameNode sdtitem = (VariableNameNode) op.Target;
+                            string sdt = sdtitem.VarName;
+                            string item = op.PropertyName;
+                            Variable sdtvar = vp.GetVariable(sdt);
+                            //edbtype e = sdtvar.Type;*/
+                        }
+                        //ObjectPropertyNode att = op.
+
+                    }
+                }
+            }
+        }
+
+        private static void CompareAssignTypes(VariablesPart vp, IOutputService output, AssignmentNode assign, string picture)
+        {
+            if (assign.Right is VariableNameNode)
+            {
+                VariableNameNode vnr = (VariableNameNode)assign.Right;
+                Variable varR = vp.GetVariable(vnr.VarName);
+                string pictureR = Utility.ReturnPictureVariable(varR);
+                if (pictureR != picture)
+                {
+                    output.AddLine(assign.Text + " " + picture + "<>" + pictureR);
+                }
+            }
+            if (assign.Right is AttributeNameNode)
+            {
+                AttributeNameNode anR = (AttributeNameNode)assign.Right;
+                if((assign.Right.Text == "true"|| assign.Right.Text == "false") && !picture.Contains("Boolean"))
+                {
+                    output.AddLine(assign.Text + " " + picture + "<>" + pictureR);
+                }
+                if(!(assign.Right.Text == "true" || assign.Right.Text == "false"))
+                {
+                    Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
+                    string pictureR = Utility.ReturnPicture(att);
+                    if (pictureR != picture)
+                    {
+                        output.AddLine(assign.Text + " " + picture + "<>" + pictureR);
+                    }
+                }
+                
+            }
+            if (assign.Right is ObjectPropertyNode)
+            {
+
+            }
+            if (assign.Right is ObjectMethodNode)
+            {
+
+            }
+            if (assign.Right is StringConstantNode)
+            {
+
+            }
+            if (assign.Right is NumberNode)
+            {
+
+            }
+            if (assign.Right is DateConstantNode)
+            {
+
+            }
+        }
+
+        private static List<AbstractNode> getAssignmentsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+        {
+            if(root != null) { 
+                List<AbstractNode> assignments = new List<AbstractNode>();
+                foreach(AbstractNode node in root.Children)
+                {
+                    if(node.Node.Token == 107)
+                    {
+                        if(node is AssignmentNode) 
+                            assignments.Add(node);
+                    }
+                    else
+                    {
+                        if(node.Node.Token > 100)
+                        {
+                            assignments.AddRange(getAssignmentsInSource(node));
+                        }
+                    }
+                }
+                return assignments;
+            }
+            return null; 
+        }
+
         internal static bool ThemeClassesNotUsed(KnowledgeBase KB, IOutputService output, ThemeClass themeclass)
         {
 

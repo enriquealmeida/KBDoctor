@@ -276,5 +276,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             return Objects.ThemeClassesNotUsed(KB, output, themeclass);
         }
+
+        public static bool AssignTypesComprarer(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
+        {
+            foreach (KBObject obj in objs)
+            {
+                Objects.AssignTypeComparer(obj, output);
+            }
+            return true;
+        }
+
     }
 }

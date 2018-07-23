@@ -211,6 +211,9 @@ namespace Concepto.Packages.KBDoctor
 
         private static CommandKey reviewModuleOrFolder = new CommandKey(Package.guid, "ReviewModuleOrFolder");
         public static CommandKey ReviewModuleOrFolder { get { return reviewModuleOrFolder; } }
+
+        private static CommandKey assignTypeComparer = new CommandKey(Package.guid, "AssignTypeComparer");
+        public static CommandKey AssignTypeComparer { get { return assignTypeComparer; } }
         //Surgery
         private static CommandKey procedureSDT = new CommandKey(Package.guid, "ProcedureSDT");
         public static CommandKey ProcedureSDT { get { return procedureSDT; } }

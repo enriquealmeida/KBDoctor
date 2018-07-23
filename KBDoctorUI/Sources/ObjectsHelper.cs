@@ -267,7 +267,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             List<KBObject> objectsWithProblems = API.ObjectsWithoutINOUT(UIServices.KB.CurrentKB, output);
-
+            
             string title = "KBDoctor - Object with parameters without IN:/OUT:/INOUT:";
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
@@ -505,7 +505,7 @@ namespace Concepto.Packages.KBDoctor
                             {
                                 lstAtt = Functions.linkObject(a) + " ";
                             }
-
+                            
                             writer.AddTableData(new string[] { "", Functions.linkObject(trn), "Exclusive Attributes:" + lstAtt, trn.Description, "NOT REMOVABLE" });
                         }
                     }
@@ -4074,6 +4074,18 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.AddErrorLine("KBDoctor", "No theme was selected");
 
 
+            return true;
+        }
+
+        public static bool AssignTypesComparer()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            List<KBObject> objs = (List<KBObject>) UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            KBDoctorCore.Sources.API.AssignTypesComprarer(kbserv.CurrentKB, output, objs);
             return true;
         }
 

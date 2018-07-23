@@ -316,3 +316,5 @@ EVO3/KBDoctorCore.dll
 EVO3/KBDoctorCmd.dll
 EVO3/KBDoctor.dll
 KBdoctor_Build - copia.cmd
+KBDoctorUI/KBDoctorUI.csproj
+*.csproj
