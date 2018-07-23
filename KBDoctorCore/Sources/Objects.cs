@@ -981,11 +981,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             if (assign.Right is AttributeNameNode)
             {
                 AttributeNameNode anR = (AttributeNameNode)assign.Right;
-                if((assign.Right.Text == "true"|| assign.Right.Text == "false") && !picture.Contains("Boolean"))
+                if((assign.Right.Text != "true"|| assign.Right.Text != "false") && picture.ToLower().Contains("boolean"))
                 {
-                    output.AddLine(assign.Text + " " + picture + "<>" + pictureR);
+                    output.AddLine(assign.Text + " " + picture + "<>" + "Boolean");
                 }
-                if(!(assign.Right.Text == "true" || assign.Right.Text == "false"))
+                else
+                {
+                    output.AddLine(picture);
+                }
+                if(!picture.Contains("Boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
                     string pictureR = Utility.ReturnPicture(att);
