@@ -210,6 +210,7 @@
             <Command refid="BuildObjectAndReferences"/>
             <Command refid="BuildObjectWithProperty"/>
             <Command refid="TreeCommit" />
+            <Command refid="ObjectsUpdateAttribute"/>
             <Group>
               <Command refid="ReviewObjects" />
               <Command refid="EditReviewObjects" />
@@ -266,6 +267,7 @@
 
               <Command refid="CleanVarsNotUsed" />
               <Command refid="RemovableTransactions"/>
+              <Command refid="CleanObjects" />
             </Popup>
           </Group>
           <Group id="LastReports" >
@@ -281,7 +283,7 @@
             <Popup name ="Labs">
               <Command refid="AddINParmRule"/>
               <Command refid="ProcedureSDT"/>
-              <Command refid="ObjectsUpdateAttribute"/>
+             
               <Command refid="ProcedureGetSet"/>
               <Command refid="CreateDeployUnits" />
               <Command refid="GenerateSimpleTransactionFromNotGeneratedTransactions" />
@@ -303,7 +305,7 @@
               <Command refid="ObjectsNotReacheable"/>
               <Command refid="CleanKBAsMuchAsPossible"/>
               <Command refid="ListTableAttributesUsingDomain"/>
-              <Command refid="CleanObjects" />
+
               <Command refid="ObjectsWithConstants" />
               <Command refid="ThemeClassesNotUsed"/>
               <Command refid="AssignTypeComparer"/>

@@ -1528,7 +1528,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                     Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)obj;
 
-                    file.WriteLine(Functions.ReturnPicture(att));
+                    file.WriteLine(Utility.ReturnPicture(att));
                     if (att.Formula == null)
                         file.WriteLine("");
                     else
@@ -2695,7 +2695,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
         private static string TypeOfAttribute(Artech.Genexus.Common.Objects.Attribute a)
         {
             string typeOfParm;
-            typeOfParm = "/" + Functions.ReturnPicture(a);
+            typeOfParm = "/" + Utility.ReturnPicture(a);
             if (a.DomainBasedOn != null)
                 typeOfParm += "/" + a.DomainBasedOn.Name + "//";
             return typeOfParm;
@@ -2711,7 +2711,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 {
                     if (v.Name == varname)
                     {
-                        typeOfParm = "/" + Functions.ReturnPictureVariable(v);
+                        typeOfParm = "/" + Utility.ReturnPictureVariable(v);
                         if (v.DomainBasedOn != null)
                             typeOfParm += "/" + v.DomainBasedOn.Name + "//";
                     }
@@ -3049,7 +3049,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         && (v.Type != eDBType.GX_SDT) && (v.Type != eDBType.GX_EXTERNAL_OBJECT) && (v.Type != eDBType.Boolean))
                     {
                         variables += v.Name + " " + v.Type.ToString().ToLower() + "(" + v.Length.ToString() + ")<br>" + Environment.NewLine;
-                        string objaux = obj.Name + "," + v.Name + "," + Functions.ReturnPictureVariable(v);
+                        string objaux = obj.Name + "," + v.Name + "," + Utility.ReturnPictureVariable(v);
                         Functions.AddLineSummary("ObjectsVariableSinDom.Txt", objaux);
 
                     }

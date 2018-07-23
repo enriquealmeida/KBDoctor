@@ -365,8 +365,11 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
             output.AddLine("KBDoctor","Generating " + name);
-
+#if EVO3
+            Dictionary<string, API.Tuple<int, string>> dictionary = new Dictionary<string, API.Tuple<int, string>>();
+#else
             Dictionary<string, Tuple<int, string>> dictionary = new Dictionary<string, Tuple<int, string>>();
+#endif
             Dictionary<int, int> initialpartition = new Dictionary<int, int>();
 
             // Dictionary<string, Tuple<int,string>> dictionary = new Dictionary<string, Tuple<int,string>>();

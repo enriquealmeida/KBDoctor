@@ -804,28 +804,37 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return true;
         }
 
-        internal static string ReturnPicture(Artech.Genexus.Common.Objects.Attribute a)
+        public static string ReturnPicture(Artech.Genexus.Common.Objects.Attribute a)
         {
             string Picture = "";
-            Picture = a.Type.ToString() + "(" + a.Length.ToString() + (a.Decimals > 0 ? "." + a.Decimals.ToString() : "") + ")" + (a.Signed ? "-" : "");
+            if (a.Type == eDBType.BINARY || a.Type == eDBType.Boolean || a.Type == eDBType.BITMAP)
+                Picture = a.Type.ToString();
+            else
+                Picture = a.Type.ToString() + "(" + a.Length.ToString() + (a.Decimals > 0 ? "." + a.Decimals.ToString() : "") + ")" + (a.Signed ? "-" : "");
             return Picture;
         }
 
-        internal static string ReturnPictureVariable(Variable v)
+        public static string ReturnPictureVariable(Variable v)
         {
             string Picture = "";
-            Picture = v.Type.ToString() + "(" + v.Length.ToString() + (v.Decimals > 0 ? "." + v.Decimals.ToString() : "") + ")" + (v.Signed ? "-" : "");
+            if (v.Type == eDBType.BINARY || v.Type == eDBType.Boolean || v.Type == eDBType.BITMAP)
+                Picture = v.Type.ToString();
+            else
+                Picture = v.Type.ToString() + "(" + v.Length.ToString() + (v.Decimals > 0 ? "." + v.Decimals.ToString() : "") + ")" + (v.Signed ? "-" : "");
             return Picture;
         }
 
-        internal static string ReturnPictureDomain(Domain d)
+        public static string ReturnPictureDomain(Domain d)
         {
 
             string Picture = "";
-            Picture = d.Type.ToString() + "(" + d.Length.ToString() + (d.Decimals > 0 ? "." + d.Decimals.ToString() : "") + ")" + (d.Signed ? "-" : "");
+            if (d.Type == eDBType.BINARY || d.Type == eDBType.Boolean || d.Type == eDBType.BITMAP)
+                Picture = d.Type.ToString();
+            else
+                Picture = d.Type.ToString() + "(" + d.Length.ToString() + (d.Decimals > 0 ? "." + d.Decimals.ToString() : "") + ")" + (d.Signed ? "-" : "");
             return Picture;
         }
-
+        
         internal static void SaveObject(IOutputService output, KBObject obj)
         {
             try
