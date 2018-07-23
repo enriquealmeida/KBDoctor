@@ -1,370 +1,377 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProductVersion>8.0.50727</ProductVersion>
-        <SchemaVersion>2.0</SchemaVersion>
-        <ProjectGuid>{93AFE55B-1DB2-44C7-9D05-06B4479D0C15}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>Concepto.Packages.KBDoctor</RootNamespace>
-        <AssemblyName>KBDoctor</AssemblyName>
-        <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-        <ApplicationIcon>Resources\Icons\favicon.ico</ApplicationIcon>
-        <FileUpgradeFlags></FileUpgradeFlags>
-        <UpgradeBackupLocation></UpgradeBackupLocation>
-        <OldToolsVersion>3.5</OldToolsVersion>
-        <TargetFrameworkVersion>$(TargetFrameworkVersion)</TargetFrameworkVersion>
-        <TargetFrameworkProfile></TargetFrameworkProfile>
-        <PublishUrl>publish\</PublishUrl>
-        <Install>true</Install>
-        <InstallFrom>Disk</InstallFrom>
-        <UpdateEnabled>false</UpdateEnabled>
-        <UpdateMode>Foreground</UpdateMode>
-        <UpdateInterval>7</UpdateInterval>
-        <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-        <UpdatePeriodically>false</UpdatePeriodically>
-        <UpdateRequired>false</UpdateRequired>
-        <MapFileExtensions>true</MapFileExtensions>
-        <ApplicationRevision>0</ApplicationRevision>
-        <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-        <IsWebBootstrapper>false</IsWebBootstrapper>
-        <UseApplicationTrust>false</UseApplicationTrust>
-        <BootstrapperEnabled>true</BootstrapperEnabled>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-        <StartAction>Program</StartAction>
-        <StartProgram>C:\Program Files (x86)\GeneXus\GeneXus16\GeneXus.exe</StartProgram>
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>full</DebugType>
-        <Optimize>false</Optimize>
-        <OutputPath>bin\Debug\</OutputPath>
-        <DefineConstants>TRACE;DEBUG</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>1</WarningLevel>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <RunCodeAnalysis>false</RunCodeAnalysis>
-        <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-        <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
-        <Prefer32Bit>false</Prefer32Bit>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <PlatformTarget>x86</PlatformTarget>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <DebugType>pdbonly</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
-        <DefineConstants>TRACE</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-        <RunCodeAnalysis>false</RunCodeAnalysis>
-        <Prefer32Bit>false</Prefer32Bit>
-    </PropertyGroup>
-    <ItemGroup>
-        <Reference Include="Artech.Architecture.BL.Framework">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.BL.Framework.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Architecture.Common">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Common.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Architecture.Language">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Language.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Architecture.UI.Framework">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.UI.Framework.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Common">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Common.Controls">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Controls.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Common.Framework">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Framework.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Common.Helpers">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Helpers.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Common.Language">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Language.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Common.Properties">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Properties.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.FrameworkDE">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.FrameworkDE.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Genexus.Common">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Genexus.Common.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Layers.Framework">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Layers.Framework.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.MsBuild.Common">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.MsBuild.Common.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Packages.Patterns">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Packages.Patterns.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Template.Base">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Template.Base.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Template.Helper">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Template.Helper.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Template.Parser">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Template.Parser.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Udm.Architecture.Common">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Architecture.Common.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Udm.BL">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.BL.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Udm.Data">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Data.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Udm.Framework">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Framework.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Udm.Layers">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Layers.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Udm.Layers.BL">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Layers.BL.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Udm.Layers.Common">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Layers.Common.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Udm.Layers.Data.SQL">
-            <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Layers.Data.SQL.dll</HintPath>
-        </Reference>
-        <Reference Include="Connector">
-            <HintPath>$(GX_SDK_DIR)\bin\Connector.dll</HintPath>
-        </Reference>
-        <Reference Include="DeklaritLibrary">
-            <HintPath>$(GX_SDK_DIR)\bin\DeklaritLibrary.dll</HintPath>
-        </Reference>
-        <Reference Include="GxDataLayer">
-            <HintPath>$(GX_SDK_DIR)\bin\GxDataLayer.dll</HintPath>
-        </Reference>
-        <Reference Include="Artech.Packages.TeamDevClient.UI">
-            <HintPath>$(GX_PROGRAM_DIR)\Packages\Artech.Packages.TeamDevClient.UI.dll</HintPath>
-        </Reference>
-        <Reference Include="Infragistics2.Shared.v11.1, Version=11.1.20111.2042, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb" />
-        <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1">
-            <HintPath>$(GX_PROGRAM_DIR)\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
-        </Reference>
-        <Reference Include="log4net">
-            <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>
-        </Reference>
-        <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Tasks.v3.5" />
-        <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Utilities.v3.5" />
-        <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.6' " Include="Microsoft.Build.Tasks.v4.0" />
-        <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.6' " Include="Microsoft.Build.Utilities.v4.0" />
-        <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7.1' " Include="Microsoft.Build.Tasks.v4.0" />
-        <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7.1' " Include="Microsoft.Build.Utilities.v4.0" />
-        <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
-            <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling">
-            <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.Practices.ObjectBuilder">
-            <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.ObjectBuilder.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.VisualBasic" />
-        <Reference Include="System" />
-        <Reference Include="System.Data" />
-        <Reference Include="System.Drawing" />
-        <Reference Include="System.Windows.Forms" />
-        <Reference Include="System.Xml" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="$(GX_SDK_DIR)\Src\CommonPackageInfo.cs">
-            <Link>CommonPackageInfo.cs</Link>
-        </Compile>
-        <Compile Include="Sources\AboutBox1.cs">
-            <SubType>Form</SubType>
-        </Compile>
-        <Compile Include="Sources\AboutBox1.Designer.cs">
-            <DependentUpon>AboutBox1.cs</DependentUpon>
-        </Compile>
-        <Compile Include="Sources\AttributesHelper.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="Comparer.Designer.cs">
-            <AutoGen>True</AutoGen>
-            <DesignTime>True</DesignTime>
-            <DependentUpon>Comparer.resx</DependentUpon>
-        </Compile>
-        <Compile Include="Sources\AskAttributeandTable.cs">
-            <SubType>Form</SubType>
-        </Compile>
-        <Compile Include="Sources\AskAttributeandTable.Designer.cs">
-            <DependentUpon>AskAttributeandTable.cs</DependentUpon>
-        </Compile>
-        <Compile Include="Sources\Functions.cs" />
-        <Compile Include="CodeGeneration\CodeGeneration.cs" />
-        <Compile Include="Sources\GraphHelper.cs" />
-        <Compile Include="Sources\Labs.cs" />
-        <Compile Include="Sources\ModulesHelper.cs" />
-        <Compile Include="Sources\NavigationHelper.cs" />
-        <Compile Include="Icons.Designer.cs">
-            <AutoGen>True</AutoGen>
-            <DesignTime>True</DesignTime>
-            <DependentUpon>Icons.resx</DependentUpon>
-        </Compile>
-        <Compile Include="Sources\KbStats.cs" />
-        <Compile Include="Sources\ReplaceDomain.cs">
-            <SubType>Form</SubType>
-        </Compile>
-        <Compile Include="Sources\ReplaceDomain.Designer.cs">
-            <DependentUpon>ReplaceDomain.cs</DependentUpon>
-        </Compile>
-        <Compile Include="StringResources.Designer.cs">
-            <AutoGen>True</AutoGen>
-            <DesignTime>True</DesignTime>
-            <DependentUpon>StringResources.resx</DependentUpon>
-        </Compile>
-        <Compile Include="Sources\ThemeHelper.cs" />
-        <Compile Include="Sources\CleanKBHelper.cs" />
-        <Compile Include="Sources\CommandKeys.cs" />
-        <Compile Include="Sources\CommandManager.cs" />
-        <Compile Include="Sources\KBDoctorHelper.cs" />
-        <Compile Include="Sources\ObjectsHelper.cs">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="Sources\Package.cs" />
-        <Compile Include="Sources\PromptDescription.cs">
-            <SubType>Form</SubType>
-        </Compile>
-        <Compile Include="Sources\PromptDescription.Designer.cs">
-            <DependentUpon>PromptDescription.cs</DependentUpon>
-        </Compile>
-        <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="Sources\TablesHelper.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="Catalog.xml">
-            <SubType>Designer</SubType>
-        </Content>
-        <Content Include="Documentacion\Cambios.txt" />
-        <Content Include="Documentacion\HowTo.txt" />
-        <Content Include="Documentacion\LoQueFaltaHacer.txt" />
-        <Content Include="Resources\Icons\file-find.ico" />
-        <None Include="packages.config" />
-        <None Include="Resources\Replace.txt" />
-        <None Include="Resources\MeneesDiffUtils.dll" />
-        <None Include="Resources\Menees.dll" />
-        <None Include="Resources\DiffDotNet.exe" />
-        <Content Include="Resources\Icons\favicon.ico" />
-        <None Include="Resources\Kbdoctor.jpg" />
-        <None Include="Resources\specXEv2.xsl">
-            <SubType>Designer</SubType>
-        </None>
-        <None Include="Resources\Icons\chart_line.ico" />
-        <None Include="Resources\Icons\Compass.ico" />
-        <None Include="Resources\Icons\Crayon.ico" />
-        <None Include="Resources\Icons\Red-Cross.ico" />
-        <None Include="Resources\Icons\Splatter.ico" />
-        <None Include="Resources\Icons\Sketch-Book.ico" />
-        <None Include="Resources\Icons\Eyedropper.ico" />
-        <None Include="Resources\Icons\Gradient.ico" />
-        <None Include="Resources\Icons\Scissors.ico" />
-        <None Include="Resources\Icons\Ink.ico" />
-        <None Include="Resources\Icons\SDT.ico" />
-        <None Include="Resources\Icons\Hand3.ico" />
-        <None Include="Resources\Icons\Magnifier.ico" />
-        <None Include="Resources\Icons\Eraser.ico" />
-        <None Include="Resources\Icons\Sharpener.ico" />
-        <None Include="Resources\Icons\Magic-Wand.ico" />
-        <None Include="Resources\Icons\Palette.ico" />
-        <None Include="Resources\Icons\Tools.ico" />
-        <None Include="Resources\Icons\Triangle.ico" />
-        <None Include="Resources\Icons\Nail.ico" />
-        <None Include="Resources\Icons\escoba.ico" />
-        <EmbeddedResource Include="Sources\AboutBox1.resx">
-            <DependentUpon>AboutBox1.cs</DependentUpon>
-            <SubType>Designer</SubType>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Sources\AskAttributeandTable.resx">
-            <DependentUpon>AskAttributeandTable.cs</DependentUpon>
-            <SubType>Designer</SubType>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Comparer.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>Comparer.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <EmbeddedResource Include="KBDoctor.package">
-            <SubType>Designer</SubType>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Sources\PromptDescription.resx">
-            <SubType>Designer</SubType>
-            <DependentUpon>PromptDescription.cs</DependentUpon>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Icons.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>Icons.Designer.cs</LastGenOutput>
-            <SubType>Designer</SubType>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Properties\Resources.resx">
-            <SubType>Designer</SubType>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Sources\ReplaceDomain.resx">
-            <DependentUpon>ReplaceDomain.cs</DependentUpon>
-        </EmbeddedResource>
-        <EmbeddedResource Include="StringResources.resx">
-            <SubType>Designer</SubType>
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>StringResources.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-    </ItemGroup>
-    <ItemGroup>
-        <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-            <Visible>False</Visible>
-            <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-            <Install>false</Install>
-        </BootstrapperPackage>
-        <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-            <Visible>False</Visible>
-            <ProductName>.NET Framework 3.5 SP1</ProductName>
-            <Install>true</Install>
-        </BootstrapperPackage>
-        <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-            <Visible>False</Visible>
-            <ProductName>Windows Installer 3.1</ProductName>
-            <Install>true</Install>
-        </BootstrapperPackage>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\IniFileParser\INIFileParser.csproj">
-            <Project>{5e46dcf4-c473-4171-9f9b-f3910b5ec407}</Project>
-            <Name>INIFileParser</Name>
-        </ProjectReference>
-        <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj">
-            <Project>{280a5263-3efa-4585-86dd-ea8fd5310a4f}</Project>
-            <Name>KBDoctorCore</Name>
-        </ProjectReference>
-        <ProjectReference Include="..\Louvain\LouvainCommunityPL.csproj">
-            <Project>{462156c1-ff14-4a0f-99b9-1f167435356d}</Project>
-            <Name>LouvainCommunityPL</Name>
-        </ProjectReference>
-    </ItemGroup>
-    <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{93AFE55B-1DB2-44C7-9D05-06B4479D0C15}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Concepto.Packages.KBDoctor</RootNamespace>
+    <AssemblyName>KBDoctor</AssemblyName>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>$(TargetFrameworkVersion)</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Program Files (x86)\GeneXus\GeneXus16\GeneXus.exe</StartProgram>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>1</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+      <DefineConstants Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">EVO3</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Artech.Architecture.BL.Framework">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.BL.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Architecture.Common">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Architecture.Language">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Language.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Architecture.UI.Framework">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.UI.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Common">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Common.Controls">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Common.Framework">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Common.Helpers">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Common.Language">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Language.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Common.Properties">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Properties.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.FrameworkDE">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.FrameworkDE.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Genexus.Common">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Genexus.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Layers.Framework">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Layers.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.MsBuild.Common">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.MsBuild.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Packages.Patterns">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Packages.Patterns.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Template.Base">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Template.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Template.Helper">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Template.Helper.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Template.Parser">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Template.Parser.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Udm.Architecture.Common">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Architecture.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Udm.BL">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.BL.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Udm.Data">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Udm.Framework">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Udm.Layers">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Layers.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Udm.Layers.BL">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Layers.BL.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Udm.Layers.Common">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Layers.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Udm.Layers.Data.SQL">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Layers.Data.SQL.dll</HintPath>
+    </Reference>
+    <Reference Include="Connector">
+      <HintPath>$(GX_SDK_DIR)\bin\Connector.dll</HintPath>
+    </Reference>
+    <Reference Include="DeklaritLibrary">
+      <HintPath>$(GX_SDK_DIR)\bin\DeklaritLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="GxDataLayer">
+      <HintPath>$(GX_SDK_DIR)\bin\GxDataLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.Packages.TeamDevClient.UI">
+      <HintPath>$(GX_PROGRAM_DIR)\Packages\Artech.Packages.TeamDevClient.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Shared.v11.1, Version=11.1.20111.2042, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb" />
+    <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1">
+      <HintPath>$(GX_PROGRAM_DIR)\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>
+    </Reference>
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Tasks.v3.5" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Utilities.v3.5" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.6' " Include="Microsoft.Build.Tasks.v4.0" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.6' " Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7.1' " Include="Microsoft.Build.Tasks.v4.0" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7.1' " Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
+      <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling">
+      <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ObjectBuilder">
+      <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.ObjectBuilder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(GX_SDK_DIR)\Src\CommonPackageInfo.cs">
+      <Link>CommonPackageInfo.cs</Link>
+    </Compile>
+    <Compile Include="Sources\AboutBox1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sources\AboutBox1.Designer.cs">
+      <DependentUpon>AboutBox1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\AttributesHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Comparer.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Comparer.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\AskAttributeandTable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sources\AskAttributeandTable.Designer.cs">
+      <DependentUpon>AskAttributeandTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\Functions.cs" />
+    <Compile Include="CodeGeneration\CodeGeneration.cs" />
+    <Compile Include="Sources\GraphHelper.cs" />
+    <Compile Include="Sources\Labs.cs" />
+    <Compile Include="Sources\ModulesHelper.cs" />
+    <Compile Include="Sources\NavigationHelper.cs" />
+    <Compile Include="Icons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Icons.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\KbStats.cs" />
+    <Compile Include="Sources\ReplaceDomain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sources\ReplaceDomain.Designer.cs">
+      <DependentUpon>ReplaceDomain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StringResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StringResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\ThemeHelper.cs" />
+    <Compile Include="Sources\CleanKBHelper.cs" />
+    <Compile Include="Sources\CommandKeys.cs" />
+    <Compile Include="Sources\CommandManager.cs" />
+    <Compile Include="Sources\KBDoctorHelper.cs" />
+    <Compile Include="Sources\ObjectsHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sources\Package.cs" />
+    <Compile Include="Sources\PromptDescription.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sources\PromptDescription.Designer.cs">
+      <DependentUpon>PromptDescription.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sources\TablesHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Catalog.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Documentacion\Cambios.txt" />
+    <Content Include="Documentacion\HowTo.txt" />
+    <Content Include="Documentacion\LoQueFaltaHacer.txt" />
+    <Content Include="Resources\Icons\file-find.ico" />
+    <None Include="packages.config" />
+    <None Include="Resources\Replace.txt" />
+    <None Include="Resources\MeneesDiffUtils.dll" />
+    <None Include="Resources\Menees.dll" />
+    <None Include="Resources\DiffDotNet.exe" />
+    <Content Include="Resources\Icons\favicon.ico" />
+    <None Include="Resources\Kbdoctor.jpg" />
+    <None Include="Resources\specXEv2.xsl">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\Icons\chart_line.ico" />
+    <None Include="Resources\Icons\Compass.ico" />
+    <None Include="Resources\Icons\Crayon.ico" />
+    <None Include="Resources\Icons\Red-Cross.ico" />
+    <None Include="Resources\Icons\Splatter.ico" />
+    <None Include="Resources\Icons\Sketch-Book.ico" />
+    <None Include="Resources\Icons\Eyedropper.ico" />
+    <None Include="Resources\Icons\Gradient.ico" />
+    <None Include="Resources\Icons\Scissors.ico" />
+    <None Include="Resources\Icons\Ink.ico" />
+    <None Include="Resources\Icons\SDT.ico" />
+    <None Include="Resources\Icons\Hand3.ico" />
+    <None Include="Resources\Icons\Magnifier.ico" />
+    <None Include="Resources\Icons\Eraser.ico" />
+    <None Include="Resources\Icons\Sharpener.ico" />
+    <None Include="Resources\Icons\Magic-Wand.ico" />
+    <None Include="Resources\Icons\Palette.ico" />
+    <None Include="Resources\Icons\Tools.ico" />
+    <None Include="Resources\Icons\Triangle.ico" />
+    <None Include="Resources\Icons\Nail.ico" />
+    <None Include="Resources\Icons\escoba.ico" />
+    <EmbeddedResource Include="Sources\AboutBox1.resx">
+      <DependentUpon>AboutBox1.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sources\AskAttributeandTable.resx">
+      <DependentUpon>AskAttributeandTable.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Comparer.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Comparer.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KBDoctor.package">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sources\PromptDescription.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PromptDescription.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Icons.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sources\ReplaceDomain.resx">
+      <DependentUpon>ReplaceDomain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StringResources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>StringResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IniFileParser\INIFileParser.csproj">
+      <Project>{5e46dcf4-c473-4171-9f9b-f3910b5ec407}</Project>
+      <Name>INIFileParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj">
+      <Project>{280a5263-3efa-4585-86dd-ea8fd5310a4f}</Project>
+      <Name>KBDoctorCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Louvain\LouvainCommunityPL.csproj">
+      <Project>{462156c1-ff14-4a0f-99b9-1f167435356d}</Project>
+      <Name>LouvainCommunityPL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>  -->
-    <Target Name="AfterBuild">
-        <Message Text="Version = $(Major).$(Minor).$(Build).$(Revision)" Importance="high" />
-    </Target>
-    <PropertyGroup>
-        <PostBuildEvent>xcopy kbdoctor*.dll  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
+  <Target Name="AfterBuild">
+    <Message Text="Version = $(Major).$(Minor).$(Build).$(Revision)" Importance="high" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy kbdoctor*.dll  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
 xcopy KBDoctorCore.dll "%25GX_PROGRAM_DIR%25\Packages" /q /Y
 xcopy louvain*.dll  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
 xcopy IniFileParser*.dll  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
 "%25GX_PROGRAM_DIR%25\genexus.exe" /install</PostBuildEvent>
-    </PropertyGroup>
+  </PropertyGroup>
 </Project>

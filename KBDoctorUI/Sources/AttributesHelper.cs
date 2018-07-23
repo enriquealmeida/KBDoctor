@@ -44,7 +44,7 @@ namespace Concepto.Packages.KBDoctor
                 description = a.Description;
                 titlesuggested = a.Title;
                 columnTitle = a.ColumnTitle;
-                string Picture = Functions.ReturnPicture(a);
+                string Picture = Utility.ReturnPicture(a);
 
                 if ((a.Description.Replace(" ", "") == a.Name) || (a.Title == a.Description) || (a.ColumnTitle == a.Description))
                 {
@@ -114,7 +114,7 @@ namespace Concepto.Packages.KBDoctor
                 else {
 
                     output.AddLine("KBDoctor","Formula " + a.Name);
-                    string Picture = Functions.ReturnPicture(a);
+                    string Picture = Utility.ReturnPicture(a);
                     string attNameLink = Functions.linkObject(a); 
                     string redundantInTables = "";
                     string tables = "";
@@ -222,7 +222,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
             {
-                string Picture = Functions.ReturnPicture(a);
+                string Picture = Utility.ReturnPicture(a);
                 bool isSubtype = Functions.AttIsSubtype(a);
                 if ((a.DomainBasedOn == null) && !isSubtype)
                 {
@@ -294,7 +294,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
             {
-                string Picture = Functions.ReturnPicture(a);
+                string Picture = Utility.ReturnPicture(a);
                 if ((a.Type == Artech.Genexus.Common.eDBType.CHARACTER) && (a.Length > 35) && !Functions.AttIsSubtype(a))
                 {
                     string domLink = DomainLinkFromAttribute(a);
@@ -347,7 +347,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
             {
-                string Picture = Functions.ReturnPicture(a);
+                string Picture = Utility.ReturnPicture(a);
                 if (((a.Type == Artech.Genexus.Common.eDBType.VARCHAR) || (a.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR)) && (a.Length <= 25) && !Functions.AttIsSubtype(a))
                 {
                     string domLink = DomainLinkFromAttribute(a);
@@ -386,7 +386,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
             {
-                string Picture = Functions.ReturnPicture(a);
+                string Picture = Utility.ReturnPicture(a);
                 string domlink = a.DomainBasedOn == null ? " ": Functions.linkObject(a.DomainBasedOn);
                 string superTypeName = a.SuperTypeKey==null? " ": a.SuperType.Name;
                 output.AddLine("KBDoctor","Procesing " + a.Name);
@@ -431,7 +431,7 @@ namespace Concepto.Packages.KBDoctor
                         {
                             string domLink = DomainLinkFromAttribute(attr);
                             string attNameLink = Functions.linkObject(attr); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + attr.Guid.ToString() + "\">" + attr.Name + "</a>";
-                            string Picture = Functions.ReturnPicture(attr);
+                            string Picture = Utility.ReturnPicture(attr);
                             writer.AddTableData(new string[] { attNameLink, attr.Attribute.Description, Picture, domLink, t.Name });
                         }
                     }
@@ -503,7 +503,7 @@ namespace Concepto.Packages.KBDoctor
                 if (!existeIndice)
                 {
                     add = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AddDescriptorIndex&tabName=" + t.Name + "\">Add index</a>";
-                    writer.AddTableData(new string[] { Functions.linkObject((KBObject)t), t.Description, atributo, Functions.ReturnPicture(t.TableStructure.DescriptionAttribute.Attribute), add });
+                    writer.AddTableData(new string[] { Functions.linkObject((KBObject)t), t.Description, atributo, Utility.ReturnPicture(t.TableStructure.DescriptionAttribute.Attribute), add });
                 }
 
 
@@ -730,7 +730,7 @@ namespace Concepto.Packages.KBDoctor
                 output.AddLine("KBDoctor","Procesing .. " + a.Name);
 
                 string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
-                string Picture = Functions.ReturnPicture(a);
+                string Picture = Utility.ReturnPicture(a);
                 string table = TableOfAtt(a);
                 bool canDelete;
                 string trns = TransactionsOfAtt(a, out canDelete);
@@ -830,7 +830,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (Domain d in Domain.GetAll(kbserv.CurrentModel))
             {
                 description = d.Description;
-                string Picture = Functions.ReturnPictureDomain(d);
+                string Picture = Utility.ReturnPictureDomain(d);
                 int attReferences = 0;
                 int otherReferences = 0;
                 foreach (EntityReference r in d.GetReferencesTo())

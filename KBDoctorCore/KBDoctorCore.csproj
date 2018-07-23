@@ -37,16 +37,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <!--
-  <PropertyGroup Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">
-    <DefineConstants>EVO3</DefineConstants>
-  </PropertyGroup>
-  
-  <DefineConstants Condition="'$(VisualStudioVersion)'=='15'">CSHARP7</DefineConstants>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  -->
+
   <ItemGroup>
     <Reference Include="Artech.Architecture.BL.Framework">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.BL.Framework.dll</HintPath>

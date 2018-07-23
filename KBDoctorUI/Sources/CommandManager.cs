@@ -1100,7 +1100,14 @@ namespace Concepto.Packages.KBDoctor
         {
             KnowledgeBase kbModel = UIServices.KB.CurrentKB;
             IOutputService output = CommonServices.Output;
-            KBDoctorCore.Sources.API.CleanKBObjects(kbModel, kbModel.DesignModel.Objects.GetAll(), output);
+
+
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+
+            List<KBObject> selectedObjects = new List<KBObject>();
+
+            KBDoctorCore.Sources.API.CleanKBObjects(kbModel, UIServices.SelectObjectDialog.SelectObjects(selectObjectOption), output);
             return true;
         }
 
