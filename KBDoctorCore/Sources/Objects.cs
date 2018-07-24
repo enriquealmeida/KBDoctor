@@ -947,7 +947,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                     if(assign.Left is ObjectPropertyNode)
                     {
-
+                        //No implementado
                         ObjectPropertyNode op = (ObjectPropertyNode)assign.Left;
 
                         if(op.Target is VariableNameNode)
@@ -981,15 +981,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             if (assign.Right is AttributeNameNode)
             {
                 AttributeNameNode anR = (AttributeNameNode)assign.Right;
-                if((assign.Right.Text != "true"|| assign.Right.Text != "false") && picture.ToLower().Contains("boolean"))
+                if((assign.Right.Text != "true" && assign.Right.Text != "false") && picture.ToLower().Contains("boolean"))
                 {
-                    output.AddLine(assign.Text + " " + picture + "<>" + "Boolean");
+                    output.AddLine(assign.Text);
                 }
-                else
-                {
-                    output.AddLine(picture);
-                }
-                if(!picture.Contains("Boolean"))
+                if(!picture.ToLower().Contains("boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
                     string pictureR = Utility.ReturnPicture(att);
@@ -998,28 +994,86 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         output.AddLine(assign.Text + " " + picture + "<>" + pictureR);
                     }
                 }
-                
+
             }
             if (assign.Right is ObjectPropertyNode)
             {
-
+                //No implementado
             }
             if (assign.Right is ObjectMethodNode)
             {
-
+                //No implementado
             }
             if (assign.Right is StringConstantNode)
-            {
-
+            {          
+                StringConstantNode scn = (StringConstantNode)assign.Right;
+                string text = scn.Text;
+                int textlength = text.Length - 2;   //Chequeo logitud ignorando las 2 comillas
+                if(textlength > int.Parse(getLengthFromPicture(picture)))
+                {
+                    output.AddLine(assign.Text + " Text too long ("+ textlength.ToString() + ") for: " + picture);
+                }
             }
             if (assign.Right is NumberNode)
             {
+                if (!picture.ToLower().Contains("boolean")) { 
+                    NumberNode nn = (NumberNode)assign.Right;
+                    string text = nn.Text;
+                    string[] def = SplitDecimals(text);
+                    string lengthPic = getLengthFromPicture(picture);
+                    string[] defPic = SplitDecimals(lengthPic);
+                    bool hasLength = (int.Parse(defPic[0]) - 1) >= (def[0].Length + def[1].Length);     //Chequeo de longitud (wiki genexus): If it is defined as numeric you must consider that the
+                    if (!hasLength)                                                                     //whole length includes the decimal places, the decimal point and the sign.                                                                                                              
+                    {
+                        output.AddLine(assign.Text + " Number too long (" + picture + ")");
+                    }
 
+                    if(hasLength && int.Parse(defPic[1]) < def[1].Length) //Chequeo de decimales
+                    {
+                        output.AddLine(assign.Text + " Number decimals too long (" + picture + ")");
+                    }
+                }
+                else
+                {
+                    NumberNode nn = (NumberNode)assign.Right;
+                    string text = nn.Text;
+                    if(text != "0" && text != "1")
+                    {
+                        output.AddLine(assign.Text + " Number greater than 1 assigned to a boolean");
+                    }
+                }
             }
             if (assign.Right is DateConstantNode)
             {
-
+                //output.AddLine("TestDateConstant");
+                //No implementado
             }
+        }
+
+        private static string[] SplitDecimals(string text)
+        {
+            string[] splits = text.Split('.');
+            string length = splits[0];
+            if (splits.Length == 2)
+            {
+                string decimals = splits[1];
+                string[] definition = { length, decimals };
+                return definition;
+            }
+            else
+            {
+                string[] definition = { length , "0"};
+                return definition;
+            }
+            
+            
+        }
+
+        private static string getLengthFromPicture(string picture)
+        {
+            string[] splits = picture.Split('(');
+            splits = splits[1].Split(')');
+            return splits[0];
         }
 
         private static List<AbstractNode> getAssignmentsInSource(Artech.Genexus.Common.AST.AbstractNode root)
