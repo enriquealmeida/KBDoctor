@@ -1127,15 +1127,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 List<AbstractNode> assignments = new List<AbstractNode>();
                 foreach(AbstractNode node in root.Children)
                 {
-                    if(node.Node != null) { 
-                        if(node.Node.Token == 107)
+                    if (node.Node != null)
+                    {
+                        if (node.Node.Token == 107)
                         {
-                            if(node is AssignmentNode) 
+                            if (node is AssignmentNode)
                                 assignments.Add(node);
                         }
                         else
                         {
-                            if(node.Node.Token > 100)
+                            if (node.Node.Token > 100)
                             {
                                 assignments.AddRange(getAssignmentsInSource(node));
                             }
