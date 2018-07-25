@@ -886,7 +886,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();  
                 if (procpart != null)
                 {
-                    ProccessAssignmentsInSource(procpart, vp, output);
+                    ProccessAssignmentsInSource(procpart, vp, output, obj.Name);
                 }
             }
             else
@@ -897,7 +897,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     if (eventspart != null)
                     {
-                        ProccessAssignmentsInSource(eventspart, vp, output);
+                        ProccessAssignmentsInSource(eventspart, vp, output, obj.Name);
                     }
                 }
             }
@@ -909,7 +909,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return false;
         }
 
-        private static void ProccessAssignmentsInSource(SourcePart procpart, VariablesPart vp, IOutputService output)
+        private static void ProccessAssignmentsInSource(SourcePart procpart, VariablesPart vp, IOutputService output, string objname)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
@@ -930,7 +930,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             string picture = Utility.ReturnPictureVariable(varL);
 
-                            CompareAssignTypes(vp, output, assign, picture);
+                            CompareAssignTypes(vp, output, assign, picture, objname);
                         }
                     }
                     if (assign.Left is AttributeNameNode)
@@ -941,7 +941,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             string picture = Utility.ReturnPicture(att);
 
-                            CompareAssignTypes(vp, output, assign, picture);
+                            CompareAssignTypes(vp, output, assign, picture, objname);
                         }
                         
                     }
@@ -966,14 +966,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static void CompareAssignTypes(VariablesPart vp, IOutputService output, AssignmentNode assign, string pictureL)
+        private static void CompareAssignTypes(VariablesPart vp, IOutputService output, AssignmentNode assign, string pictureL, string objname)
         {
             if (assign.Right is VariableNameNode)
             {
                 VariableNameNode vnr = (VariableNameNode)assign.Right;
                 Variable varR = vp.GetVariable(vnr.VarName);
                 string pictureR = Utility.ReturnPictureVariable(varR);
-                CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR);
+                CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR, objname);
 
             }
             if (assign.Right is AttributeNameNode)
@@ -983,13 +983,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
                     string pictureR = Utility.ReturnPicture(att);
-                    CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR);
+                    CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR, objname);
                 }
                 if(!pictureL.ToLower().Contains("boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
                     string pictureR = Utility.ReturnPicture(att);
-                    CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR);
+                    CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR, objname);
                 }
             }
             if (assign.Right is ObjectPropertyNode)
@@ -1007,7 +1007,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 int textlength = text.Length - 2;   //Chequeo logitud ignorando las 2 comillas
                 if(textlength > int.Parse(getLengthFromPicture(pictureL)))
                 {
-                    output.AddLine(assign.Text + " Text assigned is too long (" + textlength.ToString() + ") for " + pictureL);
+                    output.AddLine(objname + ">" + assign.Text + " Text assigned is too long (" + textlength.ToString() + ") for " + pictureL);
                 }
             }
             if (assign.Right is NumberNode)
@@ -1035,12 +1035,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     if (!hasLength)                                                                                                                                                                                   
                     {
-                        output.AddLine(assign.Text + " Number assigned is too long (" + pictureL + ")");
+                        output.AddLine(objname + ">" + assign.Text + " Number assigned is too long (" + pictureL + ")");
                     }
 
                     if(hasLength && int.Parse(def[1]) != 0 && int.Parse(defPic[1]) < def[1].Length) //Chequeo de decimales
                     {
-                        output.AddLine(assign.Text + " Number assigned decimals are too long (" + pictureL + ")");
+                        output.AddLine(objname + ">" + assign.Text + " Number assigned decimals are too long (" + pictureL + ")");
                     }
                 }
                 else
@@ -1049,7 +1049,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     string text = nn.Text;
                     if(text != "0" && text != "1")
                     {
-                        output.AddLine(assign.Text + " Number greater than 1 assigned to a boolean");
+                        output.AddLine(objname + ">" + assign.Text + " Number greater than 1 assigned to a boolean");
                     }
                 }
             }
@@ -1060,7 +1060,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static void CheckVarAndAttAssignTypes(IOutputService output, AssignmentNode assign, string pictureL, string pictureR)
+        private static void CheckVarAndAttAssignTypes(IOutputService output, AssignmentNode assign, string pictureL, string pictureR, string objname)
         {
             if (pictureL.ToLower().Contains("char") && pictureR.ToLower().Contains("char"))
             {
@@ -1068,7 +1068,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string lengthPicR = getLengthFromPicture(pictureR);
                 if (int.Parse(lengthPicL) < int.Parse(lengthPicR))
                 {
-                    output.AddLine(assign.Text + " String assigned is too long " + pictureL + "<" + pictureR);
+                    output.AddLine(objname + ">" + assign.Text + " String assigned is too long " + pictureL + "<" + pictureR);
                 }
             }
             else if (pictureL.ToLower().Contains("numeric") && pictureR.ToLower().Contains("numeric"))
@@ -1079,18 +1079,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string[] splitsR = SplitDecimals(lengthPicR);
                 if ((int.Parse(splitsL[0]) - int.Parse(splitsL[1])) < (int.Parse(splitsR[0]) - int.Parse(splitsR[1])))
                 {
-                    output.AddLine(assign.Text + " Number assigned is too long " + pictureL + "<" + pictureR);
+                    output.AddLine(objname + ">" + assign.Text + " Number assigned is too long " + pictureL + "<" + pictureR);
                 }
                 else if (int.Parse(splitsL[0]) >= int.Parse(splitsR[0]) && int.Parse(splitsL[1]) < int.Parse(splitsR[1]))
                 {
-                    output.AddLine(assign.Text + " Number decimals assigned are too long " + pictureL + "<" + pictureR);
+                    output.AddLine(objname + ">" + assign.Text + " Number decimals assigned are too long " + pictureL + "<" + pictureR);
                 }
             }
             else
             {
                 if (pictureR != pictureL)
                 {
-                    output.AddLine(assign.Text + " " + pictureL + "<>" + pictureR);
+                    output.AddLine(objname + ">" + assign.Text + " " + pictureL + "<>" + pictureR);
                 }
             }
         }
