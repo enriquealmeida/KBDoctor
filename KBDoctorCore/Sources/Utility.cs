@@ -806,35 +806,35 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static string ReturnPicture(Artech.Genexus.Common.Objects.Attribute a)
         {
-            string Picture = "";
-            if (a.Type == eDBType.BINARY || a.Type == eDBType.Boolean || a.Type == eDBType.BITMAP)
-                Picture = a.Type.ToString();
-            else
-                Picture = a.Type.ToString() + "(" + a.Length.ToString() + (a.Decimals > 0 ? "." + a.Decimals.ToString() : "") + ")" + (a.Signed ? "-" : "");
-            return Picture;
+            return ReturnFormattedType(a.Type, a.Length, a.Decimals, a.Signed);
         }
 
         public static string ReturnPictureVariable(Variable v)
         {
-            string Picture = "";
-            if (v.Type == eDBType.BINARY || v.Type == eDBType.Boolean || v.Type == eDBType.BITMAP)
-                Picture = v.Type.ToString();
-            else
-                Picture = v.Type.ToString() + "(" + v.Length.ToString() + (v.Decimals > 0 ? "." + v.Decimals.ToString() : "") + ")" + (v.Signed ? "-" : "");
-            return Picture;
+            return ReturnFormattedType(v.Type, v.Length, v.Decimals, v.Signed);
         }
 
         public static string ReturnPictureDomain(Domain d)
         {
-
-            string Picture = "";
-            if (d.Type == eDBType.BINARY || d.Type == eDBType.Boolean || d.Type == eDBType.BITMAP)
-                Picture = d.Type.ToString();
-            else
-                Picture = d.Type.ToString() + "(" + d.Length.ToString() + (d.Decimals > 0 ? "." + d.Decimals.ToString() : "") + ")" + (d.Signed ? "-" : "");
-            return Picture;
+            return ReturnFormattedType(d.Type, d.Length, d.Decimals, d.Signed);
         }
         
+        private static string ReturnFormattedType(eDBType type, int length, int decimals, bool signed)
+        {
+            string Picture = "";
+            if (type == eDBType.BINARY || type == eDBType.Boolean || type == eDBType.BITMAP)
+                Picture = type.ToString();
+            else if(type == eDBType.VARCHAR || type == eDBType.LONGVARCHAR || type == eDBType.CHARACTER)
+            {
+                Picture = type.ToString() + "(" + length.ToString() + ")" + (signed ? "-" : "");
+            }
+            else { 
+                Picture = type.ToString() + "(" + length.ToString() + (decimals > 0 ? "." + decimals.ToString() : "") + ")" + (signed ? "-" : "");
+            }
+
+            return Picture;
+
+        }
         internal static void SaveObject(IOutputService output, KBObject obj)
         {
             try

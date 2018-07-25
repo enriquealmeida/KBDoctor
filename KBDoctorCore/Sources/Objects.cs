@@ -929,8 +929,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if(varL != null)
                         {
                             string picture = Utility.ReturnPictureVariable(varL);
-
-                            CompareAssignTypes(vp, output, assign, picture, objname);
+                            Domain domL = varL.DomainBasedOn;
+                            CompareAssignTypes(vp, output, assign, picture, domL, objname);
                         }
                     }
                     if (assign.Left is AttributeNameNode)
@@ -940,8 +940,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (att != null)
                         {
                             string picture = Utility.ReturnPicture(att);
-
-                            CompareAssignTypes(vp, output, assign, picture, objname);
+                            Domain domL = att.DomainBasedOn;
+                            CompareAssignTypes(vp, output, assign, picture, domL, objname);
                         }
                         
                     }
@@ -966,14 +966,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static void CompareAssignTypes(VariablesPart vp, IOutputService output, AssignmentNode assign, string pictureL, string objname)
+        private static void CompareAssignTypes(VariablesPart vp, IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string objname)
         {
             if (assign.Right is VariableNameNode)
             {
                 VariableNameNode vnr = (VariableNameNode)assign.Right;
                 Variable varR = vp.GetVariable(vnr.VarName);
                 string pictureR = Utility.ReturnPictureVariable(varR);
-                CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR, objname);
+                Domain domR = varR.DomainBasedOn;
+                CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
 
             }
             if (assign.Right is AttributeNameNode)
@@ -983,13 +984,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
                     string pictureR = Utility.ReturnPicture(att);
-                    CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR, objname);
+                    Domain domR = att.DomainBasedOn;
+                    CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
                 }
                 if(!pictureL.ToLower().Contains("boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
                     string pictureR = Utility.ReturnPicture(att);
-                    CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR, objname);
+                    Domain domR = att.DomainBasedOn;
+                    CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
                 }
             }
             if (assign.Right is ObjectPropertyNode)
@@ -1060,7 +1063,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static void CheckVarAndAttAssignTypes(IOutputService output, AssignmentNode assign, string pictureL, string pictureR, string objname)
+        private static void CheckVarAndAttAssignTypes(IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string pictureR, Domain domR, string objname)
         {
             if (pictureL.ToLower().Contains("char") && pictureR.ToLower().Contains("char"))
             {
@@ -1070,6 +1073,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     output.AddLine(objname + ">" + assign.Text + " String assigned is too long " + pictureL + "<" + pictureR);
                 }
+                CheckDomains(output, assign, domL, domR, objname);
             }
             else if (pictureL.ToLower().Contains("numeric") && pictureR.ToLower().Contains("numeric"))
             {
@@ -1085,12 +1089,43 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     output.AddLine(objname + ">" + assign.Text + " Number decimals assigned are too long " + pictureL + "<" + pictureR);
                 }
+                CheckDomains(output, assign, domL, domR, objname);
+                
             }
             else
             {
                 if (pictureR != pictureL)
                 {
                     output.AddLine(objname + ">" + assign.Text + " " + pictureL + "<>" + pictureR);
+                }
+            }
+        }
+
+        private static void CheckDomains(IOutputService output, AssignmentNode assign, Domain domL, Domain domR, string objname)
+        {
+            if (domL != null)
+            {
+                if (domR != null)
+                {
+                    if (domL.Name != domR.Name)
+                    {
+                        output.AddLine(objname + ">" + assign.Text + " Variables are based on different domains " + domL.Name + "<>" + domR.Name);
+                    }
+                }
+                else
+                {
+                    output.AddLine(objname + ">" + assign.Text + " (" + assign.Right.Text + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name);
+                }
+            }
+            else
+            {
+                if (domR != null)
+                {
+                    output.AddLine(objname + ">" + assign.Text + " (" + assign.Left.Text + ") Doesn't have domain but (" + assign.Right.Text + ") is BasedOn " + domR.Name);
+                }
+                else
+                {
+                    output.AddLine(objname + ">" + assign.Text + " No element in assign has domain ");
                 }
             }
         }
