@@ -4077,7 +4077,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             return true;
         }
 
-        public static bool AssignTypesComparer()
+        public static void AssignTypesComparer()
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
@@ -4086,7 +4086,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             List<KBObject> objs = (List<KBObject>) UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
             KBDoctorCore.Sources.API.AssignTypesComprarer(kbserv.CurrentKB, output, objs);
-            return true;
         }
 
         public static void TestParser()

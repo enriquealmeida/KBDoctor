@@ -966,35 +966,31 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static void CompareAssignTypes(VariablesPart vp, IOutputService output, AssignmentNode assign, string picture)
+        private static void CompareAssignTypes(VariablesPart vp, IOutputService output, AssignmentNode assign, string pictureL)
         {
             if (assign.Right is VariableNameNode)
             {
                 VariableNameNode vnr = (VariableNameNode)assign.Right;
                 Variable varR = vp.GetVariable(vnr.VarName);
                 string pictureR = Utility.ReturnPictureVariable(varR);
-                if (pictureR != picture)
-                {
-                    output.AddLine(assign.Text + " " + picture + "<>" + pictureR);
-                }
+                CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR);
+
             }
             if (assign.Right is AttributeNameNode)
             {
                 AttributeNameNode anR = (AttributeNameNode)assign.Right;
-                if((assign.Right.Text != "true" && assign.Right.Text != "false") && picture.ToLower().Contains("boolean"))
-                {
-                    output.AddLine(assign.Text);
-                }
-                if(!picture.ToLower().Contains("boolean"))
+                if((assign.Right.Text.ToLower() != "true" && assign.Right.Text.ToLower() != "false") && pictureL.ToLower().Contains("boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
                     string pictureR = Utility.ReturnPicture(att);
-                    if (pictureR != picture)
-                    {
-                        output.AddLine(assign.Text + " " + picture + "<>" + pictureR);
-                    }
+                    CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR);
                 }
-
+                if(!pictureL.ToLower().Contains("boolean"))
+                {
+                    Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
+                    string pictureR = Utility.ReturnPicture(att);
+                    CheckVarAndAttAssignTypes(output, assign, pictureL, pictureR);
+                }
             }
             if (assign.Right is ObjectPropertyNode)
             {
@@ -1009,28 +1005,42 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 StringConstantNode scn = (StringConstantNode)assign.Right;
                 string text = scn.Text;
                 int textlength = text.Length - 2;   //Chequeo logitud ignorando las 2 comillas
-                if(textlength > int.Parse(getLengthFromPicture(picture)))
+                if(textlength > int.Parse(getLengthFromPicture(pictureL)))
                 {
-                    output.AddLine(assign.Text + " Text too long ("+ textlength.ToString() + ") for: " + picture);
+                    output.AddLine(assign.Text + " Text assigned is too long (" + textlength.ToString() + ") for " + pictureL);
                 }
             }
             if (assign.Right is NumberNode)
             {
-                if (!picture.ToLower().Contains("boolean")) { 
+                if (!pictureL.ToLower().Contains("boolean")) {
                     NumberNode nn = (NumberNode)assign.Right;
                     string text = nn.Text;
                     string[] def = SplitDecimals(text);
-                    string lengthPic = getLengthFromPicture(picture);
+                    string lengthPic = getLengthFromPicture(pictureL);
                     string[] defPic = SplitDecimals(lengthPic);
-                    bool hasLength = (int.Parse(defPic[0]) - 1) >= (def[0].Length + def[1].Length);     //Chequeo de longitud (wiki genexus): If it is defined as numeric you must consider that the
-                    if (!hasLength)                                                                     //whole length includes the decimal places, the decimal point and the sign.                                                                                                              
+                    bool hasLength = false;
+                    if (defPic[1] != "0")                                                                   //Chequeo de longitud (wiki genexus): If it is defined as numeric you must consider that the
+                                                                                                            //whole length includes the decimal places, the decimal point and the sign.
                     {
-                        output.AddLine(assign.Text + " Number too long (" + picture + ")");
+                        hasLength = (int.Parse(defPic[0]) - 1) >= (def[0].Length + def[1].Length);
+                    }
+                    else if (def[1]!="0")
+                    {                                                                                   
+                        hasLength = (int.Parse(defPic[0]) >= (def[0].Length + def[1].Length));
+                    }
+                    else
+                    {
+                        hasLength = (int.Parse(defPic[0]) >= (def[0].Length));
                     }
 
-                    if(hasLength && int.Parse(defPic[1]) < def[1].Length) //Chequeo de decimales
+                    if (!hasLength)                                                                                                                                                                                   
                     {
-                        output.AddLine(assign.Text + " Number decimals too long (" + picture + ")");
+                        output.AddLine(assign.Text + " Number assigned is too long (" + pictureL + ")");
+                    }
+
+                    if(hasLength && int.Parse(def[1]) != 0 && int.Parse(defPic[1]) < def[1].Length) //Chequeo de decimales
+                    {
+                        output.AddLine(assign.Text + " Number assigned decimals are too long (" + pictureL + ")");
                     }
                 }
                 else
@@ -1047,6 +1057,41 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 //output.AddLine("TestDateConstant");
                 //No implementado
+            }
+        }
+
+        private static void CheckVarAndAttAssignTypes(IOutputService output, AssignmentNode assign, string pictureL, string pictureR)
+        {
+            if (pictureL.ToLower().Contains("char") && pictureR.ToLower().Contains("char"))
+            {
+                string lengthPicL = getLengthFromPicture(pictureL);
+                string lengthPicR = getLengthFromPicture(pictureR);
+                if (int.Parse(lengthPicL) < int.Parse(lengthPicR))
+                {
+                    output.AddLine(assign.Text + " String assigned is too long " + pictureL + "<" + pictureR);
+                }
+            }
+            else if (pictureL.ToLower().Contains("numeric") && pictureR.ToLower().Contains("numeric"))
+            {
+                string lengthPicL = getLengthFromPicture(pictureL);
+                string lengthPicR = getLengthFromPicture(pictureR);
+                string[] splitsL = SplitDecimals(lengthPicL);
+                string[] splitsR = SplitDecimals(lengthPicR);
+                if ((int.Parse(splitsL[0]) - int.Parse(splitsL[1])) < (int.Parse(splitsR[0]) - int.Parse(splitsR[1])))
+                {
+                    output.AddLine(assign.Text + " Number assigned is too long " + pictureL + "<" + pictureR);
+                }
+                else if (int.Parse(splitsL[0]) >= int.Parse(splitsR[0]) && int.Parse(splitsL[1]) < int.Parse(splitsR[1]))
+                {
+                    output.AddLine(assign.Text + " Number decimals assigned are too long " + pictureL + "<" + pictureR);
+                }
+            }
+            else
+            {
+                if (pictureR != pictureL)
+                {
+                    output.AddLine(assign.Text + " " + pictureL + "<>" + pictureR);
+                }
             }
         }
 
@@ -1082,16 +1127,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 List<AbstractNode> assignments = new List<AbstractNode>();
                 foreach(AbstractNode node in root.Children)
                 {
-                    if(node.Node.Token == 107)
-                    {
-                        if(node is AssignmentNode) 
-                            assignments.Add(node);
-                    }
-                    else
-                    {
-                        if(node.Node.Token > 100)
+                    if(node.Node != null) { 
+                        if(node.Node.Token == 107)
                         {
-                            assignments.AddRange(getAssignmentsInSource(node));
+                            if(node is AssignmentNode) 
+                                assignments.Add(node);
+                        }
+                        else
+                        {
+                            if(node.Node.Token > 100)
+                            {
+                                assignments.AddRange(getAssignmentsInSource(node));
+                            }
                         }
                     }
                 }
