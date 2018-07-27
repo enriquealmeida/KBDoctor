@@ -4084,6 +4084,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
             List<KBObject> objs = (List<KBObject>) UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
             KBDoctorCore.Sources.API.AssignTypesComprarer(kbserv.CurrentKB, output, objs);
         }

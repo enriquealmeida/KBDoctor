@@ -281,7 +281,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             foreach (KBObject obj in objs)
             {
-                Objects.AssignTypeComparer(obj, output);
+                Objects.AssignTypeComparer(KB.DesignModel, obj, output);
             }
             return true;
         }

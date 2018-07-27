@@ -590,8 +590,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            Thread thread = new Thread(() => ReviewObjects());
-            thread.Start();
+            ReviewObjects();
             return true;
         }
 
