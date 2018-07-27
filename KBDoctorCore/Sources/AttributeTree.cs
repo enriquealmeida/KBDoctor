@@ -1067,7 +1067,7 @@ namespace Concepto.Packages.KBDoctor
             return GetStructureTypeReference(node, model, out type);
         }
 
-        private static StructureTypeReference GetStructureTypeReference(AbstractNode node, KBModel model, out Dependency.Types type)
+        public static StructureTypeReference GetStructureTypeReference(AbstractNode node, KBModel model, out Dependency.Types type)
         {
             type = Dependency.Types.Variable;
             if (node is VariableNameNode && ((VariableNameNode)node).Variable != null)
@@ -1194,7 +1194,7 @@ namespace Concepto.Packages.KBDoctor
                             yield return member;
         }
 
-        private static IEnumerable<Artech.Common.Helpers.Structure.IStructureItem> GetStructureSubStructures(StructureTypeReference StructureReference, KBModel model)
+        public static IEnumerable<Artech.Common.Helpers.Structure.IStructureItem> GetStructureSubStructures(StructureTypeReference StructureReference, KBModel model)
         {
             if (StructureReference == null)
                 yield break;

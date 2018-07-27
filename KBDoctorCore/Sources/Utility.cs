@@ -643,6 +643,99 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+        public static KBObject GetObjectByNameModule(KBModel model, string name, string module)
+        {
+            foreach (KBObject obj in model.Objects.GetByPropertyValue("Name", name))
+            {
+                if (obj.Module.Name.ToLower() == module.ToLower())
+                    return obj;
+            }
+            return null;
+        }
+
+        public static string GetOutputFormatedType(KBObject obj)
+        {
+            ICallableObject callableObject = obj as ICallableObject;
+
+            if (callableObject != null)
+            {
+                List<Signature> signatures = (List<Signature>)callableObject.GetSignatures();
+                if(signatures.Count == 1) { 
+                    foreach (Signature signature in signatures)
+                    {
+                        Parameter lastparameter = null;
+                        foreach (Parameter parm in signature.Parameters)
+                        {
+                            lastparameter = parm;
+                        }
+                        if(lastparameter != null && lastparameter.Accessor.ToString() != "PARM_IN") {
+                            if (lastparameter.IsAttribute)
+                            {
+                                Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)lastparameter.Object;
+                                if (att != null)
+                                    return Utility.ReturnPicture(att);
+                                else
+                                    return "";
+                            }
+                            else
+                            {
+                                Variable var = (Variable)lastparameter.Object;
+                                if(var != null)
+                                    return Utility.ReturnPictureVariable(var);
+                                else
+                                    return "";
+                            }
+                        }
+                    }
+                }
+            }
+            return "";
+        }
+        
+        public static Domain GetOutputDomains(KBObject obj)
+        {
+            ICallableObject callableObject = obj as ICallableObject;
+
+            if (callableObject != null)
+            {
+                List<Signature> signatures = (List<Signature>)callableObject.GetSignatures();
+                if (signatures.Count == 1)
+                {
+                    foreach (Signature signature in signatures)
+                    {
+                        Parameter lastparameter = null;
+                        foreach (Parameter parm in signature.Parameters)
+                        {
+                            lastparameter = parm;
+                        }
+                        if (lastparameter != null && lastparameter.Accessor.ToString() != "PARM_IN")
+                        {
+                            if (lastparameter.IsAttribute)
+                            {
+                                Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)lastparameter.Object;
+                                if (att != null)
+                                    return att.DomainBasedOn;
+                                else
+                                    return null;
+                            }
+                            else
+                            {
+                                Variable var = (Variable)lastparameter.Object;
+                                if(var != null) { 
+                                    return var.DomainBasedOn;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         internal static void CreateModuleNamesFile(KnowledgeBase KB)
         {
             string pathNvg = Path.Combine(Utility.SpcDirectory(KB), "NvgComparer");
@@ -819,7 +912,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return ReturnFormattedType(d.Type, d.Length, d.Decimals, d.Signed);
         }
         
-        private static string ReturnFormattedType(eDBType type, int length, int decimals, bool signed)
+        public static string ReturnFormattedType(eDBType type, int length, int decimals, bool signed)
         {
             string Picture = "";
             if (type == eDBType.BINARY || type == eDBType.Boolean || type == eDBType.BITMAP)

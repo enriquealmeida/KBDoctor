@@ -24,6 +24,8 @@ using Artech.Udm.Framework;
 using Artech.Udm.Framework.References;
 using Concepto.Packages.KBDoctor;
 using Artech.Genexus.Common.AST;
+using Artech.Architecture.Common.Descriptors;
+using Artech.Genexus.Common.Types;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -916,7 +918,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return false;
         }
 
-        internal static bool AssignTypeComparer(KBObject obj, IOutputService output)
+        internal static bool AssignTypeComparer(KBModel model, KBObject obj, IOutputService output)
         {
             
             if (obj is Procedure)
@@ -925,7 +927,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();  
                 if (procpart != null)
                 {
-                    ProccessAssignmentsInSource(procpart, vp, output, obj.Name);
+                    ProccessAssignmentsInSource(model, procpart, vp, output, obj.Name);
                 }
             }
             else
@@ -936,19 +938,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     if (eventspart != null)
                     {
-                        ProccessAssignmentsInSource(eventspart, vp, output, obj.Name);
+                        ProccessAssignmentsInSource(model, eventspart, vp, output, obj.Name);
                     }
                 }
             }
-            
-
-           
-
-           
             return false;
         }
 
-        private static void ProccessAssignmentsInSource(SourcePart procpart, VariablesPart vp, IOutputService output, string objname)
+        private static void ProccessAssignmentsInSource(KBModel model, SourcePart procpart, VariablesPart vp, IOutputService output, string objname)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
@@ -969,7 +966,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             string picture = Utility.ReturnPictureVariable(varL);
                             Domain domL = varL.DomainBasedOn;
-                            CompareAssignTypes(vp, output, assign, picture, domL, objname);
+                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname);
                         }
                     }
                     if (assign.Left is AttributeNameNode)
@@ -980,32 +977,65 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             string picture = Utility.ReturnPicture(att);
                             Domain domL = att.DomainBasedOn;
-                            CompareAssignTypes(vp, output, assign, picture, domL, objname);
+                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname);
                         }
                         
                     }
-                    if(assign.Left is ObjectPropertyNode)
+                    if (assign.Left is ObjectPropertyNode)
                     {
                         //No implementado
                         ObjectPropertyNode op = (ObjectPropertyNode)assign.Left;
 
-                        if(op.Target is VariableNameNode)
-                        {
-                           /* AttCustomType CustomType = ((VariableNameNode)op).Variable).GetPropertyValue<AttCustomType>(Artech.Genexus.Common.Properties.ATT.DataType);
-                            VariableNameNode sdtitem = (VariableNameNode) op.Target;
-                            string sdt = sdtitem.VarName;
-                            string item = op.PropertyName;
-                            Variable sdtvar = vp.GetVariable(sdt);
-                            //edbtype e = sdtvar.Type;*/
-                        }
-                        //ObjectPropertyNode att = op.
+                        AttributeTree.Dependency.Types type;
+                        StructureTypeReference parentRef = AttributeTree.GetStructureTypeReference(op.Children.First(), model, out type);
 
+                        string ChildText = op.Children.Skip(1).First().Text;
+                        foreach (Artech.Common.Helpers.Structure.IStructureItem item in AttributeTree.GetStructureSubStructures(parentRef, model))
+                        {
+                            if (item.Name == ChildText)
+                                if (item is SDTLevel)
+                                    new StructureTypeReference(((SDTLevel)item).ItemEntity.Type, ((SDTLevel)item).ItemEntity.Id);
+                                else if (item is TransactionLevel)
+                                {
+                                    TransactionLevel TrnLvl = (TransactionLevel)item;
+                                    new StructureTypeReference(TrnLvl.Transaction.Key.Type, TrnLvl.Transaction.Key.Id, StructureInfoProvider.GetLevelPrimaryKey(TrnLvl));
+                                }
+                                else if (item is SDTItem)
+                                {
+                                    SDTItem sdtitem = (SDTItem)item;
+                                    Domain domL = sdtitem.DomainBasedOn;
+                                    string pictureL;
+                                    if (domL != null)
+                                    {
+                                        pictureL = Utility.ReturnPictureDomain(domL);
+                                    }
+                                    else
+                                    {
+                                        pictureL = Utility.ReturnFormattedType(sdtitem.Type, sdtitem.Length, sdtitem.Decimals, sdtitem.Signed);
+                                    }
+
+                                    CompareAssignTypes(model, vp, output, assign, pictureL, domL, objname);
+                                }
+                                //return null;
+                                else if (item is TransactionAttribute)
+                                {
+
+                                }
+                                else if (item is Artech.Genexus.Common.Parts.ExternalObject.ExternalObjectProperty)
+                                {
+
+                                }
+                                else
+                                {
+
+                                }
+                        }
                     }
                 }
             }
         }
 
-        private static void CompareAssignTypes(VariablesPart vp, IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string objname)
+        private static void CompareAssignTypes(KBModel model, VariablesPart vp, IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string objname)
         {
             if (assign.Right is VariableNameNode)
             {
@@ -1034,12 +1064,35 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
                 }
             }
-            if (assign.Right is ObjectPropertyNode)
+            if (assign.Right is FunctionNode)
             {
-                //No implementado
+                FunctionNode fn = (FunctionNode)assign.Right;
+                if (fn.Node != null)
+                {
+                    /*Artech.Common.Language.Parser.Objects.BLFunction
+
+                    BLFunction bl = (BLFunction)fn.Node;
+                    model.Objects.Get(
+                        )*/
+                }
             }
             if (assign.Right is ObjectMethodNode)
             {
+                ObjectMethodNode omn = (ObjectMethodNode) assign.Right;
+                if(omn.Node != null)
+                {
+                    string methodname = omn.MethodName;
+                    string text = omn.Text;
+                    string[] splits = text.ToLower().Split('.');
+                    if(splits.Length > 1) { 
+                        KBObject obj = Utility.GetObjectByNameModule(model, methodname, splits[splits.Length - 2]);
+                        string pictureR = Utility.GetOutputFormatedType(obj);
+                        Domain domR = Utility.GetOutputDomains(obj);
+                        if(pictureR != "") { 
+                            CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                        }
+                    }
+                }
                 //No implementado
             }
             if (assign.Right is StringConstantNode)
@@ -1101,6 +1154,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 //No implementado
             }
         }
+
+
 
         private static void CheckVarAndAttAssignTypes(IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string pictureR, Domain domR, string objname)
         {
@@ -1184,8 +1239,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string[] definition = { length , "0"};
                 return definition;
             }
-            
-            
         }
 
         private static string getLengthFromPicture(string picture)
