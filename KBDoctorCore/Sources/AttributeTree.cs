@@ -527,7 +527,7 @@ namespace Concepto.Packages.KBDoctor
                                     Artech.Genexus.Common.Variable CollectionVariable = ((VariableNameNode)CollectionNode).Variable;
                                     if (CollectionVariable != null && CollectionVariable.Type == eDBType.GX_BUSCOMP)
                                     {
-                                        if (CollectionNode.Children.Skip(1).First() is FunctionNode)
+                                        if (CollectionNode.Children.Skip(1).First() is FunctionFunctionNode)
                                             FunctionName = ((FunctionNode)CollectionNode.Children.Skip(1).First()).FunctionName;
                                     }
                                 }

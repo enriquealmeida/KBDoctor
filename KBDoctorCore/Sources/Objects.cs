@@ -26,6 +26,8 @@ using Concepto.Packages.KBDoctor;
 using Artech.Genexus.Common.AST;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Genexus.Common.Types;
+using Artech.Common.Language.Parser;
+using Artech.Architecture.Language.Parser.Objects;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -1019,28 +1021,41 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if((assign.Right.Text.ToLower() != "true" && assign.Right.Text.ToLower() != "false") && pictureL.ToLower().Contains("boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
-                    string pictureR = Utility.ReturnPicture(att);
-                    Domain domR = att.DomainBasedOn;
-                    CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                    if(att != null) { 
+                        string pictureR = Utility.ReturnPicture(att);
+                        Domain domR = att.DomainBasedOn;
+                        CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                    }
                 }
                 if(!pictureL.ToLower().Contains("boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
-                    string pictureR = Utility.ReturnPicture(att);
-                    Domain domR = att.DomainBasedOn;
-                    CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                    if(att != null) { 
+                        string pictureR = Utility.ReturnPicture(att);
+                        Domain domR = att.DomainBasedOn;
+                        CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                    }
                 }
             }
             if (assign.Right is FunctionNode)
             {
                 FunctionNode fn = (FunctionNode)assign.Right;
-                if (fn.Node != null)
+                if (fn.Element != null)
                 {
-                    /*Artech.Common.Language.Parser.Objects.BLFunction
-
-                    BLFunction bl = (BLFunction)fn.Node;
-                    model.Objects.Get(
-                        )*/
+                    KBObject obj = (KBObject)(((FunctionNode)assign.Right).Element.Name.Tag);
+                    if(obj != null)
+                    {
+                        string pictureR = Utility.GetOutputFormatedType(obj);
+                        Domain domR = Utility.GetOutputDomains(obj);
+                        if (pictureR != "")
+                        {
+                            CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                        }
+                    }
+                    else
+                    {
+                        //No implementado
+                    }
                 }
             }
             if (assign.Right is ObjectMethodNode)
@@ -1146,7 +1161,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     output.AddLine(objname + ">" + assign.Text + " Number assigned is too long " + pictureL + "<" + pictureR);
                 }
-                else if (int.Parse(splitsL[0]) >= int.Parse(splitsR[0]) && int.Parse(splitsL[1]) < int.Parse(splitsR[1]))
+                else if (int.Parse(splitsL[1]) < int.Parse(splitsR[1]))
                 {
                     output.AddLine(objname + ">" + assign.Text + " Number decimals assigned are too long " + pictureL + "<" + pictureR);
                 }
@@ -1186,7 +1201,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 else
                 {
-                    output.AddLine(objname + ">" + assign.Text + " No element in assign has domain ");
+                    //output.AddLine(objname + ">" + assign.Text + " No element in assign has domain ");
                 }
             }
         }
