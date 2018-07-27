@@ -284,10 +284,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static bool AssignTypesComprarer(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
         {
+            output.SelectOutput("KBDoctor");
+            output.StartSection("KBDoctor - Assign Types Comparer");
             foreach (KBObject obj in objs)
             {
                 Objects.AssignTypeComparer(KB.DesignModel, obj, output);
             }
+            output.EndSection("KBDoctor - Assign Types Comparer", true);
             return true;
         }
 

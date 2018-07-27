@@ -42,7 +42,7 @@ using Concepto.Packages.KBDoctorCore.Sources;
 using Artech.Genexus.Common.AST;
 using Artech.Architecture.Common.Location;
 using Artech.Genexus.Common.Types;
-
+using System.Threading;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -4087,7 +4087,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
             List<KBObject> objs = (List<KBObject>) UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
-            KBDoctorCore.Sources.API.AssignTypesComprarer(kbserv.CurrentKB, output, objs);
+            Thread thread = new Thread(() => KBDoctorCore.Sources.API.AssignTypesComprarer(kbserv.CurrentKB, output, objs));
+            thread.Start();   
         }
 
         public static void TestParser()

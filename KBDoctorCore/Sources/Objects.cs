@@ -920,34 +920,35 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return false;
         }
 
-        internal static bool AssignTypeComparer(KBModel model, KBObject obj, IOutputService output)
+        internal static void AssignTypeComparer(KBModel model, KBObject obj, IOutputService output)
         {
-            
-            if (obj is Procedure)
+            if (!isGeneratedbyPattern(obj))
             {
-                Artech.Genexus.Common.Parts.ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
-                Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();  
-                if (procpart != null)
+                if (obj is Procedure)
                 {
-                    ProccessAssignmentsInSource(model, procpart, vp, output, obj.Name);
-                }
-            }
-            else
-            {
-                if (obj is WebPanel || obj is Transaction)
-                {
-                    Artech.Genexus.Common.Parts.EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
+                    Artech.Genexus.Common.Parts.ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
                     Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
-                    if (eventspart != null)
+                    if (procpart != null)
                     {
-                        ProccessAssignmentsInSource(model, eventspart, vp, output, obj.Name);
+                        ProccessAssignmentsInSource(model, procpart, vp, output, obj.Name, procpart);
+                    }
+                }
+                else
+                {
+                    if (obj is WebPanel || obj is Transaction)
+                    {
+                        Artech.Genexus.Common.Parts.EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
+                        Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                        if (eventspart != null)
+                        {
+                            ProccessAssignmentsInSource(model, eventspart, vp, output, obj.Name, eventspart);
+                        }
                     }
                 }
             }
-            return false;
         }
 
-        private static void ProccessAssignmentsInSource(KBModel model, SourcePart procpart, VariablesPart vp, IOutputService output, string objname)
+        private static void ProccessAssignmentsInSource(KBModel model, SourcePart procpart, VariablesPart vp, IOutputService output, string objname, KBObjectPart part)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
@@ -968,7 +969,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             string picture = Utility.ReturnPictureVariable(varL);
                             Domain domL = varL.DomainBasedOn;
-                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname);
+                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname, part);
                         }
                     }
                     if (assign.Left is AttributeNameNode)
@@ -979,13 +980,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             string picture = Utility.ReturnPicture(att);
                             Domain domL = att.DomainBasedOn;
-                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname);
+                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname, part);
                         }
                         
                     }
                     if (assign.Left is ObjectPropertyNode)
                     {
-                        //No implementado
                         ObjectPropertyNode op = (ObjectPropertyNode)assign.Left;
 
                         AttributeTree.Dependency.Types type;
@@ -1016,9 +1016,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                         pictureL = Utility.ReturnFormattedType(sdtitem.Type, sdtitem.Length, sdtitem.Decimals, sdtitem.Signed);
                                     }
 
-                                    CompareAssignTypes(model, vp, output, assign, pictureL, domL, objname);
+                                    CompareAssignTypes(model, vp, output, assign, pictureL, domL, objname, part);
                                 }
-                                //return null;
                                 else if (item is TransactionAttribute)
                                 {
 
@@ -1037,7 +1036,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static void CompareAssignTypes(KBModel model, VariablesPart vp, IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string objname)
+        private static void CompareAssignTypes(KBModel model, VariablesPart vp, IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string objname, KBObjectPart part)
         {
             if (assign.Right is VariableNameNode)
             {
@@ -1045,7 +1044,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Variable varR = vp.GetVariable(vnr.VarName);
                 string pictureR = Utility.ReturnPictureVariable(varR);
                 Domain domR = varR.DomainBasedOn;
-                CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
 
             }
             if (assign.Right is AttributeNameNode)
@@ -1057,7 +1056,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if(att != null) { 
                         string pictureR = Utility.ReturnPicture(att);
                         Domain domR = att.DomainBasedOn;
-                        CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                        CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
                     }
                 }
                 if(!pictureL.ToLower().Contains("boolean"))
@@ -1066,7 +1065,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if(att != null) { 
                         string pictureR = Utility.ReturnPicture(att);
                         Domain domR = att.DomainBasedOn;
-                        CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                        CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
                     }
                 }
             }
@@ -1075,19 +1074,52 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 FunctionNode fn = (FunctionNode)assign.Right;
                 if (fn.Element != null)
                 {
-                    KBObject obj = (KBObject)(((FunctionNode)assign.Right).Element.Name.Tag);
-                    if(obj != null)
+                    KBObject proc = (KBObject)(((FunctionNode)assign.Right).Element.Name.Tag);
+                    if(proc != null)
                     {
-                        string pictureR = Utility.GetOutputFormatedType(obj);
-                        Domain domR = Utility.GetOutputDomains(obj);
+                        string pictureR = Utility.GetOutputFormatedType(proc);
+                        Domain domR = Utility.GetOutputDomains(proc);
                         if (pictureR != "")
                         {
-                            CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                            CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
                         }
                     }
                     else
                     {
-                        //No implementado
+                        if(fn.FunctionName.ToLower() == "udp")
+                        {
+                            if (fn.Children.First() is ObjectPropertyNode)
+                            {
+                                ObjectPropertyNode opn = (ObjectPropertyNode)fn.Children.First();
+                                if (opn.Node != null)
+                                {
+                                    string methodname = opn.PropertyName;
+                                    string text = opn.Text;
+                                    string[] splits = text.ToLower().Split('.');
+                                    if (splits.Length > 1)
+                                    {
+                                        KBObject obj = Utility.GetObjectByNameModule(model, methodname, splits[splits.Length - 2]);
+                                        string pictureR = Utility.GetOutputFormatedType(obj);
+                                        Domain domR = Utility.GetOutputDomains(obj);
+                                        if (pictureR != "")
+                                        {
+                                            CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
+                                        }
+                                    }
+                                }
+                            }
+                            else if(fn.Children.First() is AttributeNameNode)
+                            {
+                                AttributeNameNode ann = (AttributeNameNode)fn.Children.First();
+                                KBObject obj = (KBObject)ann.Element.Tag;
+                                string pictureR = Utility.GetOutputFormatedType(obj);
+                                Domain domR = Utility.GetOutputDomains(obj);
+                                if(pictureR != "")
+                                {
+                                    CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1097,18 +1129,54 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if(omn.Node != null)
                 {
                     string methodname = omn.MethodName;
-                    string text = omn.Text;
-                    string[] splits = text.ToLower().Split('.');
-                    if(splits.Length > 1) { 
-                        KBObject obj = Utility.GetObjectByNameModule(model, methodname, splits[splits.Length - 2]);
-                        string pictureR = Utility.GetOutputFormatedType(obj);
-                        Domain domR = Utility.GetOutputDomains(obj);
-                        if(pictureR != "") { 
-                            CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname);
+                    if (methodname == "udp") {
+                        if(omn.Children.First() is ObjectPropertyNode) { 
+                            ObjectPropertyNode opn = (ObjectPropertyNode)omn.Children.First();
+                            if (opn.Node != null)
+                            {
+                                string objectname = opn.PropertyName;
+                                string text = opn.Text;
+                                string[] splits = text.ToLower().Split('.');
+                                if (splits.Length > 1)
+                                {
+                                    KBObject obj = Utility.GetObjectByNameModule(model, objectname, splits[splits.Length - 2]);
+                                    string pictureR = Utility.GetOutputFormatedType(obj);
+                                    Domain domR = Utility.GetOutputDomains(obj);
+                                    if (pictureR != "")
+                                    {
+                                        CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
+                                    }
+                                }
+                            }
+                        }
+                        else if(omn.Children.First() is AttributeNameNode)
+                        {
+                            AttributeNameNode ann = (AttributeNameNode)omn.Children.First();
+                            KBObject obj = (KBObject)ann.Element.Tag;
+                            string pictureR = Utility.GetOutputFormatedType(obj);
+                            Domain domR = Utility.GetOutputDomains(obj);
+                            if (pictureR != "")
+                            {
+                                CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string text = omn.Text;
+                        string[] splits = text.ToLower().Split('.');
+                        if (splits.Length > 1)
+                        {
+                            KBObject obj = Utility.GetObjectByNameModule(model, methodname, splits[splits.Length - 2]);
+                            string pictureR = Utility.GetOutputFormatedType(obj);
+                            Domain domR = Utility.GetOutputDomains(obj);
+                            if (pictureR != "")
+                            {
+                                CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
+                            }
                         }
                     }
                 }
-                //No implementado
             }
             if (assign.Right is StringConstantNode)
             {          
@@ -1117,7 +1185,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 int textlength = text.Length - 2;   //Chequeo logitud ignorando las 2 comillas
                 if(textlength > int.Parse(getLengthFromPicture(pictureL)))
                 {
-                    output.AddLine(objname + ">" + assign.Text + " Text assigned is too long (" + textlength.ToString() + ") for " + pictureL);
+                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Text assigned is too long (" + textlength.ToString() + ") for " + pictureL, MessageLevel.Warning, new KBObjectPosition(part));
+                    output.Add("KBDoctor", err);
                 }
             }
             if (assign.Right is NumberNode)
@@ -1145,12 +1214,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     if (!hasLength)                                                                                                                                                                                   
                     {
-                        output.AddLine(objname + ">" + assign.Text + " Number assigned is too long (" + pictureL + ")");
+                        OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Number assigned is too long (" + pictureL + ")", MessageLevel.Warning, new KBObjectPosition(part));
+                        output.Add("KBDoctor", err);
                     }
 
                     if(hasLength && int.Parse(def[1]) != 0 && int.Parse(defPic[1]) < def[1].Length) //Chequeo de decimales
                     {
-                        output.AddLine(objname + ">" + assign.Text + " Number assigned decimals are too long (" + pictureL + ")");
+                        OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Number assigned decimals are too long (" + pictureL + ")", MessageLevel.Warning, new KBObjectPosition(part));
+                        output.Add("KBDoctor", err);
                     }
                 }
                 else
@@ -1159,20 +1230,19 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     string text = nn.Text;
                     if(text != "0" && text != "1")
                     {
-                        output.AddLine(objname + ">" + assign.Text + " Number greater than 1 assigned to a boolean");
+                        OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Number greater than 1 assigned to a boolean", MessageLevel.Warning, new KBObjectPosition(part));
+                        output.Add("KBDoctor", err);
                     }
                 }
             }
             if (assign.Right is DateConstantNode)
             {
-                //output.AddLine("TestDateConstant");
-                //No implementado
             }
         }
 
 
 
-        private static void CheckVarAndAttAssignTypes(IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string pictureR, Domain domR, string objname)
+        private static void CheckVarAndAttAssignTypes(IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string pictureR, Domain domR, string objname, KBObjectPart part)
         {
             if (pictureL.ToLower().Contains("char") && pictureR.ToLower().Contains("char"))
             {
@@ -1180,9 +1250,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string lengthPicR = getLengthFromPicture(pictureR);
                 if (int.Parse(lengthPicL) < int.Parse(lengthPicR))
                 {
-                    output.AddLine(objname + ">" + assign.Text + " String assigned is too long " + pictureL + "<" + pictureR);
+                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " String assigned is too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new KBObjectPosition(part));
+                    output.Add("KBDoctor", err);
                 }
-                CheckDomains(output, assign, domL, domR, objname);
+                CheckDomains(output, assign, domL, domR, objname, part);
             }
             else if (pictureL.ToLower().Contains("numeric") && pictureR.ToLower().Contains("numeric"))
             {
@@ -1192,25 +1263,28 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string[] splitsR = SplitDecimals(lengthPicR);
                 if ((int.Parse(splitsL[0]) - int.Parse(splitsL[1])) < (int.Parse(splitsR[0]) - int.Parse(splitsR[1])))
                 {
-                    output.AddLine(objname + ">" + assign.Text + " Number assigned is too long " + pictureL + "<" + pictureR);
+                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Number assigned is too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new KBObjectPosition(part));
+                    output.Add("KBDoctor", err);
                 }
                 else if (int.Parse(splitsL[1]) < int.Parse(splitsR[1]))
                 {
-                    output.AddLine(objname + ">" + assign.Text + " Number decimals assigned are too long " + pictureL + "<" + pictureR);
+                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Number decimals assigned are too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new KBObjectPosition(part));
+                    output.Add("KBDoctor", err);
                 }
-                CheckDomains(output, assign, domL, domR, objname);
+                CheckDomains(output, assign, domL, domR, objname, part);
                 
             }
             else
             {
                 if (pictureR != pictureL)
                 {
-                    output.AddLine(objname + ">" + assign.Text + " " + pictureL + "<>" + pictureR);
+                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " " + pictureL + "<>" + pictureR, MessageLevel.Warning, new KBObjectPosition(part));
+                    output.Add("KBDoctor", err);
                 }
             }
         }
 
-        private static void CheckDomains(IOutputService output, AssignmentNode assign, Domain domL, Domain domR, string objname)
+        private static void CheckDomains(IOutputService output, AssignmentNode assign, Domain domL, Domain domR, string objname, KBObjectPart part)
         {
             if (domL != null)
             {
@@ -1218,23 +1292,25 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     if (domL.Name != domR.Name)
                     {
-                        output.AddLine(objname + ">" + assign.Text + " Variables are based on different domains " + domL.Name + "<>" + domR.Name);
+                        OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Variables are based on different domains " + domL.Name + "<>" + domR.Name, MessageLevel.Warning, new KBObjectPosition(part));
+                        output.Add("KBDoctor", err);
                     }
                 }
                 else
                 {
-                    output.AddLine(objname + ">" + assign.Text + " (" + assign.Right.Text + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name);
+                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " (" + assign.Right.Text + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name, MessageLevel.Warning, new KBObjectPosition(part));
+                    output.Add("KBDoctor", err);
                 }
             }
             else
             {
                 if (domR != null)
                 {
-                    output.AddLine(objname + ">" + assign.Text + " (" + assign.Left.Text + ") Doesn't have domain but (" + assign.Right.Text + ") is BasedOn " + domR.Name);
+                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " (" + assign.Left.Text + ") Doesn't have domain but (" + assign.Right.Text + ") is BasedOn " + domR.Name, MessageLevel.Warning, new KBObjectPosition(part));
+                    output.Add("KBDoctor", err);
                 }
                 else
                 {
-                    //output.AddLine(objname + ">" + assign.Text + " No element in assign has domain ");
                 }
             }
         }

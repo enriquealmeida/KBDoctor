@@ -392,7 +392,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return (obj is Transaction || obj is WebPanel || obj is Procedure || obj is DataProvider || obj is Menubar);
         }
 
-        internal static string ExtractComments(string source)
+        public static string ExtractComments(string source)
         {
 
             var blockComments = @"/\*(.*?)\*/";
@@ -414,6 +414,38 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             noComments = noComments.Replace(")", ") ");
             noComments = noComments.Replace("\"", "\'");
             noComments = noComments.Replace("\t", " ");
+
+            //saco blancos
+            string aux = noComments.Replace("  ", " ");
+            do
+            {
+                noComments = aux;
+                aux = noComments.Replace("  ", " ");
+            } while (noComments != aux);
+
+            //noComments = noComments.ToUpper();
+            return noComments;
+        }
+
+        public static string ExtractCommentsAndBreakLines(string source)
+        {
+
+            var blockComments = @"/\*(.*?)\*/";
+            var lineComments = @"//(.*?)\r?\n";
+            var strings = @"""((\\[^\n]|[^""\n])*)""";
+            var verbatimStrings = @"@(""[^""]*"")+";
+
+            string noComments = Regex.Replace(source, blockComments + "|" + lineComments + "|" + strings + "|" + verbatimStrings,
+             me =>
+             {
+                 if (me.Value.StartsWith("/*") || me.Value.StartsWith("//"))
+                     return me.Value.StartsWith("//") ? Environment.NewLine : "";
+                 // Keep the literal strings
+                 return me.Value;
+             },
+                    RegexOptions.Singleline);
+            noComments = noComments.Replace("\t", "");
+            noComments = noComments.Replace("\n", "");
 
             //saco blancos
             string aux = noComments.Replace("  ", " ");
