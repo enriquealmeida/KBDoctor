@@ -492,6 +492,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         }
                         if (someInOut)
                         {
+
+                            string recommend = "Parameter INOUT ";
+                            OutputError err = new OutputError(recommend, MessageLevel.Warning, new KBObjectPosition(obj.Parts.Get<RulesPart>()));
+                            recommendations += recommend + "<br>";
+                            output.Add("KBDoctor", err);
+
                             string ruleParm = Utility.ExtractRuleParm(obj);
                             if (ruleParm != "")
                             {
@@ -501,8 +507,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 {
                                     objWithProblems += 1;
                                     objectsWithProblems.Add(obj);
-                                    string recommend = "Parameter without IN/OUT/INOUT ";
-                                    OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(obj.Parts.Get<RulesPart>()));
+                                     recommend = "Parameter without IN/OUT/INOUT ";
+                                     err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(obj.Parts.Get<RulesPart>()));
                                     recommendations += recommend + "<br>";
                                     output.Add("KBDoctor", err);
                                 }
