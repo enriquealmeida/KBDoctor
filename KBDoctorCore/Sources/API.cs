@@ -129,6 +129,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (parsedData[SectionName]["CleanUnusedVariables"].ToLower() == "true") 
                         CleanKB.CleanKBObjectVariables(obj, output, ref recommendations);
 
+                    //Fix variables not based in domains or attributes
+                    if (parsedData[SectionName]["FixVariables"].ToLower() == "true")
+                        CleanKB.FixObjectVariables(obj, output, ref recommendations);
+
                     //Check commit on exit
                     if (parsedData[SectionName]["CheckCommitOnExit"].ToLower() == "true")
                         Objects.CommitOnExit(objlist, output, ref recommendations);
@@ -234,6 +238,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 data.Sections.AddSection(SectionName);
 
                 AddKeyToIni(data, SectionName, "CleanUnusedVariables", "true", "Remove unused variables from objects");
+                AddKeyToIni(data, SectionName, "FixVariables", "false", "Fix variables definition, assinging Attribute or Domain");
                 AddKeyToIni(data, SectionName, "ParamINOUT", "true", "Check if all parameters have IN: OUT: INOUT: keywords");
                 AddKeyToIni(data, SectionName, "CheckCommitOnExit", "true", "Check if property Commit on exit = YES");
                 AddKeyToIni(data, SectionName, "CheckModule", "true", "Use of modules is required");

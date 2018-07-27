@@ -677,6 +677,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             if ((!v.IsStandard) && Utility.VarHasToBeInDomain(v))
                             {
+
                                 string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
                                 string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
                                 if (attname == "" && domname == "")
@@ -684,6 +685,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     string vname = v.Name.ToLower();
                                     vnames += vname + " ";
                                     hasErrors = true;
+                                    if (FixObjectVariable(v))
+                                        SaveObj = true;
                                 }
                             }
                         }
@@ -695,8 +698,38 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         recommendations += recommend + "<br>";
                         output.Add("KBDoctor", err);
                     }
+                    if (SaveObj)
+                        obj.Save();
                 }
             }
+        }
+
+        private static bool FixObjectVariable(Variable v)
+        {
+            KBObject obj = v.KBObject;
+            KBModel kBModel = obj.Model;
+            foreach (Artech.Genexus.Common.Objects.Attribute att in kBModel.Objects.GetByName("Attributes", new Guid("adbb33c9-0906-4971-833c-998de27e0676"), v.Name))
+            {
+                KBDoctorOutput.Message("Attribute " + att.Name + " assigned to variable " + v.Name);
+                v.AttributeBasedOn = att;
+                return true;
+                break;
+            }
+
+            //Si no asigno atributo intento asignar dominio
+            if (v.AttributeBasedOn == null)
+            {
+                foreach (Domain d in kBModel.Objects.GetByName("Domains", new Guid("00972a17-9975-449e-aab1-d26165d51393"), v.Name))
+                {
+
+                    KBDoctorOutput.Message("Domain " + d.Name + " assigned to variable " + v.Name);
+                    v.DomainBasedOn = d;
+                    return true;
+                    break;
+                }
+            }
+            return false;
+
         }
 
         internal static void CodeCommented(List<KBObject> objs, IOutputService output, ref string recommendations)
