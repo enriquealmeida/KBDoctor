@@ -928,9 +928,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     Artech.Genexus.Common.Parts.ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
                     Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    Artech.Genexus.Common.Parts.RulesPart rules = obj.Parts.Get<RulesPart>();
                     if (procpart != null)
                     {
-                        ProccessAssignmentsInSource(model, procpart, vp, output, obj.Name, procpart);
+                        ProccessAssignmentsInSource(model, procpart, vp, output, obj.Name);
+                    }
+                    if (rules != null)
+                    {
+                        ProccessAssignmentsInSource(model, rules, vp, output, obj.Name);
                     }
                 }
                 else
@@ -939,16 +944,21 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     {
                         Artech.Genexus.Common.Parts.EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
                         Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                        Artech.Genexus.Common.Parts.RulesPart rules = obj.Parts.Get<RulesPart>();
                         if (eventspart != null)
                         {
-                            ProccessAssignmentsInSource(model, eventspart, vp, output, obj.Name, eventspart);
+                            ProccessAssignmentsInSource(model, eventspart, vp, output, obj.Name);
+                        }
+                        if (rules != null)
+                        {
+                            ProccessAssignmentsInSource(model, rules, vp, output, obj.Name);
                         }
                     }
                 }
             }
         }
 
-        private static void ProccessAssignmentsInSource(KBModel model, SourcePart procpart, VariablesPart vp, IOutputService output, string objname, KBObjectPart part)
+        private static void ProccessAssignmentsInSource(KBModel model, SourcePart procpart, VariablesPart vp, IOutputService output, string objname)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
@@ -969,7 +979,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             string picture = Utility.ReturnPictureVariable(varL);
                             Domain domL = varL.DomainBasedOn;
-                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname, part);
+                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname, procpart);
                         }
                     }
                     if (assign.Left is AttributeNameNode)
@@ -980,7 +990,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             string picture = Utility.ReturnPicture(att);
                             Domain domL = att.DomainBasedOn;
-                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname, part);
+                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname, procpart);
                         }
                         
                     }
@@ -1016,7 +1026,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                         pictureL = Utility.ReturnFormattedType(sdtitem.Type, sdtitem.Length, sdtitem.Decimals, sdtitem.Signed);
                                     }
 
-                                    CompareAssignTypes(model, vp, output, assign, pictureL, domL, objname, part);
+                                    CompareAssignTypes(model, vp, output, assign, pictureL, domL, objname, procpart);
                                 }
                                 else if (item is TransactionAttribute)
                                 {
@@ -1347,17 +1357,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     if (node.Node != null)
                     {
-                        if (node.Node.Token == 107)
+                        if (node.Node.Token == 107 || node.Node.Token == -1) 
                         {
                             if (node is AssignmentNode)
                                 assignments.Add(node);
                         }
                         else
                         {
-                            if (node.Node.Token > 100)
-                            {
-                                assignments.AddRange(getAssignmentsInSource(node));
-                            }
+                            assignments.AddRange(getAssignmentsInSource(node));
                         }
                     }
                 }
