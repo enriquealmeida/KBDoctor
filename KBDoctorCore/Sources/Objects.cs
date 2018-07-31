@@ -26,7 +26,7 @@ using Concepto.Packages.KBDoctor;
 using Artech.Genexus.Common.AST;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Genexus.Common.Types;
-using Artech.Common.Language.Parser;
+//using Artech.Common.Language.Parser;
 using Artech.Architecture.Language.Parser.Objects;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
