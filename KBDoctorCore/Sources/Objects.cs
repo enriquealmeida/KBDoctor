@@ -926,9 +926,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (obj is Procedure)
                 {
-                    Artech.Genexus.Common.Parts.ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
-                    Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
-                    Artech.Genexus.Common.Parts.RulesPart rules = obj.Parts.Get<RulesPart>();
+                    ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    RulesPart rules = obj.Parts.Get<RulesPart>();
                     if (procpart != null)
                     {
                         ProccessAssignmentsInSource(model, procpart, vp, output, obj.Name);
@@ -942,9 +942,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     if (obj is WebPanel || obj is Transaction)
                     {
-                        Artech.Genexus.Common.Parts.EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
-                        Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
-                        Artech.Genexus.Common.Parts.RulesPart rules = obj.Parts.Get<RulesPart>();
+                        EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
+                        VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                        RulesPart rules = obj.Parts.Get<RulesPart>();
                         if (eventspart != null)
                         {
                             ProccessAssignmentsInSource(model, eventspart, vp, output, obj.Name);
@@ -997,7 +997,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (assign.Left is ObjectPropertyNode)
                     {
                         ObjectPropertyNode op = (ObjectPropertyNode)assign.Left;
-
                         AttributeTree.Dependency.Types type;
                         StructureTypeReference parentRef = AttributeTree.GetStructureTypeReference(op.Children.First(), model, out type);
 
@@ -1005,6 +1004,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         foreach (Artech.Common.Helpers.Structure.IStructureItem item in AttributeTree.GetStructureSubStructures(parentRef, model))
                         {
                             if (item.Name == ChildText)
+                            { 
                                 if (item is SDTLevel)
                                     new StructureTypeReference(((SDTLevel)item).ItemEntity.Type, ((SDTLevel)item).ItemEntity.Id);
                                 else if (item is TransactionLevel)
@@ -1028,18 +1028,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                                     CompareAssignTypes(model, vp, output, assign, pictureL, domL, objname, procpart);
                                 }
-                                else if (item is TransactionAttribute)
-                                {
-
-                                }
-                                else if (item is Artech.Genexus.Common.Parts.ExternalObject.ExternalObjectProperty)
-                                {
-
-                                }
-                                else
-                                {
-
-                                }
+                            }
                         }
                     }
                 }
@@ -1195,7 +1184,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 int textlength = text.Length - 2;   //Chequeo logitud ignorando las 2 comillas
                 if(textlength > int.Parse(getLengthFromPicture(pictureL)))
                 {
-                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Text assigned is too long (" + textlength.ToString() + ") for " + pictureL, MessageLevel.Warning, new KBObjectPosition(part));
+                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                    OutputError err = new OutputError(printText + " Text assigned is too long (" + textlength.ToString() + ") for " + pictureL, MessageLevel.Warning, new SourcePosition(part, assign.Node.Row, 0));
                     output.Add("KBDoctor", err);
                 }
             }
@@ -1224,13 +1214,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     if (!hasLength)                                                                                                                                                                                   
                     {
-                        OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Number assigned is too long (" + pictureL + ")", MessageLevel.Warning, new KBObjectPosition(part));
+                        string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                        OutputError err = new OutputError(printText + " Number assigned is too long (" + pictureL + ")", MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
                         output.Add("KBDoctor", err);
                     }
 
                     if(hasLength && int.Parse(def[1]) != 0 && int.Parse(defPic[1]) < def[1].Length) //Chequeo de decimales
                     {
-                        OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Number assigned decimals are too long (" + pictureL + ")", MessageLevel.Warning, new KBObjectPosition(part));
+                        string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                        OutputError err = new OutputError(printText + " Number assigned decimals are too long (" + pictureL + ")", MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
                         output.Add("KBDoctor", err);
                     }
                 }
@@ -1240,13 +1232,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     string text = nn.Text;
                     if(text != "0" && text != "1")
                     {
-                        OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Number greater than 1 assigned to a boolean", MessageLevel.Warning, new KBObjectPosition(part));
+                        string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                        OutputError err = new OutputError(printText + " Number greater than 1 assigned to a boolean", MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
                         output.Add("KBDoctor", err);
                     }
                 }
-            }
-            if (assign.Right is DateConstantNode)
-            {
             }
         }
 
@@ -1260,7 +1250,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string lengthPicR = getLengthFromPicture(pictureR);
                 if (int.Parse(lengthPicL) < int.Parse(lengthPicR))
                 {
-                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " String assigned is too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new KBObjectPosition(part));
+                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                    OutputError err = new OutputError(printText + " String assigned is too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
                     output.Add("KBDoctor", err);
                 }
                 CheckDomains(output, assign, domL, domR, objname, part);
@@ -1273,12 +1264,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string[] splitsR = SplitDecimals(lengthPicR);
                 if ((int.Parse(splitsL[0]) - int.Parse(splitsL[1])) < (int.Parse(splitsR[0]) - int.Parse(splitsR[1])))
                 {
-                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Number assigned is too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new KBObjectPosition(part));
+                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                    OutputError err = new OutputError(printText + " Number assigned is too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
                     output.Add("KBDoctor", err);
                 }
                 else if (int.Parse(splitsL[1]) < int.Parse(splitsR[1]))
                 {
-                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Number decimals assigned are too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new KBObjectPosition(part));
+                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                    OutputError err = new OutputError(printText + " Number decimals assigned are too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
                     output.Add("KBDoctor", err);
                 }
                 CheckDomains(output, assign, domL, domR, objname, part);
@@ -1288,7 +1281,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (pictureR != pictureL)
                 {
-                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " " + pictureL + "<>" + pictureR, MessageLevel.Warning, new KBObjectPosition(part));
+                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                    OutputError err = new OutputError(printText + " " + pictureL + "<>" + pictureR, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
                     output.Add("KBDoctor", err);
                 }
             }
@@ -1302,13 +1296,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     if (domL.Name != domR.Name)
                     {
-                        OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " Variables are based on different domains " + domL.Name + "<>" + domR.Name, MessageLevel.Warning, new KBObjectPosition(part));
+                        string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                        OutputError err = new OutputError(printText + " Variables are based on different domains " + domL.Name + "<>" + domR.Name, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
                         output.Add("KBDoctor", err);
                     }
                 }
                 else
                 {
-                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " (" + assign.Right.Text + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name, MessageLevel.Warning, new KBObjectPosition(part));
+                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                    OutputError err = new OutputError(printText + " (" + assign.Right.Text + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
                     output.Add("KBDoctor", err);
                 }
             }
@@ -1316,7 +1312,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (domR != null)
                 {
-                    OutputError err = new OutputError(Utility.ExtractCommentsAndBreakLines(assign.Text) + " (" + assign.Left.Text + ") Doesn't have domain but (" + assign.Right.Text + ") is BasedOn " + domR.Name, MessageLevel.Warning, new KBObjectPosition(part));
+                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+                    OutputError err = new OutputError(printText + " (" + assign.Left.Text + ") Doesn't have domain but (" + assign.Right.Text + ") is BasedOn " + domR.Name, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
                     output.Add("KBDoctor", err);
                 }
                 else
