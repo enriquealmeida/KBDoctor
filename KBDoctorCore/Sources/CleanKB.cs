@@ -276,7 +276,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                     string attNameLink = Utility.linkObject(a); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
                     strRemoved = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + a.Guid.ToString() + "\">Remove</a>";
-                    string Picture = Utility.ReturnPicture(a);
+                    string Picture = Utility.FormattedTypeAttribute(a);
                     lineswriter.Add(new string[] { strRemoved, attNameLink, a.Description, Picture });
                 }
             }

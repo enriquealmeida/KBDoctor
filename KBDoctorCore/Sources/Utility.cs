@@ -705,7 +705,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             {
                                 Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)lastparameter.Object;
                                 if (att != null)
-                                    return Utility.ReturnPicture(att);
+                                    return Utility.FormattedTypeAttribute(att);
                                 else
                                     return "";
                             }
@@ -713,7 +713,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             {
                                 Variable var = (Variable)lastparameter.Object;
                                 if(var != null)
-                                    return Utility.ReturnPictureVariable(var);
+                                    return Utility.FormattedTypeVariable(var);
                                 else
                                     return "";
                             }
@@ -929,35 +929,35 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return true;
         }
 
-        public static string ReturnPicture(Artech.Genexus.Common.Objects.Attribute a)
+        public static string FormattedTypeAttribute(Artech.Genexus.Common.Objects.Attribute a)
         {
             return ReturnFormattedType(a.Type, a.Length, a.Decimals, a.Signed);
         }
 
-        public static string ReturnPictureVariable(Variable v)
+        public static string FormattedTypeVariable(Variable v)
         {
             return ReturnFormattedType(v.Type, v.Length, v.Decimals, v.Signed);
         }
 
-        public static string ReturnPictureDomain(Domain d)
+        public static string FormattedTypeDomain(Domain d)
         {
             return ReturnFormattedType(d.Type, d.Length, d.Decimals, d.Signed);
         }
         
         public static string ReturnFormattedType(eDBType type, int length, int decimals, bool signed)
         {
-            string Picture = "";
+            string formatType = "";
             if (type == eDBType.BINARY || type == eDBType.Boolean || type == eDBType.BITMAP)
-                Picture = type.ToString();
+                formatType = type.ToString();
             else if(type == eDBType.VARCHAR || type == eDBType.LONGVARCHAR || type == eDBType.CHARACTER)
             {
-                Picture = type.ToString() + "(" + length.ToString() + ")" + (signed ? "-" : "");
+                formatType = type.ToString() + "(" + length.ToString() + ")" + (signed ? "-" : "");
             }
             else { 
-                Picture = type.ToString() + "(" + length.ToString() + (decimals > 0 ? "." + decimals.ToString() : "") + ")" + (signed ? "-" : "");
+                formatType = type.ToString() + "(" + length.ToString() + (decimals > 0 ? "." + decimals.ToString() : "") + ")" + (signed ? "-" : "");
             }
 
-            return Picture;
+            return formatType;
 
         }
         internal static void SaveObject(IOutputService output, KBObject obj)

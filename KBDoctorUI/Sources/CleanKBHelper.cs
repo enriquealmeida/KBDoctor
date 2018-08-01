@@ -324,7 +324,7 @@ namespace Concepto.Packages.KBDoctor
 
                         if ((tbl != null) && (tbl is Table))
                         {
-                            writer.AddTableData(new string[] { Utility.ReturnPicture(a), Functions.linkObject(tbl), tbl.Description, Functions.linkObject(a), a.Description , ModulesHelper.ObjectModuleName(tbl) });
+                            writer.AddTableData(new string[] { Utility.FormattedTypeAttribute(a), Functions.linkObject(tbl), tbl.Description, Functions.linkObject(a), a.Description , ModulesHelper.ObjectModuleName(tbl) });
                         }
                     }
 

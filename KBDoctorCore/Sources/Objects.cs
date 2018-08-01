@@ -761,7 +761,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if (obj is Artech.Genexus.Common.Objects.Attribute)
                 {
                     Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute)obj;
-                    string Picture = Utility.ReturnPicture(a);
+                    string FormatType = Utility.FormattedTypeAttribute(a);
                     bool isSubtype = Utility.AttIsSubtype(a);
 
                     if ((a.DomainBasedOn == null) && !isSubtype && Utility.AttHasToBeInDomain(a))
@@ -930,13 +930,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     RulesPart rules = obj.Parts.Get<RulesPart>();
                     if (procpart != null)
-                    {
                         ProccessAssignmentsInSource(model, procpart, vp, output, obj.Name);
-                    }
                     if (rules != null)
-                    {
                         ProccessAssignmentsInSource(model, rules, vp, output, obj.Name);
-                    }
                 }
                 else
                 {
@@ -946,13 +942,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         VariablesPart vp = obj.Parts.Get<VariablesPart>();
                         RulesPart rules = obj.Parts.Get<RulesPart>();
                         if (eventspart != null)
-                        {
                             ProccessAssignmentsInSource(model, eventspart, vp, output, obj.Name);
-                        }
                         if (rules != null)
-                        {
                             ProccessAssignmentsInSource(model, rules, vp, output, obj.Name);
-                        }
                     }
                 }
             }
@@ -963,109 +955,102 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
             parserInfo = new ParserInfo(procpart);
-
             var info = new Artech.Architecture.Language.Parser.ParserInfo(procpart);
+
             if (parser.Validate(info, procpart.Source))
             {
                 Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, procpart, vp, info);
                 List<AbstractNode> assigns = getAssignmentsInSource(paramRootNode);
+
                 foreach(AssignmentNode assign in assigns)
                 {
                     if(assign.Left is VariableNameNode)
                     {
                         VariableNameNode vn = (VariableNameNode) assign.Left;
                         Variable varL = vp.GetVariable(vn.VarName);
+
                         if(varL != null)
                         {
-                            string picture = Utility.ReturnPictureVariable(varL);
+                            string formatType = Utility.FormattedTypeVariable(varL);
                             Domain domL = varL.DomainBasedOn;
-                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname, procpart);
+                            CompareAssignTypes(model, vp, output, assign, formatType, domL, objname, procpart);
                         }
                     }
                     if (assign.Left is AttributeNameNode)
                     {
                         AttributeNameNode an = (AttributeNameNode)assign.Left;
                         Artech.Genexus.Common.Objects.Attribute att = an.Attribute;
+
                         if (att != null)
                         {
-                            string picture = Utility.ReturnPicture(att);
+                            string formatType = Utility.FormattedTypeAttribute(att);
                             Domain domL = att.DomainBasedOn;
-                            CompareAssignTypes(model, vp, output, assign, picture, domL, objname, procpart);
+                            CompareAssignTypes(model, vp, output, assign, formatType, domL, objname, procpart);
                         }
-                        
                     }
                     if (assign.Left is ObjectPropertyNode)
                     {
                         ObjectPropertyNode op = (ObjectPropertyNode)assign.Left;
-                        AttributeTree.Dependency.Types type;
-                        StructureTypeReference parentRef = AttributeTree.GetStructureTypeReference(op.Children.First(), model, out type);
-
-                        string ChildText = op.Children.Skip(1).First().Text;
-                        foreach (Artech.Common.Helpers.Structure.IStructureItem item in AttributeTree.GetStructureSubStructures(parentRef, model))
-                        {
-                            if (item.Name == ChildText)
-                            { 
-                                if (item is SDTLevel)
-                                    new StructureTypeReference(((SDTLevel)item).ItemEntity.Type, ((SDTLevel)item).ItemEntity.Id);
-                                else if (item is TransactionLevel)
-                                {
-                                    TransactionLevel TrnLvl = (TransactionLevel)item;
-                                    new StructureTypeReference(TrnLvl.Transaction.Key.Type, TrnLvl.Transaction.Key.Id, StructureInfoProvider.GetLevelPrimaryKey(TrnLvl));
-                                }
-                                else if (item is SDTItem)
-                                {
-                                    SDTItem sdtitem = (SDTItem)item;
-                                    Domain domL = sdtitem.DomainBasedOn;
-                                    string pictureL;
-                                    if (domL != null)
-                                    {
-                                        pictureL = Utility.ReturnPictureDomain(domL);
-                                    }
-                                    else
-                                    {
-                                        pictureL = Utility.ReturnFormattedType(sdtitem.Type, sdtitem.Length, sdtitem.Decimals, sdtitem.Signed);
-                                    }
-
-                                    CompareAssignTypes(model, vp, output, assign, pictureL, domL, objname, procpart);
-                                }
-                            }
-                        }
+                        CompareAssignTypesSDT(model, procpart, vp, output, objname, assign, op);
                     }
                 }
             }
         }
 
-        private static void CompareAssignTypes(KBModel model, VariablesPart vp, IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string objname, KBObjectPart part)
+        private static void CompareAssignTypesSDT(KBModel model, SourcePart procpart, VariablesPart vp, IOutputService output, string objname, AssignmentNode assign, ObjectPropertyNode op)
+        {
+            AttributeTree.Dependency.Types type;
+            string ChildText = op.Children.Skip(1).First().Text;
+            StructureTypeReference parentRef = AttributeTree.GetStructureTypeReference(op.Children.First(), model, out type);
+            foreach (Artech.Common.Helpers.Structure.IStructureItem item in AttributeTree.GetStructureSubStructures(parentRef, model))
+            {
+                if (item.Name == ChildText)
+                {
+                    if (item is SDTLevel)
+                        new StructureTypeReference(((SDTLevel)item).ItemEntity.Type, ((SDTLevel)item).ItemEntity.Id);
+                    else if (item is TransactionLevel)
+                    {
+                        TransactionLevel TrnLvl = (TransactionLevel)item;
+                        new StructureTypeReference(TrnLvl.Transaction.Key.Type, TrnLvl.Transaction.Key.Id, StructureInfoProvider.GetLevelPrimaryKey(TrnLvl));
+                    }
+                    else if (item is SDTItem)
+                    {
+                        SDTItem sdtitem = (SDTItem)item;
+                        Domain domL = sdtitem.DomainBasedOn;
+                        string formatTypeL;
+                        if (domL != null)
+                            formatTypeL = Utility.FormattedTypeDomain(domL);
+                        else
+                            formatTypeL = Utility.ReturnFormattedType(sdtitem.Type, sdtitem.Length, sdtitem.Decimals, sdtitem.Signed);
+                        CompareAssignTypes(model, vp, output, assign, formatTypeL, domL, objname, procpart);
+                    }
+                }
+            }
+        }
+
+        private static void CompareAssignTypes(KBModel model, VariablesPart vp, IOutputService output, AssignmentNode assign, string formatTypeL, Domain domL, string objname, KBObjectPart part)
         {
             if (assign.Right is VariableNameNode)
             {
                 VariableNameNode vnr = (VariableNameNode)assign.Right;
                 Variable varR = vp.GetVariable(vnr.VarName);
-                string pictureR = Utility.ReturnPictureVariable(varR);
+                string formatTypeR = Utility.FormattedTypeVariable(varR);
                 Domain domR = varR.DomainBasedOn;
-                CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
+                CompareAssignTypes(output, assign, formatTypeL, domL, formatTypeR, domR, objname, part);
 
             }
             if (assign.Right is AttributeNameNode)
             {
                 AttributeNameNode anR = (AttributeNameNode)assign.Right;
-                if((assign.Right.Text.ToLower() != "true" && assign.Right.Text.ToLower() != "false") && pictureL.ToLower().Contains("boolean"))
+                if((assign.Right.Text.ToLower() != "true" && assign.Right.Text.ToLower() != "false") && formatTypeL.ToLower().Contains("boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
-                    if(att != null) { 
-                        string pictureR = Utility.ReturnPicture(att);
-                        Domain domR = att.DomainBasedOn;
-                        CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
-                    }
+                    CheckAssignTypesFromAttribute(output, assign, formatTypeL, domL, objname, part, att);
                 }
-                if(!pictureL.ToLower().Contains("boolean"))
+                if(!formatTypeL.ToLower().Contains("boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
-                    if(att != null) { 
-                        string pictureR = Utility.ReturnPicture(att);
-                        Domain domR = att.DomainBasedOn;
-                        CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
-                    }
+                    CheckAssignTypesFromAttribute(output, assign, formatTypeL, domL, objname, part, att);
                 }
             }
             if (assign.Right is FunctionNode)
@@ -1075,14 +1060,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     KBObject proc = (KBObject)(((FunctionNode)assign.Right).Element.Name.Tag);
                     if(proc != null)
-                    {
-                        string pictureR = Utility.GetOutputFormatedType(proc);
-                        Domain domR = Utility.GetOutputDomains(proc);
-                        if (pictureR != "")
-                        {
-                            CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
-                        }
-                    }
+                        CheckAssignTypesFromObject(output, assign, formatTypeL, domL, objname, part, proc);
                     else
                     {
                         if(fn.FunctionName.ToLower() == "udp")
@@ -1098,12 +1076,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     if (splits.Length > 1)
                                     {
                                         KBObject obj = Utility.GetObjectByNameModule(model, methodname, splits[splits.Length - 2]);
-                                        string pictureR = Utility.GetOutputFormatedType(obj);
-                                        Domain domR = Utility.GetOutputDomains(obj);
-                                        if (pictureR != "")
-                                        {
-                                            CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
-                                        }
+                                        CheckAssignTypesFromObject(output, assign, formatTypeL, domL, objname, part, obj);
                                     }
                                 }
                             }
@@ -1111,12 +1084,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             {
                                 AttributeNameNode ann = (AttributeNameNode)fn.Children.First();
                                 KBObject obj = (KBObject)ann.Element.Tag;
-                                string pictureR = Utility.GetOutputFormatedType(obj);
-                                Domain domR = Utility.GetOutputDomains(obj);
-                                if(pictureR != "")
-                                {
-                                    CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
-                                }
+                                CheckAssignTypesFromObject(output, assign, formatTypeL, domL, objname, part, obj);
                             }
                         }
                     }
@@ -1139,12 +1107,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 if (splits.Length > 1)
                                 {
                                     KBObject obj = Utility.GetObjectByNameModule(model, objectname, splits[splits.Length - 2]);
-                                    string pictureR = Utility.GetOutputFormatedType(obj);
-                                    Domain domR = Utility.GetOutputDomains(obj);
-                                    if (pictureR != "")
-                                    {
-                                        CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
-                                    }
+                                    CheckAssignTypesFromObject(output, assign, formatTypeL, domL, objname, part, obj);
                                 }
                             }
                         }
@@ -1152,12 +1115,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             AttributeNameNode ann = (AttributeNameNode)omn.Children.First();
                             KBObject obj = (KBObject)ann.Element.Tag;
-                            string pictureR = Utility.GetOutputFormatedType(obj);
-                            Domain domR = Utility.GetOutputDomains(obj);
-                            if (pictureR != "")
-                            {
-                                CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
-                            }
+                            CheckAssignTypesFromObject(output, assign, formatTypeL, domL, objname, part, obj);
                         }
                     }
                     else
@@ -1167,128 +1125,145 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (splits.Length > 1)
                         {
                             KBObject obj = Utility.GetObjectByNameModule(model, methodname, splits[splits.Length - 2]);
-                            string pictureR = Utility.GetOutputFormatedType(obj);
-                            Domain domR = Utility.GetOutputDomains(obj);
-                            if (pictureR != "")
-                            {
-                                CheckVarAndAttAssignTypes(output, assign, pictureL, domL, pictureR, domR, objname, part);
-                            }
+                            CheckAssignTypesFromObject(output, assign, formatTypeL, domL, objname, part, obj);
                         }
                     }
                 }
             }
             if (assign.Right is StringConstantNode)
-            {          
+            {
                 StringConstantNode scn = (StringConstantNode)assign.Right;
                 string text = scn.Text;
                 int textlength = text.Length - 2;   //Chequeo logitud ignorando las 2 comillas
-                if(textlength > int.Parse(getLengthFromPicture(pictureL)))
-                {
-                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                    OutputError err = new OutputError(printText + " Text assigned is too long (" + textlength.ToString() + ") for " + pictureL, MessageLevel.Warning, new SourcePosition(part, assign.Node.Row, 0));
-                    output.Add("KBDoctor", err);
-                }
+                CheckAssignTypesStringConstant(output, assign, formatTypeL, part, textlength);
             }
             if (assign.Right is NumberNode)
             {
-                if (!pictureL.ToLower().Contains("boolean")) {
+                if (!formatTypeL.ToLower().Contains("boolean"))
+                {
                     NumberNode nn = (NumberNode)assign.Right;
                     string text = nn.Text;
-                    string[] def = SplitDecimals(text);
-                    string lengthPic = getLengthFromPicture(pictureL);
-                    string[] defPic = SplitDecimals(lengthPic);
-                    bool hasLength = false;
-                    if (defPic[1] != "0")                                                                   //Chequeo de longitud (wiki genexus): If it is defined as numeric you must consider that the
-                                                                                                            //whole length includes the decimal places, the decimal point and the sign.
-                    {
-                        hasLength = (int.Parse(defPic[0]) - 1) >= (def[0].Length + def[1].Length);
-                    }
-                    else if (def[1]!="0")
-                    {                                                                                   
-                        hasLength = (int.Parse(defPic[0]) >= (def[0].Length + def[1].Length));
-                    }
-                    else
-                    {
-                        hasLength = (int.Parse(defPic[0]) >= (def[0].Length));
-                    }
-
-                    if (!hasLength)                                                                                                                                                                                   
-                    {
-                        string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                        OutputError err = new OutputError(printText + " Number assigned is too long (" + pictureL + ")", MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
-                        output.Add("KBDoctor", err);
-                    }
-
-                    if(hasLength && int.Parse(def[1]) != 0 && int.Parse(defPic[1]) < def[1].Length) //Chequeo de decimales
-                    {
-                        string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                        OutputError err = new OutputError(printText + " Number assigned decimals are too long (" + pictureL + ")", MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
-                        output.Add("KBDoctor", err);
-                    }
+                    string[] definitionR = SplitDecimals(text);
+                    string lengthFormatTypeL = getLengthFromFormattedType(formatTypeL);
+                    string[] definitionL = SplitDecimals(lengthFormatTypeL);
+                    CheckAssignTypesNumericConstant(output, assign, formatTypeL, part, definitionR, definitionL);
                 }
                 else
                 {
                     NumberNode nn = (NumberNode)assign.Right;
                     string text = nn.Text;
-                    if(text != "0" && text != "1")
+                    if(text.Trim() != "0" && text.Trim() != "1")
                     {
-                        string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                        OutputError err = new OutputError(printText + " Number greater than 1 assigned to a boolean", MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
-                        output.Add("KBDoctor", err);
+                        string msgOutput = " Number greater than 1 assigned to a boolean";
+                        OutputMsgAssignComparer(output, assign, part, msgOutput);
                     }
                 }
             }
         }
 
-
-
-        private static void CheckVarAndAttAssignTypes(IOutputService output, AssignmentNode assign, string pictureL, Domain domL, string pictureR, Domain domR, string objname, KBObjectPart part)
+        private static void CheckAssignTypesFromAttribute(IOutputService output, AssignmentNode assign, string formatTypeL, Domain domL, string objname, KBObjectPart part, Artech.Genexus.Common.Objects.Attribute att)
         {
-            if (pictureL.ToLower().Contains("char") && pictureR.ToLower().Contains("char"))
+            if (att != null)
             {
-                string lengthPicL = getLengthFromPicture(pictureL);
-                string lengthPicR = getLengthFromPicture(pictureR);
-                if (int.Parse(lengthPicL) < int.Parse(lengthPicR))
-                {
-                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                    OutputError err = new OutputError(printText + " String assigned is too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
-                    output.Add("KBDoctor", err);
-                }
-                CheckDomains(output, assign, domL, domR, objname, part);
+                string formatTypeR = Utility.FormattedTypeAttribute(att);
+                Domain domR = att.DomainBasedOn;
+                CompareAssignTypes(output, assign, formatTypeL, domL, formatTypeR, domR, objname, part);
             }
-            else if (pictureL.ToLower().Contains("numeric") && pictureR.ToLower().Contains("numeric"))
+        }
+
+        private static void CheckAssignTypesFromObject(IOutputService output, AssignmentNode assign, string formatTypeL, Domain domL, string objname, KBObjectPart part, KBObject obj)
+        {
+            string formatTypeR = Utility.GetOutputFormatedType(obj);
+            Domain domR = Utility.GetOutputDomains(obj);
+            if (formatTypeR != "")
+                CompareAssignTypes(output, assign, formatTypeL, domL, formatTypeR, domR, objname, part);
+        }
+
+        private static void CheckAssignTypesStringConstant(IOutputService output, AssignmentNode assign, string formatTypeL, KBObjectPart part, int textlength)
+        {
+            if (textlength > int.Parse(getLengthFromFormattedType(formatTypeL)))
             {
-                string lengthPicL = getLengthFromPicture(pictureL);
-                string lengthPicR = getLengthFromPicture(pictureR);
+                string msgOutput = " Text assigned is too long (" + textlength.ToString() + ") for " + formatTypeL;
+                OutputMsgAssignComparer(output, assign, part, msgOutput);
+            }
+        }
+
+        private static void CheckAssignTypesNumericConstant(IOutputService output, AssignmentNode assign, string formatTypeL, KBObjectPart part, string[] definitionR, string[] definitionL)
+        {
+            bool hasLength = false;
+            if (definitionL[1] != "0")                                                                   //Chequeo de longitud (wiki genexus): If it is defined as numeric you must consider that the whole length includes the decimal places, the decimal point and the sign.
+                hasLength = (int.Parse(definitionL[0]) - 1) >= (definitionR[0].Length + definitionR[1].Length);
+            else if (definitionR[1] != "0")
+                hasLength = (int.Parse(definitionL[0]) >= (definitionR[0].Length + definitionR[1].Length));
+            else
+                hasLength = (int.Parse(definitionL[0]) >= (definitionR[0].Length));
+
+            if (!hasLength)
+            {
+                string msgOutput = " Number assigned is too long (" + formatTypeL + ")";
+                OutputMsgAssignComparer(output, assign, part, msgOutput);
+            }
+
+            if (hasLength && int.Parse(definitionR[1]) != 0 && int.Parse(definitionL[1]) < definitionR[1].Length) //Chequeo de decimales
+            {
+                string msgOutput = " Number assigned decimals are too long (" + formatTypeL + ")";
+                OutputMsgAssignComparer(output, assign, part, msgOutput);
+            }
+        }
+
+        private static void CompareAssignTypes(IOutputService output, AssignmentNode assign, string formatTypeL, Domain domL, string formatTypeR, Domain domR, string objname, KBObjectPart part)
+        {
+            if (formatTypeL.ToLower().Contains("char") && formatTypeR.ToLower().Contains("char"))
+            {
+                string lengthPicL = getLengthFromFormattedType(formatTypeL);
+                string lengthPicR = getLengthFromFormattedType(formatTypeR);
+                CheckAssignTypesLengthString(output, assign, formatTypeL, formatTypeR, part, lengthPicL, lengthPicR);
+                CheckAssignTypesDomains(output, assign, domL, domR, objname, part);
+            }
+            else if (formatTypeL.ToLower().Contains("numeric") && formatTypeR.ToLower().Contains("numeric"))
+            {
+                string lengthPicL = getLengthFromFormattedType(formatTypeL);
+                string lengthPicR = getLengthFromFormattedType(formatTypeR);
                 string[] splitsL = SplitDecimals(lengthPicL);
                 string[] splitsR = SplitDecimals(lengthPicR);
-                if ((int.Parse(splitsL[0]) - int.Parse(splitsL[1])) < (int.Parse(splitsR[0]) - int.Parse(splitsR[1])))
-                {
-                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                    OutputError err = new OutputError(printText + " Number assigned is too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
-                    output.Add("KBDoctor", err);
-                }
-                else if (int.Parse(splitsL[1]) < int.Parse(splitsR[1]))
-                {
-                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                    OutputError err = new OutputError(printText + " Number decimals assigned are too long " + pictureL + "<" + pictureR, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
-                    output.Add("KBDoctor", err);
-                }
-                CheckDomains(output, assign, domL, domR, objname, part);
-                
+                CheckAssignTypesLengthNumeric(output, assign, formatTypeL, formatTypeR, part, splitsL, splitsR);
+                CheckAssignTypesDomains(output, assign, domL, domR, objname, part);
+
             }
             else
             {
-                if (pictureR != pictureL)
+                if (formatTypeR != formatTypeL)
                 {
-                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                    OutputError err = new OutputError(printText + " " + pictureL + "<>" + pictureR, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
-                    output.Add("KBDoctor", err);
+                    string msgOutput = " " + formatTypeL + "<>" + formatTypeR;
+                    OutputMsgAssignComparer(output, assign, part, msgOutput);
                 }
             }
         }
 
-        private static void CheckDomains(IOutputService output, AssignmentNode assign, Domain domL, Domain domR, string objname, KBObjectPart part)
+        private static void CheckAssignTypesLengthString(IOutputService output, AssignmentNode assign, string formatTypeL, string formatTypeR, KBObjectPart part, string lengthPicL, string lengthPicR)
+        {
+            if (int.Parse(lengthPicL) < int.Parse(lengthPicR))
+            {
+                string msgOutput = " String assigned is too long " + formatTypeL + "<" + formatTypeR;
+                OutputMsgAssignComparer(output, assign, part, msgOutput);
+            }
+        }
+
+        private static void CheckAssignTypesLengthNumeric(IOutputService output, AssignmentNode assign, string formatTypeL, string formatTypeR, KBObjectPart part, string[] splitsL, string[] splitsR)
+        {
+            if ((int.Parse(splitsL[0]) - int.Parse(splitsL[1])) < (int.Parse(splitsR[0]) - int.Parse(splitsR[1])))
+            {
+                string msgOutput = " Number assigned is too long " + formatTypeL + "<" + formatTypeR;
+                OutputMsgAssignComparer(output, assign, part, msgOutput);
+            }
+            else if (int.Parse(splitsL[1]) < int.Parse(splitsR[1]))
+            {
+                string msgOutput = " Number decimals assigned are too long " + formatTypeL + "<" + formatTypeR;
+                OutputMsgAssignComparer(output, assign, part, msgOutput);
+            }
+        }
+
+        private static void CheckAssignTypesDomains(IOutputService output, AssignmentNode assign, Domain domL, Domain domR, string objname, KBObjectPart part)
         {
             if (domL != null)
             {
@@ -1296,30 +1271,31 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     if (domL.Name != domR.Name)
                     {
-                        string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                        OutputError err = new OutputError(printText + " Variables are based on different domains " + domL.Name + "<>" + domR.Name, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
-                        output.Add("KBDoctor", err);
+                        string msgOutput = " Variables are based on different domains " + domL.Name + "<>" + domR.Name;
+                        OutputMsgAssignComparer(output, assign, part, msgOutput);
                     }
                 }
                 else
                 {
-                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                    OutputError err = new OutputError(printText + " (" + assign.Right.Text + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
-                    output.Add("KBDoctor", err);
+                    string msgOutput = " (" + assign.Right.Text + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name;
+                    OutputMsgAssignComparer(output, assign, part, msgOutput);
                 }
             }
             else
             {
                 if (domR != null)
                 {
-                    string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
-                    OutputError err = new OutputError(printText + " (" + assign.Left.Text + ") Doesn't have domain but (" + assign.Right.Text + ") is BasedOn " + domR.Name, MessageLevel.Warning, new SourcePosition(part,assign.Node.Row,0));
-                    output.Add("KBDoctor", err);
-                }
-                else
-                {
+                    string msgOutput = " (" + assign.Left.Text + ") Doesn't have domain but (" + assign.Right.Text + ") is BasedOn " + domR.Name;
+                    OutputMsgAssignComparer(output, assign, part, msgOutput);
                 }
             }
+        }
+
+        private static void OutputMsgAssignComparer(IOutputService output, AssignmentNode assign, KBObjectPart part, string msgOutput)
+        {
+            string printText = Utility.ExtractCommentsAndBreakLines(assign.Text.Replace(System.Environment.NewLine, " "));
+            OutputError err = new OutputError(printText + msgOutput, MessageLevel.Warning, new SourcePosition(part, assign.Node.Row, 0));
+            output.Add("KBDoctor", err);
         }
 
         private static string[] SplitDecimals(string text)
@@ -1339,9 +1315,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static string getLengthFromPicture(string picture)
+        private static string getLengthFromFormattedType(string formatType)
         {
-            string[] splits = picture.Split('(');
+            string[] splits = formatType.Split('(');
             splits = splits[1].Split(')');
             return splits[0];
         }
@@ -1353,17 +1329,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 foreach(AbstractNode node in root.Children)
                 {
                     if (node.Node != null)
-                    {
-                        if (node.Node.Token == 107 || node.Node.Token == -1) 
-                        {
+                        if (node.Node.Token == 107 || node.Node.Token == -1) { 
                             if (node is AssignmentNode)
                                 assignments.Add(node);
                         }
-                        else
-                        {
+                        else { 
                             assignments.AddRange(getAssignmentsInSource(node));
                         }
-                    }
                 }
                 return assignments;
             }
