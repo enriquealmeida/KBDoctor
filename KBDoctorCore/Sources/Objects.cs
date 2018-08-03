@@ -660,7 +660,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        internal static void ObjectsWithVarNotBasedOnAtt(List<KBObject> objs, IOutputService output, ref string recommendations)
+        internal static void ObjectsWithVarNotBasedOnAtt(List<KBObject> objs, IOutputService output, bool fixvar, ref string recommendations)
         {
             foreach (KBObject obj in objs)
             {
@@ -685,8 +685,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     string vname = v.Name.ToLower();
                                     vnames += vname + " ";
                                     hasErrors = true;
-                                    if (FixObjectVariable(v))
-                                        SaveObj = true;
+                                    if(fixvar)
+                                        if (FixObjectVariable(v, ref recommendations))
+                                            SaveObj = true;
                                 }
                             }
                         }
@@ -704,16 +705,21 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static bool FixObjectVariable(Variable v)
+        private static bool FixObjectVariable(Variable v, ref string recommendations)
         {
             KBObject obj = v.KBObject;
             KBModel kBModel = obj.Model;
             foreach (Artech.Genexus.Common.Objects.Attribute att in kBModel.Objects.GetByName("Attributes", new Guid("adbb33c9-0906-4971-833c-998de27e0676"), v.Name))
             {
-                KBDoctorOutput.Message("Attribute " + att.Name + " assigned to variable " + v.Name);
-                v.AttributeBasedOn = att;
-                return true;
-                break;
+                if(att.Type == v.Type)
+                {
+                    string recommend = "Attribute " + att.Name + " assigned to variable " + v.Name;
+                    recommendations += recommend + "<br>";
+                    KBDoctorOutput.Message(recommend);
+                    v.AttributeBasedOn = att;
+                    return true;
+                    break;
+                }
             }
 
             //Si no asigno atributo intento asignar dominio
@@ -721,11 +727,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 foreach (Domain d in kBModel.Objects.GetByName("Domains", new Guid("00972a17-9975-449e-aab1-d26165d51393"), v.Name))
                 {
-
-                    KBDoctorOutput.Message("Domain " + d.Name + " assigned to variable " + v.Name);
-                    v.DomainBasedOn = d;
-                    return true;
-                    break;
+                    if(d.Type == v.Type) { 
+                        KBDoctorOutput.Message("Domain " + d.Name + " assigned to variable " + v.Name);
+                        v.DomainBasedOn = d;
+                        return true;
+                        break;
+                    }
                 }
             }
             return false;

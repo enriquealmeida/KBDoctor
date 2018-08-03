@@ -415,4 +415,7 @@
   <data name="ObjectsUpdateAttribute" xml:space="preserve">
     <value>Procedures that updates attributes</value>
   </data>
+  <data name="AssignTypeComparer" xml:space="preserve">
+    <value>Assign Type Comparer</value>
+  </data>
 </root>

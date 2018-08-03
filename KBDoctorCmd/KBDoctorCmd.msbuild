@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="CleanKB" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="$(GX_PROGRAM_DIR)\Genexus.Tasks.targets" />
-  <Import Project="$(GX_PROGRAM_DIR)\KBDoctorCmd.Tasks.targets" />
+  <Import Project="$(GX_PROGRAM_DIR)\Packages\KBDoctorCmd.Tasks.targets" />
 
   <Target  Name="PrepareAndCompare">
     <OpenKnowledgeBase Directory="$(KBPath)"/>
@@ -73,9 +73,9 @@
     <CloseKnowledgeBase />
   </Target>
   
-  <Target  Name="ExportObjects">
+  <Target  Name="ReviewObjects">
     <OpenKnowledgeBase Directory="$(KBPath)"/>
-    <CleanProcess Objects="Procedure:SetCustomProperties;WebPanel:GAMExampleLogin" />
+    <ReviewObjectsCmd  />
     <CloseKnowledgeBase />
   </Target>
 </Project>

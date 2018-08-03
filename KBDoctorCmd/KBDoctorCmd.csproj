@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Artech.Architecture.Common">
       <SpecificVersion>False</SpecificVersion>
@@ -48,6 +51,7 @@
     <Reference Include="Artech.MsBuild.Common">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.MsBuild.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Artech.Udm.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Tasks.v3.5" />
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Utilities.v3.5" />
@@ -63,7 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CleanProcess.cs" />
+    <Compile Include="ReviewObjectsCmd.cs" />
     <Compile Include="ObjectsWithoutInOutCmd.cs" />
     <Compile Include="CleanAllKBObjectVariablesCmd.cs" />
     <Compile Include="CompareNavigationsCmd.cs" />
@@ -101,9 +105,10 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy "KBDoctorCmd.dll" "%25GX_PROGRAM_DIR%25\Packages" /q /Y
+    <PostBuildEvent>xcopy "KBDoctorCmd.*" "%25GX_PROGRAM_DIR%25\Packages" /q /Y
 xcopy "KBDoctorCore.dll" "%25GX_PROGRAM_DIR%25\Packages" /q /Y
-xcopy ..\..\KBDoctorCmd.Tasks.targets "%25GX_PROGRAM_DIR%25\Packages" /q /Y</PostBuildEvent>
+xcopy ..\..\KBDoctorCmd.Tasks.targets "%25GX_PROGRAM_DIR%25\Packages" /q /Y
+xcopy ..\..\KBDoctorCmd.Tasks.targets "%25GX_PROGRAM_DIR%25" /q /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

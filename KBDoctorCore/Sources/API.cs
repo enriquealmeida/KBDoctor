@@ -99,6 +99,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return Objects.ParmWOInOut(KB, output);
         }
         //
+
         public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs, out List<string[]> lineswriter)
         {
 
@@ -123,15 +124,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     //Check objects with parameteres without inout
                     if (parsedData[SectionName]["ParamINOUT"].ToLower() == "true")
-                           Objects.ParmWOInOut(objlist, output, ref recommendations);
+                        Objects.ParmWOInOut(objlist, output, ref recommendations);
 
                     //Clean variables not used
-                    if (parsedData[SectionName]["CleanUnusedVariables"].ToLower() == "true") 
+                    if (parsedData[SectionName]["CleanUnusedVariables"].ToLower() == "true")
                         CleanKB.CleanKBObjectVariables(obj, output, ref recommendations);
-
-                    //Fix variables not based in domains or attributes
-                    if (parsedData[SectionName]["FixVariables"].ToLower() == "true")
-                        CleanKB.FixObjectVariables(obj, output, ref recommendations);
 
                     //Check commit on exit
                     if (parsedData[SectionName]["CheckCommitOnExit"].ToLower() == "true")
@@ -141,13 +138,22 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (parsedData[SectionName]["CheckModule"].ToLower() == "true")
                         Objects.isInModule(objlist, output, ref recommendations);
 
+                    //Fix variables not based in domains or attributes
+                    bool fixvar = false;
+                    if (parsedData[SectionName]["FixVariables"].ToLower() == "true")
+                        fixvar = true;
+
                     //With variables not based on attributes
                     if (parsedData[SectionName]["VariablesBasedAttOrDomain"].ToLower() == "true")
-                        Objects.ObjectsWithVarNotBasedOnAtt(objlist, output, ref recommendations);
+                        Objects.ObjectsWithVarNotBasedOnAtt(objlist, output, fixvar, ref recommendations);
 
                     //Code commented
                     if (parsedData[SectionName]["CodeCommented"].ToLower() == "true")
                         Objects.CodeCommented(objlist, output, ref recommendations);
+
+                    //Assign types comparer
+                    if (parsedData[SectionName]["AssignTypes"].ToLower() == "true")
+                        AssignTypesComprarer(KB, output, objlist);
 
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
@@ -205,12 +211,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Objects.AttributeWithoutTable(atts, output);
             }
 
-            //output.EndSection(KBDOCTOR_OUTPUTID, "Review Objects", true);
             output.AddLine("KBDoctor", "KBDoctor Review Object finished");
-            //  output.SelectOutput(KBDOCTOR_OUTPUTID);
             output.UnselectOutput(KBDOCTOR_OUTPUTID);
             output.SelectOutput("General");
-         //   output.AddText("General", "KBDoctor Review Object finished");
             lineswriter = new List<string[]>();
             
             foreach (Tuple<KBObject, string> item in recommended_list)
@@ -248,6 +251,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 AddKeyToIni(data, SectionName, "AttributeBasedOnDomain", "true", "Attributes must be based on domains");
                 AddKeyToIni(data, SectionName, "SDTBasedAttOrDomain", "true", "SDT items must be based on attributes or domains");
                 AddKeyToIni(data, SectionName, "AttributeWithoutTable", "true", "All attributes must be in table");
+                AddKeyToIni(data, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain");
 
                 AddKeyToIni(data, SectionName, "MaxNestLevel", "7", "Maximun nesting level allowed in source");
                 AddKeyToIni(data, SectionName, "MaxComplexity", "30", "Maximun Complexity level allowed in sources");
@@ -284,13 +288,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static bool AssignTypesComprarer(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
         {
-            output.SelectOutput("KBDoctor");
-            output.StartSection("KBDoctor - Assign Types Comparer");
             foreach (KBObject obj in objs)
             {
                 Objects.AssignTypeComparer(KB.DesignModel, obj, output);
             }
-            output.EndSection("KBDoctor - Assign Types Comparer", true);
             return true;
         }
 

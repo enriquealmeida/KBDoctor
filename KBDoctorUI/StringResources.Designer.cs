@@ -79,6 +79,15 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assign Type Comparer.
+        /// </summary>
+        internal static string AssignTypeComparer {
+            get {
+                return ResourceManager.GetString("AssignTypeComparer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Char that should be VarChar.
         /// </summary>
         internal static string AttCharToVarchar {

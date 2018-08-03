@@ -10,19 +10,19 @@ using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace KBDoctorCmd
 {
-    public class CleanProcess : ArtechTask
+    public class ReviewObjectsCmd : ArtechTask
     {
-        private string m_Objects;
+        private string m_DateFrom;
 
-        public string Objects
+        public string DateFrom
         {
             get
             {
-                return this.m_Objects;
+                return this.m_DateFrom;
             }
             set
             {
-                this.m_Objects = value;
+                this.m_DateFrom = value;
             }
         }
 
@@ -32,7 +32,7 @@ namespace KBDoctorCmd
             Stopwatch watch = null;
             OutputSubscribe();
             IOutputService output = CommonServices.Output;
-            output.StartSection("Clean process");
+            output.StartSection("Review objects");
             try
             {
                 watch = new Stopwatch();
@@ -45,8 +45,31 @@ namespace KBDoctorCmd
                 }
                 else
                 {
-                    output.AddLine("KBDoctor",Objects);
-                    //API.PreProcessPendingObjects(KB, output, CodigoGX.GetObjects(base.KB.DesignModel, this.Objects));   
+                    output.AddLine("KBDoctor",DateFrom);
+                    List<KBObject> objects = new List<KBObject>();
+                    DateTime dt;
+                    if (DateFrom != null)
+                    { 
+                        dt = DateTime.ParseExact(DateFrom, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                    else
+                    {
+                        DateTime ayer = DateTime.Today.AddDays(-1);
+                        dt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day - 1);
+                    }
+
+                    foreach (KBObject obj in KB.DesignModel.Objects.GetAll())
+                    {
+                        if(DateTime.Compare(obj.Timestamp, dt) >= 0)
+                        {
+                            objects.Add(obj);
+                        }
+                    }
+
+                    output.AddLine("Review objects from " + dt.ToString());
+                    List<string[]> lines = new List<string[]>();
+                    API.PreProcessPendingObjects(KB, output, objects, out lines);
+                    lines.Clear();
                 }
             }
             catch (Exception e)

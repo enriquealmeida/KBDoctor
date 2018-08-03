@@ -4087,8 +4087,10 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
             List<KBObject> objs = (List<KBObject>) UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            output.SelectOutput("KBDoctor");
+            output.StartSection("KBDoctor - Assign Types Comparer");
             Thread thread = new Thread(() => KBDoctorCore.Sources.API.AssignTypesComprarer(kbserv.CurrentKB, output, objs));
-            thread.Start();   
+            thread.Start();
         }
 
         public static void TestParser()

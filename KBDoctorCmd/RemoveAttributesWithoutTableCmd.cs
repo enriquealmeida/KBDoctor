@@ -34,7 +34,6 @@ namespace KBDoctorCmd
                     List<string[]> list = new List<string[]>();
                     API.RemoveAttributesWithoutTable(KB.DesignModel, output, out list);
                 }
-
             }
             catch (Exception e)
             {
