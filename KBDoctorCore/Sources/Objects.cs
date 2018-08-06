@@ -686,7 +686,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     vnames += vname + " ";
                                     hasErrors = true;
                                     if(fixvar)
-                                        if (FixObjectVariable(v, ref recommendations))
+                                        if (FixObjectVariable(v, ref recommendations, output))
                                             SaveObj = true;
                                 }
                             }
@@ -705,7 +705,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static bool FixObjectVariable(Variable v, ref string recommendations)
+        private static bool FixObjectVariable(Variable v, ref string recommendations, IOutputService output)
         {
             KBObject obj = v.KBObject;
             KBModel kBModel = obj.Model;
@@ -715,10 +715,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     string recommend = "Attribute " + att.Name + " assigned to variable " + v.Name;
                     recommendations += recommend + "<br>";
-                    KBDoctorOutput.Message(recommend);
+                    OutputError err = new OutputError(recommend, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                    output.Add("KBDoctor", err);
                     v.AttributeBasedOn = att;
                     return true;
                     break;
+                }
+                else
+                {
+                    string recommend = "The variable " + v.Name + " has the same name as an attribute but is based on a different type.";
+                    recommendations += recommend + "<br>";
+                    OutputError err = new OutputError(recommend, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                    output.Add("KBDoctor", err);
                 }
             }
 
@@ -727,11 +735,22 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 foreach (Domain d in kBModel.Objects.GetByName("Domains", new Guid("00972a17-9975-449e-aab1-d26165d51393"), v.Name))
                 {
-                    if(d.Type == v.Type) { 
-                        KBDoctorOutput.Message("Domain " + d.Name + " assigned to variable " + v.Name);
+                    if (d.Type == v.Type)
+                    {
+                        string recommend = "Domain " + d.Name + " assigned to variable " + v.Name;
+                        recommendations += recommend + "<br>";
+                        OutputError err = new OutputError(recommend, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                        output.Add("KBDoctor", err);
                         v.DomainBasedOn = d;
                         return true;
                         break;
+                    }
+                    else
+                    {
+                        string recommend = "The variable " + v.Name + " has the same name as a domain but is based on a different type.";
+                        recommendations += recommend + "<br>";
+                        OutputError err = new OutputError(recommend, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                        output.Add("KBDoctor", err);
                     }
                 }
             }

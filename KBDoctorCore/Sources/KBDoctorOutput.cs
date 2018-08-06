@@ -40,10 +40,10 @@ namespace Concepto.Packages.KBDoctor
         }
 
 
-        public static void Warning(string v, SourcePosition sourcePosition)
+        public static void Warning(string v)
         {
             IOutputService output = NewKBDoctorOutput();
-            output.AddLine(v);
+            output.AddWarningLine(v);
         }
 
         private static IOutputService NewKBDoctorOutput()

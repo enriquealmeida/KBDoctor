@@ -600,7 +600,7 @@ namespace Concepto.Packages.KBDoctor
                                 }
                             }
                             if (FunctionName != "getmessages")
-                                KBDoctorOutput.Warning(string.Format("Do not know how to handle collection '{1}' in '{0}' code block.", CmdBlock.Name, CollectionNode.Text), new SourcePosition(CollectionNode.Part, CollectionNode.Node.Row, CollectionNode.Node.CharPosition));
+                                KBDoctorOutput.Warning(string.Format("Do not know how to handle collection '{1}' in '{0}' code block.", CmdBlock.Name, CollectionNode.Text));
                         }
 
                         foreach (AbstractNode child in AbstractNode.Children)
@@ -731,7 +731,7 @@ namespace Concepto.Packages.KBDoctor
                 }
             }
             else if (!CallVariable)
-                KBDoctorOutput.Warning(string.Format("Unhandled call format: {0}.", AbstractNode.Text), new SourcePosition(AbstractNode.Part, AbstractNode.Node.Row, AbstractNode.Node.CharPosition));
+                KBDoctorOutput.Warning(string.Format("Unhandled call format: {0}.", AbstractNode.Text));
         }
         /*
         private static void CallStatement2(AbstractNode AbstractNode, KBModel model, CallTree calltree)
