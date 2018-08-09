@@ -199,6 +199,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     //SDTItems Has Domain
                      Objects.SDTBasedOnAttDomain(objlist, output, ref recommendations);
                 }
+                if (obj is Transaction && parsedData[SectionName]["AttributeBasedOnDomain"].ToLower() == "true")
+                {
+                    Objects.AttributeHasDomain(Objects.GetAttributesFromTrn((Transaction)obj), output, ref recommendations);
+                }
                 if(recommendations != "")
                 {
                     Tuple<KBObject, string> recommend_tuple = new Tuple<KBObject, string>(obj, recommendations);

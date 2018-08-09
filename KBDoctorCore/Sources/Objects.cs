@@ -834,6 +834,19 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
             }
         }
+        
+        internal static List<KBObject> GetAttributesFromTrn(Transaction trn)
+        {
+            List<KBObject> atts = new List<KBObject>();
+            foreach(KBObject att in trn.GetAttributes())
+            {
+                if(att is Artech.Genexus.Common.Objects.Attribute)
+                {
+                    atts.Add((Artech.Genexus.Common.Objects.Attribute)att);
+                }
+            }
+            return atts;
+        }
 
         internal static void AttributeWithoutTable(List<KBObject> objs, IOutputService output)
         {

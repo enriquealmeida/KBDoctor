@@ -60,7 +60,7 @@
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common.Language">
-      <HintPath>..\..\..\..\Program Files (x86)\GeneXus\GeneXus15PlatformSDK\Bin\Artech.Common.Language.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Language.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common.Properties">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Properties.dll</HintPath>
