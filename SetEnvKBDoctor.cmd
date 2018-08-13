@@ -33,6 +33,5 @@ PAUSE
 
 :END_CASE
 echo %TargetFrameworkVersion%
-pause
  GOTO :EOF 
 
