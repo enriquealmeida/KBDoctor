@@ -109,7 +109,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             FileIniDataParser fileIniData = new FileIniDataParser();
             InitializeIniFile(KB);
 
-            IniData parsedData = fileIniData.ReadFile(KB.UserDirectory + "\\KBDoctor.ini");
+            string filename = KB.UserDirectory + "\\KBDoctor.ini";
+            IniData parsedData = fileIniData.ReadFile(filename);
             string SectionName = "ReviewObject";
             
             List<Tuple<KBObject, string>> recommended_list = new List<Tuple<KBObject, string>>(); 
@@ -122,84 +123,95 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 objlist.Add(obj);
                 if (Utility.isRunable(obj) && !Utility.IsGeneratedByPattern(obj))
                 {
+
+                    /*
+              
+                AddKeyToIni();
+                AddKeyToIni(data, SectionName, "ParamINOUT", "true", "Check if all parameters have IN: OUT: INOUT: keywords");
+                AddKeyToIni();
+                AddKeyToIni();
+                AddKeyToIni();
+
+                AddKeyToIni();
+                AddKeyToIni(data,;
+               
+                AddKeyToIni(data, SectionName, "AttributeWithoutTable", "true", "All attributes must be in table");
+                
+
+        
+                     
+                     */
+
                     //Check objects with parameteres without inout
-                    if (parsedData[SectionName]["ParamINOUT"].ToLower() == "true")
+                    if (CheckKeyInINI(parsedData, SectionName, "ParamINOUT",  "true", "Check if all parameters have IN: OUT: INOUT: keywords",filename))
                         Objects.ParmWOInOut(objlist, output, ref recommendations);
 
                     //Clean variables not used
-                    if (parsedData[SectionName]["CleanUnusedVariables"].ToLower() == "true")
+                    if (CheckKeyInINI(parsedData, SectionName, "CleanUnusedVariables", "true", "Remove unused variables from objects",filename))
                         CleanKB.CleanKBObjectVariables(obj, output, ref recommendations);
 
                     //Check commit on exit
-                    if (parsedData[SectionName]["CheckCommitOnExit"].ToLower() == "true")
+                    if (CheckKeyInINI(parsedData, SectionName, "CheckCommitOnExit",  "true", "Check if property Commit on exit = YES",filename))
                         Objects.CommitOnExit(objlist, output, ref recommendations);
 
                     //Is in module
-                    if (parsedData[SectionName]["CheckModule"].ToLower() == "true")
+                    if (CheckKeyInINI(parsedData, SectionName, "CheckModule",  "true", "Use of modules is required",filename))
                         Objects.isInModule(objlist, output, ref recommendations);
 
                     //Fix variables not based in domains or attributes
-                    bool fixvar = false;
-                    if (parsedData[SectionName]["FixVariables"].ToLower() == "true")
-                        fixvar = true;
+                    bool fixvar = true;
+                    if (CheckKeyInINI(parsedData, SectionName, "FixVariables",  "false", "Fix variables definition, assinging Attribute or Domain",filename))
+                        fixvar = false;
 
                     //With variables not based on attributes
-                    if (parsedData[SectionName]["VariablesBasedAttOrDomain"].ToLower() == "true")
+                    if (CheckKeyInINI(parsedData, SectionName, "VariablesBasedAttOrDomain",  "true", "Variables must be based on Attributes or Domains",filename))
                         Objects.ObjectsWithVarNotBasedOnAtt(objlist, output, fixvar, ref recommendations);
 
                     //Code commented
-                    if (parsedData[SectionName]["CodeCommented"].ToLower() == "true")
+                    if (CheckKeyInINI(parsedData, SectionName, "CodeCommented",  "true", "Code commented is marked as error",filename))
                         Objects.CodeCommented(objlist, output, ref recommendations);
 
                     //Assign types comparer
-                    if (parsedData[SectionName]["AssignTypes"].ToLower() == "true")
+                    if (CheckKeyInINI(parsedData, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain",filename))
                         AssignTypesComprarer(KB, output, objlist);
 
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
+
+                    bool aux;
+                    aux = CheckKeyInINI(parsedData, SectionName, "MaxNestLevel",  "7", "Maximun nesting level allowed in source",filename);
+                    aux = CheckKeyInINI(parsedData, SectionName, "MaxComplexity",  "30", "Maximun Complexity level allowed in sources", filename);
+                    aux = CheckKeyInINI(parsedData, SectionName, "MaxBlockSize",  "500", "Maximun block of code", filename);
+                    aux = CheckKeyInINI(parsedData, SectionName, "MaxParameterCount",  "6", "Maximun Number of parameters allowed in parm rule", filename);
+
                     int maxNestLevel = 7;
-                    Int32.TryParse( parsedData[SectionName]["MaxNestLevel"], out maxNestLevel);
+                    Int32.TryParse(parsedData[SectionName]["MaxNestLevel"], out maxNestLevel);
 
                     int complexityLevel = 30;
-                    complexityLevel = Int32.Parse(parsedData[SectionName]["MaxComplexity"]);
+                    Int32.TryParse(parsedData[SectionName]["MaxComplexity"], out complexityLevel);
 
                     int maxCodeBlock = 500;
-                    maxCodeBlock = Int32.Parse(parsedData[SectionName]["MaxBlockSize"]);
+                    Int32.TryParse(parsedData[SectionName]["MaxBlockSize"], out maxCodeBlock);
 
                     int maxParametersCount = 6;
-                    maxParametersCount = Int32.Parse(parsedData[SectionName]["MaxParameterCount"]);
+                    Int32.TryParse(parsedData[SectionName]["MaxParameterCount"], out maxParametersCount);
 
                     Objects.CheckComplexityMetrics(objlist, output, maxNestLevel, complexityLevel, maxCodeBlock, maxParametersCount, ref recommendations);
 
-                    /*
-                    * Tiene todas las referencias?
-                    * Tiene calls que pueden ser UDP
-                    * Mas de un parametro de salida
-                    * Constantes en el código
-                    * Nombre "poco claro" / Descripcion "poco clara"
-                    * Si es modulo, revisar que no tenga objetos publicos no llamados
-                    * Si es modulo, revisar que no tenga objetos privados llamados desde fuera
-                    * Si es modulo, Valor de la propiedad ObjectVisibility <> Private
-                    * Atributo Varchar que debe ser char
-                    * Atributo Char que debe ser varchar
-                    * Column Title muy ancho para el ancho del atributo
-                    * Nombre del Control en pantalla por Default
-                    * Todos los eventos son invocados
-                    *
-                    */
+
                 }
-                if (obj is Artech.Genexus.Common.Objects.Attribute && parsedData[SectionName]["AttributeBasedOnDomain"].ToLower() == "true")
+                if (obj is Artech.Genexus.Common.Objects.Attribute && CheckKeyInINI(parsedData,  SectionName, "AttributeBasedOnDomain",  "true", "Attributes must be based on domains", filename))
                 {
                     atts.Add(obj);
                     //Attribute Has Domain
                     Objects.AttributeHasDomain(objlist, output, ref recommendations);
                 }
-                if (obj is SDT && parsedData[SectionName]["SDTBasedAttOrDomain"].ToLower() == "true")
+                if (obj is SDT && CheckKeyInINI(parsedData, SectionName, "SDTBasedAttOrDomain", "true", "SDT items must be based on attributes or domains",filename))
                 {
                     //SDTItems Has Domain
                      Objects.SDTBasedOnAttDomain(objlist, output, ref recommendations);
                 }
-                if (obj is Transaction && parsedData[SectionName]["AttributeBasedOnDomain"].ToLower() == "true")
+                if (obj is Transaction && CheckKeyInINI(parsedData,SectionName,"AttributeBasedOnDomain","true" , "Attributes must be based on domains",filename))
                 {
                     Objects.AttributeHasDomain(Objects.GetAttributesFromTrn((Transaction)obj), output, ref recommendations);
                 }
@@ -209,7 +221,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     recommended_list.Add(recommend_tuple);
                 }
             }
-            if (atts.Count > 0 && parsedData[SectionName]["AttributeWithoutTable"].ToLower() == "true")
+            if (atts.Count > 0 && CheckKeyInINI(parsedData, SectionName, "AttributeWithoutTable",  "true", "All attributes must be in table", filename))
             {
                 // Attributes without table
                 Objects.AttributeWithoutTable(atts, output);
@@ -225,8 +237,41 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string[] line = new string[] {Utility.linkObject(item.Item1),item.Item2};
                 lineswriter.Add(line);
             }
-            
 
+            /*
+* Tiene todas las referencias?
+* Tiene calls que pueden ser UDP
+* Mas de un parametro de salida
+* Constantes en el código
+* Nombre "poco claro" / Descripcion "poco clara"
+* Si es modulo, revisar que no tenga objetos publicos no llamados
+* Si es modulo, revisar que no tenga objetos privados llamados desde fuera
+* Si es modulo, Valor de la propiedad ObjectVisibility <> Private
+* Atributo Varchar que debe ser char
+* Atributo Char que debe ser varchar
+* Column Title muy ancho para el ancho del atributo
+* Nombre del Control en pantalla por Default
+* Todos los eventos son invocados
+*
+*/
+
+        }
+
+        private static bool CheckKeyInINI(IniData parsedData, string SectionName,string KeyName,  string KeyValue,  string Comment, string INIfilename )
+        {
+            string key = SectionName + parsedData.SectionKeySeparator + KeyName;
+            string value;
+            parsedData.TryGetKey(key, out value);
+
+            if (value == "") {
+
+                AddKeyToIni(parsedData, SectionName, KeyName, KeyValue, Comment);
+                var parser = new FileIniDataParser();
+                //Save the file
+                parser.WriteFile(INIfilename, parsedData);
+                value = KeyValue; //
+            }
+            return value.ToLower() == KeyValue; 
 
         }
 

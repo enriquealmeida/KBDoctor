@@ -793,7 +793,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if ((a.DomainBasedOn == null) && !isSubtype && Utility.AttHasToBeInDomain(a))
                     {
                         string recommend = "Attribute without domain: " + a.Name;
-                        OutputError err = new OutputError(recommend, MessageLevel.Warning, new KBObjectAnyPosition(obj));
+                        OutputError err = new OutputError(recommend, MessageLevel.Error, new KBObjectAnyPosition(obj));
                         recommendations += recommend + "<br>";
                         output.Add("KBDoctor", err);
                     }
