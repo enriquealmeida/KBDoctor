@@ -2291,75 +2291,48 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 {
                     //output.AddLine("KBDoctor",obj.Name);
 
-                    string source = Functions.ObjectSourceUpper(obj);
+                    string source = ObjectsHelper.ObjectSource(obj);
                     source = Functions.RemoveEmptyLines(source);
 
                     string sourceWOComments = Functions.ExtractComments(source);
-                    sourceWOComments = Functions.RemoveEmptyLines(sourceWOComments);
+                    
+                   // sourceWOComments = Functions.RemoveEmptyLines(sourceWOComments);
 
-                    int linesSource, linesComment;
-                    float PercentComment;
-
-                    CountCommentsLines(source, sourceWOComments, out linesSource, out linesComment, out PercentComment);
-
-                    int MaxCodeBlock = Functions.MaxCodeBlock(sourceWOComments);
-                    int MaxNestLevel = Functions.MaxNestLevel(sourceWOComments);
-                    int ComplexityLevel = Functions.ComplexityLevel(sourceWOComments);
-                    string ParmINOUT = Functions.ValidateINOUTinParm(obj) ? "Error" : "";
-
-                    if (ParmINOUT == "Error")
-
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    if (vp != null)
                     {
-                        ErrorCode = "kbd0001";
-                        ErrorDescription = "Missing IN:OUT:INOUT: in parm rule";
-                        Observation = Functions.ExtractRuleParm(obj);
-                        Solution = CleanKBHelper.ChangeRuleParmWithIN(obj);
-                        CleanKBHelper.SaveObjectNewParm(output, obj, Observation, Solution);
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, ErrorCode, ErrorDescription, Observation, Solution });
+                        bool tieneVarSinDomain = false;
+                        foreach (Variable v in vp.Variables)
+                        {
+                            if ((!v.IsStandard) && (v.AttributeBasedOn == null) && (v.DomainBasedOn == null) && (v.Type != eDBType.GX_USRDEFTYP)
+                                && (v.Type != eDBType.GX_SDT) && (v.Type != eDBType.GX_EXTERNAL_OBJECT) && (v.Type != eDBType.Boolean) && v.Type != eDBType.GX_BUSCOMP && v.Type != eDBType.GX_BUSCOMP_LEVEL)
+                            {
+                                tieneVarSinDomain = true;
+                                KBDoctorOutput.Message("Object:" + obj.Name + " -> " + v.Name + " " + Utility.FormattedTypeVariable(v));
+                                KBDoctorOutput.Message("& " + v.Name + " " + Utility.FormattedTypeVariable(v));
+                                KBDoctorOutput.Message("=============================================================");
 
+                                string[] textLines = sourceWOComments.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+                                string toSearch = "&" + v.Name;
+
+                                ShowLinesContaining(textLines, toSearch);
+
+                                string[] rulesLines = obj.Parts.Get<RulesPart>().Source.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                                ShowLinesContaining(rulesLines, toSearch);
+
+                                KBDoctorOutput.Message("=============================================================");
+
+                            }
+                            
+                        }
+                        if (tieneVarSinDomain)
+                        {
+                            Form1 f = new Form1(obj);
+                            f.ShowDialog();
+                            
+                        }
                     }
-
-
-                    string Candidate = "";
-                    if ((ParmINOUT == "Error") || (MaxNestLevel > 10) || (ComplexityLevel > 30) || (MaxCodeBlock > 500))
-                    {
-                        Candidate = "*";
-                    }
-                    int ComplexityIndex = CalculateComplexityIndex(MaxCodeBlock, MaxNestLevel, ComplexityLevel, ParmINOUT);
-
-                    if (ComplexityIndex > 500)
-                    {
-                        ErrorCode = "kbd0002";
-                        ErrorDescription = "KBDoctor Complexity Index too high";
-                        Observation = "ComplexityIndex = " + ComplexityIndex.ToString();
-                        Solution = "";
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, ErrorCode, ErrorDescription, Observation, Solution });
-                    }
-
-                    string variablesNotBasedAttributesOrDom = VariablesNotBasedAttributesOrDomain(obj);
-
-                    if (variablesNotBasedAttributesOrDom != "")
-                    {
-                        ErrorCode = "kbd0003";
-                        ErrorDescription = "Variables no based in Attributes or Domain";
-                        Observation = variablesNotBasedAttributesOrDom;
-                        Solution = "";
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, ErrorCode, ErrorDescription, Observation, Solution });
-                    }
-
-
-                    // string calledObjects = CompareCallParameters(obj);      
-
-                    /*
-                    if (calledObjects != "")
-                    {
-                        ErrorCode = "kbd0004";
-                        ErrorDescription = "Called objects";
-                        Observation = calledObjects;
-                        Solution = "";
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, ErrorCode, ErrorDescription, Observation, Solution });
-                    }
-                    */
 
 
                 }
@@ -2374,6 +2347,17 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
             output.EndSection("KBDoctor", title, success);
+        }
+
+        private static void ShowLinesContaining(string[] textLines, string toSearch)
+        {
+            foreach (string line in textLines)
+            {
+                if (line.ToUpper().Contains(toSearch.ToUpper()))
+                {
+                    KBDoctorOutput.Message(line);
+                }
+            }
         }
 
         public static void ObjectsUDPCallables()

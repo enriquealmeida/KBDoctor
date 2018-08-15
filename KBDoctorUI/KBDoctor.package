@@ -309,6 +309,7 @@
               <Command refid="ObjectsWithConstants" />
               <Command refid="ThemeClassesNotUsed"/>
               <Command refid="AssignTypeComparer"/>
+               <Command refid="ObjectsDiagnostics" />
             </Popup>
           </Group>
           <!--
