@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.MsBuild.Common;

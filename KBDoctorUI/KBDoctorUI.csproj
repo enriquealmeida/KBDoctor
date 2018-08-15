@@ -19,7 +19,6 @@
     <TargetFrameworkVersion>$(TargetFrameworkVersion)</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -66,7 +65,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-      <DefineConstants Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">EVO3</DefineConstants>
+    <DefineConstants Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">EVO3</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Artech.Architecture.BL.Framework">
@@ -212,6 +211,12 @@
     <Compile Include="Sources\AskAttributeandTable.Designer.cs">
       <DependentUpon>AskAttributeandTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sources\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sources\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sources\Functions.cs" />
     <Compile Include="CodeGeneration\CodeGeneration.cs" />
     <Compile Include="Sources\GraphHelper.cs" />
@@ -306,6 +311,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="KBDoctor.package">
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sources\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sources\PromptDescription.resx">
       <SubType>Designer</SubType>
