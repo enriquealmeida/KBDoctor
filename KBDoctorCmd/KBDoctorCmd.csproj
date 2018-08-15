@@ -49,9 +49,13 @@
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.MsBuild.Common">
+	   <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.MsBuild.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Artech.Udm.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa" />
+	    <Reference Include="Artech.Udm.Framework">
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Udm.Framework.dll</HintPath>
+    </Reference>
+	
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Tasks.v3.5" />
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Utilities.v3.5" />
