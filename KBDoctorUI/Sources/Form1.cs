@@ -1,5 +1,6 @@
 ﻿using Artech.Architecture.Common.Objects;
 using Artech.Genexus.Common;
+using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Parts;
 using Concepto.Packages.KBDoctorCore.Sources;
 using System;
@@ -24,8 +25,21 @@ namespace Concepto.Packages.KBDoctor
             objName.Text = obj.Name + " : " + obj.Description;
             objSource = ObjectsHelper.ObjectSource(obj);
             objRules = obj.Parts.Get<RulesPart>().Source;
+            o2 = obj;
 
-            //.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            KBModel model = obj.Model;
+
+            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(model))
+            {
+                attList.Add(new ItemAtt(Utility.FormattedTypeAttribute(a) + "  " + a.Name  , a));
+
+            }
+
+            foreach (Domain d in Artech.Genexus.Common.Objects.Domain.GetAll(model))
+            {
+                domList.Add(new ItemDom(Utility.FormattedTypeDomain(d)  + "   " + d.Name , d));
+
+            }
 
             VariablesPart vp = obj.Parts.Get<VariablesPart>();
             if (vp != null)
@@ -41,7 +55,7 @@ namespace Concepto.Packages.KBDoctor
                     }
 
                 }
-              //  comboVar.SelectedIndex = 1;
+
             }
         }
 
@@ -67,20 +81,38 @@ namespace Concepto.Packages.KBDoctor
             }
 
             source.Text = "====== SOURCE ===== " + Environment.NewLine + tt  +Environment.NewLine +  "==== Rules =====" + Environment.NewLine + rr;
-            
+
+            comboAtt.Items.Clear();
+            foreach (ItemAtt ita in attList)
+            {
+                if (ita.Att.Type == v2.Type )
+                        comboAtt.Items.Add(ita);
+
+            }
+
+            comboDom.Items.Clear();
+            foreach (ItemDom dom in domList)
+            {
+                if (dom.Dom.Type == v2.Type)
+                    comboDom.Items.Add(dom);
+
+            }
+
+
             //Falta cargar los combos con atributos y dominios de tipo compatible. 
-            
+
         }
 
 
         public string vName = "";
         public string objSource = "";
         public string objRules = "";
+        private List<ItemAtt> attList = new List<ItemAtt>();
+        private List<ItemDom> domList = new List<ItemDom>();
+        public KBObject o2;
+        public Variable v2;
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
+      
 
         private class Item
         {
@@ -95,6 +127,85 @@ namespace Concepto.Packages.KBDoctor
                 // Generates the text shown in the combo box
                 return Name;
             }
+        }
+
+        private class ItemDom
+        {
+            public string Name;
+            public Domain Dom;
+            public ItemDom(string name, Domain dom)
+            {
+                Name = name; Dom = dom;
+            }
+            public override string ToString()
+            {
+                // Generates the text shown in the combo box
+                return Name;
+            }
+        }
+
+        private class ItemAtt
+        {
+            public string Name;
+            public Artech.Genexus.Common.Objects.Attribute Att;
+            public ItemAtt(string name, Artech.Genexus.Common.Objects.Attribute att)
+            {
+                Name = name; Att = att;
+            }
+            public override string ToString()
+            {
+                // Generates the text shown in the combo box
+                return Name;
+            }
+        }
+
+        private void AssignDom_Click(object sender, EventArgs e)
+        {
+            Item it = (Item)comboVar.SelectedItem;
+            Variable v3 = it.Var;
+            if (v3 != null)
+            {
+                ItemDom idom = (ItemDom)comboDom.SelectedItem;
+                Domain dom = idom.Dom;
+                if (dom != null)
+                {
+                    v3.DomainBasedOn = dom;
+                    v3.KBObject.Save();
+                   
+                    source.Text = "";
+                    comboDom.Text = "";
+                    comboVar.Items.Remove(it);
+                    if (comboVar.Items.Count == 0) return;
+
+                }
+            }
+        }
+
+        private void AssignAtt_Click(object sender, EventArgs e)
+        {
+            Item it = (Item)comboVar.SelectedItem;
+            Variable v3 = it.Var;
+            if (v3 != null)
+            {
+                ItemAtt iat = (ItemAtt)comboAtt.SelectedItem;
+                Artech.Genexus.Common.Objects.Attribute at = iat.Att;
+                if (at != null)
+                {
+                    v3.AttributeBasedOn = at;
+                    v3.KBObject.Save();
+                    source.Text = "";
+                    comboAtt.Text = "";
+
+                    comboVar.Items.Remove(it);
+                    if (comboVar.Items.Count == 0) return;
+                }
+            }
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -40,6 +40,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.comboDom = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,7 +72,7 @@
             this.source.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.source.Multiline = true;
             this.source.Name = "source";
-            this.source.Size = new System.Drawing.Size(1028, 462);
+            this.source.Size = new System.Drawing.Size(1028, 412);
             this.source.TabIndex = 3;
             // 
             // comboVar
@@ -87,22 +89,23 @@
             // comboAtt
             // 
             this.comboAtt.FormattingEnabled = true;
-            this.comboAtt.Location = new System.Drawing.Point(234, 28);
+            this.comboAtt.Location = new System.Drawing.Point(282, 591);
             this.comboAtt.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.comboAtt.Name = "comboAtt";
-            this.comboAtt.Size = new System.Drawing.Size(712, 26);
+            this.comboAtt.Size = new System.Drawing.Size(617, 26);
+            this.comboAtt.Sorted = true;
             this.comboAtt.TabIndex = 5;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(981, 25);
+            this.button1.Location = new System.Drawing.Point(911, 43);
             this.button1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(154, 32);
+            this.button1.Size = new System.Drawing.Size(218, 30);
             this.button1.TabIndex = 6;
-            this.button1.Text = "Enter";
+            this.button1.Text = "Assign Attribute";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.AssignAtt_Click);
             // 
             // label2
             // 
@@ -127,7 +130,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(26, 32);
+            this.label4.Location = new System.Drawing.Point(74, 595);
             this.label4.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(198, 18);
@@ -137,7 +140,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(56, 90);
+            this.label5.Location = new System.Drawing.Point(75, 83);
             this.label5.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(168, 18);
@@ -147,34 +150,58 @@
             // comboDom
             // 
             this.comboDom.FormattingEnabled = true;
-            this.comboDom.Location = new System.Drawing.Point(234, 87);
+            this.comboDom.Location = new System.Drawing.Point(253, 80);
             this.comboDom.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.comboDom.Name = "comboDom";
-            this.comboDom.Size = new System.Drawing.Size(712, 26);
+            this.comboDom.Size = new System.Drawing.Size(617, 26);
+            this.comboDom.Sorted = true;
             this.comboDom.TabIndex = 11;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button3);
+            this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.comboDom);
             this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.comboAtt);
-            this.groupBox1.Location = new System.Drawing.Point(29, 616);
+            this.groupBox1.Location = new System.Drawing.Point(29, 545);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1147, 148);
+            this.groupBox1.Size = new System.Drawing.Size(1147, 159);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Change variable definition";
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(911, 77);
+            this.button3.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(218, 30);
+            this.button3.TabIndex = 12;
+            this.button3.Text = "Assign Domain";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.AssignDom_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(531, 719);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(152, 41);
+            this.button2.TabIndex = 13;
+            this.button2.Text = "Cancel";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1216, 772);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.comboVar);
+            this.Controls.Add(this.comboAtt);
             this.Controls.Add(this.source);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.objName);
@@ -204,5 +231,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboDom;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button2;
     }
 }
