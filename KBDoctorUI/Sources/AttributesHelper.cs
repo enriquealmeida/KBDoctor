@@ -219,7 +219,7 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Suggested Domains" });
-
+            int cantAtt = 0;
             foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
             {
                 string Picture = Utility.FormattedTypeAttribute(a);
@@ -241,7 +241,7 @@ namespace Concepto.Packages.KBDoctor
                         suggestedDomains = SuggestedDomains(kbserv, a);
                         myDict.Add(Picture, suggestedDomains);
                     }
-                    
+                    cantAtt += 1;
                     string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
                     writer.AddTableData(new string[] { attNameLink, a.Description, Picture, suggestedDomains });
                 }
@@ -250,6 +250,7 @@ namespace Concepto.Packages.KBDoctor
             writer.AddFooter();
             writer.Close();
 
+            KBDoctorOutput.Warning(cantAtt.ToString() + " attributes without domain");
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
             output.EndSection("KBDoctor", title, success);
@@ -268,7 +269,9 @@ namespace Concepto.Packages.KBDoctor
                     {
                         suggestedDomains += ", ";
                     }
-                    suggestedDomains += "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDomainToAttribute&attName=" + a.Name + "&domainName=" + d.Name + "\">" + d.Name + "</a>";
+                    //suggestedDomains += "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDomainToAttribute&attName=" + a.Name + "&domainName=" + d.Name + "\">" + d.Name + "</a>";
+                    suggestedDomains += d.Name ;
+
                 }
 
             }
