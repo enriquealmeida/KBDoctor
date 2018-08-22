@@ -318,3 +318,4 @@ EVO3/KBDoctor.dll
 KBdoctor_Build - copia.cmd
 KBDoctorUI/KBDoctorUI.csproj
 *.csproj
+KBDoctorCmd/salida.txt
