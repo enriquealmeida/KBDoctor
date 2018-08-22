@@ -74,6 +74,8 @@
   </Target>
   
   <Target  Name="ReviewObjects">
+    <Message Text="Using GeneXus DIR = $(GX_PROGRAM_DIR)" /> 
+	<Message Text="KB DIR = $(KBPath)" /> 
     <OpenKnowledgeBase Directory="$(KBPath)"/>
     <ReviewObjectsCmd  />
     <CloseKnowledgeBase />
