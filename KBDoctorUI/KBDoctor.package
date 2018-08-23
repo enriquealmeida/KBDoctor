@@ -220,6 +220,7 @@
               <Command refid="CalculateCheckSum"  />
               <Command refid="CompareLastOBJDirectory" />
               <Command refid="OpenFolderObjComparerNavigation"  />
+              <Command refid="ObjectsDiagnostics" />
             </Group>
 
           </Popup>
@@ -309,7 +310,7 @@
               <Command refid="ObjectsWithConstants" />
               <Command refid="ThemeClassesNotUsed"/>
               <Command refid="AssignTypeComparer"/>
-               <Command refid="ObjectsDiagnostics" />
+             
             </Popup>
           </Group>
           <!--
