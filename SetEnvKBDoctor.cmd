@@ -14,7 +14,7 @@ GOTO END_CASE
 :CASE_GX15
 SET GX_PROGRAM_DIR=C:\Program Files (x86)\GeneXus\GeneXus15
 SET GX_SDK_DIR=C:\Program Files (x86)\GeneXus\GeneXus16PlatformSDK
-SET NETFRAMEWORK_DIR="C:\Program Files (x86)\MSBuild\14.0\bin\amd64"
+SET NETFRAMEWORK_DIR="C:\Windows\Microsoft.NET\Framework\v4.0.30319"
 SET TargetFrameworkVersion=v4.7.1
 ctt.exe source:KBDoctorUI\KBDoctorUI.csproj.user transform:KBDoctorUI\TransformacionGX15.xml destination:KBDoctorUI\KBDoctorUI.csproj.user i
 GOTO END_CASE
@@ -22,7 +22,7 @@ GOTO END_CASE
 :CASE_GX16
 SET GX_PROGRAM_DIR=C:\Program Files (x86)\GeneXus\GeneXus16
 SET GX_SDK_DIR=C:\Program Files (x86)\GeneXus\GeneXus16PlatformSDK
-SET NETFRAMEWORK_DIR="C:\Program Files (x86)\MSBuild\14.0\bin\amd64"
+SET NETFRAMEWORK_DIR="C:\Windows\Microsoft.NET\Framework\v4.0.30319"
 SET TargetFrameworkVersion=v4.7.1
 ctt.exe source:KBDoctorUI\KBDoctorUI.csproj.user transform:KBDoctorUI\TransformacionGX16.xml destination:KBDoctorUI\KBDoctorUI.csproj.user i
 GOTO END_CASE

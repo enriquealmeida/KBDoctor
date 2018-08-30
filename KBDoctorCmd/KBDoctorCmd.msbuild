@@ -77,7 +77,7 @@
     <Message Text="Using GeneXus DIR = $(GX_PROGRAM_DIR)" /> 
 	<Message Text="KB DIR = $(KBPath)" /> 
     <OpenKnowledgeBase Directory="$(KBPath)"/>
-    <ReviewObjectsCmd  />
+    <ReviewObjectsCmd  DateFrom="01-01-2018"/>
     <CloseKnowledgeBase />
   </Target>
 </Project>

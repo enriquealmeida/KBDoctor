@@ -544,9 +544,16 @@ namespace Concepto.Packages.KBDoctor
             selectObjectOption.MultipleSelection = true;
 
             List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
-            KBDoctorOutput.StartSection("KBDoctor - Parameters Type Comparer");
-            Thread thread = new Thread(() => API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs));
+            
+            Thread thread = new Thread(() => ParametersTypeComparer(UIServices.KB.CurrentKB, objs));
             thread.Start();
+        }
+
+        private static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs)
+        {
+            KBDoctorOutput.StartSection("KBDoctor - Parameters Type Comparer");
+            API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs);
+            KBDoctorOutput.EndSection("KBDoctor - Parameters Type Comparer");
         }
         private static void PreprocessPendingObjects(CommandData cmdData)
         {

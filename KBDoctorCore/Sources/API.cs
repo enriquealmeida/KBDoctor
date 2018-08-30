@@ -175,6 +175,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (CheckKeyInINI(parsedData, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain",filename))
                         AssignTypesComprarer(KB, objlist);
 
+                    if (CheckKeyInINI(parsedData, SectionName, "ParameterTypes", "true", "Check if call parameters have the correct Type or Domain", filename))
+                        ParametersTypeComparer(KB, objlist);
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
 
@@ -215,7 +217,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     Objects.AttributeHasDomain(Objects.GetAttributesFromTrn((Transaction)obj), output, ref recommendations);
                 }
-                if(recommendations != "")
+                
+                if (recommendations != "")
                 {
                     Tuple<KBObject, string> recommend_tuple = new Tuple<KBObject, string>(obj, recommendations);
                     recommended_list.Add(recommend_tuple);
@@ -301,6 +304,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 AddKeyToIni(data, SectionName, "SDTBasedAttOrDomain", "true", "SDT items must be based on attributes or domains");
                 AddKeyToIni(data, SectionName, "AttributeWithoutTable", "true", "All attributes must be in table");
                 AddKeyToIni(data, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain");
+                AddKeyToIni(data, SectionName, "ParameterTypes", "true", "Check if assignments have the correct Type or Domain");
 
                 AddKeyToIni(data, SectionName, "MaxNestLevel", "7", "Maximun nesting level allowed in source");
                 AddKeyToIni(data, SectionName, "MaxComplexity", "30", "Maximun Complexity level allowed in sources");
@@ -350,7 +354,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 Objects.ParameterTypeComparer(KB.DesignModel, obj);
             }
-            KBDoctor.KBDoctorOutput.EndSection("KBDoctor - Parameters Type Comparer");
         }
 
 #if EVO3
