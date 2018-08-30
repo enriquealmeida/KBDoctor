@@ -105,6 +105,7 @@
     <CommandDefinition id="ResetWINForm" />
     <CommandDefinition id="ThemeClassesNotUsed" />
     <CommandDefinition id="AssignTypeComparer" />
+    <CommandDefinition id="ParameterTypeComparer" />
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
     <CommandDefinition id="CountGeneratedByPattern" />
@@ -305,11 +306,11 @@
               <Command refid="ObjectsNotReacheable"/>
               <Command refid="CleanKBAsMuchAsPossible"/>
               <Command refid="ListTableAttributesUsingDomain"/>
-
               <Command refid="ObjectsWithConstants" />
               <Command refid="ThemeClassesNotUsed"/>
               <Command refid="AssignTypeComparer"/>
-               <Command refid="ObjectsDiagnostics" />
+              <Command refid="ObjectsDiagnostics" />
+              <Command refid="ParameterTypeComparer" />
             </Popup>
           </Group>
           <!--

@@ -47,12 +47,12 @@
             // 
             // objName
             // 
-            this.objName.Font = new System.Drawing.Font("Miriam Mono CLM", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.objName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.objName.Location = new System.Drawing.Point(118, 23);
             this.objName.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.objName.Name = "objName";
             this.objName.ReadOnly = true;
-            this.objName.Size = new System.Drawing.Size(766, 27);
+            this.objName.Size = new System.Drawing.Size(766, 26);
             this.objName.TabIndex = 0;
             // 
             // label1
@@ -61,13 +61,13 @@
             this.label1.Location = new System.Drawing.Point(22, 26);
             this.label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 18);
+            this.label1.Size = new System.Drawing.Size(59, 20);
             this.label1.TabIndex = 1;
             this.label1.Text = "Object:";
             // 
             // source
             // 
-            this.source.Font = new System.Drawing.Font("Miriam Mono CLM", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.source.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.source.Location = new System.Drawing.Point(118, 126);
             this.source.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.source.Multiline = true;
@@ -77,12 +77,12 @@
             // 
             // comboVar
             // 
-            this.comboVar.Font = new System.Drawing.Font("Miriam Mono CLM", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.comboVar.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.comboVar.FormattingEnabled = true;
             this.comboVar.Location = new System.Drawing.Point(118, 76);
             this.comboVar.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.comboVar.Name = "comboVar";
-            this.comboVar.Size = new System.Drawing.Size(766, 26);
+            this.comboVar.Size = new System.Drawing.Size(766, 28);
             this.comboVar.TabIndex = 4;
             this.comboVar.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
@@ -92,7 +92,7 @@
             this.comboAtt.Location = new System.Drawing.Point(282, 591);
             this.comboAtt.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.comboAtt.Name = "comboAtt";
-            this.comboAtt.Size = new System.Drawing.Size(617, 26);
+            this.comboAtt.Size = new System.Drawing.Size(617, 28);
             this.comboAtt.Sorted = true;
             this.comboAtt.TabIndex = 5;
             // 
@@ -113,7 +113,7 @@
             this.label2.Location = new System.Drawing.Point(10, 76);
             this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(98, 18);
+            this.label2.Size = new System.Drawing.Size(71, 20);
             this.label2.TabIndex = 7;
             this.label2.Text = "Variable:";
             // 
@@ -123,7 +123,7 @@
             this.label3.Location = new System.Drawing.Point(10, 129);
             this.label3.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(88, 18);
+            this.label3.Size = new System.Drawing.Size(67, 20);
             this.label3.TabIndex = 8;
             this.label3.Text = "Used in:";
             // 
@@ -133,7 +133,7 @@
             this.label4.Location = new System.Drawing.Point(74, 595);
             this.label4.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(198, 18);
+            this.label4.Size = new System.Drawing.Size(144, 20);
             this.label4.TabIndex = 9;
             this.label4.Text = "Based on attribute:";
             // 
@@ -143,7 +143,7 @@
             this.label5.Location = new System.Drawing.Point(75, 83);
             this.label5.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(168, 18);
+            this.label5.Size = new System.Drawing.Size(137, 20);
             this.label5.TabIndex = 10;
             this.label5.Text = "Based on domain:";
             // 
@@ -153,7 +153,7 @@
             this.comboDom.Location = new System.Drawing.Point(253, 80);
             this.comboDom.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.comboDom.Name = "comboDom";
-            this.comboDom.Size = new System.Drawing.Size(617, 26);
+            this.comboDom.Size = new System.Drawing.Size(617, 28);
             this.comboDom.Sorted = true;
             this.comboDom.TabIndex = 11;
             // 
@@ -193,7 +193,7 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1216, 772);
             this.Controls.Add(this.button2);
@@ -206,7 +206,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.objName);
             this.Controls.Add(this.groupBox1);
-            this.Font = new System.Drawing.Font("Miriam Mono CLM", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(177)));
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "Form1";
             this.Text = "Form1";

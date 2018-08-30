@@ -1,4 +1,5 @@
 ﻿using Artech.Architecture.Common.Objects;
+using Artech.Architecture.UI.Framework.Services;
 using Artech.Genexus.Common;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Parts;

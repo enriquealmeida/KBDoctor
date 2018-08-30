@@ -76,8 +76,9 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.RenameVariables, new ExecHandler(ExecRenameVariables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildModule, new ExecHandler(ExecBuildModule), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignTypeComparer, new ExecHandler(ExecAssignTypeComparer), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ParameterTypeComparer, new ExecHandler(ExecParametersTypeComparer), new QueryHandler(QueryKBDoctor));
 
-      //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
+            //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectWithProperty, new ExecHandler(ExecBuildObjectWithProperty), new QueryHandler(QueryKBDoctor));
 
@@ -526,6 +527,27 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecParametersTypeComparer(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            ParametersTypeComparer();
+            return true;
+        }
+
+        private static void ParametersTypeComparer()
+        {
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            selectObjectOption.MultipleSelection = true;
+
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            KBDoctorOutput.StartSection("KBDoctor - Parameters Type Comparer");
+            Thread thread = new Thread(() => API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs));
+            thread.Start();
+        }
         private static void PreprocessPendingObjects(CommandData cmdData)
         {
 

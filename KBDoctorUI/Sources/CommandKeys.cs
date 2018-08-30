@@ -143,6 +143,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey generateSQLScripts  = new CommandKey(Package.guid, "GenerateSQLScripts");
         private static CommandKey generateGraph = new CommandKey(Package.guid, "GenerateGraph");
         private static CommandKey themeClassesNotUsed = new CommandKey(Package.guid, "ThemeClassesNotUsed");
+        private static CommandKey parameterTypeComparer = new CommandKey(Package.guid, "ParameterTypeComparer");
 
         public static CommandKey ObjNotReacheable { get { return objNotReacheable; } }
         public static CommandKey ObjectsWithoutInOut { get { return objectsWithoutInOut; } }
@@ -184,6 +185,7 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey GenerateSQLScripts { get { return generateSQLScripts; } }
         public static CommandKey GenerateGraph { get { return generateGraph; } }
         public static CommandKey ThemeClassesNotUsed { get { return themeClassesNotUsed; } }
+        public static CommandKey ParameterTypeComparer { get { return parameterTypeComparer; } }
 
         // Acciones sobre objetos
         private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");

@@ -1,6 +1,7 @@
 ﻿using System;
 using Artech.Architecture.Common.Location;
 using Artech.Architecture.Common.Services;
+using Artech.Common.Diagnostics;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -44,6 +45,12 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = NewKBDoctorOutput();
             output.AddWarningLine(v);
+        }
+
+        public static void OutputError(OutputError oe)
+        {
+            IOutputService output = NewKBDoctorOutput();
+            output.Add("KBDoctor", oe);
         }
 
         private static IOutputService NewKBDoctorOutput()

@@ -173,7 +173,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     //Assign types comparer
                     if (CheckKeyInINI(parsedData, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain",filename))
-                        AssignTypesComprarer(KB, output, objlist);
+                        AssignTypesComprarer(KB, objlist);
 
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
@@ -335,13 +335,22 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return Objects.ThemeClassesNotUsed(KB, output, themeclass);
         }
 
-        public static bool AssignTypesComprarer(KnowledgeBase KB, IOutputService output, List<KBObject> objs)
+        public static bool AssignTypesComprarer(KnowledgeBase KB, List<KBObject> objs)
         {
             foreach (KBObject obj in objs)
             {
-                Objects.AssignTypeComparer(KB.DesignModel, obj, output);
+                Objects.AssignTypeComparer(KB.DesignModel, obj);
             }
             return true;
+        }
+
+        public static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs)
+        {
+            foreach(KBObject obj in objs)
+            {
+                Objects.ParameterTypeComparer(KB.DesignModel, obj);
+            }
+            KBDoctor.KBDoctorOutput.EndSection("KBDoctor - Parameters Type Comparer");
         }
 
 #if EVO3

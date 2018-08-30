@@ -477,9 +477,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         }
 
-        internal static Domain DomainByName(string domainName)
+        internal static Domain DomainByName(KBModel model, string domainName)
         {
-            foreach (Domain d in Domain.GetAll(UIServices.KB.CurrentModel))
+            foreach (Domain d in Domain.GetAll(model))
             {
                 if (d.Name == domainName)
                 {
@@ -681,6 +681,98 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (obj.Module.Name.ToLower() == module.ToLower())
                     return obj;
+            }
+            return null;
+        }
+
+        public static List<Tuple<Domain, string>> GetParametersDomains(KBObject obj)
+        {
+            ICallableObject callableObject = obj as ICallableObject;
+
+            if (callableObject != null)
+            {
+                List<Signature> signatures = (List<Signature>)callableObject.GetSignatures();
+                if (signatures.Count == 1)
+                {
+                    List<Tuple<Domain, string>> domain_accessors = new List<Tuple<Domain, string>>();
+                    foreach (Signature signature in signatures)
+                    {
+                        foreach (Parameter parm in signature.Parameters)
+                        {
+                            Domain param_domain;
+                            string param_access = parm.Accessor.ToString();
+                            if (parm.IsAttribute)
+                            {
+                                Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)parm.Object;
+                                if (att != null)
+                                    param_domain = att.DomainBasedOn;
+                                else
+                                    return null;
+                            }
+                            else
+                            {
+                                Variable var = (Variable)parm.Object;
+                                if (var != null)
+                                    param_domain = var.DomainBasedOn;
+                                else
+                                    param_domain = null;
+                            }
+                            Tuple<Domain, string> par = new Tuple<Domain, string>(param_domain, param_access);
+                            domain_accessors.Add(par);
+                        }
+                    }
+                    return domain_accessors;
+                }
+
+            }
+            return null;
+        }
+
+        public static List<Tuple<string,string>> GetParametersFormatedType(KBObject obj)
+        {
+            ICallableObject callableObject = obj as ICallableObject;
+
+            if (callableObject != null)
+            {
+                List<Signature> signatures = (List<Signature>)callableObject.GetSignatures();
+                if (signatures.Count == 1)
+                {
+                    List<Tuple<string, string>> types_accessors = new List<Tuple<string, string>>();
+                    foreach (Signature signature in signatures)
+                    {
+                        foreach (Parameter parm in signature.Parameters)
+                        {
+                            string param_type = "";
+                            string param_access = parm.Accessor.ToString();
+                            if (parm.IsAttribute)
+                            {
+                                Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)parm.Object;
+                                if (att != null)
+                                {
+                                    param_type = Utility.FormattedTypeAttribute(att);
+                                }
+                                else
+                                {
+                                    param_type = "Unknown";
+                                }
+                            }
+                            else
+                            {
+                                Variable var = (Variable)parm.Object;
+                                if (var != null)
+                                    param_type = Utility.FormattedTypeVariable(var);
+                                else if(obj is DataProvider)
+                                {
+                                    param_type = "Unknown";
+                                }
+                            }
+                            Tuple<string, string> par = new Tuple<string, string>(param_type, param_access);
+                            types_accessors.Add(par);
+                        }
+                    }
+                    return types_accessors;
+                }
+                
             }
             return null;
         }
