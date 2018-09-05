@@ -106,6 +106,9 @@
     <CommandDefinition id="ThemeClassesNotUsed" />
     <CommandDefinition id="AssignTypeComparer" />
     <CommandDefinition id="ParameterTypeComparer" />
+    <CommandDefinition id="EmptyConditionalBlocks" />
+    <CommandDefinition id="NewsWithoutWhenDuplicate" />
+    <CommandDefinition id="ForEachsWithoutWhenNone" />
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
     <CommandDefinition id="CountGeneratedByPattern" />
@@ -311,6 +314,9 @@
               <Command refid="AssignTypeComparer"/>
               <Command refid="ObjectsDiagnostics" />
               <Command refid="ParameterTypeComparer" />
+              <Command refid="EmptyConditionalBlocks" />
+              <Command refid="ForEachsWithoutWhenNone" />
+              <Command refid="NewsWithoutWhenDuplicate" />
             </Popup>
           </Group>
           <!--

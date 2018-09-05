@@ -99,7 +99,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return Objects.ParmWOInOut(KB, output);
         }
         //
-
         public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs, out List<string[]> lineswriter)
         {
 
@@ -174,9 +173,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     //Assign types comparer
                     if (CheckKeyInINI(parsedData, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain",filename))
                         AssignTypesComprarer(KB, objlist);
-
+                    //Parameter types comparer
                     if (CheckKeyInINI(parsedData, SectionName, "ParameterTypes", "true", "Check if call parameters have the correct Type or Domain", filename))
                         ParametersTypeComparer(KB, objlist);
+                    //Empty conditional blocks
+                    if (CheckKeyInINI(parsedData, SectionName, "EmptyConditionalBlocks", "true", "Checks if exists any IF/Else block without code in it", filename))
+                        EmptyConditionalBlocks(KB, objlist);
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
 
@@ -305,12 +307,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 AddKeyToIni(data, SectionName, "AttributeWithoutTable", "true", "All attributes must be in table");
                 AddKeyToIni(data, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain");
                 AddKeyToIni(data, SectionName, "ParameterTypes", "true", "Check if assignments have the correct Type or Domain");
+                AddKeyToIni(data, SectionName, "EmptyConditionalBlocks", "6", "Check if there is any IF/Else block without code in it");
 
                 AddKeyToIni(data, SectionName, "MaxNestLevel", "7", "Maximun nesting level allowed in source");
                 AddKeyToIni(data, SectionName, "MaxComplexity", "30", "Maximun Complexity level allowed in sources");
                 AddKeyToIni(data, SectionName, "MaxBlockSize", "300", "Maximun block of code");
                 AddKeyToIni(data, SectionName, "MaxParameterCount", "6", "Maximun Number of parameters allowed in parm rule");
-
+                
+                
                 //Save the file
                 parser.WriteFile(filename, data);
             }
@@ -353,6 +357,30 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             foreach(KBObject obj in objs)
             {
                 Objects.ParameterTypeComparer(KB.DesignModel, obj);
+            }
+        }
+
+        public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs)
+        {
+            foreach(KBObject obj in objs)
+            {
+                Objects.EmptyConditionalBlocks(KB.DesignModel, obj);
+            }
+        }
+
+        public static void ForEachsWithoutWhenNone(KnowledgeBase KB, List<KBObject> objs)
+        {
+            foreach (KBObject obj in objs)
+            {
+                Objects.ForEachsWithoutWhenNone(KB.DesignModel, obj);
+            }
+        }
+
+        public static void NewsWithoutWhenDuplicate(KnowledgeBase KB, List<KBObject> objs)
+        {
+            foreach (KBObject obj in objs)
+            {
+                Objects.NewsWithoutWhenDuplicate(KB.DesignModel, obj);
             }
         }
 

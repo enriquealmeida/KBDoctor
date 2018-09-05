@@ -1346,6 +1346,277 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
+        internal static void ProcessIfElseInSource(KBModel model, SourcePart source, VariablesPart vp)
+        {
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+            ParserInfo parserInfo;
+            parserInfo = new ParserInfo(source);
+            var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+
+            if (parser.Validate(info, source.Source))
+            {
+                Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                List<AbstractNode> conditions = getIfElseInSource(paramRootNode);
+
+                foreach (CommandBlockNode cond in conditions)
+                {
+                    if(cond.Children.Count() == 0)
+                    {
+                        
+                        OutputError error = new OutputError("This conditional block has no code.", MessageLevel.Warning, new SourcePosition(source, cond.Node.Row, 0));
+                        KBDoctorOutput.OutputError(error);
+                    }
+                    else if(cond.Children.Count() == 1)
+                    {
+                        if (cond.Children.First() is CommandBlockNode && cond.Children.First().Node.Token == 110) //else
+                        {
+                            OutputError error = new OutputError("This conditional block has no code.", MessageLevel.Warning, new SourcePosition(source, cond.Node.Row, 0));
+                            KBDoctorOutput.OutputError(error);
+                        }
+                    }
+                }
+            }
+        }
+
+        internal static void ForEachsWithoutWhenNone(KBModel model, KBObject obj)
+        {
+            if (!isGeneratedbyPattern(obj))
+            {
+                if (obj is Procedure)
+                {
+                    ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    if (procpart != null)
+                        ProcessForeachsInSource(model, procpart, vp);
+                }
+                else
+                {
+                    if (obj is WebPanel || obj is Transaction)
+                    {
+                        EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
+                        VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                        if (eventspart != null)
+                            ProcessForeachsInSource(model, eventspart, vp);
+                    }
+                }
+            }
+        }
+
+        internal static void ProcessForeachsInSource(KBModel model, SourcePart source, VariablesPart vp)
+        {
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+            ParserInfo parserInfo;
+            parserInfo = new ParserInfo(source);
+            var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+
+            if (parser.Validate(info, source.Source))
+            {
+                Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                List<AbstractNode> foreachs = getForeachsInSource(paramRootNode);
+
+                foreach (CommandBlockNode @foreach in foreachs)
+                {
+                    if (@foreach.Children.Count() == 0)
+                    {
+                        OutputError error = new OutputError("This 'For Each' block has no code.", MessageLevel.Warning, new SourcePosition(source, @foreach.Node.Row, 0));
+                        KBDoctorOutput.OutputError(error);
+                    }
+                    else
+                    {
+                        bool hasWN = false;
+                        CommandBlockNode wn = null;
+                        foreach (AbstractNode an in @foreach.Children)
+                        {
+                            if (an is CommandBlockNode && an.Node.Token == 130) //when none
+                            {
+                                hasWN = true;
+                                wn = (CommandBlockNode)an;
+                            }
+                        }
+                        if (hasWN)
+                        {
+                            if (wn.Children.Count() == 0)
+                            {
+                                OutputError error = new OutputError("This 'When None' block has no code.", MessageLevel.Warning, new SourcePosition(source, wn.Node.Row, 0));
+                                KBDoctorOutput.OutputError(error);
+                            }
+                        }
+                        else
+                        {
+                            OutputError error = new OutputError("This 'For Each' block has no 'When None' associated.", MessageLevel.Warning, new SourcePosition(source, @foreach.Node.Row, 0));
+                            KBDoctorOutput.OutputError(error);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static List<AbstractNode> getForeachsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+        {
+            if (root != null)
+            {
+                List<AbstractNode> foreachs = new List<AbstractNode>();
+                foreach (AbstractNode node in root.Children)
+                {
+                    if (node.Node != null)
+                    {
+                        if (node.Node.Token == 121)   // New
+                        {
+                            if (node is CommandBlockNode)
+                            {
+                                foreachs.Add(node);
+                                foreachs.AddRange(getForeachsInSource(node));
+                            }
+                        }
+                        else
+                        {
+                            foreachs.AddRange(getForeachsInSource(node));
+                        }
+                    }
+                }
+                return foreachs;
+            }
+            return null;
+        }
+
+        internal static void NewsWithoutWhenDuplicate(KBModel model, KBObject obj)
+        {
+            if (!isGeneratedbyPattern(obj))
+            {
+                if (obj is Procedure)
+                {
+                    ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    if (procpart != null)
+                        ProcessNewsInSource(model, procpart, vp);
+                }
+                else
+                {
+                    if (obj is WebPanel || obj is Transaction)
+                    {
+                        EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
+                        VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                        if (eventspart != null)
+                            ProcessNewsInSource(model, eventspart, vp);
+                    }
+                }
+            }
+        }
+
+
+        internal static void ProcessNewsInSource(KBModel model, SourcePart source, VariablesPart vp)
+        {
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+            ParserInfo parserInfo;
+            parserInfo = new ParserInfo(source);
+            var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+
+            if (parser.Validate(info, source.Source))
+            {
+                Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                List<AbstractNode> news = getNewsInSource(paramRootNode);
+
+                foreach (CommandBlockNode @new in news)
+                {
+                    if (@new.Children.Count() == 0)
+                    {
+                        OutputError error = new OutputError("This 'New' block has no code.", MessageLevel.Warning, new SourcePosition(source, @new.Node.Row, 0));
+                        KBDoctorOutput.OutputError(error);
+                    }
+                    else 
+                    {
+                        bool hasWD = false;
+                        CommandBlockNode wd = null;
+                        foreach (AbstractNode an in @new.Children)
+                        {
+                            if (an is CommandBlockNode && an.Node.Token == 129) //when duplicate
+                            {
+                                hasWD = true;
+                                wd =(CommandBlockNode)an; 
+                            }
+                        }
+                        if(hasWD)
+                        {
+                            if(wd.Children.Count() == 0)
+                            {
+                                OutputError error = new OutputError("This 'When Duplicate' block has no code.", MessageLevel.Warning, new SourcePosition(source, wd.Node.Row, 0));
+                                KBDoctorOutput.OutputError(error);
+                            }
+                        }
+                        else
+                        {
+                            OutputError error = new OutputError("This 'New' block has no 'When Duplicate' associated.", MessageLevel.Warning, new SourcePosition(source, @new.Node.Row, 0));
+                            KBDoctorOutput.OutputError(error);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static List<AbstractNode> getNewsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+        {
+            if (root != null)
+            {
+                List<AbstractNode> ifelse = new List<AbstractNode>();
+                foreach (AbstractNode node in root.Children)
+                {
+                    if (node.Node != null)
+                    {
+                        if (node.Node.Token == 117)   // New
+                        {
+                            if (node is CommandBlockNode)
+                            {
+                                ifelse.Add(node);
+                                ifelse.AddRange(getNewsInSource(node));
+                            }
+                        }
+                        else
+                        {
+                            ifelse.AddRange(getNewsInSource(node));
+                        }
+                    }
+                }
+                return ifelse;
+            }
+            return null;
+        }
+
+        private static List<AbstractNode> getIfElseInSource(Artech.Genexus.Common.AST.AbstractNode root)
+        {
+           if (root != null)
+            {
+                List<AbstractNode> ifelse = new List<AbstractNode>();
+                foreach (AbstractNode node in root.Children)
+                {
+                    if (node.Node != null)
+                    {
+                        if (node.Node.Token == 109)
+                        {
+                            if (node is CommandBlockNode)
+                            {
+                                ifelse.Add(node);
+                                ifelse.AddRange(getIfElseInSource(node));
+                            }
+                        }
+                        else if (node.Node.Token == 110)
+                        {
+                            if (node is CommandBlockNode)
+                            {
+                                ifelse.Add(node);
+                                ifelse.AddRange(getIfElseInSource(node));
+                            }
+                        }
+                        else
+                        {
+                            ifelse.AddRange(getIfElseInSource(node));
+                        }
+                    }
+                }
+                return ifelse;
+            }
+            return null;
+        }
+
         internal static void AssignTypeComparer(KBModel model, KBObject obj)
         {
             if (!isGeneratedbyPattern(obj))
@@ -1371,6 +1642,30 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             ProccessAssignmentsInSource(model, eventspart, vp, obj.Name);
                         if (rules != null)
                             ProccessAssignmentsInSource(model, rules, vp, obj.Name);
+                    }
+                }
+            }
+        }
+
+        internal static void EmptyConditionalBlocks(KBModel model, KBObject obj)
+        {
+            if (!isGeneratedbyPattern(obj))
+            {
+                if (obj is Procedure)
+                {
+                    ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    if (procpart != null)
+                        ProcessIfElseInSource(model, procpart, vp);
+                }
+                else
+                {
+                    if (obj is WebPanel || obj is Transaction)
+                    {
+                        EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
+                        VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                        if (eventspart != null)
+                            ProcessIfElseInSource(model, eventspart, vp);
                     }
                 }
             }

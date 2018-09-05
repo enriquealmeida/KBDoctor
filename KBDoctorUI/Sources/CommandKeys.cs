@@ -144,6 +144,10 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey generateGraph = new CommandKey(Package.guid, "GenerateGraph");
         private static CommandKey themeClassesNotUsed = new CommandKey(Package.guid, "ThemeClassesNotUsed");
         private static CommandKey parameterTypeComparer = new CommandKey(Package.guid, "ParameterTypeComparer");
+        private static CommandKey emptyConditionalBlocks = new CommandKey(Package.guid, "EmptyConditionalBlocks");
+        private static CommandKey newsWithoutWhenDuplicate = new CommandKey(Package.guid, "NewsWithoutWhenDuplicate");
+        private static CommandKey forEachsWithoutWhenNone = new CommandKey(Package.guid, "ForEachsWithoutWhenNone");
+
 
         public static CommandKey ObjNotReacheable { get { return objNotReacheable; } }
         public static CommandKey ObjectsWithoutInOut { get { return objectsWithoutInOut; } }
@@ -186,6 +190,9 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey GenerateGraph { get { return generateGraph; } }
         public static CommandKey ThemeClassesNotUsed { get { return themeClassesNotUsed; } }
         public static CommandKey ParameterTypeComparer { get { return parameterTypeComparer; } }
+        public static CommandKey EmptyConditionalBlocks { get { return emptyConditionalBlocks; } }
+        public static CommandKey NewsWithoutWhenDuplicate { get { return newsWithoutWhenDuplicate; } }
+        public static CommandKey ForEachsWithoutWhenNone { get { return forEachsWithoutWhenNone; } }
 
         // Acciones sobre objetos
         private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");
