@@ -1,7 +1,7 @@
 cd ..
-call setEnvKBDoctor.cmd EVO3
+call setEnvKBDoctor.cmd GX15
 cd KBDoctorCmd
-set KBPath=C:\Models\ev3\RiesgoDIAN
+set KBPath=C:\Models\nsanguinetti\MT15v7
 
 del salida.txt
 echo %KBPath%  > salida.txt

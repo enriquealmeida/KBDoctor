@@ -179,6 +179,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     //Empty conditional blocks
                     if (CheckKeyInINI(parsedData, SectionName, "EmptyConditionalBlocks", "true", "Checks if exists any IF/Else block without code in it", filename))
                         EmptyConditionalBlocks(KB, objlist);
+                    //Constants in code
+                    if (CheckKeyInINI(parsedData, SectionName, "ConstantsInCode", "true", "Check if there are hardcoded constants", filename))
+                        ConstantsInCode(KB, objlist);
+                    //For eachs without when none
+                    if (CheckKeyInINI(parsedData, SectionName, "ForEachsWithoutWhenNone", "true", "Check if there is any 'ForEach' block without a 'When None' clause", filename))
+                        ForEachsWithoutWhenNone(KB, objlist);
+                    //News without when duplicate
+                    if (CheckKeyInINI(parsedData, SectionName, "NewsWithoutWhenDuplicate", "true", "Check if there is any 'New' block without 'When Duplicate' clause", filename))
+                        NewsWithoutWhenDuplicate(KB, objlist);
+
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
 
@@ -225,6 +235,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     Tuple<KBObject, string> recommend_tuple = new Tuple<KBObject, string>(obj, recommendations);
                     recommended_list.Add(recommend_tuple);
                 }
+
             }
             if (atts.Count > 0 && CheckKeyInINI(parsedData, SectionName, "AttributeWithoutTable",  "true", "All attributes must be in table", filename))
             {
@@ -307,13 +318,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 AddKeyToIni(data, SectionName, "AttributeWithoutTable", "true", "All attributes must be in table");
                 AddKeyToIni(data, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain");
                 AddKeyToIni(data, SectionName, "ParameterTypes", "true", "Check if assignments have the correct Type or Domain");
-                AddKeyToIni(data, SectionName, "EmptyConditionalBlocks", "6", "Check if there is any IF/Else block without code in it");
+                AddKeyToIni(data, SectionName, "EmptyConditionalBlocks", "true", "Check if there is any IF/Else block without code in it");
+                AddKeyToIni(data, SectionName, "ConstantsInCode", "true", "Check if there are hardcoded constants");
+                AddKeyToIni(data, SectionName, "ForEachsWithoutWhenNone", "true", "Check if there is any 'ForEach' block without a 'When None' clause");
+                AddKeyToIni(data, SectionName, "NewsWithoutWhenDuplicate", "true", "Check if there is any 'New' block without 'When Duplicate' clause");
 
                 AddKeyToIni(data, SectionName, "MaxNestLevel", "7", "Maximun nesting level allowed in source");
                 AddKeyToIni(data, SectionName, "MaxComplexity", "30", "Maximun Complexity level allowed in sources");
                 AddKeyToIni(data, SectionName, "MaxBlockSize", "300", "Maximun block of code");
                 AddKeyToIni(data, SectionName, "MaxParameterCount", "6", "Maximun Number of parameters allowed in parm rule");
-                
                 
                 //Save the file
                 parser.WriteFile(filename, data);
@@ -360,9 +373,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+        public static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs)
+        {
+            foreach (KBObject obj in objs)
+            {
+                Objects.ConstantsInCode(KB.DesignModel, obj);
+            }
+        }
+        
         public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs)
         {
-            foreach(KBObject obj in objs)
+            foreach (KBObject obj in objs)
             {
                 Objects.EmptyConditionalBlocks(KB.DesignModel, obj);
             }

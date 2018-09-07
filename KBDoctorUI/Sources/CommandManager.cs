@@ -80,6 +80,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.EmptyConditionalBlocks, new ExecHandler(ExecEmptyConditionalBlock), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.NewsWithoutWhenDuplicate, new ExecHandler(ExecNewsWithoutWhenDuplicate), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ForEachsWithoutWhenNone, new ExecHandler(ExecForEachsWithoutWhenNone), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ConstantsInCode, new ExecHandler(ExecConstantsInCode), new QueryHandler(QueryKBDoctor));
 
             //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
@@ -575,7 +576,36 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
-        public bool ExecForEachsWithoutWhenNone(CommandData cmdData)
+        public bool ExecConstantsInCode(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            ConstantsInCode();
+            return true;
+        }
+
+        private static void ConstantsInCode()
+        {
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            selectObjectOption.MultipleSelection = true;
+
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+
+            Thread thread = new Thread(() => ConstantsInCode(UIServices.KB.CurrentKB, objs));
+            thread.Start();
+        }
+
+        private static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs)
+        {
+            KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
+            API.ConstantsInCode(UIServices.KB.CurrentKB, objs);
+            KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
+        }
+
+            public bool ExecForEachsWithoutWhenNone(CommandData cmdData)
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");

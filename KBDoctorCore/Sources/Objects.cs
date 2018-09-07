@@ -1479,6 +1479,108 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
+        internal static void ConstantsInCode(KBModel model, KBObject obj)
+        {
+            if (!isGeneratedbyPattern(obj))
+            {
+                if (obj is Procedure)
+                {
+                    ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    if (procpart != null)
+                        ProcessConstantsInSource(model, procpart, vp);
+                }
+                else
+                {
+                    if (obj is WebPanel || obj is Transaction)
+                    {
+                        EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
+                        VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                        if (eventspart != null)
+                            ProcessConstantsInSource(model, eventspart, vp);
+                    }
+                }
+            }
+        }
+
+        internal static void ProcessConstantsInSource(KBModel model, SourcePart source, VariablesPart vp)
+        {
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+            ParserInfo parserInfo;
+            parserInfo = new ParserInfo(source);
+            var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+
+            if (parser.Validate(info, source.Source))
+            {
+                Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                List<AbstractNode> constants = getConstantsInSource(paramRootNode);
+
+                foreach (AbstractNode constant in constants)
+                {
+                    if(constant is StringConstantNode)
+                    {
+                        if (constant.Parent is FunctionNode)
+                        {
+                            if(!(((FunctionNode)constant.Parent).FunctionName.ToLower() == "msg"))
+                            {
+                                StringConstantsIsCorrect((StringConstantNode)constant, source);
+                            }
+                        }
+                        if(constant.Parent is CommandLineNode)
+                        {
+                            if(!( ( (CommandLineNode)constant.Parent).Name == "do")){
+                                StringConstantsIsCorrect((StringConstantNode)constant, source);
+                            }
+                        }
+                        else
+                        {
+                            StringConstantsIsCorrect((StringConstantNode)constant, source);
+                        }
+                    }
+                    if(constant is NumberNode)
+                    {
+                        //OutputError error = new OutputError("Number constant in code", MessageLevel.Warning, new SourcePosition(source, constant.Node.Row, 0));
+                        //KBDoctorOutput.OutputError(error);
+                    }
+                }
+            }
+        }
+
+        private static void StringConstantsIsCorrect(StringConstantNode scn, SourcePart source)
+        {
+            bool isCorrect = scn.Text.Contains(' ') || (scn.Text.Length <= 4) || (scn.Text.Contains('<') || scn.Text.Contains('>'));
+            if (!isCorrect)
+            {
+                OutputError error = new OutputError("String Constant in code", MessageLevel.Warning, new SourcePosition(source, scn.Node.Row, 0));
+                KBDoctorOutput.OutputError(error);
+            }
+        }
+
+        private static List<AbstractNode> getConstantsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+        {
+            if (root != null)
+            {
+                List<AbstractNode> constants = new List<AbstractNode>();
+                foreach (AbstractNode node in root.Children)
+                {
+                    if (node.Node != null)
+                    {
+                        if (node.Node.Token == 3)   // Constants
+                        {
+                            constants.Add(node);
+                            constants.AddRange(getConstantsInSource(node));
+                        }
+                        else
+                        {
+                            constants.AddRange(getConstantsInSource(node));
+                        }
+                    }
+                }
+                return constants;
+            }
+            return null;
+        }
+
         internal static void NewsWithoutWhenDuplicate(KBModel model, KBObject obj)
         {
             if (!isGeneratedbyPattern(obj))

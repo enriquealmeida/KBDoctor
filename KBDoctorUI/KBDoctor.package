@@ -109,6 +109,7 @@
     <CommandDefinition id="EmptyConditionalBlocks" />
     <CommandDefinition id="NewsWithoutWhenDuplicate" />
     <CommandDefinition id="ForEachsWithoutWhenNone" />
+    <CommandDefinition id="ConstantsInCode" />
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
     <CommandDefinition id="CountGeneratedByPattern" />
@@ -317,6 +318,7 @@
               <Command refid="EmptyConditionalBlocks" />
               <Command refid="ForEachsWithoutWhenNone" />
               <Command refid="NewsWithoutWhenDuplicate" />
+              <Command refid="ConstantsInCode" />
             </Popup>
           </Group>
           <!--

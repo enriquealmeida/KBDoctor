@@ -147,6 +147,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey emptyConditionalBlocks = new CommandKey(Package.guid, "EmptyConditionalBlocks");
         private static CommandKey newsWithoutWhenDuplicate = new CommandKey(Package.guid, "NewsWithoutWhenDuplicate");
         private static CommandKey forEachsWithoutWhenNone = new CommandKey(Package.guid, "ForEachsWithoutWhenNone");
+        private static CommandKey constantsInCode = new CommandKey(Package.guid, "ConstantsInCode");
 
 
         public static CommandKey ObjNotReacheable { get { return objNotReacheable; } }
@@ -193,6 +194,7 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey EmptyConditionalBlocks { get { return emptyConditionalBlocks; } }
         public static CommandKey NewsWithoutWhenDuplicate { get { return newsWithoutWhenDuplicate; } }
         public static CommandKey ForEachsWithoutWhenNone { get { return forEachsWithoutWhenNone; } }
+        public static CommandKey ConstantsInCode { get { return constantsInCode; } }
 
         // Acciones sobre objetos
         private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");
