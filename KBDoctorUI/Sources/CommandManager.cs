@@ -76,8 +76,13 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.RenameVariables, new ExecHandler(ExecRenameVariables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildModule, new ExecHandler(ExecBuildModule), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignTypeComparer, new ExecHandler(ExecAssignTypeComparer), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ParameterTypeComparer, new ExecHandler(ExecParametersTypeComparer), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.EmptyConditionalBlocks, new ExecHandler(ExecEmptyConditionalBlock), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.NewsWithoutWhenDuplicate, new ExecHandler(ExecNewsWithoutWhenDuplicate), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ForEachsWithoutWhenNone, new ExecHandler(ExecForEachsWithoutWhenNone), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ConstantsInCode, new ExecHandler(ExecConstantsInCode), new QueryHandler(QueryKBDoctor));
 
-      //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
+            //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectWithProperty, new ExecHandler(ExecBuildObjectWithProperty), new QueryHandler(QueryKBDoctor));
 
@@ -526,9 +531,156 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecParametersTypeComparer(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            ParametersTypeComparer();
+            return true;
+        }
+
+        private static void ParametersTypeComparer()
+        {
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            selectObjectOption.MultipleSelection = true;
+
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            
+            Thread thread = new Thread(() => ParametersTypeComparer(UIServices.KB.CurrentKB, objs));
+            thread.Start();
+        }
+
+        private static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs)
+        {
+            KBDoctorOutput.StartSection("KBDoctor - Parameters Type Comparer");
+            API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs);
+            KBDoctorOutput.EndSection("KBDoctor - Parameters Type Comparer");
+        }
+
+        public bool ExecEmptyConditionalBlock(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            EmptyConditionalBlock();
+            return true;
+        }
+
+        public bool ExecNewsWithoutWhenDuplicate(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            NewsWithoutWhenDuplicate();
+            return true;
+        }
+
+        public bool ExecConstantsInCode(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            ConstantsInCode();
+            return true;
+        }
+
+        private static void ConstantsInCode()
+        {
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            selectObjectOption.MultipleSelection = true;
+
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+
+            Thread thread = new Thread(() => ConstantsInCode(UIServices.KB.CurrentKB, objs));
+            thread.Start();
+        }
+
+        private static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs)
+        {
+            KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
+            API.ConstantsInCode(UIServices.KB.CurrentKB, objs);
+            KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
+        }
+
+            public bool ExecForEachsWithoutWhenNone(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            ForEachsWithoutWhenNone();
+            return true;
+        }
+
+
+        private static void EmptyConditionalBlock()
+        {
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            selectObjectOption.MultipleSelection = true;
+
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+
+            Thread thread = new Thread(() => EmptyConditionalBlock(UIServices.KB.CurrentKB, objs));
+            thread.Start();
+        }
+
+        private static void NewsWithoutWhenDuplicate()
+        {
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            selectObjectOption.MultipleSelection = true;
+
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+
+            Thread thread = new Thread(() => NewsWithoutWhenDuplicate(UIServices.KB.CurrentKB, objs));
+            thread.Start();
+        }
+
+        private static void ForEachsWithoutWhenNone()
+        {
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            selectObjectOption.MultipleSelection = true;
+
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+
+            Thread thread = new Thread(() => ForEachsWithoutWhenNone(UIServices.KB.CurrentKB, objs));
+            thread.Start();
+        }
+
+
+
+        private static void ForEachsWithoutWhenNone(KnowledgeBase KB, List<KBObject> objs)
+        {
+            KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
+            API.ForEachsWithoutWhenNone(UIServices.KB.CurrentKB, objs);
+            KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
+        }
+
+        private static void NewsWithoutWhenDuplicate(KnowledgeBase KB, List<KBObject> objs)
+        {
+            KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
+            API.NewsWithoutWhenDuplicate(UIServices.KB.CurrentKB, objs);
+            KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
+        }
+
+        private static void EmptyConditionalBlock(KnowledgeBase KB, List<KBObject> objs)
+        {
+            KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
+            API.EmptyConditionalBlocks(UIServices.KB.CurrentKB, objs);
+            KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
+        }
+
         private static void PreprocessPendingObjects(CommandData cmdData)
         {
-
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
             SelectedRowsCollection selrows = cmdData.Context as SelectedRowsCollection;

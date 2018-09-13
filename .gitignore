@@ -319,3 +319,4 @@ KBdoctor_Build - copia.cmd
 KBDoctorUI/KBDoctorUI.csproj
 *.csproj
 KBDoctorCmd/salida.txt
+KBDoctorCmd/RunMsbuild.cmd
