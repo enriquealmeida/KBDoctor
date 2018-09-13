@@ -418,4 +418,19 @@
   <data name="AssignTypeComparer" xml:space="preserve">
     <value>Assign Type Comparer</value>
   </data>
+  <data name="ConstantsInCode" xml:space="preserve">
+    <value>Constants in code</value>
+  </data>
+  <data name="EmptyConditionalBlocks" xml:space="preserve">
+    <value>Empty Conditional Blocks</value>
+  </data>
+  <data name="ForEachsWithoutWhenNone" xml:space="preserve">
+    <value>For Each without When None</value>
+  </data>
+  <data name="NewsWithoutWhenDuplicate" xml:space="preserve">
+    <value>News without When Duplicate</value>
+  </data>
+  <data name="ParameterTypeComparer" xml:space="preserve">
+    <value>Parameter type comparer</value>
+  </data>
 </root>
