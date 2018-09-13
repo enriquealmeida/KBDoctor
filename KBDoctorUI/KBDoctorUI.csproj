@@ -211,11 +211,11 @@
     <Compile Include="Sources\AskAttributeandTable.Designer.cs">
       <DependentUpon>AskAttributeandTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sources\Form1.cs">
+    <Compile Include="Sources\AsignDomToVar.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Sources\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Sources\AsignDomToVar.Designer.cs">
+      <DependentUpon>AsignDomToVar.cs</DependentUpon>
     </Compile>
     <Compile Include="Sources\Functions.cs" />
     <Compile Include="CodeGeneration\CodeGeneration.cs" />
@@ -312,8 +312,8 @@
     <EmbeddedResource Include="KBDoctor.package">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sources\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="Sources\AsignDomToVar.resx">
+      <DependentUpon>AsignDomToVar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sources\PromptDescription.resx">
       <SubType>Designer</SubType>

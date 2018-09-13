@@ -2264,18 +2264,16 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            string title = "KBDoctor - Diagnostics";
+            string title = "KBDoctor - Variables not based in domain or attribute";
             string outputFile = Functions.CreateOutputFile(kbserv, title);
-
 
             output.StartSection("KBDoctor", title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Error Code", "Error Description", "Observation", "Solution" });
+            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "# Variables not based in attributes or domain" });
 
             string ErrorCode, ErrorDescription, Observation, Solution;
-
 
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
@@ -2284,59 +2282,26 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
+            int cantVar = 0;
+            IList<KBObject> listObj = UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
 
-            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            foreach (KBObject obj in listObj)
             {
-                if (isGenerated(obj) && !isGeneratedbyPattern(obj))
+               if (HasVariablesNotBasedOnAttributeOrDomain(obj, out cantVar))
                 {
-                    //output.AddLine("KBDoctor",obj.Name);
-
-                    string source = ObjectsHelper.ObjectSource(obj);
-                    source = Functions.RemoveEmptyLines(source);
-
-                    string sourceWOComments = Functions.ExtractComments(source);
-                    
-                   // sourceWOComments = Functions.RemoveEmptyLines(sourceWOComments);
-
-                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
-                    if (vp != null)
-                    {
-                        bool tieneVarSinDomain = false;
-                        foreach (Variable v in vp.Variables)
-                        {
-                            if ((!v.IsStandard) && (v.AttributeBasedOn == null) && (v.DomainBasedOn == null) && (v.Type != eDBType.GX_USRDEFTYP)
-                                && (v.Type != eDBType.GX_SDT) && (v.Type != eDBType.GX_EXTERNAL_OBJECT) && (v.Type != eDBType.Boolean) && v.Type != eDBType.GX_BUSCOMP && v.Type != eDBType.GX_BUSCOMP_LEVEL)
-                            {
-                                tieneVarSinDomain = true;
-                                KBDoctorOutput.Message("Object:" + obj.Name + " -> " + v.Name + " " + Utility.FormattedTypeVariable(v));
-                                KBDoctorOutput.Message("& " + v.Name + " " + Utility.FormattedTypeVariable(v));
-                                KBDoctorOutput.Message("=============================================================");
-
-                                string[] textLines = sourceWOComments.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-
-                                string toSearch = "&" + v.Name;
-
-                                ShowLinesContaining(textLines, toSearch);
-
-                                string[] rulesLines = obj.Parts.Get<RulesPart>().Source.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                                ShowLinesContaining(rulesLines, toSearch);
-
-                                KBDoctorOutput.Message("=============================================================");
-
-                            }
-                            
-                        }
-                        if (tieneVarSinDomain)
-                        {
-                            Form1 f = new Form1(obj);
-                            f.ShowDialog();
-                            
-                        }
-                    }
-
-
+                    AssignDomToVar f = new AssignDomToVar(obj);
+                    f.ShowDialog();
+                    f.Close();
                 }
 
+            }
+
+            foreach (KBObject obj in listObj)
+            {
+                if (HasVariablesNotBasedOnAttributeOrDomain(obj, out cantVar))
+                {
+                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, cantVar.ToString() });
+                }
             }
             writer.AddTableFooterOnly();
             writer.AddTableFooterOnly();
@@ -2349,16 +2314,31 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.EndSection("KBDoctor", title, success);
         }
 
-        private static void ShowLinesContaining(string[] textLines, string toSearch)
+        private static bool HasVariablesNotBasedOnAttributeOrDomain(KBObject obj, out int cantVar)
         {
-            foreach (string line in textLines)
+            bool tieneVarSinDomain = false;
+            cantVar = 0;
+
+            if (isGenerated(obj) && !isGeneratedbyPattern(obj))
             {
-                if (line.ToUpper().Contains(toSearch.ToUpper()))
+                VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                if (vp != null)
                 {
-                    KBDoctorOutput.Message(line);
+                    foreach (Variable v in vp.Variables)
+                    {
+                        if ((!v.IsStandard) && (v.AttributeBasedOn == null) && (v.DomainBasedOn == null) && (v.Type != eDBType.GX_USRDEFTYP)
+                            && (v.Type != eDBType.GX_SDT) && (v.Type != eDBType.GX_EXTERNAL_OBJECT) && (v.Type != eDBType.Boolean) && v.Type != eDBType.GX_BUSCOMP && v.Type != eDBType.GX_BUSCOMP_LEVEL)
+                        {
+                            tieneVarSinDomain = true;
+                            cantVar += 1;                
+                        }
+                    }
                 }
             }
+            return tieneVarSinDomain;
         }
+
+
 
         public static void ObjectsUDPCallables()
         {

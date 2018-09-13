@@ -118,7 +118,7 @@
     <CommandDefinition id="PrepareComparerNavigation" />
     <CommandDefinition id="CompareLastNVGDirectory" />
     <CommandDefinition id="OpenFolderComparerNavigation" />
-
+	
     <CommandDefinition id="CompareLastOBJDirectory" />
     <CommandDefinition id="OpenFolderObjComparerNavigation" />
     <!-- Acciones sobre tablas -->
@@ -225,6 +225,7 @@
               <Command refid="CalculateCheckSum"  />
               <Command refid="CompareLastOBJDirectory" />
               <Command refid="OpenFolderObjComparerNavigation"  />
+			  <Command refid="ObjectsDiagnostics" />
             </Group>
 
           </Popup>
