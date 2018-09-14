@@ -89,13 +89,23 @@ namespace IniParser.Model
         /// <param name="toMergeSection"></param>
         public void Merge(SectionData toMergeSection)
         {
-            foreach (var comment in toMergeSection.LeadingComments) 
+#pragma warning disable CS0618 // Type or member is obsolete
+            foreach (var comment in toMergeSection.LeadingComments)
+#pragma warning restore CS0618 // Type or member is obsolete
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
                 LeadingComments.Add(comment);
-                
+#pragma warning restore CS0618 // Type or member is obsolete
+            }
+
             Keys.Merge(toMergeSection.Keys);
 
+#pragma warning disable CS0618 // Type or member is obsolete
             foreach(var comment in toMergeSection.TrailingComments) 
+#pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
                 TrailingComments.Add(comment);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
 		#endregion

@@ -135,7 +135,9 @@ namespace IniParser.Parser
                     // Check if there are actually sections in the file
                     if (iniData.Sections.Count > 0)
                     {
+#pragma warning disable CS0618 // Type or member is obsolete
                         iniData.Sections.GetSectionData(_currentSectionNameTemp).TrailingComments
+#pragma warning restore CS0618 // Type or member is obsolete
                             .AddRange(_currentCommentListTemp);
                     }
                     // No sections, put the comment in the last key value pair
@@ -329,7 +331,9 @@ namespace IniParser.Parser
             currentIniData.Sections.AddSection(sectionName);
 
             // Save comments read until now and assign them to this section
+#pragma warning disable CS0618 // Type or member is obsolete
             currentIniData.Sections.GetSectionData(sectionName).LeadingComments = _currentCommentListTemp;
+#pragma warning restore CS0618 // Type or member is obsolete
             _currentCommentListTemp.Clear();
 
         }
