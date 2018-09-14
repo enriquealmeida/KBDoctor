@@ -686,7 +686,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
-        public  List<Tuple<Domain, string>> GetParametersDomains(KBObject obj)
+        internal static List<Tuple<Domain, string>> GetParametersDomains(KBObject obj)
         {
             ICallableObject callableObject = obj as ICallableObject;
 
@@ -729,7 +729,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
-        public static List<Tuple<string,string>> GetParametersFormatedType(KBObject obj)
+        internal static List<Tuple<string,string>> GetParametersFormatedType(KBObject obj)
         {
             ICallableObject callableObject = obj as ICallableObject;
 

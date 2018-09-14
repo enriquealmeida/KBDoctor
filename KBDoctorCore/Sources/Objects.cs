@@ -2266,8 +2266,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 #if EVO3
     public class Tuple<T1, T2>
     {
-        public T1 Item1 { get; private set; }
-        public T2 Item2 { get; private set; }
+        public T1 Item1 { get; internal set; }
+        public T2 Item2 { get; internal set; }
         internal Tuple(T1 first, T2 second)
         {
             Item1 = first;
@@ -2277,9 +2277,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
     public class Tuple<T1, T2, T3>
         {
-            public T1 Item1 { get; private set; }
-            public T2 Item2 { get; private set; }
-            public T3 Item3 { get; private set; }
+            public T1 Item1 { get; internal set; }
+            public T2 Item2 { get; internal set; }
+            public T3 Item3 { get; internal set; }
             internal Tuple(T1 first, T2 second, T3 third)
             {
                 Item1 = first;
@@ -2288,7 +2288,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        public static class Tuple
+    public class Tuple
     {
         public static Tuple<T1, T2> New<T1, T2>(T1 first, T2 second)
         {
