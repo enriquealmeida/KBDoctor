@@ -2275,16 +2275,32 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
     }
 
-    public static class Tuple
+    public class Tuple<T1, T2, T3>
+        {
+            public T1 Item1 { get; private set; }
+            public T2 Item2 { get; private set; }
+            public T3 Item3 { get; private set; }
+            internal Tuple(T1 first, T2 second, T3 third)
+            {
+                Item1 = first;
+                Item2 = second;
+                Item3 = third;
+            }
+        }
+
+        public static class Tuple
     {
         public static Tuple<T1, T2> New<T1, T2>(T1 first, T2 second)
         {
             var tuple = new Tuple<T1, T2>(first, second);
             return tuple;
         }
-    }
-#else
-        //Nothing
+        public static Tuple<T1, T2,T3> New<T1, T2,T3>(T1 first, T2 second, T3 third)
+            {
+                var tuple = new Tuple<T1, T2, T3>(first, second, third);
+                return tuple;
+            }
+        }
 #endif
     }
 }
