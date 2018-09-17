@@ -74,9 +74,7 @@
     <Reference Include="Artech.Udm.Framework">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Udm.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Connector">
-      <HintPath>$(GX_SDK_DIR)\Bin\Connector.dll</HintPath>
-    </Reference>
+
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
