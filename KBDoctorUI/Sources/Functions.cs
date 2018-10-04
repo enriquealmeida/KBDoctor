@@ -284,7 +284,10 @@ namespace Concepto.Packages.KBDoctor
 
         public static string linkObject(KBObject obj)
         {
-            return "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + obj.Guid.ToString() + "\">" + obj.Name + "</a>";
+            if (obj != null)
+                return "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + obj.Guid.ToString() + "\">" + obj.Name + "</a>";
+            else
+                return "";
         }
 
         public static string linkFile(string file)
@@ -322,7 +325,15 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Functions.CleanFileName(title) + ".html";
             if (File.Exists(outputFile))
             {
-                File.Delete(outputFile);
+                try
+                {
+                    File.Delete(outputFile);
+                }
+                catch
+                {
+                    KBDoctor.KBDoctorOutput.Warning("File " + outputFile + " is locked. The start page cannot be generated");
+                    throw new Exception("File " + outputFile + " is locked.The start page cannot be generated");
+                }
             }
 
             return outputFile;

@@ -27,60 +27,67 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes with incomplete description";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor", title);
-
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Table", "Attribute", "Description", "Data type", "Title", "Column Title" });
-            string description;
-            string titlesuggested;
-            string columnTitle;
-            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+            try
             {
-                description = a.Description;
-                titlesuggested = a.Title;
-                columnTitle = a.ColumnTitle;
-                string Picture = Utility.FormattedTypeAttribute(a);
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                if ((a.Description.Replace(" ", "") == a.Name) || (a.Title == a.Description) || (a.ColumnTitle == a.Description))
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Table", "Attribute", "Description", "Data type", "Title", "Column Title" });
+                string description;
+                string titlesuggested;
+                string columnTitle;
+                foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentKB.DesignModel))
                 {
-                    string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
+                    description = a.Description;
+                    titlesuggested = a.Title;
+                    columnTitle = a.ColumnTitle;
+                    string Picture = Utility.FormattedTypeAttribute(a);
 
-                    if (a.Title == a.Description)
+                    if ((a.Description.Replace(" ", "") == a.Name) || (a.Title == a.Description) || (a.ColumnTitle == a.Description))
                     {
-                        titlesuggested = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignTitleToAttribute&attName=" + a.Name + "\">" + a.Title + "</a>";
-                     
+                        string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
+
+                        if (a.Title == a.Description)
+                        {
+                            titlesuggested = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignTitleToAttribute&attName=" + a.Name + "\">" + a.Title + "</a>";
+
+                        }
+
+                        if (a.Description.Replace(" ", "") == a.Name)
+                        {
+                            description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToAttribute&attName=" + a.Name + "\">" + a.Description + "</a>";
+                            Table t = TablesHelper.TableOfAttribute(a);
+                            writer.AddTableData(new string[] { Functions.linkObject(t), attNameLink, description, Picture, titlesuggested, columnTitle });
+
+                        }
+
+                        if (a.ColumnTitle == a.Description)
+                        {
+                            columnTitle = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignColumnTitleToAttribute&attName=" + a.Name + "\">" + a.ColumnTitle + "</a>";
+                        }
+
+                        //                    writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
                     }
 
-                    if (a.Description.Replace(" ", "") == a.Name)
-                    {
-                        description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToAttribute&attName=" + a.Name + "\">" + a.Description + "</a>";
-                        Table t = TablesHelper.TableOfAttribute(a);
-                        writer.AddTableData(new string[] {Functions.linkObject(t), attNameLink, description, Picture, titlesuggested, columnTitle });
-
-                    }
-
-                    if (a.ColumnTitle == a.Description)
-                    {
-                        columnTitle = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignColumnTitleToAttribute&attName=" + a.Name + "\">" + a.ColumnTitle + "</a>";
-                    }
-      
- //                    writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
                 }
 
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void AttFormula()
@@ -89,83 +96,91 @@ namespace Concepto.Packages.KBDoctor
 
 
             string title = "KBDoctor - Attributes Formula";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor", title);
-
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Attribute", "Description", "DataType", "Formula", "Tables", "Redundant in Tables", "#References" });
-            string description;
-            string titlesuggested;
-            string columnTitle;
-            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+            try
             {
-                description = a.Description;
-                titlesuggested = a.Title;
-                columnTitle = a.ColumnTitle;
-                Formula formula = a.Formula;
-                if (formula == null)
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Attribute", "Description", "DataType", "Formula", "Tables", "Redundant in Tables", "#References" });
+                string description;
+                string titlesuggested;
+                string columnTitle;
+                foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
                 {
-                    //  output.AddLine("KBDoctor",a.Name);
-                }
-                else {
-
-                    output.AddLine("KBDoctor","Formula " + a.Name);
-                    string Picture = Utility.FormattedTypeAttribute(a);
-                    string attNameLink = Functions.linkObject(a); 
-                    string redundantInTables = "";
-                    string tables = "";
-                    GetTablesAttIsRedundant(kbserv.CurrentModel, a, out tables, out redundantInTables);
-
-                    int Count = 0;
-                    foreach (EntityReference entityRef in kbserv.CurrentModel.GetReferencesTo(a.Key))
+                    description = a.Description;
+                    titlesuggested = a.Title;
+                    columnTitle = a.ColumnTitle;
+                    Formula formula = a.Formula;
+                    if (formula == null)
                     {
-                        KBObject objRef = KBObject.Get(kbserv.CurrentModel,entityRef.From);
-                        if (objRef != null)
-                        {
-                            if (!(objRef is Table) && !(objRef is Transaction))
-                                Count += 1 ;
-                        }
-
+                        //  output.AddLine("KBDoctor",a.Name);
                     }
-                    if (Count==0)  //Solo es referido por transacciones o por tablas
+                    else
+                    {
 
-                        
-                       foreach (EntityReference entityRef in kbserv.CurrentModel.GetReferencesTo(a.Key))
-                          {
-                           KBObject objRef = KBObject.Get(kbserv.CurrentModel, entityRef.From);
-                           if (objRef != null)
-                           {
-                              if (objRef is Transaction)
-                               
-                                foreach (KBObjectPart part in objRef.Parts)
+                        output.AddLine("KBDoctor", "Formula " + a.Name);
+                        string Picture = Utility.FormattedTypeAttribute(a);
+                        string attNameLink = Functions.linkObject(a);
+                        string redundantInTables = "";
+                        string tables = "";
+                        GetTablesAttIsRedundant(kbserv.CurrentModel, a, out tables, out redundantInTables);
+
+                        int Count = 0;
+                        foreach (EntityReference entityRef in kbserv.CurrentModel.GetReferencesTo(a.Key))
+                        {
+                            KBObject objRef = KBObject.Get(kbserv.CurrentModel, entityRef.From);
+                            if (objRef != null)
+                            {
+                                if (!(objRef is Table) && !(objRef is Transaction))
+                                    Count += 1;
+                            }
+
+                        }
+                        if (Count == 0)  //Solo es referido por transacciones o por tablas
+
+
+                            foreach (EntityReference entityRef in kbserv.CurrentModel.GetReferencesTo(a.Key))
+                            {
+                                KBObject objRef = KBObject.Get(kbserv.CurrentModel, entityRef.From);
+                                if (objRef != null)
                                 {
-                                    if (!(part is StructurePart))
-                                        foreach (EntityReference ref2 in part.GetPartReferences())
+                                    if (objRef is Transaction)
+
+                                        foreach (KBObjectPart part in objRef.Parts)
                                         {
-                                            if (ref2.To.Id == a.Id)
-                                                Count += 1;
+                                            if (!(part is StructurePart))
+                                                foreach (EntityReference ref2 in part.GetPartReferences())
+                                                {
+                                                    if (ref2.To.Id == a.Id)
+                                                        Count += 1;
+                                                }
                                         }
                                 }
                             }
-                        }
 
 
                         writer.AddTableData(new string[] { attNameLink, description, Picture, formula.ToString(), tables, redundantInTables, Count.ToString() });
+                    }
+
                 }
 
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
 
@@ -209,52 +224,59 @@ namespace Concepto.Packages.KBDoctor
             Dictionary<string, string> myDict = new Dictionary<string, string>();
 
             string title = "KBDoctor - Attributes without domain";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
-            output.StartSection("KBDoctor", title);
-
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Suggested Domains" });
-            int cantAtt = 0;
-            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+            try
             {
-                string Picture = Utility.FormattedTypeAttribute(a);
-                bool isSubtype = Functions.AttIsSubtype(a);
-                if ((a.DomainBasedOn == null) && !isSubtype)
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                IOutputService output = CommonServices.Output;
+                output.SelectOutput("KBDoctor");
+                output.StartSection("KBDoctor", title);
+
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Suggested Domains" });
+                int cantAtt = 0;
+                foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
                 {
-                    // search for domains with the same data type
-                    output.AddLine("KBDoctor","Procesing " + a.Name);
-                    string suggestedDomains = "";
-                    string value = "";
-                    
-                    //busco el 
-                    if (myDict.TryGetValue(Picture, out value))
+                    string Picture = Utility.FormattedTypeAttribute(a);
+                    bool isSubtype = Functions.AttIsSubtype(a);
+                    if ((a.DomainBasedOn == null) && !isSubtype)
                     {
-                        suggestedDomains = value;
+                        // search for domains with the same data type
+                        output.AddLine("KBDoctor", "Procesing " + a.Name);
+                        string suggestedDomains = "";
+                        string value = "";
+
+                        //busco el 
+                        if (myDict.TryGetValue(Picture, out value))
+                        {
+                            suggestedDomains = value;
+                        }
+                        else
+                        {
+                            suggestedDomains = SuggestedDomains(kbserv, a);
+                            myDict.Add(Picture, suggestedDomains);
+                        }
+                        cantAtt += 1;
+                        string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
+                        writer.AddTableData(new string[] { attNameLink, a.Description, Picture, suggestedDomains });
                     }
-                    else
-                    {
-                        suggestedDomains = SuggestedDomains(kbserv, a);
-                        myDict.Add(Picture, suggestedDomains);
-                    }
-                    cantAtt += 1;
-                    string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
-                    writer.AddTableData(new string[] { attNameLink, a.Description, Picture, suggestedDomains });
                 }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorOutput.Warning(cantAtt.ToString() + " attributes without domain");
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorOutput.Warning(cantAtt.ToString() + " attributes without domain");
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static string SuggestedDomains(IKBService kbserv, Artech.Genexus.Common.Objects.Attribute a)
@@ -286,36 +308,43 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes Char that shoud be Varchar";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain" });
-
-            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+            try
             {
-                string Picture = Utility.FormattedTypeAttribute(a);
-                if ((a.Type == Artech.Genexus.Common.eDBType.CHARACTER) && (a.Length > 35) && !Functions.AttIsSubtype(a))
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain" });
+
+                foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
                 {
-                    string domLink = DomainLinkFromAttribute(a);
+                    string Picture = Utility.FormattedTypeAttribute(a);
+                    if ((a.Type == Artech.Genexus.Common.eDBType.CHARACTER) && (a.Length > 35) && !Functions.AttIsSubtype(a))
+                    {
+                        string domLink = DomainLinkFromAttribute(a);
 
-                    string attNameLink = "";
-                    attNameLink = Functions.linkObject(a); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name="output.EndSection("KBDoctor", title, + a.Guid.ToString() + "\">" + a.Name + "</a>";
+                        string attNameLink = "";
+                        attNameLink = Functions.linkObject(a); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name="output.EndSection("KBDoctor", title, + a.Guid.ToString() + "\">" + a.Name + "</a>";
 
-                    writer.AddTableData(new string[] { attNameLink, a.Description, Picture, domLink });
+                        writer.AddTableData(new string[] { attNameLink, a.Description, Picture, domLink });
+                    }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static string DomainLinkFromAttribute(Artech.Genexus.Common.Objects.Attribute a)
@@ -338,36 +367,44 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes Varchar that shoud be Char";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain" });
-
-            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+            try
             {
-                string Picture = Utility.FormattedTypeAttribute(a);
-                if (((a.Type == Artech.Genexus.Common.eDBType.VARCHAR) || (a.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR)) && (a.Length <= 25) && !Functions.AttIsSubtype(a))
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain" });
+
+                foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
                 {
-                    string domLink = DomainLinkFromAttribute(a);
+                    string Picture = Utility.FormattedTypeAttribute(a);
+                    if (((a.Type == Artech.Genexus.Common.eDBType.VARCHAR) || (a.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR)) && (a.Length <= 25) && !Functions.AttIsSubtype(a))
+                    {
+                        string domLink = DomainLinkFromAttribute(a);
 
-                    string attNameLink = "";
+                        string attNameLink = "";
 
-                    attNameLink = Functions.linkObject(a); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
-                    writer.AddTableData(new string[] { attNameLink, a.Description, Picture, domLink });
+                        attNameLink = Functions.linkObject(a); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
+                        writer.AddTableData(new string[] { attNameLink, a.Description, Picture, domLink });
+                    }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 
@@ -377,32 +414,40 @@ namespace Concepto.Packages.KBDoctor
            // Dictionary<string, string> myDict = new Dictionary<string, string>();
 
             string title = "KBDoctor - List Attributes";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain", "Subtype" , "Title", "Column Title", "Contextual", "IsFormula"});
-
-            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+            try
             {
-                string Picture = Utility.FormattedTypeAttribute(a);
-                string domlink = a.DomainBasedOn == null ? " ": Functions.linkObject(a.DomainBasedOn);
-                string superTypeName = a.SuperTypeKey==null? " ": a.SuperType.Name;
-                output.AddLine("KBDoctor","Procesing " + a.Name);
-                string isFormula = a.Formula == null ? "" : "*";
-                writer.AddTableData(new string[] { Functions.linkObject(a), a.Description, Picture, domlink ,  superTypeName, a.Title, a.ColumnTitle, a.ContextualTitleProperty,isFormula});
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain", "Subtype", "Title", "Column Title", "Contextual", "IsFormula" });
+
+                foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+                {
+                    string Picture = Utility.FormattedTypeAttribute(a);
+                    string domlink = a.DomainBasedOn == null ? " " : Functions.linkObject(a.DomainBasedOn);
+                    string superTypeName = a.SuperTypeKey == null ? " " : a.SuperType.Name;
+                    output.AddLine("KBDoctor", "Procesing " + a.Name);
+                    string isFormula = a.Formula == null ? "" : "*";
+                    writer.AddTableData(new string[] { Functions.linkObject(a), a.Description, Picture, domlink, superTypeName, a.Title, a.ColumnTitle, a.ContextualTitleProperty, isFormula });
+                }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void ListKeyVarchar()
@@ -457,67 +502,75 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Descriptor attribute without unique index";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-
-            string tabla = "";
-            string atributo = "";
-            string add = "";
-
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Table", "Description", "Attribute", "Data Type", "" });
-
-            // voy borrando todos los atributos que estan en alguna tabla
-            foreach (Table t in Table.GetAll(kbserv.CurrentModel))
+            try
             {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                int idAttDesc = t.TableStructure.DescriptionAttribute.Id;
-                bool existeIndice = false;
 
-                tabla = t.Name + " - " + t.Description;
-                atributo = t.TableStructure.DescriptionAttribute.Name;
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
-                foreach (TableIndex index in t.TableIndexes.Indexes)
+                string tabla = "";
+                string atributo = "";
+                string add = "";
+
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Table", "Description", "Attribute", "Data Type", "" });
+
+                // voy borrando todos los atributos que estan en alguna tabla
+                foreach (Table t in Table.GetAll(kbserv.CurrentModel))
                 {
-                    int nroAtributos = 0;
-                    bool esta = false;
-                    foreach (EntityReference reference in index.Index.GetReferences(LinkType.UsedObject))
+
+                    int idAttDesc = t.TableStructure.DescriptionAttribute.Id;
+                    bool existeIndice = false;
+
+                    tabla = t.Name + " - " + t.Description;
+                    atributo = t.TableStructure.DescriptionAttribute.Name;
+
+                    foreach (TableIndex index in t.TableIndexes.Indexes)
                     {
-                        if (!existeIndice)
+                        int nroAtributos = 0;
+                        bool esta = false;
+                        foreach (EntityReference reference in index.Index.GetReferences(LinkType.UsedObject))
                         {
-                            KBObject objRef = KBObject.Get(kbserv.CurrentModel, reference.To);
-                            if (objRef is Artech.Genexus.Common.Objects.Attribute)
+                            if (!existeIndice)
                             {
-                                if (objRef.Id == idAttDesc)
-                                    esta = true;
-                                nroAtributos = nroAtributos + 1;
+                                KBObject objRef = KBObject.Get(kbserv.CurrentModel, reference.To);
+                                if (objRef is Artech.Genexus.Common.Objects.Attribute)
+                                {
+                                    if (objRef.Id == idAttDesc)
+                                        esta = true;
+                                    nroAtributos = nroAtributos + 1;
+                                }
+                                if ((esta) && (nroAtributos == 1))
+                                    existeIndice = true;
                             }
-                            if ((esta) && (nroAtributos == 1))
-                                existeIndice = true;
                         }
+
+                    }
+                    if (!existeIndice)
+                    {
+                        add = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AddDescriptorIndex&tabName=" + t.Name + "\">Add index</a>";
+                        writer.AddTableData(new string[] { Functions.linkObject((KBObject)t), t.Description, atributo, Utility.FormattedTypeAttribute(t.TableStructure.DescriptionAttribute.Attribute), add });
                     }
 
-                }
-                if (!existeIndice)
-                {
-                    add = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AddDescriptorIndex&tabName=" + t.Name + "\">Add index</a>";
-                    writer.AddTableData(new string[] { Functions.linkObject((KBObject)t), t.Description, atributo, Utility.FormattedTypeAttribute(t.TableStructure.DescriptionAttribute.Attribute), add });
+
                 }
 
+                writer.AddFooter();
+                writer.Close();
 
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 
@@ -688,67 +741,74 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes in Transaction only";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Attribute", "can delete", "Description", "Data type", "Tables", "Transactions" });
-
-            // grabo todos los atributos en una colección
-            output.AddLine("KBDoctor","Loading attributes..");
-            List<Artech.Genexus.Common.Objects.Attribute> attTodos = new List<Artech.Genexus.Common.Objects.Attribute>();
-            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+            try
             {
-                attTodos.Add(a);
-            }
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            output.AddLine("KBDoctor","Procesiong objects..");
 
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
-            {
-                // output.AddLine("KBDoctor","Procesing .. " + obj.Name);
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
-                if ((!(obj is Transaction) && !(obj is Table) && !(obj is SDT)) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT"))
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Attribute", "can delete", "Description", "Data type", "Tables", "Transactions" });
+
+                // grabo todos los atributos en una colección
+                output.AddLine("KBDoctor", "Loading attributes..");
+                List<Artech.Genexus.Common.Objects.Attribute> attTodos = new List<Artech.Genexus.Common.Objects.Attribute>();
+                foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
                 {
-                    foreach (EntityReference reference in obj.GetReferences(LinkType.UsedObject))
+                    attTodos.Add(a);
+                }
+
+                output.AddLine("KBDoctor", "Procesiong objects..");
+
+                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                {
+                    // output.AddLine("KBDoctor","Procesing .. " + obj.Name);
+
+                    if ((!(obj is Transaction) && !(obj is Table) && !(obj is SDT)) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT"))
                     {
-                        KBObject objRef = KBObject.Get(kbserv.CurrentModel, reference.To);
-                        if (objRef is Artech.Genexus.Common.Objects.Attribute)
+                        foreach (EntityReference reference in obj.GetReferences(LinkType.UsedObject))
                         {
-                            Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute)objRef;
-                            attTodos.Remove(a);
+                            KBObject objRef = KBObject.Get(kbserv.CurrentModel, reference.To);
+                            if (objRef is Artech.Genexus.Common.Objects.Attribute)
+                            {
+                                Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute)objRef;
+                                attTodos.Remove(a);
+                            }
                         }
                     }
                 }
+
+
+                foreach (Artech.Genexus.Common.Objects.Attribute a in attTodos)
+                {
+                    output.AddLine("KBDoctor", "Procesing .. " + a.Name);
+
+                    string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
+                    string Picture = Utility.FormattedTypeAttribute(a);
+                    string table = TableOfAtt(a);
+                    bool canDelete;
+                    string trns = TransactionsOfAtt(a, out canDelete);
+                    string strCanDelete = canDelete ? "Yes" : "";
+                    writer.AddTableData(new string[] { attNameLink, strCanDelete, a.Description, Picture, table, trns });
+
+                }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-
-
-            foreach (Artech.Genexus.Common.Objects.Attribute a in attTodos)
+            catch
             {
-                output.AddLine("KBDoctor","Procesing .. " + a.Name);
-
-                string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
-                string Picture = Utility.FormattedTypeAttribute(a);
-                string table = TableOfAtt(a);
-                bool canDelete;
-                string trns = TransactionsOfAtt(a, out canDelete);
-                string strCanDelete = canDelete ? "Yes" : "";
-                writer.AddTableData(new string[] { attNameLink, strCanDelete, a.Description, Picture, table, trns });
-
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
         }
 
         public static void ReplaceDomain()
@@ -818,40 +878,48 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Domains";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Domain", "Description", "Data type", "Att references", "Other References" });
-            string description;
-            string titlesuggested;
-            string columnTitle;
-            foreach (Domain d in Domain.GetAll(kbserv.CurrentModel))
+            try
             {
-                description = d.Description;
-                string Picture = Utility.FormattedTypeDomain(d);
-                int attReferences = 0;
-                int otherReferences = 0;
-                foreach (EntityReference r in d.GetReferencesTo())
-                {
-                    KBObject objRef = KBObject.Get(UIServices.KB.CurrentModel, r.From);
-                    if (objRef is Artech.Genexus.Common.Objects.Attribute)
-                        attReferences += 1;
-                    else
-                        otherReferences += 1;
-                }
-                writer.AddTableData(new string[] { Functions.linkObject(d), description, Picture, attReferences.ToString(), otherReferences.ToString() });
-            }
-            writer.AddFooter();
-            writer.Close();
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Domain", "Description", "Data type", "Att references", "Other References" });
+                string description;
+                string titlesuggested;
+                string columnTitle;
+                foreach (Domain d in Domain.GetAll(kbserv.CurrentModel))
+                {
+                    description = d.Description;
+                    string Picture = Utility.FormattedTypeDomain(d);
+                    int attReferences = 0;
+                    int otherReferences = 0;
+                    foreach (EntityReference r in d.GetReferencesTo())
+                    {
+                        KBObject objRef = KBObject.Get(UIServices.KB.CurrentModel, r.From);
+                        if (objRef is Artech.Genexus.Common.Objects.Attribute)
+                            attReferences += 1;
+                        else
+                            otherReferences += 1;
+                    }
+                    writer.AddTableData(new string[] { Functions.linkObject(d), description, Picture, attReferences.ToString(), otherReferences.ToString() });
+                }
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
 

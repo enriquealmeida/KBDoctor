@@ -27,92 +27,100 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Object with variables not based on attribute/domain";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-            
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Attribute", "Domain" });
-
-
-            //All useful objects are added to a collection
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            try
             {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                output.AddLine("KBDoctor","Procesing.." + obj.Name);
-                if ((obj is Transaction) || (obj is WebPanel))
+
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Attribute", "Domain" });
+
+
+                //All useful objects are added to a collection
+                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    WebFormPart webForm = obj.Parts.Get<WebFormPart>();
-                    foreach (IWebTag current in WebFormHelper.EnumerateWebTag(webForm))
+
+                    output.AddLine("KBDoctor", "Procesing.." + obj.Name);
+                    if ((obj is Transaction) || (obj is WebPanel))
                     {
-                        output.AddLine("KBDoctor","Procesing.." + obj.Name + "-" );
-                    }
-                    
-                 }
-
-            }
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
-            /*   
-            type = obj.TypeDescriptor.Description;
-                name = obj.Name;
-                primerVarObj = true;
-                if (isGenerated(obj))
-                {
-                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
-                    if (vp != null)
-                    {
-                        foreach (Variable v in vp.Variables)
+                        WebFormPart webForm = obj.Parts.Get<WebFormPart>();
+                        foreach (IWebTag current in WebFormHelper.EnumerateWebTag(webForm))
                         {
-                            if ((!v.IsStandard) && (v.AttributeBasedOn == null) && (v.DomainBasedOn) == null)
+                            output.AddLine("KBDoctor", "Procesing.." + obj.Name + "-");
+                        }
+
+                    }
+
+                }
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+
+                /*   
+                type = obj.TypeDescriptor.Description;
+                    name = obj.Name;
+                    primerVarObj = true;
+                    if (isGenerated(obj))
+                    {
+                        VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                        if (vp != null)
+                        {
+                            foreach (Variable v in vp.Variables)
                             {
-                                varName = v.Name;
-                                if (primerVarObj)
+                                if ((!v.IsStandard) && (v.AttributeBasedOn == null) && (v.DomainBasedOn) == null)
                                 {
-                                    primerVarObj = false;
-                                    writer.AddTableData(new string[] { type, name, "", "", "" });
-                                }
-                                string suggestedDomains = "";
-                                foreach (Domain d in Domain.GetAll(kbserv.CurrentModel))
-                                {
-                                    if ((v.Type == d.Type) && (v.Length == d.Length) && (v.Decimals == d.Decimals) && (v.Signed == d.Signed))
+                                    varName = v.Name;
+                                    if (primerVarObj)
                                     {
-                                        if (suggestedDomains != "")
-                                        {
-                                            suggestedDomains += ", ";
-                                        }
-                                        suggestedDomains += "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDomainToVariable&objName=" + obj.Name + "&objtype=" + type + "&varId=" + v.Id.ToString() + "&domainName=" + d.Name + "\">" + d.Name + "</a>";
+                                        primerVarObj = false;
+                                        writer.AddTableData(new string[] { type, name, "", "", "" });
                                     }
-                                }
-                                string suggestedAttribute = "";
-                                foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
-                                {
-                                    if ((v.Type == a.Type) && (v.Length == a.Length) && (v.Decimals == a.Decimals) && (v.Signed == a.Signed))
+                                    string suggestedDomains = "";
+                                    foreach (Domain d in Domain.GetAll(kbserv.CurrentModel))
                                     {
-                                        if (suggestedAttribute != "")
+                                        if ((v.Type == d.Type) && (v.Length == d.Length) && (v.Decimals == d.Decimals) && (v.Signed == d.Signed))
                                         {
-                                            suggestedAttribute += ", ";
+                                            if (suggestedDomains != "")
+                                            {
+                                                suggestedDomains += ", ";
+                                            }
+                                            suggestedDomains += "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDomainToVariable&objName=" + obj.Name + "&objtype=" + type + "&varId=" + v.Id.ToString() + "&domainName=" + d.Name + "\">" + d.Name + "</a>";
                                         }
-                                        suggestedAttribute += "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignAttributeToVariable&objName=" + obj.Name + "&objtype=" + type + "&varId=" + v.Id.ToString() + "&attId=" + a.Id.ToString() + "\">" + a.Name + "</a>";
                                     }
+                                    string suggestedAttribute = "";
+                                    foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+                                    {
+                                        if ((v.Type == a.Type) && (v.Length == a.Length) && (v.Decimals == a.Decimals) && (v.Signed == a.Signed))
+                                        {
+                                            if (suggestedAttribute != "")
+                                            {
+                                                suggestedAttribute += ", ";
+                                            }
+                                            suggestedAttribute += "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignAttributeToVariable&objName=" + obj.Name + "&objtype=" + type + "&varId=" + v.Id.ToString() + "&attId=" + a.Id.ToString() + "\">" + a.Name + "</a>";
+                                        }
+                                    }
+                                    writer.AddTableData(new string[] { "", "", varName, suggestedAttribute, suggestedDomains });
                                 }
-                                writer.AddTableData(new string[] { "", "", varName, suggestedAttribute, suggestedDomains });
                             }
                         }
                     }
                 }
-            }
 
-            
-             * */
+
+                 * */
+            }
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
     }

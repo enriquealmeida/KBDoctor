@@ -49,57 +49,65 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Replace attribute with Compatible with NO ";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            output.StartSection("KBDoctor",title);
-
-            KBDoctorXMLWriter writer = new  KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Attribute", "Description", "PK / FK", "Nullable" });
-
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            KBModel kbModel = UIServices.KB.CurrentModel;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-
-            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
-                bool saveObj = false;
-                Transaction trn = (Transaction)obj;
-                if (trn != null)
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Attribute", "Description", "PK / FK", "Nullable" });
+
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                KBModel kbModel = UIServices.KB.CurrentModel;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+
+                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    foreach (TransactionLevel LVL in trn.Structure.GetLevels())
+                    bool saveObj = false;
+                    Transaction trn = (Transaction)obj;
+                    if (trn != null)
                     {
-                        bool isLevelRemovable = true;
-
-                        Table TBL = LVL.AssociatedTable;
-
-                        foreach (TransactionAttribute a in LVL.Structure.GetAttributes())
+                        foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         {
-                            output.AddLine("KBDoctor",a.Name);
-                            writer.AddTableData(new string[] { Functions.linkObject(trn), trn.Description, Functions.linkObject(a), a.Attribute.Description, a.IsForeignKey.ToString(), a.IsNullable.ToString() });
-                            if (!a.IsForeignKey && !a.IsKey && (a.IsNullable == TableAttribute.IsNullableValue.Compatible || a.IsNullable == TableAttribute.IsNullableValue.True))
+                            bool isLevelRemovable = true;
+
+                            Table TBL = LVL.AssociatedTable;
+
+                            foreach (TransactionAttribute a in LVL.Structure.GetAttributes())
+                            {
+                                output.AddLine("KBDoctor", a.Name);
+                                writer.AddTableData(new string[] { Functions.linkObject(trn), trn.Description, Functions.linkObject(a), a.Attribute.Description, a.IsForeignKey.ToString(), a.IsNullable.ToString() });
+                                if (!a.IsForeignKey && !a.IsKey && (a.IsNullable == TableAttribute.IsNullableValue.Compatible || a.IsNullable == TableAttribute.IsNullableValue.True))
                                 {
-                                a.IsNullable = TableAttribute.IsNullableValue.False;
-                                saveObj = true;
+                                    a.IsNullable = TableAttribute.IsNullableValue.False;
+                                    saveObj = true;
                                 }
+                            }
+                        }
+                        if (saveObj)
+                        {
+                            output.AddLine("KBDoctor", "Saving ." + trn.Name);
+                            trn.Save();
                         }
                     }
-                    if (saveObj)
-                    {
-                        output.AddLine("KBDoctor","Saving ." + trn.Name);
-                        trn.Save();
-                    }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
     }
 }

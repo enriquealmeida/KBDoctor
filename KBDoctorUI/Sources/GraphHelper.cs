@@ -29,55 +29,63 @@ namespace Concepto.Packages.KBDoctor
 
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Generate Graph ";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            KBModel model = kbserv.CurrentKB.DesignModel;
-            int ATTNAME_LEN = model.GetPropertyValue<int>("ATTNAME_LEN");
-            int TBLNAME_LEN = model.GetPropertyValue<int>("TBLNAME_LEN");
-            int OBJNAME_LEN = model.GetPropertyValue<int>("OBJNAME_LEN");
+                KBModel model = kbserv.CurrentKB.DesignModel;
+                int ATTNAME_LEN = model.GetPropertyValue<int>("ATTNAME_LEN");
+                int TBLNAME_LEN = model.GetPropertyValue<int>("TBLNAME_LEN");
+                int OBJNAME_LEN = model.GetPropertyValue<int>("OBJNAME_LEN");
 
 
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Check", "File" });
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Check", "File" });
 
-            string Check = "";
-            string Name = "";
-            string FileName = "";
-            /*
-            Check = "KB Table Graph";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
-            GenerateKBTableGraph(Name, FileName); 
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                string Check = "";
+                string Name = "";
+                string FileName = "";
+                /*
+                Check = "KB Table Graph";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
+                GenerateKBTableGraph(Name, FileName); 
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
 
-            Check = "KB Object Graph";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
-            GenerateKBObjectGraph(Name, FileName);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-            */
-            Check = "KB Object Edges txt";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".txt";
-            GenerateKBObjectEdgesTxt(Name, FileName);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-            /*
-            Check = "KB Module Graph";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
-            GenerateKBModuleGraph(Name, FileName);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-            */
-            writer.AddFooter();
-            writer.Close();
+                Check = "KB Object Graph";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
+                GenerateKBObjectGraph(Name, FileName);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                */
+                Check = "KB Object Edges txt";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".txt";
+                GenerateKBObjectEdgesTxt(Name, FileName);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                /*
+                Check = "KB Module Graph";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
+                GenerateKBModuleGraph(Name, FileName);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                */
+                writer.AddFooter();
+                writer.Close();
 
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static void GenerateKBConexComponentGraph(string name)

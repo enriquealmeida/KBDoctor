@@ -36,105 +36,113 @@ namespace Concepto.Packages.KBDoctor
             List<string> objWarnErr = new List<string>();
 
             string title = "KBDoctor - Similar Navigations";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-
-            string path2 = kbserv.CurrentKB.UserDirectory + "Navigation.txt";
             try
             {
-                File.Delete(path2);
-            } catch (Exception e ) {};
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            Stream stream = File.Open(path2, FileMode.OpenOrCreate, FileAccess.Write);
-            TextWriter writer2 = new StreamWriter(stream);
-            
-            writer.AddHeader(title);
-            GxModel gxModel = kbserv.CurrentKB.DesignModel.Environment.TargetModel.GetAs<GxModel>();
 
-            var fileWildcardsArg = new[] { "*.xml" };
-            var directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
-            writer.AddTableHeader(new string[] {"Type", "Tables", "Attributes", "Object/Line/Event" });
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
-            foreach (string d in Directory.GetDirectories(directoryArg, "NVG", System.IO.SearchOption.AllDirectories))
-            {
-                ProcesoDirNavigations(d, output, writer2);
-            }
-
-            writer2.Close();
-
-        //    string inFile = @"Navigation.txt";
-            string outFile = kbserv.CurrentKB.UserDirectory + @"NavigationOrdered.csv";
-            var contents = File.ReadAllLines(path2);
-            //string[]  q = contents.Distinct().ToArray();
-            Array.Sort(contents);
-            File.WriteAllLines(outFile, contents);    
-
-            string clave = "";
-            string objetos = "";
-            string objeto = "";
-            string objetosAnterior="";
-            int numObj = 1;
-            
-            string claveanterior = "";
-            string tableanterior = "" ;
-            string attanterior = "";
-            string LevelTypeanterior = "";
-            
-            TextFieldParser parser = new TextFieldParser(outFile);
-            parser.TextFieldType = FieldType.Delimited;
-            parser.SetDelimiters(",");
-            while (!parser.EndOfData)
-            {
-                //Process row
-                string[] fields = parser.ReadFields();
-                string LevelType = fields[0].Replace(" ","_");
-                string Tables = fields[1];
-                string Atts = fields[2];
-                string ObjLink = fields[3];
-                string ObjEvent = fields[4];
-                string ObjLine = fields[5];
-              
-                clave = LevelType + Tables + Atts ;
-                objeto = ObjLink + " / " + ObjLine + " / " + ObjEvent + "<BR>";
-                if (clave == claveanterior)
+                string path2 = kbserv.CurrentKB.UserDirectory + "Navigation.txt";
+                try
                 {
-                    if (!objetos.Contains(objeto))
-                    {
-                        objetos += objeto;
-                        numObj += 1;
-                    }
+                    File.Delete(path2);
                 }
-                else
+                catch (Exception e) { };
+
+                Stream stream = File.Open(path2, FileMode.OpenOrCreate, FileAccess.Write);
+                TextWriter writer2 = new StreamWriter(stream);
+
+                writer.AddHeader(title);
+                GxModel gxModel = kbserv.CurrentKB.DesignModel.Environment.TargetModel.GetAs<GxModel>();
+
+                var fileWildcardsArg = new[] { "*.xml" };
+                var directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
+
+                writer.AddTableHeader(new string[] { "Type", "Tables", "Attributes", "Object/Line/Event" });
+
+                foreach (string d in Directory.GetDirectories(directoryArg, "NVG", System.IO.SearchOption.AllDirectories))
                 {
-                    if (numObj > 1)
-                    {
-                        writer.AddTableData(new string[] { LevelTypeanterior, tableanterior, attanterior, objetosAnterior });
-                    }
-                    objetos = objeto;
-                    numObj = 1;
+                    ProcesoDirNavigations(d, output, writer2);
                 }
-                claveanterior = clave;
-                tableanterior = Tables;
-                attanterior = Atts;
-                LevelTypeanterior = LevelType;
-                objetosAnterior = objetos;
+
+                writer2.Close();
+
+                //    string inFile = @"Navigation.txt";
+                string outFile = kbserv.CurrentKB.UserDirectory + @"NavigationOrdered.csv";
+                var contents = File.ReadAllLines(path2);
+                //string[]  q = contents.Distinct().ToArray();
+                Array.Sort(contents);
+                File.WriteAllLines(outFile, contents);
+
+                string clave = "";
+                string objetos = "";
+                string objeto = "";
+                string objetosAnterior = "";
+                int numObj = 1;
+
+                string claveanterior = "";
+                string tableanterior = "";
+                string attanterior = "";
+                string LevelTypeanterior = "";
+
+                TextFieldParser parser = new TextFieldParser(outFile);
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                while (!parser.EndOfData)
+                {
+                    //Process row
+                    string[] fields = parser.ReadFields();
+                    string LevelType = fields[0].Replace(" ", "_");
+                    string Tables = fields[1];
+                    string Atts = fields[2];
+                    string ObjLink = fields[3];
+                    string ObjEvent = fields[4];
+                    string ObjLine = fields[5];
+
+                    clave = LevelType + Tables + Atts;
+                    objeto = ObjLink + " / " + ObjLine + " / " + ObjEvent + "<BR>";
+                    if (clave == claveanterior)
+                    {
+                        if (!objetos.Contains(objeto))
+                        {
+                            objetos += objeto;
+                            numObj += 1;
+                        }
+                    }
+                    else
+                    {
+                        if (numObj > 1)
+                        {
+                            writer.AddTableData(new string[] { LevelTypeanterior, tableanterior, attanterior, objetosAnterior });
+                        }
+                        objetos = objeto;
+                        numObj = 1;
+                    }
+                    claveanterior = clave;
+                    tableanterior = Tables;
+                    attanterior = Atts;
+                    LevelTypeanterior = LevelType;
+                    objetosAnterior = objetos;
+                }
+                parser.Close();
+
+                writer.AddFooter();
+                writer.Close();
+
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-            parser.Close();
-            
-            writer.AddFooter();
-            writer.Close();
-
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void ProcesoDirNavigations(string directoryArg, IOutputService output, TextWriter writer2)
@@ -394,49 +402,56 @@ namespace Concepto.Packages.KBDoctor
             List<string> objWarnErr = new List<string>();
 
             string title = "KBDoctor - Warnings and Errors";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-
-            writer.AddHeader(title);
-            GxModel gxModel = kbserv.CurrentKB.DesignModel.Environment.TargetModel.GetAs<GxModel>();
-
-            var fileWildcardsArg = new[] { "*.xml" };
-            var directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
-            var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
-            var ignoreCaseArg = true;
-
-            writer.AddTableHeader(new string[] { "Error Type", "ObjClass", "Object", "Description", "UserName", "Observation" });
-
-            SearchNVGFiles(output, writer, fileWildcardsArg, directoryArg, searchSubDirsArg, "<Error>", ignoreCaseArg, objWarnErr);
-            SearchNVGFiles(output, writer, fileWildcardsArg, directoryArg, searchSubDirsArg, "deprecated", ignoreCaseArg, objWarnErr);
-            SearchNVGFiles(output, writer, fileWildcardsArg, directoryArg, searchSubDirsArg, "<Warning>", ignoreCaseArg, objWarnErr);
-            SearchNVGFiles(output, writer, fileWildcardsArg, directoryArg, searchSubDirsArg, "<Icon>client<", ignoreCaseArg, objWarnErr);
-            SearchNVGFiles(output, writer, fileWildcardsArg, directoryArg, searchSubDirsArg, "<JoinLocation>0</JoinLocation>", ignoreCaseArg, objWarnErr);
-
-
-            writer.AddFooter();
-            //agrego lista de objetos para que sea facil hacerle un BUILD WITH THIS ONLY
-            string lstObjWarn = "";
-            string puntoycoma = "";
-            foreach (string objstr in objWarnErr)
+            try
             {
-                lstObjWarn += puntoycoma + Path.GetFileNameWithoutExtension(objstr);
-                puntoycoma = ";";
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+
+                writer.AddHeader(title);
+                GxModel gxModel = kbserv.CurrentKB.DesignModel.Environment.TargetModel.GetAs<GxModel>();
+
+                var fileWildcardsArg = new[] { "*.xml" };
+                var directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
+                var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
+                var ignoreCaseArg = true;
+
+                writer.AddTableHeader(new string[] { "Error Type", "ObjClass", "Object", "Description", "UserName", "Observation" });
+
+                SearchNVGFiles(output, writer, fileWildcardsArg, directoryArg, searchSubDirsArg, "<Error>", ignoreCaseArg, objWarnErr);
+                SearchNVGFiles(output, writer, fileWildcardsArg, directoryArg, searchSubDirsArg, "deprecated", ignoreCaseArg, objWarnErr);
+                SearchNVGFiles(output, writer, fileWildcardsArg, directoryArg, searchSubDirsArg, "<Warning>", ignoreCaseArg, objWarnErr);
+                SearchNVGFiles(output, writer, fileWildcardsArg, directoryArg, searchSubDirsArg, "<Icon>client<", ignoreCaseArg, objWarnErr);
+                SearchNVGFiles(output, writer, fileWildcardsArg, directoryArg, searchSubDirsArg, "<JoinLocation>0</JoinLocation>", ignoreCaseArg, objWarnErr);
+
+
+                writer.AddFooter();
+                //agrego lista de objetos para que sea facil hacerle un BUILD WITH THIS ONLY
+                string lstObjWarn = "";
+                string puntoycoma = "";
+                foreach (string objstr in objWarnErr)
+                {
+                    lstObjWarn += puntoycoma + Path.GetFileNameWithoutExtension(objstr);
+                    puntoycoma = ";";
+                }
+                writer.AddTableData(new string[] { lstObjWarn });
+                writer.AddTableData(new string[] { "  " + objWarnErr.Count.ToString() });
+
+                writer.Close();
+
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-            writer.AddTableData(new string[] { lstObjWarn });
-            writer.AddTableData(new string[] { "  " + objWarnErr.Count.ToString() });
-
-            writer.Close();
-
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static void SearchNVGFiles(IOutputService output, KBDoctorXMLWriter writer, string[] fileWildcardsArg, string directoryArg, System.IO.SearchOption searchSubDirsArg, string containsTextArg, bool ignoreCaseArg, List<string> objWarnErr)
@@ -605,71 +620,79 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Where update this attribute? :";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-           
-
-            AskAttributeandTable at = new AskAttributeandTable();
-            DialogResult dr = new DialogResult();
-            dr = at.ShowDialog();
-
-            if (dr == DialogResult.OK)
+            try
             {
-                string tblName = at.tblName;
-                string attName = at.attName;
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                List<string> Objlist = new List<string>();
-                
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title + attName + " in table " + tblName);
-                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Navigation File" });
 
-                int IndFiles = 0;
+                AskAttributeandTable at = new AskAttributeandTable();
+                DialogResult dr = new DialogResult();
+                dr = at.ShowDialog();
 
-                //   IKBService kbserv = UIServices.KB;
-                string directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
-                string fileWildcard = @"*.xml";
-                var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
-                string[] xFiles = System.IO.Directory.GetFiles(directoryArg, fileWildcard, searchSubDirsArg);
-
-                foreach (string x in xFiles)
+                if (dr == DialogResult.OK)
                 {
-                    // output.AddLine("KBDoctor",x);
-                    IndFiles += 1;
-                    if (IndFiles % 100 == 0)
-                        output.AddLine("KBDoctor"," Procesing " + IndFiles.ToString() + " navigation files.");
+                    string tblName = at.tblName;
+                    string attName = at.attName;
 
-                    string filename = Path.GetFileNameWithoutExtension(x);
+                    List<string> Objlist = new List<string>();
 
-                    if (!Objlist.Contains(filename))
+
+                    KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                    writer.AddHeader(title + attName + " in table " + tblName);
+                    writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Navigation File" });
+
+                    int IndFiles = 0;
+
+                    //   IKBService kbserv = UIServices.KB;
+                    string directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
+                    string fileWildcard = @"*.xml";
+                    var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
+                    string[] xFiles = System.IO.Directory.GetFiles(directoryArg, fileWildcard, searchSubDirsArg);
+
+                    foreach (string x in xFiles)
                     {
-                        Objlist.Add(filename);
-                        if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
-                        {
-                            string xmlstring = AddXMLHeader(x);
+                        // output.AddLine("KBDoctor",x);
+                        IndFiles += 1;
+                        if (IndFiles % 100 == 0)
+                            output.AddLine("KBDoctor", " Procesing " + IndFiles.ToString() + " navigation files.");
 
-                            if (ObjectUpdateTable(xmlstring, tblName, attName))
+                        string filename = Path.GetFileNameWithoutExtension(x);
+
+                        if (!Objlist.Contains(filename))
+                        {
+                            Objlist.Add(filename);
+                            if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
                             {
-                                KBObject obj = ExtractObject(xmlstring);
-                                if (obj == null)
-                                    writer.AddTableData(new string[] { "Can't find object", "", "", x });
-                                else
-                                    if (KBDoctorCore.Sources.Utility.isGenerated(obj) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT")) 
-                                          writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, x  });
+                                string xmlstring = AddXMLHeader(x);
+
+                                if (ObjectUpdateTable(xmlstring, tblName, attName))
+                                {
+                                    KBObject obj = ExtractObject(xmlstring);
+                                    if (obj == null)
+                                        writer.AddTableData(new string[] { "Can't find object", "", "", x });
+                                    else
+                                        if (KBDoctorCore.Sources.Utility.isGenerated(obj) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT"))
+                                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, x });
+                                }
                             }
                         }
                     }
+
+                    writer.AddFooter();
+                    writer.Close();
+
+                    KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                    bool success = true;
+                    output.EndSection("KBDoctor", title, success);
                 }
-
-                writer.AddFooter();
-                writer.Close();
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                output.EndSection("KBDoctor", title, success);
+            }
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
             

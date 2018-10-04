@@ -138,7 +138,20 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 int i = 1;
                 foreach(FileInfo fileToRename in oldfiles)
                 {
-                    fileToRename.MoveTo(fileToRename.DirectoryName + '\\' + Path.GetFileNameWithoutExtension(fileToRename.Name) + i.ToString() + ".oldxml");
+                    string nombre = fileToRename.DirectoryName + '\\' + Path.GetFileNameWithoutExtension(fileToRename.Name) + i.ToString() + ".oldxml";
+                    FileInfo filerenamed = new FileInfo(nombre);
+                    if(filerenamed.Exists) {
+                        try
+                        {
+                            filerenamed.Delete();
+                            fileToRename.MoveTo(nombre);
+                        }
+                        catch(Exception e)
+                        {
+                        }
+                    }
+
+                    
                     i++;
                 }
             }

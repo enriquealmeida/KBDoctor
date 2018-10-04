@@ -546,7 +546,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string outputFile = KB.UserDirectory + @"\kbdoctor." + Utility.CleanFileName(title) + ".html";
             if (File.Exists(outputFile))
             {
-                File.Delete(outputFile);
+                bool locked = false;
+                try
+                {
+                    File.Delete(outputFile);
+                }
+                catch
+                {
+                    locked = true;
+                }
+                KBDoctor.KBDoctorOutput.Warning("File " + outputFile + " is locked. The start page cannot be generated");
             }
 
             return outputFile;

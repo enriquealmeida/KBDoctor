@@ -57,121 +57,127 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Unreachable Objects";
             output.StartSection("KBDoctor", title);
             // UIServices.ToolWindows.ShowToolWindow(new Guid("59CE53BC-F419-402b-AC09-AC275ED21AB9"));
-
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Remove" });
-            KBObjectCollection reachablesObjects = new KBObjectCollection();
-            KBObjectCollection unreachablesObjects = new KBObjectCollection();
-            KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
-            foreach (KBObject obj in mainCategory.AllMembers)
+            try
             {
-                MarkReachables(output, obj, reachablesObjects);
-            }
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
-            {
-                ICallableObject callableObject = obj as ICallableObject;
-                if ((callableObject != null) | (obj is Artech.Genexus.Common.Objects.Attribute)
-                    | obj is Artech.Genexus.Common.Objects.Table | obj is Domain | obj is ExternalObject | obj is SDT) //Saco Image
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Remove" });
+                KBObjectCollection reachablesObjects = new KBObjectCollection();
+                KBObjectCollection unreachablesObjects = new KBObjectCollection();
+                KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
+                foreach (KBObject obj in mainCategory.AllMembers)
                 {
-                    unreachablesObjects.Add(obj);
+                    MarkReachables(output, obj, reachablesObjects);
                 }
-            }
-            int cantObj = unreachablesObjects.Count;
-            //saco los objetos alcanzables. 
-            unreachablesObjects.RemoveAll(reachablesObjects);
-            int cantUnObj = unreachablesObjects.Count;
-            output.AddLine("KBDoctor", "(Re)creating KBDoctor.Unreachable category");
-            KBCategory catR = KBCategory.Get(kbserv.CurrentModel, "KBDoctor.UnReachable");
-            if (catR == null)
-            {
-                catR = new KBCategory(kbserv.CurrentModel);
-                catR.Name = "KBDoctor.UnReachable";
-                catR.Description = "Category for unreachable objects";
-                catR.ShowInModelTree = true;
-                BLServices.TeamDevClient.IgnoreForCommit(catR.Model, catR.Key);
-                catR.Save();
-            }
 
-            foreach (KBObject obj in catR.AllMembers)
-            {
-                output.AddLine("KBDoctor", "Removing " + obj.Name + " from  KBDoctor.Unreachable category");
-                obj.RemoveCategory(catR);
-                if (!obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject) && (obj is Procedure | obj is WebPanel | obj is WorkPanel | obj is Transaction | obj is DataProvider | obj is Menubar))
+
+                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    obj.SetPropertyValue(Properties.TRN.GenerateObject, true);
-                }
-                obj.Save();
-
-            }
-
-
-            Boolean SaveObj = false;
-            foreach (KBObject obj in unreachablesObjects)
-            {
-                Artech.Architecture.UI.Framework.Objects.IGxDocument document;
-
-                SaveObj = false;
-
-
-                if (UIServices.DocumentManager.IsOpenDocument(obj, out document))
-                {
-                    document.Object.AddCategory(catR);
-                    SetDocumentDirty(document);
-                    UIServices.TrackSelection.OnSelectChange(document.Object, null);
-                }
-                else
-                {
-                    if (!catR.ContainsMember(obj))
+                    ICallableObject callableObject = obj as ICallableObject;
+                    if ((callableObject != null) | (obj is Artech.Genexus.Common.Objects.Attribute)
+                        | obj is Artech.Genexus.Common.Objects.Table | obj is Domain | obj is ExternalObject | obj is SDT) //Saco Image
                     {
-                        obj.AddCategory(catR);
-                        SaveObj = true;
+                        unreachablesObjects.Add(obj);
                     }
+                }
+                int cantObj = unreachablesObjects.Count;
+                //saco los objetos alcanzables. 
+                unreachablesObjects.RemoveAll(reachablesObjects);
+                int cantUnObj = unreachablesObjects.Count;
+                output.AddLine("KBDoctor", "(Re)creating KBDoctor.Unreachable category");
+                KBCategory catR = KBCategory.Get(kbserv.CurrentModel, "KBDoctor.UnReachable");
+                if (catR == null)
+                {
+                    catR = new KBCategory(kbserv.CurrentModel);
+                    catR.Name = "KBDoctor.UnReachable";
+                    catR.Description = "Category for unreachable objects";
+                    catR.ShowInModelTree = true;
+                    BLServices.TeamDevClient.IgnoreForCommit(catR.Model, catR.Key);
+                    catR.Save();
+                }
 
-
-                    if (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject) && (obj is Procedure | obj is WebPanel | obj is WorkPanel | obj is Transaction | obj is DataProvider))
+                foreach (KBObject obj in catR.AllMembers)
+                {
+                    output.AddLine("KBDoctor", "Removing " + obj.Name + " from  KBDoctor.Unreachable category");
+                    obj.RemoveCategory(catR);
+                    if (!obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject) && (obj is Procedure | obj is WebPanel | obj is WorkPanel | obj is Transaction | obj is DataProvider | obj is Menubar))
                     {
-                        obj.SetPropertyValue(Properties.TRN.GenerateObject, false);
-                        SaveObj = true;
+                        obj.SetPropertyValue(Properties.TRN.GenerateObject, true);
                     }
+                    obj.Save();
 
-                    string objNameLink = Functions.linkObject(obj);
-                    string remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
-                    writer.AddTableData(new string[] { objNameLink, obj.TypeDescriptor.Name, obj.Description, remove });
+                }
 
-                    if (SaveObj)
+
+                Boolean SaveObj = false;
+                foreach (KBObject obj in unreachablesObjects)
+                {
+                    Artech.Architecture.UI.Framework.Objects.IGxDocument document;
+
+                    SaveObj = false;
+
+
+                    if (UIServices.DocumentManager.IsOpenDocument(obj, out document))
                     {
-                        try
-                        {
-                            output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable (SAVING) ");
-                            obj.Save();
-                        }
-                        catch
-                        {
-                            output.AddWarningLine("Error saving " + obj.TypeDescriptor.Name + "-" + obj.Name);
-                            success = false;
-                        }
+                        document.Object.AddCategory(catR);
+                        ObjectsHelper.SetDocumentDirty(document);
+                        UIServices.TrackSelection.OnSelectChange(document.Object, null);
                     }
                     else
                     {
-                        output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable ");
+                        if (!catR.ContainsMember(obj))
+                        {
+                            obj.AddCategory(catR);
+                            SaveObj = true;
+                        }
+
+
+                        if (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject) && (obj is Procedure | obj is WebPanel | obj is WorkPanel | obj is Transaction | obj is DataProvider))
+                        {
+                            obj.SetPropertyValue(Properties.TRN.GenerateObject, false);
+                            SaveObj = true;
+                        }
+
+                        string objNameLink = Functions.linkObject(obj);
+                        string remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
+                        writer.AddTableData(new string[] { objNameLink, obj.TypeDescriptor.Name, obj.Description, remove });
+
+                        if (SaveObj)
+                        {
+                            try
+                            {
+                                output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable (SAVING) ");
+                                obj.Save();
+                            }
+                            catch
+                            {
+                                output.AddWarningLine("Error saving " + obj.TypeDescriptor.Name + "-" + obj.Name);
+                                success = false;
+                            }
+                        }
+                        else
+                        {
+                            output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable ");
+                        }
                     }
+
+
                 }
 
-
+                output.AddLine("KBDoctor", "");
+                output.AddLine("KBDoctor", "Total Objects:" + cantObj.ToString() + ". Unreachable Objects: " + cantUnObj.ToString());
+                output.EndSection("KBDoctor", title, success);
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-
-            output.AddLine("KBDoctor", "");
-            output.AddLine("KBDoctor", "Total Objects:" + cantObj.ToString() + ". Unreachable Objects: " + cantUnObj.ToString());
-            output.EndSection("KBDoctor", title, success);
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
+            catch
+            {
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static void MarkReachables(IOutputService output, KBObject obj, KBObjectCollection reachablesObjects)
@@ -214,50 +220,57 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Object main called by others";
 
             output.StartSection("KBDoctor", title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Type", "Object", "Description", "Parm", "#Callers", "Call Protocol", "Generated by Pattern", " Encrypt Parameters " });
-
-            KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
-            foreach (KBObject obj in mainCategory.AllMembers)
+            try
             {
-                int callers = 0;
-                foreach (EntityReference reference in obj.GetReferencesTo(LinkType.UsedObject))
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Type", "Object", "Description", "Parm", "#Callers", "Call Protocol", "Generated by Pattern", " Encrypt Parameters " });
+
+                KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
+                foreach (KBObject obj in mainCategory.AllMembers)
                 {
-                    callers = callers + 1;
-                    //break;
-                }
-                //if (callers > 0)
-                // {
-                string ruleParm = Functions.ExtractRuleParm(obj);
-                string enc = obj.GetPropertyValueString("USE_ENCRYPTION");
-                writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), obj.Description, ruleParm, callers.ToString(), obj.GetPropertyValueString("CALL_PROTOCOL"), isGeneratedbyPattern(obj).ToString(), enc });
-                /*
-                if (obj is Procedure)
-                {
-                    try
+                    int callers = 0;
+                    foreach (EntityReference reference in obj.GetReferencesTo(LinkType.UsedObject))
                     {
-                        output.AddLine("KBDoctor",obj.Name);
-                        obj.SetPropertyValue("isMain", false);
-                        obj.Save();
+                        callers = callers + 1;
+                        //break;
                     }
-                    catch (Exception e) { output.AddLine("KBDoctor",e.Message.ToString()); };
+                    //if (callers > 0)
+                    // {
+                    string ruleParm = Functions.ExtractRuleParm(obj);
+                    string enc = obj.GetPropertyValueString("USE_ENCRYPTION");
+                    writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), obj.Description, ruleParm, callers.ToString(), obj.GetPropertyValueString("CALL_PROTOCOL"), isGeneratedbyPattern(obj).ToString(), enc });
+                    /*
+                    if (obj is Procedure)
+                    {
+                        try
+                        {
+                            output.AddLine("KBDoctor",obj.Name);
+                            obj.SetPropertyValue("isMain", false);
+                            obj.Save();
+                        }
+                        catch (Exception e) { output.AddLine("KBDoctor",e.Message.ToString()); };
+                    }
+                    */
                 }
-                */
+
+
+                writer.AddFooter();
+                writer.Close();
+
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-
-
-            writer.AddFooter();
-            writer.Close();
-
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void ParmWOInOut()
@@ -269,30 +282,38 @@ namespace Concepto.Packages.KBDoctor
             List<KBObject> objectsWithProblems = API.ObjectsWithoutINOUT(UIServices.KB.CurrentKB, output);
             
             string title = "KBDoctor - Object with parameters without IN:/OUT:/INOUT:";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Folder", "Object", "Description", "Param rule", "Timestamp", "Mains" });
-
-            foreach (KBObject obj in objectsWithProblems)
+            try
             {
-                string ruleParm = Functions.ExtractRuleParm(obj);
-                string objNameLink = Functions.linkObject(obj);
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                KBObjectCollection objColl = new KBObjectCollection();
-                string callTree = "";
-                // string  mainss = KbStats.MainsOf(obj, objColl, callTree);
-                string mainss = "";
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Folder", "Object", "Description", "Param rule", "Timestamp", "Mains" });
 
-                writer.AddTableData(new string[] { obj.Parent.Name, objNameLink, obj.Description, ruleParm, obj.Timestamp.ToString(), mainss });
+                foreach (KBObject obj in objectsWithProblems)
+                {
+                    string ruleParm = Functions.ExtractRuleParm(obj);
+                    string objNameLink = Functions.linkObject(obj);
+
+                    KBObjectCollection objColl = new KBObjectCollection();
+                    string callTree = "";
+                    // string  mainss = KbStats.MainsOf(obj, objColl, callTree);
+                    string mainss = "";
+
+                    writer.AddTableData(new string[] { obj.Parent.Name, objNameLink, obj.Description, ruleParm, obj.Timestamp.ToString(), mainss });
+                }
+
+                writer.AddTableData(new string[] { "#Objects with problems ", objectsWithProblems.Count.ToString(), "", "" });
+
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-
-            writer.AddTableData(new string[] { "#Objects with problems ", objectsWithProblems.Count.ToString(), "", "" });
-
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
 
@@ -316,52 +337,58 @@ namespace Concepto.Packages.KBDoctor
             string objNameLink;
 
             output.StartSection("KBDoctor", title);
-
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Type", "Name", "Description", "isGenerated?" });
-
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            try
             {
-                ICallableObject callableObject = obj as ICallableObject;
-                if (callableObject != null)
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Type", "Name", "Description", "isGenerated?" });
+
+                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    output.AddLine("KBDoctor", "Processing " + obj.TypeDescriptor.Name + " " + obj.Name);
-
-                    hasParameters = false;
-                    foreach (Signature signature in callableObject.GetSignatures())
+                    ICallableObject callableObject = obj as ICallableObject;
+                    if (callableObject != null)
                     {
-                        foreach (Parameter parm in signature.Parameters)
+                        output.AddLine("KBDoctor", "Processing " + obj.TypeDescriptor.Name + " " + obj.Name);
+
+                        hasParameters = false;
+                        foreach (Signature signature in callableObject.GetSignatures())
                         {
-                            hasParameters = true;
+                            foreach (Parameter parm in signature.Parameters)
+                            {
+                                hasParameters = true;
+                            }
                         }
-                    }
 
-                    if (hasParameters)
-                    {
-                        object aux = obj.GetPropertyValue("CommitOnExit");
-                        commitOnExit = ((aux != null) && (aux.ToString() == "Yes"));
-
-                        if (commitOnExit)
+                        if (hasParameters)
                         {
-                            string isGeneratedstr = (isGenerated(obj) ? "Yes" : string.Empty);
-                            objNameLink = Functions.linkObject(obj);
-                            writer.AddTableData(new string[] { obj.TypeDescriptor.Name, objNameLink, obj.Description, isGeneratedstr });
+                            object aux = obj.GetPropertyValue("CommitOnExit");
+                            commitOnExit = ((aux != null) && (aux.ToString() == "Yes"));
+
+                            if (commitOnExit)
+                            {
+                                string isGeneratedstr = (isGenerated(obj) ? "Yes" : string.Empty);
+                                objNameLink = Functions.linkObject(obj);
+                                writer.AddTableData(new string[] { obj.TypeDescriptor.Name, objNameLink, obj.Description, isGeneratedstr });
+                            }
                         }
                     }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 
@@ -370,86 +397,93 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Not referenced objects";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Type", "Object", "Remove", "is generated?", "isMain?" });
-            int callers;
-            string remove = "";
-            bool continuar = true;
-
-            do
+            try
             {
-                continuar = false;
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Type", "Object", "Remove", "is generated?", "isMain?" });
+                int callers;
+                string remove = "";
+                bool continuar = true;
+
+                do
                 {
-                    ICallableObject callableObject = obj as ICallableObject;
-                    if ((callableObject != null) | (obj is Artech.Genexus.Common.Objects.Attribute)
-                        | obj is Artech.Genexus.Common.Objects.Table | obj is Domain | obj is ExternalObject | obj is Image | obj is SDT)
+                    continuar = false;
+                    foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                     {
-                        callers = 0;
-                        foreach (EntityReference reference in obj.GetReferencesTo(LinkType.UsedObject))
+                        ICallableObject callableObject = obj as ICallableObject;
+                        if ((callableObject != null) | (obj is Artech.Genexus.Common.Objects.Attribute)
+                            | obj is Artech.Genexus.Common.Objects.Table | obj is Domain | obj is ExternalObject | obj is Image | obj is SDT)
                         {
-                            callers = callers + 1;
-                        }
-
-                        if (callers == 0)
-                        {
-                            if ((obj is Transaction) | obj is Table | obj is Artech.Genexus.Common.Objects.Attribute | obj is Domain | obj is Image)
+                            callers = 0;
+                            foreach (EntityReference reference in obj.GetReferencesTo(LinkType.UsedObject))
                             {
-                                remove = "";
+                                callers = callers + 1;
                             }
-                            else
-                            {
-                                remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
-                            }
-                            string objNameLink = Functions.linkObject(obj);
-                            string isMainstr = (Utility.IsMain(obj) ? "Main" : string.Empty);
-                            string isGeneratedstr = (isGenerated(obj) ? "Yes" : string.Empty);
-                            if (!Utility.IsMain(obj))
-                            {
 
-                                if (remove != "")
+                            if (callers == 0)
+                            {
+                                if ((obj is Transaction) | obj is Table | obj is Artech.Genexus.Common.Objects.Attribute | obj is Domain | obj is Image)
+                                {
+                                    remove = "";
+                                }
+                                else
+                                {
+                                    remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
+                                }
+                                string objNameLink = Functions.linkObject(obj);
+                                string isMainstr = (Utility.IsMain(obj) ? "Main" : string.Empty);
+                                string isGeneratedstr = (isGenerated(obj) ? "Yes" : string.Empty);
+                                if (!Utility.IsMain(obj))
+                                {
+
+                                    if (remove != "")
+                                    {
+                                        try
+                                        {
+                                            obj.Delete();
+                                            output.AddLine("KBDoctor", "REMOVING..." + obj.Name);
+                                            remove = "REMOVED!";
+                                            objNameLink = obj.Name;
+                                            continuar = true;
+                                        }
+                                        catch (Exception e) { };
+
+                                    }
+                                    writer.AddTableData(new string[] { obj.TypeDescriptor.Name, objNameLink, remove, isGeneratedstr, isMainstr });
+                                }
+                                if ((obj is Transaction) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
                                 {
                                     try
                                     {
-                                        obj.Delete();
-                                        output.AddLine("KBDoctor", "REMOVING..." + obj.Name);
-                                        remove = "REMOVED!";
-                                        objNameLink = obj.Name;
-                                        continuar = true;
+                                        obj.SetPropertyValue(Properties.TRN.GenerateObject, false);
+                                        KBDoctorCore.Sources.API.CleanKBObject(obj, output);
                                     }
                                     catch (Exception e) { };
 
                                 }
-                                writer.AddTableData(new string[] { obj.TypeDescriptor.Name, objNameLink, remove, isGeneratedstr, isMainstr });
-                            }
-                            if ((obj is Transaction) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
-                            {
-                                try
-                                {
-                                    obj.SetPropertyValue(Properties.TRN.GenerateObject, false);
-                                    KBDoctorCore.Sources.API.CleanKBObject(obj, output);
-                                }
-                                catch (Exception e) { };
-
                             }
                         }
                     }
-                }
-            } while (continuar);
+                } while (continuar);
 
-            writer.AddFooter();
-            writer.Close();
+                writer.AddFooter();
+                writer.Close();
 
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+            }
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void RemovableTransactions()
@@ -458,67 +492,75 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
 
             string title = "KBDoctor - Removable Transactions";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            output.StartSection("KBDoctor", title);
-
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Table", "Object", "Remove", "is generated?", "isMain?" });
-
-            string remove = "";
-
-            foreach (Transaction trn in Transaction.GetAll(kbserv.CurrentModel))
+            try
             {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                if (!isGenerated(trn))
+
+                output.StartSection("KBDoctor", title);
+
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Table", "Object", "Remove", "is generated?", "isMain?" });
+
+                string remove = "";
+
+                foreach (Transaction trn in Transaction.GetAll(kbserv.CurrentModel))
                 {
-                    output.AddLine("KBDoctor", "Procesing... " + trn.Name);
-                    bool isRemovable, isRemovableWithWarning;
-                    string lstTrns, tblName;
-                    KBObjectCollection attExclusive;
 
-                    CheckIfRemovable(output, writer, trn, out isRemovable, out isRemovableWithWarning, out lstTrns, out attExclusive);
+                    if (!isGenerated(trn))
+                    {
+                        output.AddLine("KBDoctor", "Procesing... " + trn.Name);
+                        bool isRemovable, isRemovableWithWarning;
+                        string lstTrns, tblName;
+                        KBObjectCollection attExclusive;
 
-                    if (isRemovable)
-                    {
-                        output.AddLine("KBDoctor", "Procesing... " + trn.Name + " REMOVABLE ");
-                        remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
-                        writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, "" });
-                    }
-                    else
-                        if (isRemovableWithWarning)
+                        CheckIfRemovable(output, writer, trn, out isRemovable, out isRemovableWithWarning, out lstTrns, out attExclusive);
 
-                    {
-                        output.AddLine("KBDoctor", "Procesing... " + trn.Name + " REMOVABLE with warning ");
-                        remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
-                        writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, lstTrns + " WHIT WARNING" });
-                    }
-                    else
-                    {
-                        if (attExclusive.Count > 0)
+                        if (isRemovable)
                         {
-                            string lstAtt = "";
-                            foreach (Artech.Genexus.Common.Objects.Attribute a in attExclusive)
-                            {
-                                lstAtt = Functions.linkObject(a) + " ";
-                            }
-                            
-                            writer.AddTableData(new string[] { "", Functions.linkObject(trn), "Exclusive Attributes:" + lstAtt, trn.Description, "NOT REMOVABLE" });
+                            output.AddLine("KBDoctor", "Procesing... " + trn.Name + " REMOVABLE ");
+                            remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
+                            writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, "" });
                         }
+                        else
+                            if (isRemovableWithWarning)
+
+                        {
+                            output.AddLine("KBDoctor", "Procesing... " + trn.Name + " REMOVABLE with warning ");
+                            remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
+                            writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, lstTrns + " WHIT WARNING" });
+                        }
+                        else
+                        {
+                            if (attExclusive.Count > 0)
+                            {
+                                string lstAtt = "";
+                                foreach (Artech.Genexus.Common.Objects.Attribute a in attExclusive)
+                                {
+                                    lstAtt = Functions.linkObject(a) + " ";
+                                }
+
+                                writer.AddTableData(new string[] { "", Functions.linkObject(trn), "Exclusive Attributes:" + lstAtt, trn.Description, "NOT REMOVABLE" });
+                            }
+                        }
+
                     }
 
                 }
+                writer.AddFooter();
+                writer.Close();
 
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static void CheckIfRemovable(IOutputService output, KBDoctorXMLWriter writer, Transaction trn, out bool isRemovable, out bool isRemovableWithWarning, out string lstTrns, out KBObjectCollection attExclusive)
@@ -581,64 +623,71 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Object referenced by object ";
 
             output.StartSection("KBDoctor", title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-
-
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Commit on Exit", "Update DB?", "Commit in Source", "Timestamp", "Last Update" });
-
-            string commitOnExit = "";
-            string commitInSource = "";
-            string UpdateInsertDelete = "";
-            foreach (KBObject objRef in kbserv.CurrentModel.Objects.GetAll())
+            try
             {
-                if (objRef is Procedure)
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+
+
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Commit on Exit", "Update DB?", "Commit in Source", "Timestamp", "Last Update" });
+
+                string commitOnExit = "";
+                string commitInSource = "";
+                string UpdateInsertDelete = "";
+                foreach (KBObject objRef in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    object aux = objRef.GetPropertyValue("CommitOnExit");
-                    if (aux != null)
+                    if (objRef is Procedure)
                     {
-                        commitOnExit = aux.ToString() == "Yes" ? "YES" : " ";
+                        object aux = objRef.GetPropertyValue("CommitOnExit");
+                        if (aux != null)
+                        {
+                            commitOnExit = aux.ToString() == "Yes" ? "YES" : " ";
 
+                        }
+                        UpdateInsertDelete = CleanKBHelper.ObjectUpdateDB(objRef) ? "YES" : "";
+
+                        Procedure prc = (Procedure)objRef;
+                        try
+                        {
+                            if (Functions.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper()).Contains("COMMIT"))
+                                commitInSource = "YES ";
+                            else
+                                commitInSource = "";
+                        }
+                        catch (Exception e)
+                        { output.AddErrorLine(e.Message); }
+                        finally
+                        { commitInSource = ""; };
+
+
+
+                        if (UpdateInsertDelete == "" & commitOnExit == "YES")
+                        {
+                            objRef.SetPropertyValue("CommitOnExit", "No");
+                            objRef.Save();
+                            writer.AddTableData(new string[] { Functions.linkObject(objRef), objRef.TypeDescriptor.Name, objRef.Description, commitOnExit, UpdateInsertDelete, commitInSource, objRef.Timestamp.ToString(), objRef.LastUpdate.ToString() });
+                        }
                     }
-                    UpdateInsertDelete = CleanKBHelper.ObjectUpdateDB(objRef) ? "YES" : "";
 
-                    Procedure prc = (Procedure)objRef;
-                    try
-                    {
-                        if (Functions.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper()).Contains("COMMIT"))
-                            commitInSource = "YES ";
-                        else
-                            commitInSource = "";
-                    }
-                    catch (Exception e)
-                    { output.AddErrorLine(e.Message); }
-                    finally
-                    { commitInSource = ""; };
-
-
-
-                    if (UpdateInsertDelete == "" & commitOnExit == "YES")
-                    {
-                        objRef.SetPropertyValue("CommitOnExit", "No");
-                        objRef.Save();
-                        writer.AddTableData(new string[] { Functions.linkObject(objRef), objRef.TypeDescriptor.Name, objRef.Description, commitOnExit, UpdateInsertDelete, commitInSource, objRef.Timestamp.ToString(), objRef.LastUpdate.ToString() });
-                    }
                 }
 
+
+                writer.AddFooter();
+                writer.Close();
+
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
             }
-
-
-            writer.AddFooter();
-            writer.Close();
-
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 
@@ -650,37 +699,45 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Tree Commit  ";
 
             output.StartSection("KBDoctor", title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Commit", "Description", "in New UTL", "Upd/Ins/Del", "TimeStamp", "Modified Tables" });
-
-
-            string Anidacion = "";
-            KBObjectCollection yaIncluidos = new KBObjectCollection();
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            KBModel kbModel = UIServices.KB.CurrentModel;
-
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-
-            foreach (Procedure obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-
+            try
             {
-                GraboLlamado(obj, Anidacion, yaIncluidos, writer);
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Commit", "Description", "in New UTL", "Upd/Ins/Del", "TimeStamp", "Modified Tables" });
+
+
+                string Anidacion = "";
+                KBObjectCollection yaIncluidos = new KBObjectCollection();
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                KBModel kbModel = UIServices.KB.CurrentModel;
+
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+
+                foreach (Procedure obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+
+                {
+                    GraboLlamado(obj, Anidacion, yaIncluidos, writer);
+                }
+
+
+                writer.AddFooter();
+                writer.Close();
+
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-
-
-            writer.AddFooter();
-            writer.Close();
-
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static void GraboLlamado(Procedure obj, string Anidacion, KBObjectCollection yaIncluido, KBDoctorXMLWriter writer)
@@ -1110,37 +1167,44 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IOutputService output = CommonServices.Output;
 
             string title = "KBDoctor - Tables used by mains";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Main", "Table", "Operation" });
-
-
-            KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
-            foreach (KBObject obj in mainCategory.AllMembers)
+            try
             {
-                StringCollection tableOperation = new StringCollection();
-                KBObjectCollection objMarked = new KBObjectCollection();
-                output.AddLine("KBDoctor", " ");
-                output.AddLine("KBDoctor", " =============================> " + obj.Name);
-
-                string mainstr = obj.Name + " " + obj.GetPropertyValueString("AppLocation");
-                TablesUsed(output, obj, tableOperation, objMarked, mainstr, writer);
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Main", "Table", "Operation" });
+
+
+                KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
+                foreach (KBObject obj in mainCategory.AllMembers)
+                {
+                    StringCollection tableOperation = new StringCollection();
+                    KBObjectCollection objMarked = new KBObjectCollection();
+                    output.AddLine("KBDoctor", " ");
+                    output.AddLine("KBDoctor", " =============================> " + obj.Name);
+
+                    string mainstr = obj.Name + " " + obj.GetPropertyValueString("AppLocation");
+                    TablesUsed(output, obj, tableOperation, objMarked, mainstr, writer);
+
+
+                }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static void TablesUsed(IOutputService output, KBObject obj, StringCollection tableOperation, KBObjectCollection objMarked, string mainstr, KBDoctorXMLWriter writer)
@@ -1224,87 +1288,95 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IOutputService output = CommonServices.Output;
             SpecificationListHelper helper = new SpecificationListHelper(kbserv.CurrentModel.Environment.TargetModel);
             string title = "KBDoctor - CreateDeployUnits";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "AppLocation", "Main", "Object", "WIN/WEB" });
-
-            StringCollection objReferenced = new StringCollection();
-
-            KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
-            foreach (KBObject obj in mainCategory.AllMembers)
+            try
             {
-
-                string objLocation = (string)obj.GetProperty("AppLocation").Value;
-
-                string objAppGenerator = obj.GetPropertyValueString("AppGenerator");
-                string Dircopia, exts;
-                if (objAppGenerator.ToUpper().Contains("WEB"))
-                {
-                    Dircopia = @".\Web\";
-                    exts = ".dll";
-                }
-                else
-                {
-                    Dircopia = @".\";
-                    exts = ".exe";
-                }
-
-                string letra = "";
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-                if (obj is Procedure)
-                    letra = "a";
-                if (obj is WorkPanel)
-                    letra = "u";
-                if (obj is Transaction)
-                    letra = "";
+                output.StartSection("KBDoctor", title);
 
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "AppLocation", "Main", "Object", "WIN/WEB" });
 
-                KBObjectCollection objMarked = new KBObjectCollection();
-                output.AddLine("KBDoctor", " ");
-                output.AddLine("KBDoctor", "ECHO  **** " + obj.Name + " ***** ");
+                StringCollection objReferenced = new StringCollection();
 
-                if (obj.GetPropertyValueString("AppLocation") == "")
+                KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
+                foreach (KBObject obj in mainCategory.AllMembers)
                 {
 
-                    string mensaje = "Insert Location for (" + obj.TypeDescriptor.Name + ") " + obj.Name + "-" + obj.Description;
+                    string objLocation = (string)obj.GetProperty("AppLocation").Value;
 
-                    PromptDescription pd = new PromptDescription(mensaje);
-                    DialogResult dr = pd.ShowDialog();
-
-                    if (dr == DialogResult.OK)
+                    string objAppGenerator = obj.GetPropertyValueString("AppGenerator");
+                    string Dircopia, exts;
+                    if (objAppGenerator.ToUpper().Contains("WEB"))
                     {
-                        obj.SetPropertyValue("AppLocation", pd.Description);
-                        obj.Save();
+                        Dircopia = @".\Web\";
+                        exts = ".dll";
                     }
-                    /* } */
+                    else
+                    {
+                        Dircopia = @".\";
+                        exts = ".exe";
+                    }
+
+                    string letra = "";
 
 
-                }
-                string mainstr = obj.GetPropertyValueString("AppLocation");
+                    if (obj is Procedure)
+                        letra = "a";
+                    if (obj is WorkPanel)
+                        letra = "u";
+                    if (obj is Transaction)
+                        letra = "";
 
-                string linea = "XCOPY /y/d " + Dircopia + @"bin\" + letra + obj.Name + exts + " %" + mainstr + @"%\bin\";
-                output.AddLine("KBDoctor", linea);
-                objReferenced.Add(linea);
 
-                if (!(obj is Procedure) && !(obj is WorkPanel) && Dircopia == @".\Web\")
-                {
-                    linea = "XCOPY /y/d " + Dircopia + letra + obj.Name + ".js %" + mainstr + "%";
+                    KBObjectCollection objMarked = new KBObjectCollection();
+                    output.AddLine("KBDoctor", " ");
+                    output.AddLine("KBDoctor", "ECHO  **** " + obj.Name + " ***** ");
+
+                    if (obj.GetPropertyValueString("AppLocation") == "")
+                    {
+
+                        string mensaje = "Insert Location for (" + obj.TypeDescriptor.Name + ") " + obj.Name + "-" + obj.Description;
+
+                        PromptDescription pd = new PromptDescription(mensaje);
+                        DialogResult dr = pd.ShowDialog();
+
+                        if (dr == DialogResult.OK)
+                        {
+                            obj.SetPropertyValue("AppLocation", pd.Description);
+                            obj.Save();
+                        }
+                        /* } */
+
+
+                    }
+                    string mainstr = obj.GetPropertyValueString("AppLocation");
+
+                    string linea = "XCOPY /y/d " + Dircopia + @"bin\" + letra + obj.Name + exts + " %" + mainstr + @"%\bin\";
                     output.AddLine("KBDoctor", linea);
                     objReferenced.Add(linea);
+
+                    if (!(obj is Procedure) && !(obj is WorkPanel) && Dircopia == @".\Web\")
+                    {
+                        linea = "XCOPY /y/d " + Dircopia + letra + obj.Name + ".js %" + mainstr + "%";
+                        output.AddLine("KBDoctor", linea);
+                        objReferenced.Add(linea);
+                    }
+                    WriteCopyObject(output, obj, objReferenced, objMarked, mainstr, Dircopia);
+
                 }
-                WriteCopyObject(output, obj, objReferenced, objMarked, mainstr, Dircopia);
 
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         internal static void SplitMainObject()
@@ -1704,45 +1776,52 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Complex Objects";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Size" });
-
-            string[] fileEntries = Directory.GetFiles(KBDoctorHelper.SpcDirectory(kbserv), "*.SP0", System.IO.SearchOption.AllDirectories);
-
-            foreach (string fileName in fileEntries)
+            try
             {
-
-                var length = new System.IO.FileInfo(fileName).Length;
-                string objName = Path.GetFileNameWithoutExtension(fileName);
-
-                string[] ns = new[] { "Objects" }; //System.Collections.SortedList()  ;
-                //
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetByPartialName(ns, objName))
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Size" });
+
+                string[] fileEntries = Directory.GetFiles(KBDoctorHelper.SpcDirectory(kbserv), "*.SP0", System.IO.SearchOption.AllDirectories);
+
+                foreach (string fileName in fileEntries)
                 {
 
-                    if ((obj.Name == objName) && (length > 200000))
+                    var length = new System.IO.FileInfo(fileName).Length;
+                    string objName = Path.GetFileNameWithoutExtension(fileName);
+
+                    string[] ns = new[] { "Objects" }; //System.Collections.SortedList()  ;
+                                                       //
+
+
+                    foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetByPartialName(ns, objName))
                     {
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, length.ToString("N0") });
-                        output.AddLine("KBDoctor", fileName);
+
+                        if ((obj.Name == objName) && (length > 200000))
+                        {
+                            writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, length.ToString("N0") });
+                            output.AddLine("KBDoctor", fileName);
+                        }
+
                     }
-
                 }
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void ObjectsLegacyCode()
@@ -1751,62 +1830,70 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IOutputService output = CommonServices.Output;
             string[] legacyCode = new string[] { "Object", "Description", "Type", " call", " udp", " create", ".false", ".true", "new", "defined", "delete", ".and.", ".or.", ".not.", ".like." };
             string titulo = "KBDoctor - Objects - Legacy Code";
-            string outputFile = Functions.CreateOutputFile(kbserv, titulo);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-
-            output.StartSection(titulo);
-            writer.AddHeader(titulo);
-            writer.AddTableHeader(legacyCode);
-            int objWithLegacyCode = 0;
-
-            foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+            try
             {
+                string outputFile = Functions.CreateOutputFile(kbserv, titulo);
 
-                if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+
+                output.StartSection(titulo);
+                writer.AddHeader(titulo);
+                writer.AddTableHeader(legacyCode);
+                int objWithLegacyCode = 0;
+
+                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
                 {
 
-                    if (isGenerated(obj))
+                    if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
                     {
-                        output.AddLine("KBDoctor", obj.Name);
 
-                        string source = ObjectSource(obj);
-                        source = Functions.RemoveEmptyLines(source);
-                        string sourceWOComments = Functions.ExtractComments(source);
-                        bool hasLegacyCode = false;
-                        string[] data = new string[legacyCode.Length];
-                        data[0] = Functions.linkObject(obj);
-                        data[1] = obj.Description;
-                        data[2] = obj.TypeDescriptor.Name;
+                        if (isGenerated(obj))
+                        {
+                            output.AddLine("KBDoctor", obj.Name);
 
-                        for (int i = 3; i < legacyCode.Length; i++) //empieza en la columan 3 para saltear nombre de objeto, descripcion y tipo
-                        {
-                            if (sourceWOComments.Contains(legacyCode[i].ToUpper()))
+                            string source = ObjectSource(obj);
+                            source = Functions.RemoveEmptyLines(source);
+                            string sourceWOComments = Functions.ExtractComments(source);
+                            bool hasLegacyCode = false;
+                            string[] data = new string[legacyCode.Length];
+                            data[0] = Functions.linkObject(obj);
+                            data[1] = obj.Description;
+                            data[2] = obj.TypeDescriptor.Name;
+
+                            for (int i = 3; i < legacyCode.Length; i++) //empieza en la columan 3 para saltear nombre de objeto, descripcion y tipo
                             {
-                                data[i] = "   **  ";
-                                hasLegacyCode = true;
+                                if (sourceWOComments.Contains(legacyCode[i].ToUpper()))
+                                {
+                                    data[i] = "   **  ";
+                                    hasLegacyCode = true;
+                                }
+                                else
+                                {
+                                    data[i] = "";
+                                }
                             }
-                            else
+                            if (hasLegacyCode)
                             {
-                                data[i] = "";
+                                writer.AddTableData(data);
+                                objWithLegacyCode += 1;
                             }
-                        }
-                        if (hasLegacyCode)
-                        {
-                            writer.AddTableData(data);
-                            objWithLegacyCode += 1;
                         }
                     }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection(titulo, success);
+                Functions.AddLineSummary(titulo + ".txt", objWithLegacyCode.ToString());
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection(titulo, success);
-            Functions.AddLineSummary(titulo + ".txt", objWithLegacyCode.ToString());
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(titulo, success);
+            }
 
         }
 
@@ -2018,69 +2105,77 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IKBService kbserv = UIServices.KB;
          //   IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Objects with Constants";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorOutput.StartSection(title);
-            
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Line", "Constant" });
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-
-            ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
-
-            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
-
-            ParserInfo parserInfo;
-
-            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-
+            try
             {
-                Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
-                Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                if (source != null)
+                KBDoctorOutput.StartSection(title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Line", "Constant" });
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+
+                ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
+
+                var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+
+                ParserInfo parserInfo;
+
+                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+
                 {
-                    
-                    parserInfo = new ParserInfo(source);
+                    Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                    Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
 
-                    /*
-                    var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
-                    if (parser.Validate(info, source.Source))
+                    if (source != null)
                     {
-                        Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
-                        AttributeTree at = new AttributeTree(obj.Model);
-                        AttributeTree.CallTree dep = new AttributeTree.CallTree(obj.Model, at);
-                        AttributeTree.ParseSource2(paramRootNode, obj.Model, dep);
-                        // KBDoctorOutput.Message(dep.Items.ToString());
 
-                        dep.m_AttributeTree.ScanDependencies(obj.Model);
-                        foreach (AttributeTree.Dependency d in dep.Items)
-                            KBDoctorOutput.Message(d.ObjectName + " - " + d.Name + " type=" +d.Type);
-                        //AttributeTree.ParseSource2(paramRootNode, obj.Model, dep);
-                    }
-                    */
-                   foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
-                    {
-                        if (TokenIsConstant(token) ) 
+                        parserInfo = new ParserInfo(source);
+
+                        /*
+                        var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+                        if (parser.Validate(info, source.Source))
                         {
-                            writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, token.Row.ToString(), token.Word });
-                            KBDoctorOutput.Message(obj.Name + " has constant " + token.Word);
-                        }
-                    }
-                    
-                   
-                }
-            }
-            KBDoctorOutput.EndSection(title);
-            
-            writer.AddFooter();
-            writer.Close();
+                            Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                            AttributeTree at = new AttributeTree(obj.Model);
+                            AttributeTree.CallTree dep = new AttributeTree.CallTree(obj.Model, at);
+                            AttributeTree.ParseSource2(paramRootNode, obj.Model, dep);
+                            // KBDoctorOutput.Message(dep.Items.ToString());
 
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                            dep.m_AttributeTree.ScanDependencies(obj.Model);
+                            foreach (AttributeTree.Dependency d in dep.Items)
+                                KBDoctorOutput.Message(d.ObjectName + " - " + d.Name + " type=" +d.Type);
+                            //AttributeTree.ParseSource2(paramRootNode, obj.Model, dep);
+                        }
+                        */
+                        foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
+                        {
+                            if (TokenIsConstant(token))
+                            {
+                                writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, token.Row.ToString(), token.Word });
+                                KBDoctorOutput.Message(obj.Name + " has constant " + token.Word);
+                            }
+                        }
+
+
+                    }
+                }
+                KBDoctorOutput.EndSection(title);
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            }
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static bool TokenIsConstant(TokenData token)
@@ -2117,52 +2212,59 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             KBModel model = kbserv.CurrentModel;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Count Table Access per Object";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module", "Inserts", "Updates", "Delete", "Read", "Total" });
-
-
-
-            foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+            try
             {
-                if (Functions.isRunable(obj))
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
+
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module", "Inserts", "Updates", "Delete", "Read", "Total" });
+
+
+
+                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
                 {
-                    output.AddLine("KBDoctor", obj.Name);
-                    int updaters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
-                                    where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                    where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
-                                    select model.Objects.Get(r.To)).ToList().Count;
-                    int inserters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
-                                     where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                     where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
-                                     select model.Objects.Get(r.To)).ToList().Count;
-                    int deleters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
-                                    where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                    where ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo)
-                                    select model.Objects.Get(r.To)).ToList().Count;
-                    int readers = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
-                                   where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                   where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
-                                   select model.Objects.Get(r.To)).ToList().Count;
-                    int total = updaters + inserters + deleters + readers;
-                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.TypeDescriptor.Name, obj.Description, obj.Module.Name, updaters.ToString(), inserters.ToString(), deleters.ToString(), readers.ToString(), total.ToString() });
+                    if (Functions.isRunable(obj))
+
+                    {
+                        output.AddLine("KBDoctor", obj.Name);
+                        int updaters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                        where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                        where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
+                                        select model.Objects.Get(r.To)).ToList().Count;
+                        int inserters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                         where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                         where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
+                                         select model.Objects.Get(r.To)).ToList().Count;
+                        int deleters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                        where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                        where ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo)
+                                        select model.Objects.Get(r.To)).ToList().Count;
+                        int readers = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                       where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                       where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
+                                       select model.Objects.Get(r.To)).ToList().Count;
+                        int total = updaters + inserters + deleters + readers;
+                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.TypeDescriptor.Name, obj.Description, obj.Module.Name, updaters.ToString(), inserters.ToString(), deleters.ToString(), readers.ToString(), total.ToString() });
+
+                    }
 
                 }
+                writer.AddTableFooterOnly();
+                writer.Close();
 
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-            writer.AddTableFooterOnly();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void ObjectsRefactoringCandidates()
@@ -2170,80 +2272,88 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Refactoring candidates";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module", "Folder", "Parm/IN:OUT:", "#Parameters", "Code commented?", "% Comments", "# Comments", "# Lines", "Max Nest", "Longest Code Block", "Cyclomatic Complexity", "Candidate", "Complexity Index" });
-
-            int ComplexityIndexTotal = 0;
-            int ObjectsTotal = 0;
-
-            foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+            try
             {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module", "Folder", "Parm/IN:OUT:", "#Parameters", "Code commented?", "% Comments", "# Comments", "# Lines", "Max Nest", "Longest Code Block", "Cyclomatic Complexity", "Candidate", "Complexity Index" });
+
+                int ComplexityIndexTotal = 0;
+                int ObjectsTotal = 0;
+
+                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
                 {
-                    if (isGenerated(obj) && !isGeneratedbyPattern(obj))
+
+                    if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
                     {
-                        output.AddLine("KBDoctor", obj.Name);
-
-                        string source = Functions.ObjectSourceUpper(obj);
-                        source = Functions.RemoveEmptyLines(source);
-
-                        string sourceWOComments = Functions.ExtractComments(source);
-                        sourceWOComments = Functions.RemoveEmptyLines(sourceWOComments);
-
-                        int linesSource, linesComment;
-                        float PercentComment;
-
-                        CountCommentsLines(source, sourceWOComments, out linesSource, out linesComment, out PercentComment);
-
-                        int MaxCodeBlock = Functions.MaxCodeBlock(sourceWOComments);
-                        int MaxNestLevel = Functions.MaxNestLevel(sourceWOComments);
-                        int ComplexityLevel = Functions.ComplexityLevel(sourceWOComments);
-
-                        string ParmINOUT = Functions.ValidateINOUTinParm(obj) ? "Error" : "";
-                        int parametersCount = ParametersCountObject(obj);
-
-                        string Candidate = "";
-                        if ((ParmINOUT == "Error") || (MaxNestLevel > 6) || (ComplexityLevel > 30) || (MaxCodeBlock > 500) || (parametersCount > 6))
+                        if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                         {
-                            Candidate = "*";
+                            output.AddLine("KBDoctor", obj.Name);
+
+                            string source = Functions.ObjectSourceUpper(obj);
+                            source = Functions.RemoveEmptyLines(source);
+
+                            string sourceWOComments = Functions.ExtractComments(source);
+                            sourceWOComments = Functions.RemoveEmptyLines(sourceWOComments);
+
+                            int linesSource, linesComment;
+                            float PercentComment;
+
+                            CountCommentsLines(source, sourceWOComments, out linesSource, out linesComment, out PercentComment);
+
+                            int MaxCodeBlock = Functions.MaxCodeBlock(sourceWOComments);
+                            int MaxNestLevel = Functions.MaxNestLevel(sourceWOComments);
+                            int ComplexityLevel = Functions.ComplexityLevel(sourceWOComments);
+
+                            string ParmINOUT = Functions.ValidateINOUTinParm(obj) ? "Error" : "";
+                            int parametersCount = ParametersCountObject(obj);
+
+                            string Candidate = "";
+                            if ((ParmINOUT == "Error") || (MaxNestLevel > 6) || (ComplexityLevel > 30) || (MaxCodeBlock > 500) || (parametersCount > 6))
+                            {
+                                Candidate = "*";
+                            }
+
+                            int ComplexityIndex = CalculateComplexityIndex(MaxCodeBlock, MaxNestLevel, ComplexityLevel, ParmINOUT);
+
+                            string folder = obj.Parent.Name;
+
+                            string codeCommented = Functions.CodeCommented(source);
+                            codeCommented = codeCommented.Replace("'", "");
+                            codeCommented = codeCommented.Replace(">", "");
+                            codeCommented = codeCommented.Replace("<", "");
+
+                            writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, obj.Module.Name, folder, ParmINOUT, parametersCount.ToString(), codeCommented, PercentComment.ToString("0"), linesComment.ToString(), linesSource.ToString(), MaxNestLevel.ToString(), MaxCodeBlock.ToString(), ComplexityLevel.ToString(), Candidate, ComplexityIndex.ToString() });
+                            ObjectsTotal += 1;
+                            ComplexityIndexTotal += ComplexityIndex;
                         }
-
-                        int ComplexityIndex = CalculateComplexityIndex(MaxCodeBlock, MaxNestLevel, ComplexityLevel, ParmINOUT);
-
-                        string folder = obj.Parent.Name;
-
-                        string codeCommented = Functions.CodeCommented(source);
-                        codeCommented = codeCommented.Replace("'", "");
-                        codeCommented = codeCommented.Replace(">", "");
-                        codeCommented = codeCommented.Replace("<", "");
-
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, obj.Module.Name, folder, ParmINOUT, parametersCount.ToString(), codeCommented, PercentComment.ToString("0"), linesComment.ToString(), linesSource.ToString(), MaxNestLevel.ToString(), MaxCodeBlock.ToString(), ComplexityLevel.ToString(), Candidate, ComplexityIndex.ToString() });
-                        ObjectsTotal += 1;
-                        ComplexityIndexTotal += ComplexityIndex;
                     }
                 }
+                writer.AddTableFooterOnly();
+                writer.AddTableFooterOnly();
+
+                int Average = ComplexityIndexTotal / ObjectsTotal;
+                writer.AddTableHeader(new string[] { "Totals Objects= ", ObjectsTotal.ToString(), " Complexity Index Sum= ", ComplexityIndexTotal.ToString(), " Complexity Index Average= " + Average.ToString() });
+
+                writer.AddTableFooterOnly();
+                writer.AddTableFooterOnly();
+                writer.AddTableFooterOnly();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+                Functions.AddLineSummary(title + ".txt", "Totals Objects= " + ObjectsTotal.ToString() + " Complexity Index Sum= " + ComplexityIndexTotal.ToString() + " Complexity Index Average= " + Average.ToString());
             }
-            writer.AddTableFooterOnly();
-            writer.AddTableFooterOnly();
-
-            int Average = ComplexityIndexTotal / ObjectsTotal;
-            writer.AddTableHeader(new string[] { "Totals Objects= ", ObjectsTotal.ToString(), " Complexity Index Sum= ", ComplexityIndexTotal.ToString(), " Complexity Index Average= " + Average.ToString() });
-
-            writer.AddTableFooterOnly();
-            writer.AddTableFooterOnly();
-            writer.AddTableFooterOnly();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-            Functions.AddLineSummary(title + ".txt", "Totals Objects= " + ObjectsTotal.ToString() + " Complexity Index Sum= " + ComplexityIndexTotal.ToString() + " Complexity Index Average= " + Average.ToString());
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static int ParametersCountObject(KBObject obj)
@@ -2265,53 +2375,61 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Variables not based in domain or attribute";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "# Variables not based in attributes or domain" });
-
-            string ErrorCode, ErrorDescription, Observation, Solution;
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            KBModel kbModel = UIServices.KB.CurrentModel;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
-            int cantVar = 0;
-            IList<KBObject> listObj = UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
-
-            foreach (KBObject obj in listObj)
+            try
             {
-               if (HasVariablesNotBasedOnAttributeOrDomain(obj, out cantVar))
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "# Variables not based in attributes or domain" });
+
+                string ErrorCode, ErrorDescription, Observation, Solution;
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                KBModel kbModel = UIServices.KB.CurrentModel;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
+                int cantVar = 0;
+                IList<KBObject> listObj = UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+
+                foreach (KBObject obj in listObj)
                 {
-                    AssignDomToVar f = new AssignDomToVar(obj);
-                    f.ShowDialog();
-                    f.Close();
+                    if (HasVariablesNotBasedOnAttributeOrDomain(obj, out cantVar))
+                    {
+                        AssignDomToVar f = new AssignDomToVar(obj);
+                        f.ShowDialog();
+                        f.Close();
+                    }
+
                 }
 
-            }
-
-            foreach (KBObject obj in listObj)
-            {
-                if (HasVariablesNotBasedOnAttributeOrDomain(obj, out cantVar))
+                foreach (KBObject obj in listObj)
                 {
-                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, cantVar.ToString() });
+                    if (HasVariablesNotBasedOnAttributeOrDomain(obj, out cantVar))
+                    {
+                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, cantVar.ToString() });
+                    }
                 }
+                writer.AddTableFooterOnly();
+                writer.AddTableFooterOnly();
+
+                writer.AddTableFooterOnly();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-            writer.AddTableFooterOnly();
-            writer.AddTableFooterOnly();
-
-            writer.AddTableFooterOnly();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static bool HasVariablesNotBasedOnAttributeOrDomain(KBObject obj, out int cantVar)
@@ -2345,47 +2463,55 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - UDP CALLABLE";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            string callers = "";
-
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Folder", "SaveDate", "Param", "Referenced with Call" });
-
-            string ErrorCode, ErrorDescription, Observation, Solution;
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            KBModel kbModel = UIServices.KB.CurrentModel;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-
-            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
-                output.AddLine("KBDoctor", obj.Name);
-                callers = ChangeUDPCallWhenNecesary(obj);
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                if (callers != "")
+                string callers = "";
+
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Folder", "SaveDate", "Param", "Referenced with Call" });
+
+                string ErrorCode, ErrorDescription, Observation, Solution;
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                KBModel kbModel = UIServices.KB.CurrentModel;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+
+                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    string Parms = Functions.ExtractRuleParm(obj);
-                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, " " + obj.Parent.Name, " " + obj.VersionDate.ToShortDateString(), Parms, callers });
+                    output.AddLine("KBDoctor", obj.Name);
+                    callers = ChangeUDPCallWhenNecesary(obj);
+
+                    if (callers != "")
+                    {
+                        string Parms = Functions.ExtractRuleParm(obj);
+                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, " " + obj.Parent.Name, " " + obj.VersionDate.ToShortDateString(), Parms, callers });
+                    }
+
                 }
+                writer.AddTableFooterOnly();
+                writer.AddTableFooterOnly();
 
+                writer.AddTableFooterOnly();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-            writer.AddTableFooterOnly();
-            writer.AddTableFooterOnly();
-
-            writer.AddTableFooterOnly();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         static string ChangeUDPCallWhenNecesary(KBObject obj)
@@ -2801,37 +2927,45 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - List Procedure that call Webpanel or Transaction";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Reference", "Description" });
-
-            foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+            try
             {
-                if ((obj is Procedure) && (obj.Name != "ListPrograms") && (!obj.Name.Contains("Dummy")))
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Reference", "Description" });
+
+                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
                 {
-                    foreach (EntityReference reference in obj.GetReferences())
+                    if ((obj is Procedure) && (obj.Name != "ListPrograms") && (!obj.Name.Contains("Dummy")))
                     {
-                        KBObject objRef = KBObject.Get(obj.Model, reference.To);
-                        if ((objRef != null) && (objRef is Transaction || objRef is WorkPanel || objRef is WebPanel))
+                        foreach (EntityReference reference in obj.GetReferences())
                         {
-                            writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, Functions.linkObject(objRef), objRef.Description });
-                            output.AddLine("KBDoctor", obj.Name + " => " + objRef.Name);
+                            KBObject objRef = KBObject.Get(obj.Model, reference.To);
+                            if ((objRef != null) && (objRef is Transaction || objRef is WorkPanel || objRef is WebPanel))
+                            {
+                                writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, Functions.linkObject(objRef), objRef.Description });
+                                output.AddLine("KBDoctor", obj.Name + " => " + objRef.Name);
+                            }
                         }
                     }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void RemoveObject(object[] parameters)
@@ -2925,77 +3059,85 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Object with variables not based on attribute/domain";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Picture", "Attribute", "Domain" });
-            string type = "";
-            string name = "";
-
-            //All useful objects are added to a collection
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            try
             {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-                Boolean SaveObj = false;
-                if (isGenerated(obj) && (/*obj is Transaction || obj is WebPanel || obj is WorkPanel ||*/ obj is Procedure))
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Picture", "Attribute", "Domain" });
+                string type = "";
+                string name = "";
+
+                //All useful objects are added to a collection
+                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    output.AddLine("KBDoctor", "Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
-                    string pic2 = (string)obj.GetPropertyValue("ATT_PICTURE");
 
 
-                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
-                    if (vp != null)
+                    Boolean SaveObj = false;
+                    if (isGenerated(obj) && (/*obj is Transaction || obj is WebPanel || obj is WorkPanel ||*/ obj is Procedure))
                     {
-                        foreach (Variable v in vp.Variables)
+                        output.AddLine("KBDoctor", "Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
+                        string pic2 = (string)obj.GetPropertyValue("ATT_PICTURE");
+
+
+                        VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                        if (vp != null)
                         {
-                            if ((!v.IsStandard))
+                            foreach (Variable v in vp.Variables)
                             {
-                                string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
-                                string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
-
-                                string picture = (string)v.GetPropertyValue("ATT_PICTURE");
-
-                                if (attname == "" && domname == "")
+                                if ((!v.IsStandard))
                                 {
+                                    string attname = (v.AttributeBasedOn == null) ? "" : v.AttributeBasedOn.Name;
+                                    string domname = (v.DomainBasedOn == null) ? "" : v.DomainBasedOn.Name;
 
-                                    if (v.Name.ToLower() == "archivo" && v.Type == eDBType.CHARACTER && v.Length == 50)
-                                        v.DomainBasedOn = Functions.DomainByName("Archivo");
+                                    string picture = (string)v.GetPropertyValue("ATT_PICTURE");
 
-                                    if (v.Name.ToLower() == "in" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
-                                        v.DomainBasedOn = Functions.DomainByName("XMLContenido");
-
-                                    if (v.Name.ToLower() == "out" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
-                                        v.DomainBasedOn = Functions.DomainByName("XMLContenido");
-
-                                    if (v.DomainBasedOn != null)
+                                    if (attname == "" && domname == "")
                                     {
-                                        string vname = v.Name.ToLower();
-                                        writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), v.Name, picture, attname, domname });
-                                        SaveObj = true;
+
+                                        if (v.Name.ToLower() == "archivo" && v.Type == eDBType.CHARACTER && v.Length == 50)
+                                            v.DomainBasedOn = Functions.DomainByName("Archivo");
+
+                                        if (v.Name.ToLower() == "in" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
+                                            v.DomainBasedOn = Functions.DomainByName("XMLContenido");
+
+                                        if (v.Name.ToLower() == "out" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
+                                            v.DomainBasedOn = Functions.DomainByName("XMLContenido");
+
+                                        if (v.DomainBasedOn != null)
+                                        {
+                                            string vname = v.Name.ToLower();
+                                            writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), v.Name, picture, attname, domname });
+                                            SaveObj = true;
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        if (SaveObj)
+                            obj.Save();
+
                     }
 
-                    if (SaveObj)
-                        obj.Save();
-
                 }
+                writer.AddFooter();
+                writer.Close();
 
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static string VariablesNotBasedAttributesOrDomain(KBObject obj)
@@ -3145,69 +3287,76 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Index with not referenced attributes";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor", title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Table", "Name", "Attribute", "Composition", "Remove Index", "Remove attribute from the index", "Remove attribute and next attributes from the index" });
-            string remove = "";
-            string remAtt = "";
-            string remAttRigth = "";
-
-            KBObjectCollection attUnreach = Unreachables("Attribute");
-            KBObjectCollection indexes = new KBObjectCollection();
-            KBObjectCollection indexatt = null;
-            foreach (KBObject obj in Artech.Genexus.Common.Objects.Index.GetAll(kbserv.CurrentModel))
+            try
             {
-                if ((((Index)obj).Source == IndexSource.User) && (((Index)obj).Table != null))
-                    indexes.Add(obj);
-            }
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            bool indexWithAtt = false;
-            string composition = "";
-            foreach (Artech.Genexus.Common.Objects.Attribute obj in attUnreach)
-            {
-                indexatt = new KBObjectCollection();
-                foreach (Index ind in indexes)
+
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Table", "Name", "Attribute", "Composition", "Remove Index", "Remove attribute from the index", "Remove attribute and next attributes from the index" });
+                string remove = "";
+                string remAtt = "";
+                string remAttRigth = "";
+
+                KBObjectCollection attUnreach = Unreachables("Attribute");
+                KBObjectCollection indexes = new KBObjectCollection();
+                KBObjectCollection indexatt = null;
+                foreach (KBObject obj in Artech.Genexus.Common.Objects.Index.GetAll(kbserv.CurrentModel))
                 {
-                    indexWithAtt = false;
-                    composition = "";
-
-                    foreach (IndexMember im in ind.IndexStructure.Members)
-                    {
-                        if (composition != "")
-                        {
-                            composition += ", ";
-                        }
-                        composition += im.Attribute.Name;
-                        if (im.Attribute.Id == obj.Id)
-                        {
-                            indexWithAtt = true;
-                        }
-                    }
-
-                    if (indexWithAtt)
-                    {
-                        indexatt.Add(ind);
-                        remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveIndexAttribute&mode=1&indId=" + ind.Id + "&attId=" + obj.Id + "\">Remove Index</a>";
-                        remAtt = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveIndexAttribute&mode=2&indId=" + ind.Id + "&attId=" + obj.Id + "\">Remove attribute from the index</a>";
-                        remAttRigth = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveIndexAttribute&mode=3&indId=" + ind.Id + "&attId=" + obj.Id + "\">Remove attribute and next attributes from the index</a>";
-                        writer.AddTableData(new string[] { ind.Table.Name, ind.Name, obj.Name, composition, remove, remAtt, remAttRigth });
-                    }
+                    if ((((Index)obj).Source == IndexSource.User) && (((Index)obj).Table != null))
+                        indexes.Add(obj);
                 }
-                indexes.RemoveAll(indexatt);
+
+                bool indexWithAtt = false;
+                string composition = "";
+                foreach (Artech.Genexus.Common.Objects.Attribute obj in attUnreach)
+                {
+                    indexatt = new KBObjectCollection();
+                    foreach (Index ind in indexes)
+                    {
+                        indexWithAtt = false;
+                        composition = "";
+
+                        foreach (IndexMember im in ind.IndexStructure.Members)
+                        {
+                            if (composition != "")
+                            {
+                                composition += ", ";
+                            }
+                            composition += im.Attribute.Name;
+                            if (im.Attribute.Id == obj.Id)
+                            {
+                                indexWithAtt = true;
+                            }
+                        }
+
+                        if (indexWithAtt)
+                        {
+                            indexatt.Add(ind);
+                            remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveIndexAttribute&mode=1&indId=" + ind.Id + "&attId=" + obj.Id + "\">Remove Index</a>";
+                            remAtt = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveIndexAttribute&mode=2&indId=" + ind.Id + "&attId=" + obj.Id + "\">Remove attribute from the index</a>";
+                            remAttRigth = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveIndexAttribute&mode=3&indId=" + ind.Id + "&attId=" + obj.Id + "\">Remove attribute and next attributes from the index</a>";
+                            writer.AddTableData(new string[] { ind.Table.Name, ind.Name, obj.Name, composition, remove, remAtt, remAttRigth });
+                        }
+                    }
+                    indexes.RemoveAll(indexatt);
+                }
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static KBObjectCollection Unreachables(string type)
@@ -3371,90 +3520,96 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string remove = "";
 
             output.StartSection("KBDoctor", title);
-
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Type", "Name", "Clean" });
-
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            try
             {
-                VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                if ((vp != null) && isGenerated(obj))
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Type", "Name", "Clean" });
+
+                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    output.AddLine("KBDoctor", "Procesing.." + obj.Name);
-                    varsNotUsed = "";
-                    foreach (Variable v in vp.Variables)
-                    {
-                        if (!v.IsStandard)
-                        {
-                            varused = false;
-                            ProcedurePart pp = obj.Parts.Get<ProcedurePart>();
-                            if (pp != null)
-                            {
-                                varused = VarUsedInText(pp.Source, varname);
-                            }
-                            if (!varused)
-                            {
-                                RulesPart rp = obj.Parts.Get<RulesPart>();
-                                if (rp != null)
-                                {
-                                    varused = VarUsedInText(rp.Source, varname);
-                                }
-                            }
-                            if (!varused)
-                            {
-                                ConditionsPart cp = obj.Parts.Get<ConditionsPart>();
-                                if (cp != null)
-                                {
-                                    varused = VarUsedInText(cp.Source, varname);
-                                }
-                            }
-                            if (!varused)
-                            {
-                                EventsPart ep = obj.Parts.Get<EventsPart>();
-                                if (ep != null)
-                                {
-                                    varused = VarUsedInText(ep.Source, varname);
-                                }
-                            }
-                            if (!varused)
-                            {
-                                WebFormPart fp = obj.Parts.Get<WebFormPart>();
-                                if (fp != null)
-                                {
-                                    varused = VarUsedInWebForm(fp, v.Id); ;
-                                }
-                            }
-                            if (!varused)
-                            {
-                                if (varsNotUsed != "")
-                                {
-                                    varsNotUsed += "&varid" + v.Id + "=";
-                                }
-                                varsNotUsed += v.Id;
-                            }
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
 
+                    if ((vp != null) && isGenerated(obj))
+                    {
+                        output.AddLine("KBDoctor", "Procesing.." + obj.Name);
+                        varsNotUsed = "";
+                        foreach (Variable v in vp.Variables)
+                        {
+                            if (!v.IsStandard)
+                            {
+                                varused = false;
+                                ProcedurePart pp = obj.Parts.Get<ProcedurePart>();
+                                if (pp != null)
+                                {
+                                    varused = VarUsedInText(pp.Source, varname);
+                                }
+                                if (!varused)
+                                {
+                                    RulesPart rp = obj.Parts.Get<RulesPart>();
+                                    if (rp != null)
+                                    {
+                                        varused = VarUsedInText(rp.Source, varname);
+                                    }
+                                }
+                                if (!varused)
+                                {
+                                    ConditionsPart cp = obj.Parts.Get<ConditionsPart>();
+                                    if (cp != null)
+                                    {
+                                        varused = VarUsedInText(cp.Source, varname);
+                                    }
+                                }
+                                if (!varused)
+                                {
+                                    EventsPart ep = obj.Parts.Get<EventsPart>();
+                                    if (ep != null)
+                                    {
+                                        varused = VarUsedInText(ep.Source, varname);
+                                    }
+                                }
+                                if (!varused)
+                                {
+                                    WebFormPart fp = obj.Parts.Get<WebFormPart>();
+                                    if (fp != null)
+                                    {
+                                        varused = VarUsedInWebForm(fp, v.Id); ;
+                                    }
+                                }
+                                if (!varused)
+                                {
+                                    if (varsNotUsed != "")
+                                    {
+                                        varsNotUsed += "&varid" + v.Id + "=";
+                                    }
+                                    varsNotUsed += v.Id;
+                                }
+
+                            }
+                        }
+                        if (varsNotUsed != "")
+                        {
+                            remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;CleanVarsNotUsed&ObjName=" + obj.Name + "&varid=" + varsNotUsed + "\">Clean vars not used</a>";
+                            writer.AddTableData(new string[] { obj.TypeDescriptor.Name, obj.Name, remove });
                         }
                     }
-                    if (varsNotUsed != "")
-                    {
-                        remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;CleanVarsNotUsed&ObjName=" + obj.Name + "&varid=" + varsNotUsed + "\">Clean vars not used</a>";
-                        writer.AddTableData(new string[] { obj.TypeDescriptor.Name, obj.Name, remove });
-                    }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 
@@ -3532,45 +3687,51 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string remove = "";
 
             output.StartSection("KBDoctor", title);
-
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Type", "Name" });
-
-            foreach (Transaction obj in Transaction.GetAll(kbserv.CurrentModel)) //kbserv.CurrentModel.Objects.GetAll<Transaction>)
+            try
             {
-                if (isGenerated(obj))
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Type", "Name" });
+
+                foreach (Transaction obj in Transaction.GetAll(kbserv.CurrentModel)) //kbserv.CurrentModel.Objects.GetAll<Transaction>)
                 {
-                    output.AddLine("KBDoctor", "Procesing.." + obj.Name);
-
-                    List<KBObjectPart> parts = new List<KBObjectPart>() { obj.Parts[typeof(WinFormPart).GUID] };
-                    parts.ForEach(part =>
+                    if (isGenerated(obj))
                     {
-                        if (part.Default.CanCalculateDefault())
+                        output.AddLine("KBDoctor", "Procesing.." + obj.Name);
+
+                        List<KBObjectPart> parts = new List<KBObjectPart>() { obj.Parts[typeof(WinFormPart).GUID] };
+                        parts.ForEach(part =>
                         {
-                            part.Default.SilentSetIsDefault(true);
-                            try
+                            if (part.Default.CanCalculateDefault())
                             {
-                                obj.Save();
+                                part.Default.SilentSetIsDefault(true);
+                                try
+                                {
+                                    obj.Save();
+                                }
+                                catch (Exception e) { output.AddErrorLine(e.Message); }
+
+                                writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj) });
                             }
-                            catch (Exception e) { output.AddErrorLine(e.Message); }
-
-                            writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj) });
                         }
+                                    );
                     }
-                                );
                 }
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void BuildObjectAndReferences()
@@ -3582,55 +3743,62 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             bool success = true;
             string title = "KBDoctor - Build Objects with references";
             output.StartSection("KBDoctor", title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Visibility", "Is Referenced by" });
-
-
-            KBObjectCollection objToBuild = new KBObjectCollection();
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            string lista = "";
-
-            // selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
-            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Visibility", "Is Referenced by" });
 
-                if (KBObjectHelper.IsSpecifiable(obj))
+
+                KBObjectCollection objToBuild = new KBObjectCollection();
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                string lista = "";
+
+                // selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
+                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    //        lista += obj.Name + ";";
-                    //output.Add(obj.QualifiedName.ObjectName.ToString() + ";");
 
-                    if (!objToBuild.Contains(obj))
+                    if (KBObjectHelper.IsSpecifiable(obj))
                     {
-                        objToBuild.Add(obj);
-                        writer.AddTableData(new string[] { obj.QualifiedName.ToString(), obj.Description, obj.IsPublic ? "Public" : "", "" });
+                        //        lista += obj.Name + ";";
+                        //output.Add(obj.QualifiedName.ObjectName.ToString() + ";");
+
+                        if (!objToBuild.Contains(obj))
+                        {
+                            objToBuild.Add(obj);
+                            writer.AddTableData(new string[] { obj.QualifiedName.ToString(), obj.Description, obj.IsPublic ? "Public" : "", "" });
+                        }
                     }
+                    ModulesHelper.AddObjectsReferenceTo(obj, objToBuild, writer);
+
                 }
-                ModulesHelper.AddObjectsReferenceTo(obj, objToBuild, writer);
+                foreach (KBObject obj2 in objToBuild)
+                { lista += obj2.Name + ";"; };
 
+
+                writer.AddTableData(new string[] { lista });
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+                GenexusUIServices.Build.BuildWithTheseOnly(objToBuild.Keys);
+
+                do
+                {
+                    Application.DoEvents();
+                } while (GenexusUIServices.Build.IsBuilding);
+
+                output.AddLine("KBDoctor", lista);
+                output.EndSection("KBDoctor", title, true);
             }
-            foreach (KBObject obj2 in objToBuild)
-            { lista += obj2.Name + ";"; };
-
-
-            writer.AddTableData(new string[] { lista });
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-            GenexusUIServices.Build.BuildWithTheseOnly(objToBuild.Keys);
-
-            do
+            catch
             {
-                Application.DoEvents();
-            } while (GenexusUIServices.Build.IsBuilding);
-
-            output.AddLine("KBDoctor", lista);
-            output.EndSection("KBDoctor", title, true);
-
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 
@@ -3645,88 +3813,95 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             bool success = true;
             string title = "KBDoctor - Build Objects with property";
             output.StartSection("KBDoctor", title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            // Procedure proc = new 
-            Artech.Genexus.Common.Objects.WebPanel nuevo = new Artech.Genexus.Common.Objects.WebPanel(kbModel);
-            string pdName = "";
-            /*
-            foreach (PropDefinition pd in nuevo.GetPropertiesDefinition())
+            try
             {
-            
-                output.AddLine("KBDoctor",pd.DisplayName);
-                pdName = pd.Name;
-                //output.AddLine("KBDoctor",pd.DefaultValue.ToString());
-            //    output.AddLine("KBDoctor",pd.ValuesResolver.GetHashCode||||||)
-            }
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            foreach (KBObject obj in kbModel.Objects.GetAll() ) 
-            {
-                if (obj.Name=="Webpanel1" )
-                       output.AddLine("KBDoctor",obj.Name);
-            }
-            */
-            output.AddLine("KBDoctor", "===== ENCRYPT URL PARAMETERS ========");
-            foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("USE_ENCRYPTION", "SITE"))
-            {
-                output.AddLine("KBDoctor", obj.Name);
-            }
-
-            output.AddLine("KBDoctor", "===== SOAP ========");
-            foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "SOAP"))
-            {
-                output.AddLine("KBDoctor", obj.Name);
-            }
-
-            output.AddLine("KBDoctor", "===== HTTP ========");
-            foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "HTTP"))
-            {
-                output.AddLine("KBDoctor", obj.Name);
-            }
-
-            //pd.GetByPropertyValue wbp in WebPanel.GetPropertiesReferences() .GetByPropertyValue)
-            /*
-           // foreach ( nuevo.GetPropertiesDefinition() )
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Visibility", "Is Referenced by" });
-
-
-            KBObjectCollection objToBuild = new KBObjectCollection();
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-
-            foreach (KBObject obj in kbModel.KB.Properties.)
-            {
-
-                if (KBObjectHelper.IsSpecifiable(obj))
+                // Procedure proc = new 
+                Artech.Genexus.Common.Objects.WebPanel nuevo = new Artech.Genexus.Common.Objects.WebPanel(kbModel);
+                string pdName = "";
+                /*
+                foreach (PropDefinition pd in nuevo.GetPropertiesDefinition())
                 {
-                    output.AddLine("KBDoctor",obj.TypeDescriptor.Name + " " + obj.Name);
-                    if (!objToBuild.Contains(obj))
-                    {
-                        objToBuild.Add(obj);
-                        writer.AddTableData(new string[] { obj.QualifiedName.ToString(), obj.Description, obj.IsPublic ? "Public" : "", "" });
-                    }
+
+                    output.AddLine("KBDoctor",pd.DisplayName);
+                    pdName = pd.Name;
+                    //output.AddLine("KBDoctor",pd.DefaultValue.ToString());
+                //    output.AddLine("KBDoctor",pd.ValuesResolver.GetHashCode||||||)
                 }
-                ModulesHelper.AddObjectsReferenceTo(obj, objToBuild, writer);
 
+                foreach (KBObject obj in kbModel.Objects.GetAll() ) 
+                {
+                    if (obj.Name=="Webpanel1" )
+                           output.AddLine("KBDoctor",obj.Name);
+                }
+                */
+                output.AddLine("KBDoctor", "===== ENCRYPT URL PARAMETERS ========");
+                foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("USE_ENCRYPTION", "SITE"))
+                {
+                    output.AddLine("KBDoctor", obj.Name);
+                }
+
+                output.AddLine("KBDoctor", "===== SOAP ========");
+                foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "SOAP"))
+                {
+                    output.AddLine("KBDoctor", obj.Name);
+                }
+
+                output.AddLine("KBDoctor", "===== HTTP ========");
+                foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "HTTP"))
+                {
+                    output.AddLine("KBDoctor", obj.Name);
+                }
+
+                //pd.GetByPropertyValue wbp in WebPanel.GetPropertiesReferences() .GetByPropertyValue)
+                /*
+               // foreach ( nuevo.GetPropertiesDefinition() )
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Visibility", "Is Referenced by" });
+
+
+                KBObjectCollection objToBuild = new KBObjectCollection();
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+
+                foreach (KBObject obj in kbModel.KB.Properties.)
+                {
+
+                    if (KBObjectHelper.IsSpecifiable(obj))
+                    {
+                        output.AddLine("KBDoctor",obj.TypeDescriptor.Name + " " + obj.Name);
+                        if (!objToBuild.Contains(obj))
+                        {
+                            objToBuild.Add(obj);
+                            writer.AddTableData(new string[] { obj.QualifiedName.ToString(), obj.Description, obj.IsPublic ? "Public" : "", "" });
+                        }
+                    }
+                    ModulesHelper.AddObjectsReferenceTo(obj, objToBuild, writer);
+
+                }
+
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+                GenexusUIServices.Build.BuildWithTheseOnly(objToBuild.Keys);
+
+                do
+                {
+                    Application.DoEvents();
+                } while (GenexusUIServices.Build.IsBuilding);
+
+                output.EndSection("KBDoctor", title, true);
+                */
             }
-
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-            GenexusUIServices.Build.BuildWithTheseOnly(objToBuild.Keys);
-
-            do
+            catch
             {
-                Application.DoEvents();
-            } while (GenexusUIServices.Build.IsBuilding);
-
-            output.EndSection("KBDoctor", title, true);
-            */
-
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void ListAPIObjects()
@@ -3736,93 +3911,101 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             Dictionary<string, KBObjectCollection> dic = new Dictionary<string, KBObjectCollection>();
 
             string title = "KBDoctor - List API Objects ";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor", title);
-
-            string sw = "", sw2 = "";
-            SortedDictionary<string, string> sw3 = new SortedDictionary<string, string>();
-            //     KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            //     writer.AddHeader(title);
-            int numObj = 0;
-
-            //writer.AddTableHeader(new string[] { "Type", "Object", "Module", "Parm" });
-
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            try
             {
-                if (obj != null && ObjectsHelper.isGenerated(obj))
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
+                string sw = "", sw2 = "";
+                SortedDictionary<string, string> sw3 = new SortedDictionary<string, string>();
+                //     KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                //     writer.AddHeader(title);
+                int numObj = 0;
+
+                //writer.AddTableHeader(new string[] { "Type", "Object", "Module", "Parm" });
+
+                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    bool tieneInterfaz = false;
-                    if (obj is DataProvider && obj.GetPropertyValue<bool>("idISWEBSERVICE"))
-                        tieneInterfaz = true;
-                    if (obj is Transaction || obj is WebPanel)
-                        tieneInterfaz = true;
-                    if (obj.TypeDescriptor.Name == "MasterPage")
-                        tieneInterfaz = false;
+                    if (obj != null && ObjectsHelper.isGenerated(obj))
 
-                    string qualifiedName = obj.QualifiedName.ToString();
-                    bool isMain = obj.GetPropertyValue<bool>("IsMain");
-                    if (obj is Procedure && isMain)
+
                     {
-                        qualifiedName = obj.QualifiedName.ModuleName + (obj.QualifiedName.ModuleName == "" ? "a" : ".a") + obj.QualifiedName.ObjectName;
-                        tieneInterfaz = true;
+                        bool tieneInterfaz = false;
+                        if (obj is DataProvider && obj.GetPropertyValue<bool>("idISWEBSERVICE"))
+                            tieneInterfaz = true;
+                        if (obj is Transaction || obj is WebPanel)
+                            tieneInterfaz = true;
+                        if (obj.TypeDescriptor.Name == "MasterPage")
+                            tieneInterfaz = false;
+
+                        string qualifiedName = obj.QualifiedName.ToString();
+                        bool isMain = obj.GetPropertyValue<bool>("IsMain");
+                        if (obj is Procedure && isMain)
+                        {
+                            qualifiedName = obj.QualifiedName.ModuleName + (obj.QualifiedName.ModuleName == "" ? "a" : ".a") + obj.QualifiedName.ObjectName;
+                            tieneInterfaz = true;
+                        }
+                        if (obj is WorkPanel && isMain)
+                            tieneInterfaz = true;
+
+                        if (obj is ExternalObject || obj is SDT)
+                            tieneInterfaz = true;
+
+
+                        //  string ruleparm = Functions.ExtractRuleParm(obj);
+                        //  ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
+                        // ruleparm = ruleparm.Replace(" ", "");
+                        string callprotocol = obj.GetPropertyValueString("CALL_PROTOCOL");
+                        if (callprotocol == "")
+                            callprotocol = "Internal";
+
+                        if (tieneInterfaz)
+                        {
+                            // if (obj is Procedure && isMain)
+
+                            //   writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, ruleparm });
+                            //sw += obj.TypeDescriptor.Name + "\t" + obj.QualifiedName + "\t" + callprotocol  + "\t"  + ruleparm + "\r\n";
+                            //      sw2 += callprotocol+ "\t" + obj.Name + "\t" + qualifiedName + "\r\n";
+                            sw3[callprotocol + "\t" + obj.Name] = qualifiedName;
+                        }
+                        numObj += 1;
+                        if ((numObj % 100) == 0)
+                            output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                     }
-                    if (obj is WorkPanel && isMain)
-                        tieneInterfaz = true;
-
-                    if (obj is ExternalObject || obj is SDT)
-                        tieneInterfaz = true;
-
-
-                    //  string ruleparm = Functions.ExtractRuleParm(obj);
-                    //  ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
-                    // ruleparm = ruleparm.Replace(" ", "");
-                    string callprotocol = obj.GetPropertyValueString("CALL_PROTOCOL");
-                    if (callprotocol == "")
-                        callprotocol = "Internal";
-
-                    if (tieneInterfaz)
-                    {
-                        // if (obj is Procedure && isMain)
-
-                        //   writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, ruleparm });
-                        //sw += obj.TypeDescriptor.Name + "\t" + obj.QualifiedName + "\t" + callprotocol  + "\t"  + ruleparm + "\r\n";
-                        //      sw2 += callprotocol+ "\t" + obj.Name + "\t" + qualifiedName + "\r\n";
-                        sw3[callprotocol + "\t" + obj.Name] = qualifiedName;
-                    }
-                    numObj += 1;
-                    if ((numObj % 100) == 0)
-                        output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                 }
+                //     writer.AddFooter();
+                //     writer.Close();
+
+                //KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+
+
+                string directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
+                string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
+
+                // string fileName = directoryArg + @"\API-" + fechahora + ".txt";
+                // System.IO.File.WriteAllText(fileName, sw);
+
+
+
+                foreach (KeyValuePair<string, string> entry in sw3)
+                {
+                    sw2 += entry.Value + "\r\n";
+                }
+
+
+                string fileName2 = directoryArg + @"\API3-" + fechahora + ".txt";
+                System.IO.File.WriteAllText(fileName2, sw2);
+                output.AddLine("KBDoctor", "URL/URI file generated in " + fileName2);
+                output.EndSection("KBDoctor", title, success);
             }
-            //     writer.AddFooter();
-            //     writer.Close();
-
-            //KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-
-
-            string directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
-            string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
-
-            // string fileName = directoryArg + @"\API-" + fechahora + ".txt";
-            // System.IO.File.WriteAllText(fileName, sw);
-
-
-
-            foreach (KeyValuePair<string, string> entry in sw3)
+            catch
             {
-                sw2 += entry.Value + "\r\n";
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-
-
-            string fileName2 = directoryArg + @"\API3-" + fechahora + ".txt";
-            System.IO.File.WriteAllText(fileName2, sw2);
-            output.AddLine("KBDoctor", "URL/URI file generated in " + fileName2);
-            output.EndSection("KBDoctor", title, success);
         }
 
         public static void ObjectsUpdatingAttributes()
@@ -3837,74 +4020,82 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             string title = "KBDoctor - Objects updating attribute";
             output.StartSection("KBDoctor", title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-
-            writer.AddTableHeader(new string[] { "Table", "Transactions", "Objects updating table", "Objects updating attribute" });
-
-            AskAttributeandTable at = new AskAttributeandTable();
-            DialogResult dr = new DialogResult();
-            dr = at.ShowDialog();
-
-            if (dr == DialogResult.OK)
+            try
             {
-                string tblName = at.tblName;
-                string attName = at.attName;
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                string trnstring = "";
-                string updatetablestring = "";
-                string updateattstring = "";
-                if (tblName != "" && attName != "")
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+
+                writer.AddTableHeader(new string[] { "Table", "Transactions", "Objects updating table", "Objects updating attribute" });
+
+                AskAttributeandTable at = new AskAttributeandTable();
+                DialogResult dr = new DialogResult();
+                dr = at.ShowDialog();
+
+                if (dr == DialogResult.OK)
                 {
-                    Table t = Table.Get(kbModel, tblName);
-                    Artech.Genexus.Common.Objects.Attribute att = Artech.Genexus.Common.Objects.Attribute.Get(kbModel, attName);
-                    if (att != null && t != null)
+                    string tblName = at.tblName;
+                    string attName = at.attName;
+
+                    string trnstring = "";
+                    string updatetablestring = "";
+                    string updateattstring = "";
+                    if (tblName != "" && attName != "")
                     {
-                        List<KBObject> updaters = API.ObjectsUpdatingTable(t, output);
-
-                        List<KBObject> updatersAtt = API.ObjectsUpdateAttribute(updaters, att, output);
-
-                        foreach (KBObject obj in updaters)
+                        Table t = Table.Get(kbModel, tblName);
+                        Artech.Genexus.Common.Objects.Attribute att = Artech.Genexus.Common.Objects.Attribute.Get(kbModel, attName);
+                        if (att != null && t != null)
                         {
-                            if (obj is Transaction)
-                            {
+                            List<KBObject> updaters = API.ObjectsUpdatingTable(t, output);
 
-                                trnstring += Functions.linkObject(obj) + " ";
-                            }
-                            else
+                            List<KBObject> updatersAtt = API.ObjectsUpdateAttribute(updaters, att, output);
+
+                            foreach (KBObject obj in updaters)
                             {
-                                updatetablestring += Functions.linkObject(obj) + " ";
+                                if (obj is Transaction)
+                                {
+
+                                    trnstring += Functions.linkObject(obj) + " ";
+                                }
+                                else
+                                {
+                                    updatetablestring += Functions.linkObject(obj) + " ";
+                                }
+                                output.AddLine("KBDoctor", obj.Name);
                             }
-                            output.AddLine("KBDoctor", obj.Name);
+
+                            foreach (KBObject obj in updatersAtt)
+                            {
+                                updateattstring += Functions.linkObject(obj) + " ";
+                                // output.AddLine("KBDoctor",obj.Name);
+                            }
+
+                            writer.AddTableData(new string[] { Functions.linkObject(t), trnstring, updatetablestring, updateattstring });
+                            writer.AddFooter();
+                            writer.Close();
+
+                            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+                            bool success = true;
+                            //output.EndSection("KBDoctor", title, success);
                         }
 
-                        foreach (KBObject obj in updatersAtt)
-                        {
-                            updateattstring += Functions.linkObject(obj) + " ";
-                            // output.AddLine("KBDoctor",obj.Name);
-                        }
-
-                        writer.AddTableData(new string[] { Functions.linkObject(t), trnstring, updatetablestring, updateattstring });
+                    }
+                    else
+                    {
+                        bool success = false;
+                        output.EndSection("KBDoctor", title, success);
                         writer.AddFooter();
                         writer.Close();
-
-                        KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-                        bool success = true;
-                        //output.EndSection("KBDoctor", title, success);
                     }
 
                 }
-                else
-                {
-                    bool success = false;
-                    output.EndSection("KBDoctor", title, success);
-                    writer.AddFooter();
-                    writer.Close();
-                }
-
+            }
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
         public static void ObjectsWithTheSameSignature()
@@ -3915,46 +4106,54 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             string title = "KBDoctor - Objects with the same signature";
             output.StartSection("KBDoctor", title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-            IEnumerable<KBObject> objects = kbserv.CurrentModel.Objects.GetAll();
-
-            HashSet<int> classes;
-            Hashtable[] Classes_types;
-
-            API.GetClassesTypesWithTheSameSignature(objects, out classes, out Classes_types);
-
-            writer.AddTableHeader(new string[] { "Class", "Object", "Datatype params" });
-
-            //Despliego en pantalla los objetos para los cuales existe otro objeto con la misma firma, de forma ordenada.
-            foreach (int i in classes)
+            try
             {
-                Hashtable table_type = Classes_types[i - 1];
-                foreach (string parameters in table_type.Keys)
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+                IEnumerable<KBObject> objects = kbserv.CurrentModel.Objects.GetAll();
+
+                HashSet<int> classes;
+                Hashtable[] Classes_types;
+
+                API.GetClassesTypesWithTheSameSignature(objects, out classes, out Classes_types);
+
+                writer.AddTableHeader(new string[] { "Class", "Object", "Datatype params" });
+
+                //Despliego en pantalla los objetos para los cuales existe otro objeto con la misma firma, de forma ordenada.
+                foreach (int i in classes)
                 {
-                    List<KBObject> objs = table_type[parameters] as List<KBObject>;
-                    if (objs.Count > 1)
+                    Hashtable table_type = Classes_types[i - 1];
+                    foreach (string parameters in table_type.Keys)
                     {
-                        foreach (KBObject obj in objs)
+                        List<KBObject> objs = table_type[parameters] as List<KBObject>;
+                        if (objs.Count > 1)
                         {
-                            writer.AddTableData(new string[] { parameters, obj.Name, Functions.ExtractRuleParm(obj) });
+                            foreach (KBObject obj in objs)
+                            {
+                                writer.AddTableData(new string[] { parameters, obj.Name, Functions.ExtractRuleParm(obj) });
+                            }
                         }
                     }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-
-            writer.AddFooter();
-            writer.Close();
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void ObjectsWithTheSameSignatureAssociated()
@@ -3965,63 +4164,71 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             string title = "KBDoctor - Objects with the same signature associated to a transaction";
             output.StartSection("KBDoctor", title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-            List<KBObject> objects = new List<KBObject>();
-            HashSet<EntityKey> guids = new HashSet<EntityKey>();
-            foreach (Transaction transaction in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
-                foreach (EntityReference refer in transaction.GetReferences())
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+                List<KBObject> objects = new List<KBObject>();
+                HashSet<EntityKey> guids = new HashSet<EntityKey>();
+                foreach (Transaction transaction in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    KBObject refto = KBObject.Get(kbserv.CurrentModel, refer.To);
-                    ICallableObject callableObject = refto as ICallableObject;
-                    if (!guids.Contains(refer.To))
+                    foreach (EntityReference refer in transaction.GetReferences())
                     {
-                        if (callableObject != null)
+                        KBObject refto = KBObject.Get(kbserv.CurrentModel, refer.To);
+                        ICallableObject callableObject = refto as ICallableObject;
+                        if (!guids.Contains(refer.To))
                         {
-                            objects.Add(refto);
-                            guids.Add(refer.To);
+                            if (callableObject != null)
+                            {
+                                objects.Add(refto);
+                                guids.Add(refer.To);
+                            }
                         }
                     }
                 }
-            }
 
-            HashSet<int> classes;
-            Hashtable[] Classes_types;
+                HashSet<int> classes;
+                Hashtable[] Classes_types;
 
-            API.GetClassesTypesWithTheSameSignature(objects, out classes, out Classes_types);
+                API.GetClassesTypesWithTheSameSignature(objects, out classes, out Classes_types);
 
-            writer.AddTableHeader(new string[] { "Class", "Object", "Datatype params" });
+                writer.AddTableHeader(new string[] { "Class", "Object", "Datatype params" });
 
-            //Despliego en pantalla los objetos para los cuales existe otro objeto con la misma firma, de forma ordenada.
-            foreach (int i in classes)
-            {
-                Hashtable table_type = Classes_types[i - 1];
-                foreach (string parameters in table_type.Keys)
+                //Despliego en pantalla los objetos para los cuales existe otro objeto con la misma firma, de forma ordenada.
+                foreach (int i in classes)
                 {
-                    List<KBObject> objs = table_type[parameters] as List<KBObject>;
-                    if (objs.Count > 1)
+                    Hashtable table_type = Classes_types[i - 1];
+                    foreach (string parameters in table_type.Keys)
                     {
-                        foreach (KBObject obj in objs)
+                        List<KBObject> objs = table_type[parameters] as List<KBObject>;
+                        if (objs.Count > 1)
                         {
-                            writer.AddTableData(new string[] { parameters, obj.Name, Functions.ExtractRuleParm(obj) });
+                            foreach (KBObject obj in objs)
+                            {
+                                writer.AddTableData(new string[] { parameters, obj.Name, Functions.ExtractRuleParm(obj) });
+                            }
                         }
                     }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-
-            writer.AddFooter();
-            writer.Close();
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static bool ThemeClassesNotUsed()
@@ -4245,57 +4452,65 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             string title = "KBDoctor - TESTEO DE PARSER ";
             output.StartSection("KBDoctor", title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-
-            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
-            ParserInfo parserInfo;
-
-            writer.AddTableHeader(new string[] { "OBJECT", "COMMAND", "TOKEN", "Id", "Row" });
-
-
-            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
-                Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
-                Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                if (source != null)
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+
+                var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+                ParserInfo parserInfo;
+
+                writer.AddTableHeader(new string[] { "OBJECT", "COMMAND", "TOKEN", "Id", "Row" });
+
+
+                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    parserInfo = new ParserInfo(source);
+                    Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                    Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
 
-
-                    var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
-                    if (parser.Validate(info, source.Source))
+                    if (source != null)
                     {
-                        Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                        parserInfo = new ParserInfo(source);
+
+
+                        var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+                        if (parser.Validate(info, source.Source))
+                        {
+                            Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                        }
+
+                        /*
+                        foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
+                        {
+                                string meaning = token_meaning[(TokensIds)token.Token] as string;
+                            if (token.Token >= 100)
+                            {
+                                writer.AddTableData(new string[] { "", meaning + "(" + token.Word + ")", "", token.Token.ToString() });
+                            }
+                            else
+                            {
+                                writer.AddTableData(new string[] { "", "", meaning + "(" + token.Word + ")", token.Token.ToString() });
+                            }
+                        }*/
                     }
-
-                    /*
-                    foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
-                    {
-                            string meaning = token_meaning[(TokensIds)token.Token] as string;
-                        if (token.Token >= 100)
-                        {
-                            writer.AddTableData(new string[] { "", meaning + "(" + token.Word + ")", "", token.Token.ToString() });
-                        }
-                        else
-                        {
-                            writer.AddTableData(new string[] { "", "", meaning + "(" + token.Word + ")", token.Token.ToString() });
-                        }
-                    }*/
                 }
+                writer.AddFooter();
+                writer.Close();
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-            writer.AddFooter();
-            writer.Close();
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
 

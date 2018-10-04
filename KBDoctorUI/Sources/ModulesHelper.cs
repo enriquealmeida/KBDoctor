@@ -45,38 +45,46 @@ namespace Concepto.Packages.KBDoctor
             bool success = true;
             string title = "KBDoctor - Mark Public Object";
             output.StartSection("KBDoctor",title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Visibility" });
-
-            MakeAllObjectPublic(kbserv, output);
-
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            try
             {
-                output.AddLine("KBDoctor","Object " + obj.Name);
-                ICallableObject callableObject = obj as ICallableObject;
-                if (((callableObject != null) || obj is ExternalObject || obj is SDT || obj is DataSelector) && (!(obj is Transaction)))
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Visibility" });
+
+                MakeAllObjectPublic(kbserv, output);
+
+                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    ObjectVisibility objVisibility = obj.GetPropertyValue<ObjectVisibility>("ObjectVisibility");
-
-                    ObjectVisibility newObjVisibility = RecoverVisibility(obj);
-
-                    if (objVisibility != newObjVisibility)
+                    output.AddLine("KBDoctor", "Object " + obj.Name);
+                    ICallableObject callableObject = obj as ICallableObject;
+                    if (((callableObject != null) || obj is ExternalObject || obj is SDT || obj is DataSelector) && (!(obj is Transaction)))
                     {
-                        obj.SetPropertyValue("ObjectVisibility", newObjVisibility);
-                        Functions.SaveObject(output, obj);
-                        string objNameLink = Functions.linkObject(obj);
-                        writer.AddTableData(new string[] { objNameLink, obj.TypeDescriptor.Name, obj.Description, newObjVisibility.ToString() });
-                        output.AddLine("KBDoctor","....Change Object " + obj.Name);
-                    }  
+                        ObjectVisibility objVisibility = obj.GetPropertyValue<ObjectVisibility>("ObjectVisibility");
+
+                        ObjectVisibility newObjVisibility = RecoverVisibility(obj);
+
+                        if (objVisibility != newObjVisibility)
+                        {
+                            obj.SetPropertyValue("ObjectVisibility", newObjVisibility);
+                            Functions.SaveObject(output, obj);
+                            string objNameLink = Functions.linkObject(obj);
+                            writer.AddTableData(new string[] { objNameLink, obj.TypeDescriptor.Name, obj.Description, newObjVisibility.ToString() });
+                            output.AddLine("KBDoctor", "....Change Object " + obj.Name);
+                        }
+                    }
                 }
+                output.AddLine("KBDoctor", "");
+                output.EndSection("KBDoctor", title, success);
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-            output.AddLine("KBDoctor","");
-            output.EndSection("KBDoctor", title, success);
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            catch
+            {
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static void MakeAllObjectPublic(IKBService kbserv, IOutputService output)
@@ -238,44 +246,51 @@ El módulo tiene objetos públicos no referenciados por externos?
             int objSinRoot = 0;
             string title = "KBDoctor - List Modules Statistics";
             output.StartSection("KBDoctor",title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Module", "Description", "Tables", "Public Tables", "Objects", "Public Obj", "Obj/Publ %", "In References" , "Out References" });
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
-            foreach (Module mdl in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Module", "Description", "Tables", "Public Tables", "Objects", "Public Obj", "Obj/Publ %", "In References", "Out References" });
 
-                    output.AddLine("KBDoctor",mdl.Name + "....");
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
+                foreach (Module mdl in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                {
+
+                    output.AddLine("KBDoctor", mdl.Name + "....");
                     string[] mdlStat = ModuleStats2(mdl);
 
-                if (mdl.Name == "Root Module")
-                {
-                    objInRoot = Int32.Parse(mdlStat[4]);
-                }
-                else
-                {
-                    if (Int32.Parse(mdlStat[2]) != 0)
-                         objSinRoot = objSinRoot + Int32.Parse(mdlStat[4]);
-                }
+                    if (mdl.Name == "Root Module")
+                    {
+                        objInRoot = Int32.Parse(mdlStat[4]);
+                    }
+                    else
+                    {
+                        if (Int32.Parse(mdlStat[2]) != 0)
+                            objSinRoot = objSinRoot + Int32.Parse(mdlStat[4]);
+                    }
                     writer.AddTableData(mdlStat);
-                
 
+
+                }
+                output.AddLine("KBDoctor", "");
+                output.EndSection("KBDoctor", title, success);
+                int ratio = (objInRoot == 0) ? 0 : (objSinRoot * 100) / objInRoot;
+                string Resumen = "Obj in Modules, Obj Root, Ratio  " + objSinRoot.ToString() + "," + objInRoot.ToString() + "," + ratio.ToString();
+
+                writer.AddTableData(new string[] { Resumen });
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                Functions.AddLineSummary("moduleStats.txt", Resumen);
             }
-            output.AddLine("KBDoctor","");
-            output.EndSection("KBDoctor", title, success);
-            int ratio = (objInRoot == 0) ? 0 : (objSinRoot * 100) / objInRoot;
-            string Resumen = "Obj in Modules, Obj Root, Ratio  " + objSinRoot.ToString() + "," + objInRoot.ToString() + "," + ratio.ToString();
-
-            writer.AddTableData(new string[] { Resumen });
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            Functions.AddLineSummary("moduleStats.txt", Resumen);
-
+            catch
+            {
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static string[] ModuleStats2(Module mdl)
@@ -371,38 +386,45 @@ El módulo tiene objetos públicos no referenciados por externos?
             int objSinRoot = 0;
             string title = "KBDoctor - Move Transaction";
             output.StartSection("KBDoctor",title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Transaction", "Description", "Table", "Most referenced in Folder" });
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-            foreach (Transaction trn in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Transaction", "Description", "Table", "Most referenced in Folder" });
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+                foreach (Transaction trn in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                {
 
 
                     foreach (TransactionLevel lvl in trn.Structure.GetLevels())
                     {
-                    Table tbl = lvl.AssociatedTable;
-                    List<string> fldlist = MostReferencedInFolder(tbl);
-                    string listatxt = "";
-                    foreach (string s in fldlist)
-                        listatxt += s + "<br>";
+                        Table tbl = lvl.AssociatedTable;
+                        List<string> fldlist = MostReferencedInFolder(tbl);
+                        string listatxt = "";
+                        foreach (string s in fldlist)
+                            listatxt += s + "<br>";
 
-                    writer.AddTableData(new string[] { Functions.linkObject(trn) , trn.Description, Functions.linkObject(tbl),  listatxt });
- 
+                        writer.AddTableData(new string[] { Functions.linkObject(trn), trn.Description, Functions.linkObject(tbl), listatxt });
+
+
+                    }
 
                 }
 
+
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-
-
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
+            catch
+            {
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 
@@ -446,33 +468,40 @@ El módulo tiene objetos públicos no referenciados por externos?
 
             string title = "KBDoctor - List Modules Errors";
             output.StartSection("KBDoctor",title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] {
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] {
                 "Module", "Warning Public Objects not referenced", "ERROR Private Objects Referenced", "ERROR  Reference private Tables", "ERROR Update outside Module", "Object to Move" });
 
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
-            foreach (Module mdl in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-            {
-                if (mdl is Module)
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
+                foreach (Module mdl in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    output.AddLine("KBDoctor",mdl.Name + "....");
-                    string[] mdlStat = ModuleStats((Module)mdl);
+                    if (mdl is Module)
+                    {
+                        output.AddLine("KBDoctor", mdl.Name + "....");
+                        string[] mdlStat = ModuleStats((Module)mdl);
 
-                    writer.AddTableData(mdlStat);
+                        writer.AddTableData(mdlStat);
+                    }
+
                 }
+                output.AddLine("KBDoctor", "");
+                output.EndSection("KBDoctor", title, success);
 
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-            output.AddLine("KBDoctor","");
-            output.EndSection("KBDoctor", title, success);
-
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
+            catch
+            {
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 
@@ -621,36 +650,43 @@ El módulo tiene objetos públicos no referenciados por externos?
             bool success = true;
             string title = "KBDoctor - Build Module";
             output.StartSection("KBDoctor",title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Description", "Visibility" });
-
-            KBObjectCollection objToBuild = new KBObjectCollection();
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
-            foreach (Module mdl in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
-                foreach (KBObject o in CreateListObjectsModuleAndReferences(kbModel, mdl, writer))
-                       objToBuild.Add(o);
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Visibility" });
+
+                KBObjectCollection objToBuild = new KBObjectCollection();
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
+                foreach (Module mdl in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                {
+                    foreach (KBObject o in CreateListObjectsModuleAndReferences(kbModel, mdl, writer))
+                        objToBuild.Add(o);
+                }
+
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+                GenexusUIServices.Build.BuildWithTheseOnly(objToBuild.Keys);
+
+                do
+                {
+                    Application.DoEvents();
+                } while (GenexusUIServices.Build.IsBuilding);
+
+                output.EndSection("KBDoctor", true);
             }
-
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-            GenexusUIServices.Build.BuildWithTheseOnly(objToBuild.Keys);
-
-            do
+            catch
             {
-                Application.DoEvents();
-            } while (GenexusUIServices.Build.IsBuilding);
-
-            output.EndSection("KBDoctor", true);
-
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 
@@ -718,93 +754,101 @@ El módulo tiene objetos públicos no referenciados por externos?
             IOutputService output = CommonServices.Output;
             output.StartSection("KBDoctor",title);
 
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] {
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] {
                 "Name", "Description", "Visibility", "Best", "Best Module", "Modules","Transaction", "Trn(NoGenerate)", "Referenced Modules" , "Referenced"  });
 
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
-            foreach (KBObject module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-            {
-                foreach (Table t in Table.GetAll(module.Model))
-
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
+                foreach (KBObject module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    if (TablesHelper.TableModule(module.Model, t) == module)
+                    foreach (Table t in Table.GetAll(module.Model))
+
                     {
-                        string objNameLink = Functions.linkObject(t);
-
-                        output.AddLine("KBDoctor","Processing... " + t.Name);
-
-                        int countAttr = 0;
-                        int countKeyAttr = 0;
-                        int widthKey = 0;
-                        int width = 0;
-                        int widthVariable = 0;
-                        int widthFixed = 0;
-
-                        ObjectVisibility objVisibility = TableVisibility(t);
-                        KBObject trnBest = GenexusBLServices.Tables.GetBestAssociatedTransaction(model, t.Key);
-                        Module mdlTrnBest = trnBest.Module;
-
-                        string trnGen = "";
-                        string trnNoGen = "";
-                        List<string> mdlList = new List<string>();
-                        foreach (Transaction trn in t.AssociatedTransactions)
-
+                        if (TablesHelper.TableModule(module.Model, t) == module)
                         {
-                            string trnstr = Functions.linkObject(trn) + "(" + ((trn.IsPublic) ? "Public" : "Private") + ") <br/> " ;
-                            if (trn.GetPropertyValue<bool>(Properties.TRN.GenerateObject)) trnGen += trnstr ;
-                            else trnNoGen += trnstr;
+                            string objNameLink = Functions.linkObject(t);
 
-                            if (!mdlList.Contains(trn.Module.Name))
+                            output.AddLine("KBDoctor", "Processing... " + t.Name);
+
+                            int countAttr = 0;
+                            int countKeyAttr = 0;
+                            int widthKey = 0;
+                            int width = 0;
+                            int widthVariable = 0;
+                            int widthFixed = 0;
+
+                            ObjectVisibility objVisibility = TableVisibility(t);
+                            KBObject trnBest = GenexusBLServices.Tables.GetBestAssociatedTransaction(model, t.Key);
+                            Module mdlTrnBest = trnBest.Module;
+
+                            string trnGen = "";
+                            string trnNoGen = "";
+                            List<string> mdlList = new List<string>();
+                            foreach (Transaction trn in t.AssociatedTransactions)
+
                             {
-                                mdlList.Add(trn.Module.Name);
+                                string trnstr = Functions.linkObject(trn) + "(" + ((trn.IsPublic) ? "Public" : "Private") + ") <br/> ";
+                                if (trn.GetPropertyValue<bool>(Properties.TRN.GenerateObject)) trnGen += trnstr;
+                                else trnNoGen += trnstr;
+
+                                if (!mdlList.Contains(trn.Module.Name))
+                                {
+                                    mdlList.Add(trn.Module.Name);
+                                }
                             }
-                        }
 
 
-                        IList<KBObject> objList = (from r in model.GetReferencesTo(t.Key, LinkType.UsedObject)
-                                                   where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                                                                                       //where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
-                                                   select model.Objects.Get(r.From)).ToList();
+                            IList<KBObject> objList = (from r in model.GetReferencesTo(t.Key, LinkType.UsedObject)
+                                                       where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                                                                                           //where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
+                                                       select model.Objects.Get(r.From)).ToList();
 
-                        IList<KBObject> objList2 = objList.Where(r => r.Module != mdlTrnBest).ToList();
+                            IList<KBObject> objList2 = objList.Where(r => r.Module != mdlTrnBest).ToList();
 
-                        string objListQNames = null;
-                        objList2.ToList().ForEach(v => objListQNames += " " + Functions.linkObject(v));
+                            string objListQNames = null;
+                            objList2.ToList().ForEach(v => objListQNames += " " + Functions.linkObject(v));
 
-                        List<string> mdlReferencedList = new List<string>();
-                        foreach (KBObject o in objList)
-                        {
-                            if (!mdlReferencedList.Contains(o.Module.Name))
+                            List<string> mdlReferencedList = new List<string>();
+                            foreach (KBObject o in objList)
                             {
-                                mdlReferencedList.Add(o.Module.Name);
+                                if (!mdlReferencedList.Contains(o.Module.Name))
+                                {
+                                    mdlReferencedList.Add(o.Module.Name);
+                                }
                             }
-                        }
 
-                        string mdlListstr = String.Join(" ", mdlList.ToArray());
-                        string mdlReferencedListstr = String.Join(" ", mdlReferencedList.ToArray());
+                            string mdlListstr = String.Join(" ", mdlList.ToArray());
+                            string mdlReferencedListstr = String.Join(" ", mdlReferencedList.ToArray());
 
-                        writer.AddTableData(new string[] {
+                            writer.AddTableData(new string[] {
                             objNameLink, t.Description,objVisibility.ToString(),trnBest.QualifiedName.ToString(),mdlTrnBest.Name,
                                  mdlListstr, trnGen, trnNoGen ,mdlReferencedListstr, objListQNames});
 
+                        }
                     }
+
                 }
 
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         internal static void ListObjectsWithTableInOtherModule()
@@ -816,54 +860,61 @@ El módulo tiene objetos públicos no referenciados por externos?
             string title = "KBDoctor - List Objects with table in other module";
             IOutputService output = CommonServices.Output;
             output.StartSection("KBDoctor",title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] {
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] {
                 "Name", "Description",  "Object Module", "Table ","Table Module"  });
 
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = true;
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
 
-            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-            {
-                string modulename = ModulesHelper.ObjectModuleName(obj);
-
-                foreach (EntityReference reference in obj.GetReferences())
-
+                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
+                    string modulename = ModulesHelper.ObjectModuleName(obj);
 
-                    KBObject objref = KBObject.Get(obj.Model, reference.To);
+                    foreach (EntityReference reference in obj.GetReferences())
 
-                    if (objref != null && objref is Table && !ObjectsHelper.isGeneratedbyPattern(obj))
                     {
 
-                        Table t = (Table)objref;
-                        string tablemodulename = TablesHelper.TableModule(t.Model, t).Name;
+                        KBObject objref = KBObject.Get(obj.Model, reference.To);
 
-                        if (tablemodulename != modulename)
+                        if (objref != null && objref is Table && !ObjectsHelper.isGeneratedbyPattern(obj))
                         {
-                            string objNameLink = Functions.linkObject(obj);
 
-                            output.AddLine("KBDoctor","Processing... " + obj.Name + " reference table " + t.Name + " Object module:" + modulename + " Table module:" + tablemodulename);
+                            Table t = (Table)objref;
+                            string tablemodulename = TablesHelper.TableModule(t.Model, t).Name;
 
-                            writer.AddTableData(new string[] {objNameLink, obj.Description,modulename,t.Name, tablemodulename});
+                            if (tablemodulename != modulename)
+                            {
+                                string objNameLink = Functions.linkObject(obj);
 
+                                output.AddLine("KBDoctor", "Processing... " + obj.Name + " reference table " + t.Name + " Object module:" + modulename + " Table module:" + tablemodulename);
+
+                                writer.AddTableData(new string[] { objNameLink, obj.Description, modulename, t.Name, tablemodulename });
+
+                            }
                         }
                     }
+
                 }
 
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         internal static void ModuleDependencies()
@@ -877,29 +928,31 @@ El módulo tiene objetos públicos no referenciados por externos?
             int objSinRoot = 0;
             string title = "KBDoctor - Module references";
             output.StartSection("KBDoctor",title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Module", "Type" , "Is referenced by"});
-
-            KBObjectCollection objRefCollection = new KBObjectCollection();
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = false;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
-            Module module2 = new Module(kbModel);
-            foreach (Module module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
-                module2 = module;
-                
-                    output.AddLine("KBDoctor","Procesing " + module.Name + "....");
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Module", "Type", "Is referenced by" });
+
+                KBObjectCollection objRefCollection = new KBObjectCollection();
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = false;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
+                Module module2 = new Module(kbModel);
+                foreach (Module module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                {
+                    module2 = module;
+
+                    output.AddLine("KBDoctor", "Procesing " + module.Name + "....");
 
                     foreach (KBObject obj in ModuleObjects(module))
                     {
                         foreach (EntityReference reference in obj.GetReferences())
                         {
                             KBObject objref = KBObject.Get(obj.Model, reference.To);
-                            if (objref != null && objref.TypeDescriptor.Name != "Attribute"  && objref.TypeDescriptor.Name != "MasterPage")
+                            if (objref != null && objref.TypeDescriptor.Name != "Attribute" && objref.TypeDescriptor.Name != "MasterPage")
                             {
                                 Module objrefModule = ((objref is Table) ? TablesHelper.TableModule(objref.Model, (Table)objref) : objref.Module);
 
@@ -914,45 +967,50 @@ El módulo tiene objetos públicos no referenciados por externos?
                                         }
                                     }
                             }
-                          
+
                         }
 
-                    
 
-                }
-
-            }
-            string listObj = "";
-            //Listo todos los objetos externos referenciados desde el modulo
-            foreach (KBObject o in objRefCollection)
-            {
-                listObj = "";
-                //Armo lista de objetos de mi modulo que referencian al objeto externo
-                foreach (EntityReference refe in o.GetReferencesTo())
-                {
-                    
-                    KBObject objref = KBObject.Get(o.Model, refe.From);
-                    if (objref !=null)
-                    {
-                        Module objrefModule = ((objref is Table) ? TablesHelper.TableModule(objref.Model, (Table)objref) : objref.Module);
-                        if (objrefModule == module2)
-                        {
-                            listObj += " " + Functions.linkObject(objref);
-                        }
 
                     }
 
                 }
-                Module oModule = ((o is Table) ? TablesHelper.TableModule(o.Model, (Table)o) : o.Module);
-                writer.AddTableData(new string[] { Functions.linkObject(o), oModule.Name, o.TypeDescriptor.Name, listObj  });
+                string listObj = "";
+                //Listo todos los objetos externos referenciados desde el modulo
+                foreach (KBObject o in objRefCollection)
+                {
+                    listObj = "";
+                    //Armo lista de objetos de mi modulo que referencian al objeto externo
+                    foreach (EntityReference refe in o.GetReferencesTo())
+                    {
+
+                        KBObject objref = KBObject.Get(o.Model, refe.From);
+                        if (objref != null)
+                        {
+                            Module objrefModule = ((objref is Table) ? TablesHelper.TableModule(objref.Model, (Table)objref) : objref.Module);
+                            if (objrefModule == module2)
+                            {
+                                listObj += " " + Functions.linkObject(objref);
+                            }
+
+                        }
+
+                    }
+                    Module oModule = ((o is Table) ? TablesHelper.TableModule(o.Model, (Table)o) : o.Module);
+                    writer.AddTableData(new string[] { Functions.linkObject(o), oModule.Name, o.TypeDescriptor.Name, listObj });
+                }
+                output.AddLine("KBDoctor", "");
+                output.EndSection("KBDoctor", title, success);
+
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-            output.AddLine("KBDoctor","");
-            output.EndSection("KBDoctor", title, success);
-
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
+            catch
+            {
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 
@@ -967,82 +1025,89 @@ El módulo tiene objetos públicos no referenciados por externos?
             int objSinRoot = 0;
             string title = "KBDoctor - Objects to divide";
             output.StartSection("KBDoctor",title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Object", "Module", "Type", "Is referenced by" });
-
-            KBObjectCollection objRefCollection = new KBObjectCollection();
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = false;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
-            Module module2 = new Module(kbModel);
-            foreach (Module module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
-                module2 = module;
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Object", "Module", "Type", "Is referenced by" });
 
-                output.AddLine("KBDoctor","Procesing " + module.Name + "....");
+                KBObjectCollection objRefCollection = new KBObjectCollection();
 
-                foreach (KBObject obj in ModuleObjects(module))
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = false;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
+                Module module2 = new Module(kbModel);
+                foreach (Module module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    foreach (EntityReference reference in obj.GetReferences())
+                    module2 = module;
+
+                    output.AddLine("KBDoctor", "Procesing " + module.Name + "....");
+
+                    foreach (KBObject obj in ModuleObjects(module))
                     {
-                        KBObject objref = KBObject.Get(obj.Model, reference.To);
-                        if (objref != null && objref.TypeDescriptor.Name != "Attribute" && objref.TypeDescriptor.Name != "MasterPage")
+                        foreach (EntityReference reference in obj.GetReferences())
+                        {
+                            KBObject objref = KBObject.Get(obj.Model, reference.To);
+                            if (objref != null && objref.TypeDescriptor.Name != "Attribute" && objref.TypeDescriptor.Name != "MasterPage")
+                            {
+                                Module objrefModule = ((objref is Table) ? TablesHelper.TableModule(objref.Model, (Table)objref) : objref.Module);
+
+                                if (objrefModule != module)
+                                    if (!(objref is Domain) && !(objref is Image) && !(objref is Theme) && !(objref is ThemeClass)
+                                        && !(objref is GeneratorCategory) && !(objref is KBCategory) && !(objref is SDT))
+                                    {
+                                        bool contain = objRefCollection.Any(p => p.Guid == objref.Guid);
+                                        if (!contain)
+                                        {
+                                            objRefCollection.Add(objref);
+                                        }
+                                    }
+                            }
+
+                        }
+
+
+
+                    }
+
+                }
+                string listObj = "";
+                //Listo todos los objetos externos referenciados desde el modulo
+                foreach (KBObject o in objRefCollection)
+                {
+                    listObj = "";
+                    //Armo lista de objetos de mi modulo que referencian al objeto externo
+                    foreach (EntityReference refe in o.GetReferencesTo())
+                    {
+
+                        KBObject objref = KBObject.Get(o.Model, refe.From);
+                        if (objref != null)
                         {
                             Module objrefModule = ((objref is Table) ? TablesHelper.TableModule(objref.Model, (Table)objref) : objref.Module);
+                            if (objrefModule == module2)
+                            {
+                                listObj += " " + Functions.linkObject(objref);
+                            }
 
-                            if (objrefModule != module)
-                                if (!(objref is Domain) && !(objref is Image) && !(objref is Theme) && !(objref is ThemeClass)
-                                    && !(objref is GeneratorCategory) && !(objref is KBCategory) && !(objref is SDT))
-                                {
-                                    bool contain = objRefCollection.Any(p => p.Guid == objref.Guid);
-                                    if (!contain)
-                                    {
-                                        objRefCollection.Add(objref);
-                                    }
-                                }
                         }
 
                     }
-
-
-
+                    Module oModule = ((o is Table) ? TablesHelper.TableModule(o.Model, (Table)o) : o.Module);
+                    writer.AddTableData(new string[] { Functions.linkObject(o), oModule.Name, o.TypeDescriptor.Name, listObj });
                 }
+                output.AddLine("KBDoctor", "");
+                output.EndSection("KBDoctor", title, success);
 
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-            string listObj = "";
-            //Listo todos los objetos externos referenciados desde el modulo
-            foreach (KBObject o in objRefCollection)
+            catch
             {
-                listObj = "";
-                //Armo lista de objetos de mi modulo que referencian al objeto externo
-                foreach (EntityReference refe in o.GetReferencesTo())
-                {
-
-                    KBObject objref = KBObject.Get(o.Model, refe.From);
-                    if (objref != null)
-                    {
-                        Module objrefModule = ((objref is Table) ? TablesHelper.TableModule(objref.Model, (Table)objref) : objref.Module);
-                        if (objrefModule == module2)
-                        {
-                            listObj += " " + Functions.linkObject(objref);
-                        }
-
-                    }
-
-                }
-                Module oModule = ((o is Table) ? TablesHelper.TableModule(o.Model, (Table)o) : o.Module);
-                writer.AddTableData(new string[] { Functions.linkObject(o), oModule.Name, o.TypeDescriptor.Name, listObj });
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-            output.AddLine("KBDoctor","");
-            output.EndSection("KBDoctor", title, success);
-
-            writer.AddFooter();
-            writer.Close();
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
 
         }
 
@@ -1081,47 +1146,54 @@ El módulo tiene objetos públicos no referenciados por externos?
             Dictionary<string, KBObjectCollection> dic = new Dictionary<string, KBObjectCollection>();
 
             string title = "KBDoctor - Recomended module";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-
-            string sw = "";
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            int numObj = 0;
-
-            writer.AddTableHeader(new string[] { "Type", "Object", "Module", "List of modules" });
-
-
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.MultipleSelection = false;
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
-            // Module module2 = new Module(kbModel);
-            foreach (Module module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            try
             {
-                foreach (KBObject obj in module.GetAllMembers()) 
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
+
+                string sw = "";
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                int numObj = 0;
+
+                writer.AddTableHeader(new string[] { "Type", "Object", "Module", "List of modules" });
+
+
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = false;
+                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
+                // Module module2 = new Module(kbModel);
+                foreach (Module module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    if (Functions.hasModule(obj))
+                    foreach (KBObject obj in module.GetAllMembers())
                     {
+                        if (Functions.hasModule(obj))
+                        {
 
-                        output.AddLine("KBDoctor",obj.Name);
-                        string moduleListString = "";
-                        foreach (Module mod in ListModulesOfReferencedTables(obj))
-                            moduleListString += mod.Name + " ";
+                            output.AddLine("KBDoctor", obj.Name);
+                            string moduleListString = "";
+                            foreach (Module mod in ListModulesOfReferencedTables(obj))
+                                moduleListString += mod.Name + " ";
 
-                        if (obj.Module.Name != moduleListString.Trim() && moduleListString.Trim() != "")
-                            writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, moduleListString });
+                            if (obj.Module.Name != moduleListString.Trim() && moduleListString.Trim() != "")
+                                writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, moduleListString });
+                        }
                     }
                 }
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
 
         }
 

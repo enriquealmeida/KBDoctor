@@ -31,67 +31,74 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             KBModel model = UIServices.KB.CurrentModel;
             string title = "KBDoctor - Tables";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
 
-           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] {
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] {
                 "Name", "Description","Module","is Public", "#Key", "Key Width", "Width Variable", "Width Fixed", "Width Total" , "Cache Level"
             });
 
-            string description;
-            foreach (Table t in Table.GetAll(kbserv.CurrentModel))
-            {
-                description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
-                string objNameLink = Functions.linkObject(t);
-
-                output.AddLine("KBDoctor","Processing... " + t.Name);
-
-                int countAttr = 0;
-                int countKeyAttr = 0;
-                int widthKey = 0;
-                int width = 0;
-                int widthVariable = 0;
-                int widthFixed = 0;
-                foreach (TableAttribute attr in t.TableStructure.Attributes)
+                string description;
+                foreach (Table t in Table.GetAll(kbserv.CurrentModel))
                 {
-                    countAttr += 1;
-                    if (attr.IsKey)
-                    {
-                        countKeyAttr += 1;
-                        widthKey += attr.Attribute.Length;
-                    }
-                    width += attr.Attribute.Length;
-                    if ((attr.Attribute.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR) || (attr.Attribute.Type == Artech.Genexus.Common.eDBType.VARCHAR))
-                    {
-                        widthVariable += attr.Attribute.Length;
-                    }
-                    else
-                    {
-                        widthFixed += attr.Attribute.Length;
-                    }
-                }
+                    description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
+                    string objNameLink = Functions.linkObject(t);
 
-                string CacheLevel = t.GetPropertyValueString("CACHE_LEVEL");
-                string isPublic = t.IsPublic ? "Yes" : "";
-                writer.AddTableData(new string[] {
+                    output.AddLine("KBDoctor", "Processing... " + t.Name);
+
+                    int countAttr = 0;
+                    int countKeyAttr = 0;
+                    int widthKey = 0;
+                    int width = 0;
+                    int widthVariable = 0;
+                    int widthFixed = 0;
+                    foreach (TableAttribute attr in t.TableStructure.Attributes)
+                    {
+                        countAttr += 1;
+                        if (attr.IsKey)
+                        {
+                            countKeyAttr += 1;
+                            widthKey += attr.Attribute.Length;
+                        }
+                        width += attr.Attribute.Length;
+                        if ((attr.Attribute.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR) || (attr.Attribute.Type == Artech.Genexus.Common.eDBType.VARCHAR))
+                        {
+                            widthVariable += attr.Attribute.Length;
+                        }
+                        else
+                        {
+                            widthFixed += attr.Attribute.Length;
+                        }
+                    }
+
+                    string CacheLevel = t.GetPropertyValueString("CACHE_LEVEL");
+                    string isPublic = t.IsPublic ? "Yes" : "";
+                    writer.AddTableData(new string[] {
                     objNameLink, t.Description, TableModule(model,t).Name, isPublic, countKeyAttr.ToString(), widthKey.ToString(), widthVariable.ToString(), widthFixed.ToString(), width.ToString() , CacheLevel
                 });
 
+                }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         internal static Table TableOfAttribute(Artech.Genexus.Common.Objects.Attribute a)
@@ -112,78 +119,92 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Tables with incomplete description";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
 
-           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] {
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] {
                 "Name", "Description"
             });
 
-            string description;
-            foreach (Table t in Table.GetAll(kbserv.CurrentModel))
-            {
-                if (t.Name == t.Description.Replace(" ", ""))
+                string description;
+                foreach (Table t in Table.GetAll(kbserv.CurrentModel))
                 {
-                    description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Name + "\">" + t.Description + "</a>";
-                    writer.AddTableData(new string[] {
+                    if (t.Name == t.Description.Replace(" ", ""))
+                    {
+                        description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Name + "\">" + t.Description + "</a>";
+                        writer.AddTableData(new string[] {
                         t.Name, description
                     });
+                    }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+
+                //UIServices.StartPage.GetToolWindow().OpenPage(outputFile, "KBDoctor");
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            //UIServices.StartPage.GetToolWindow().OpenPage(outputFile, "KBDoctor");
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void ListGroupWithoutDescription()
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Subtypes Group with incomplete description";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
 
-           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] {
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] {
                 "Name", "Description"
             });
 
 
-            foreach (Group g in Group.GetAll(kbserv.CurrentModel))
-            {
-                if (g.Name == g.Description.Replace(" ", "") || (g.Name == ""))
+                foreach (Group g in Group.GetAll(kbserv.CurrentModel))
                 {
-                    string grpLink = Functions.linkObject(g);
+                    if (g.Name == g.Description.Replace(" ", "") || (g.Name == ""))
+                    {
+                        string grpLink = Functions.linkObject(g);
 
-                    writer.AddTableData(new string[] {
+                        writer.AddTableData(new string[] {
                         grpLink, g.Description
                     });
+                    }
                 }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void AssignDescriptionToTable(object[] parameters)
@@ -224,65 +245,73 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Tables Width";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
 
-           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] {
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] {
                 "Name", "Description", "#Key", "Key Width", "Width Variable", "Width Fixed", "Width Total" , "Cache Level"
             });
 
-            string description;
-            foreach (Table t in Table.GetAll(kbserv.CurrentModel))
-            {
-                description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
-                string objNameLink = Functions.linkObject(t);
-
-                output.AddLine("KBDoctor","Processing... " + t.Name);
-
-                int countAttr = 0;
-                int countKeyAttr = 0;
-                int widthKey = 0;
-                int width = 0;
-                int widthVariable = 0;
-                int widthFixed = 0;
-                foreach (TableAttribute attr in t.TableStructure.Attributes)
+                string description;
+                foreach (Table t in Table.GetAll(kbserv.CurrentModel))
                 {
-                    countAttr += 1;
-                    if (attr.IsKey)
-                    {
-                        countKeyAttr += 1;
-                        widthKey += attr.Attribute.Length;
-                    }
-                    width += attr.Attribute.Length;
-                    if ((attr.Attribute.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR) || (attr.Attribute.Type == Artech.Genexus.Common.eDBType.VARCHAR))
-                    {
-                        widthVariable += attr.Attribute.Length;
-                    }
-                    else {
-                        widthFixed += attr.Attribute.Length;
-                    }
-                }
+                    description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
+                    string objNameLink = Functions.linkObject(t);
 
-                string CacheLevel = t.GetPropertyValueString("CACHE_LEVEL");
-                writer.AddTableData(new string[] {
+                    output.AddLine("KBDoctor", "Processing... " + t.Name);
+
+                    int countAttr = 0;
+                    int countKeyAttr = 0;
+                    int widthKey = 0;
+                    int width = 0;
+                    int widthVariable = 0;
+                    int widthFixed = 0;
+                    foreach (TableAttribute attr in t.TableStructure.Attributes)
+                    {
+                        countAttr += 1;
+                        if (attr.IsKey)
+                        {
+                            countKeyAttr += 1;
+                            widthKey += attr.Attribute.Length;
+                        }
+                        width += attr.Attribute.Length;
+                        if ((attr.Attribute.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR) || (attr.Attribute.Type == Artech.Genexus.Common.eDBType.VARCHAR))
+                        {
+                            widthVariable += attr.Attribute.Length;
+                        }
+                        else
+                        {
+                            widthFixed += attr.Attribute.Length;
+                        }
+                    }
+
+                    string CacheLevel = t.GetPropertyValueString("CACHE_LEVEL");
+                    writer.AddTableData(new string[] {
                     objNameLink, t.Description, countKeyAttr.ToString(), widthKey.ToString(), widthVariable.ToString(), widthFixed.ToString(), width.ToString() , CacheLevel
                 });
 
+                }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
 
@@ -291,45 +320,52 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Tables Transaction Relation";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-            StringCollection strCol = new StringCollection();
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+                StringCollection strCol = new StringCollection();
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
-           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] {
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] {
                 "Table", "Transactions with GenerateObject=False", " Transactions with GENERATEObject=True","Check"
             });
 
 
-            foreach (Table tbl in Table.GetAll(kbserv.CurrentModel))
-            {
-                string tblNamelink = Functions.linkObject((KBObject)tbl);
-
-                string trnGen = "";
-                string trnNoGen = "";
-                foreach (Transaction trn in tbl.AssociatedTransactions)
+                foreach (Table tbl in Table.GetAll(kbserv.CurrentModel))
                 {
-                    if (trn.GetPropertyValue<bool>(Properties.TRN.GenerateObject)) trnGen += Functions.linkObject(trn) + " ";
-                    else trnNoGen += Functions.linkObject(trn) + " ";
-                }
+                    string tblNamelink = Functions.linkObject((KBObject)tbl);
 
-                writer.AddTableData(new string[] {
+                    string trnGen = "";
+                    string trnNoGen = "";
+                    foreach (Transaction trn in tbl.AssociatedTransactions)
+                    {
+                        if (trn.GetPropertyValue<bool>(Properties.TRN.GenerateObject)) trnGen += Functions.linkObject(trn) + " ";
+                        else trnNoGen += Functions.linkObject(trn) + " ";
+                    }
+
+                    writer.AddTableData(new string[] {
 
                     tblNamelink, trnNoGen, trnGen,(trnGen!="" && trnNoGen!="")?"*":""
                 });
+                }
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void GenterateSimpleTransactionFromNotGeneratedTransaction()
@@ -377,46 +413,53 @@ namespace Concepto.Packages.KBDoctor
 
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Table - Update/Delete/Insert/Read";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            StringCollection strCol = new StringCollection();
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+                StringCollection strCol = new StringCollection();
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
 
-           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] {
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] {
                 "Table", "Update", "Delete", "Insert", "Read", "*"
             });
 
-            KBModel model = UIServices.KB.CurrentModel;
+                KBModel model = UIServices.KB.CurrentModel;
 
 
 
-            foreach (Table tbl in Table.GetAll(model))
-            {
+                foreach (Table tbl in Table.GetAll(model))
+                {
 
-                string tblNamelink = Functions.linkObject((KBObject)tbl);
+                    string tblNamelink = Functions.linkObject((KBObject)tbl);
 
-                string objUpdaters, objDeleters, objInserters, objReaders, str;
-                ObjectsReferenceTable(model, tbl, out objUpdaters, out objDeleters, out objInserters, out objReaders, out str);
+                    string objUpdaters, objDeleters, objInserters, objReaders, str;
+                    ObjectsReferenceTable(model, tbl, out objUpdaters, out objDeleters, out objInserters, out objReaders, out str);
 
 
-                writer.AddTableData(new string[] {
+                    writer.AddTableData(new string[] {
                     tblNamelink, objUpdaters, objDeleters, objInserters, objReaders, str
                 });
 
+                }
+
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         public static void ObjectsReferenceTable(KBModel model, Table tbl, out string objUpdaterspar, out string objDeleterspar, out string objInserterspar, out string objReaderspar, out string str)
@@ -490,82 +533,89 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Table - New - Not instanciated attributed";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
 
-            StringCollection strCol = new StringCollection();
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+                StringCollection strCol = new StringCollection();
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
-           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] {
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] {
                 "Table", "Insert", "Att not referenced"
             });
 
-            KBModel model = UIServices.KB.CurrentModel;
+                KBModel model = UIServices.KB.CurrentModel;
 
 
 
-            foreach (Table tbl in Table.GetAll(model))
-            {
-
-                string objInserters = "";
-                string str = "";
-                string tblNamelink = Functions.linkObject((KBObject)tbl);
-
-                KBObjectCollection attTable = new KBObjectCollection();
-
-                foreach (Artech.Genexus.Common.Objects.Attribute att in tbl.GetAttributes())
+                foreach (Table tbl in Table.GetAll(model))
                 {
-                    Formula formula = att.Formula;
-                    if (formula == null)
-                    {
-                        if (!Functions.AttIsSubtype(att)) attTable.Add(att); //solo agrego si no es formula o subtipo. 
-                    }
-                }
 
-                IList<KBObject> inserters = (from r in model.GetReferencesTo(tbl.Key, LinkType.UsedObject)
-                                             where r.ReferenceType == ReferenceType.WeakExternal
-                                             where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
-                                             select model.Objects.Get(r.From)).ToList();
+                    string objInserters = "";
+                    string str = "";
+                    string tblNamelink = Functions.linkObject((KBObject)tbl);
 
-                foreach (KBObject prc in inserters)
-                {
-                    if (prc is Procedure)
+                    KBObjectCollection attTable = new KBObjectCollection();
+
+                    foreach (Artech.Genexus.Common.Objects.Attribute att in tbl.GetAttributes())
                     {
-                        objInserters += " " + Functions.linkObject(prc);
-                        foreach (EntityReference reference in prc.GetReferences())
+                        Formula formula = att.Formula;
+                        if (formula == null)
                         {
-                            KBObject objRef = KBObject.Get(prc.Model, reference.To);
-                            if ((objRef != null) && (objRef is Artech.Genexus.Common.Objects.Attribute))
-                            {
-                                attTable.Remove(objRef);
-                            }
+                            if (!Functions.AttIsSubtype(att)) attTable.Add(att); //solo agrego si no es formula o subtipo. 
                         }
-
                     }
-                }
 
-                if (objInserters != "")
-                {
-                    attTable.ToList().ForEach(v => str += " " + Functions.linkObject(v));
-                    writer.AddTableData(new string[] {
+                    IList<KBObject> inserters = (from r in model.GetReferencesTo(tbl.Key, LinkType.UsedObject)
+                                                 where r.ReferenceType == ReferenceType.WeakExternal
+                                                 where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
+                                                 select model.Objects.Get(r.From)).ToList();
+
+                    foreach (KBObject prc in inserters)
+                    {
+                        if (prc is Procedure)
+                        {
+                            objInserters += " " + Functions.linkObject(prc);
+                            foreach (EntityReference reference in prc.GetReferences())
+                            {
+                                KBObject objRef = KBObject.Get(prc.Model, reference.To);
+                                if ((objRef != null) && (objRef is Artech.Genexus.Common.Objects.Attribute))
+                                {
+                                    attTable.Remove(objRef);
+                                }
+                            }
+
+                        }
+                    }
+
+                    if (objInserters != "")
+                    {
+                        attTable.ToList().ForEach(v => str += " " + Functions.linkObject(v));
+                        writer.AddTableData(new string[] {
                         tblNamelink, objInserters, str
                     });
-                };
+                    };
 
+                }
+
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
             }
-
-
-            writer.AddFooter();
-            writer.Close();
-
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
-
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         internal static void GenerateTrnFromTables()
@@ -717,85 +767,93 @@ namespace Concepto.Packages.KBDoctor
 
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Scripts to check/correct data";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-            KBModel model = kbserv.CurrentKB.DesignModel;
-            int ATTNAME_LEN = model.GetPropertyValue<int>("ATTNAME_LEN");
-            int TBLNAME_LEN = model.GetPropertyValue<int>("TBLNAME_LEN");
-            int OBJNAME_LEN = model.GetPropertyValue<int>("OBJNAME_LEN");
-
-
-            IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
-
-           KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-            writer.AddTableHeader(new string[] { "Check", "File" });
-
-            string Check = "Check DB Structure";
-            string Name = Functions.CleanFileName(Check);
-            string FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
-            
-            GenerateSciptCheckDBStructure(Name, FileName, ATTNAME_LEN,TBLNAME_LEN);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-            
-            Check = "Update Null Values";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
-            GenerateSciptUpdateNullValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN); ;
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-
-            Check = "Check PK Empty Values";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
-            GenerateSciptCheckPKEmptyValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-
-            Check = "Check FK Empty Values";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
-            GenerateSciptCheckFKEmptyValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-
-            Check = "Count Referential Integrity Problems";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
-            GenerateCountReferentialIntegrityProblems(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-
-            Check = "Check Referential Integrity";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
-            GenerateCheckReferentialIntegrity(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-
-            Check = "Delete Invalid Integrity Values";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
-            GenerateDeleteInvalidIntegrityValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-
-            Check = "Copy test data from databases";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
-            GenerateCopyTestData(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-            
-            /*
-            Check = "Check Referential Integrity Numeric3";
-            Name = Functions.CleanFileName(Check);
-            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
-            GenerateCheckReferentialIntegrityN3(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-            */
+                KBModel model = kbserv.CurrentKB.DesignModel;
+                int ATTNAME_LEN = model.GetPropertyValue<int>("ATTNAME_LEN");
+                int TBLNAME_LEN = model.GetPropertyValue<int>("TBLNAME_LEN");
+                int OBJNAME_LEN = model.GetPropertyValue<int>("OBJNAME_LEN");
 
 
-            writer.AddFooter();
-            writer.Close();
+                IOutputService output = CommonServices.Output;
+                output.StartSection("KBDoctor", title);
 
-            KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            bool success = true;
-            output.EndSection("KBDoctor", title, success);
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Check", "File" });
+
+                string Check = "Check DB Structure";
+                string Name = Functions.CleanFileName(Check);
+                string FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
+
+                GenerateSciptCheckDBStructure(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+
+                Check = "Update Null Values";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
+                GenerateSciptUpdateNullValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN); ;
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+
+                Check = "Check PK Empty Values";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
+                GenerateSciptCheckPKEmptyValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+
+                Check = "Check FK Empty Values";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
+                GenerateSciptCheckFKEmptyValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+
+                Check = "Count Referential Integrity Problems";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
+                GenerateCountReferentialIntegrityProblems(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+
+                Check = "Check Referential Integrity";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
+                GenerateCheckReferentialIntegrity(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+
+                Check = "Delete Invalid Integrity Values";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
+                GenerateDeleteInvalidIntegrityValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+
+                Check = "Copy test data from databases";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
+                GenerateCopyTestData(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+
+                /*
+                Check = "Check Referential Integrity Numeric3";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
+                GenerateCheckReferentialIntegrityN3(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                */
+
+
+                writer.AddFooter();
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+            }
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
         }
 
         private static void GenerateKBTableGraph(string name, string fileName)

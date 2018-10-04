@@ -33,6 +33,11 @@ namespace Concepto.Packages.KBDoctor
             output.EndSection(section, true);
         }
 
+        public static void EndSection(string section, bool success)
+        {
+            IOutputService output = NewKBDoctorOutput();
+            output.EndSection(section, success);
+        }
 
         public static void Message(string v)
         {
