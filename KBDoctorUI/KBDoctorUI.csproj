@@ -376,10 +376,10 @@
     <Message Text="Version = $(Major).$(Minor).$(Build).$(Revision)" Importance="high" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy kbdoctor*.dll  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
-xcopy KBDoctorCore.dll "%25GX_PROGRAM_DIR%25\Packages" /q /Y
-xcopy louvain*.dll  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
-xcopy IniFileParser*.dll  "%25GX_PROGRAM_DIR%25\Packages" /q /Y
+    <PostBuildEvent>xcopy kbdoctor*.dll  "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
+xcopy KBDoctorCore.dll "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
+xcopy louvain*.dll  "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
+xcopy IniFileParser*.dll  "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
 "%25GX_PROGRAM_DIR%25\genexus.exe" /install</PostBuildEvent>
   </PropertyGroup>
 </Project>
