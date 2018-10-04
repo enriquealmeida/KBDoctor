@@ -1529,7 +1529,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 {
 
                     writer.WriteStartElement("GXLocation");
-                    writer.WriteAttributeString("name", eobj.Name);
+                    string locationName = eobj.QualifiedName.ToString().Replace(".", "_");
+                    writer.WriteAttributeString("name", locationName);
                     writer.WriteStartElement("Common");
 
                     writer.WriteElementString("Host", "www.server.com");
