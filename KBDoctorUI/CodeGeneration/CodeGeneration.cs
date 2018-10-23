@@ -45,8 +45,8 @@ namespace Concepto.Packages.KBDoctor
                 KBModel kbModel = UIServices.KB.CurrentModel;
 
                 selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Table>());
-                List<Table> tablas = UIServices.SelectObjectDialog.SelectObjects(selectObjectOption) as List<Table>;
-                foreach (Table tabla in tablas)
+                //List<Table> tablas = UIServices.SelectObjectDialog.SelectObjects(selectObjectOption) as List<Table>;
+                foreach (Table tabla in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
 
 
