@@ -36,9 +36,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static bool CompareNavigations(KnowledgeBase KB, IOutputService output)
         {
-           Utility.CreateModuleNamesFile(KB);
-           Navigation.ReplaceModulesInNVGFiles(KB, output);
-           return Navigation.CompareLastNVGDirectories(KB, output);
+            Utility.CreateModuleNamesFile(KB);
+            Navigation.ReplaceModulesInNVGFiles(KB, output);
+            return Navigation.CompareLastNVGDirectories(KB, output);
         }
         //
         public static void GetClassesTypesWithTheSameSignature(IEnumerable<KBObject> objects, out HashSet<int> classes, out Hashtable[] Classes_types)
@@ -71,7 +71,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void CleanKBObjects(KnowledgeBase kb, IEnumerable<KBObject> kbojs, IOutputService output)
         {
-            CleanKB.CleanObjects(kb,kbojs,output);
+            CleanKB.CleanObjects(kb, kbojs, output);
         }
         //
         public static void RemoveObjectsNotCalled(KBModel kbmodel, IOutputService output, out List<string[]> lineswriter)
@@ -111,8 +111,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string filename = KB.UserDirectory + "\\KBDoctor.ini";
             IniData parsedData = fileIniData.ReadFile(filename);
             string SectionName = "ReviewObject";
-            
-            List<Tuple<KBObject, string>> recommended_list = new List<Tuple<KBObject, string>>(); 
+
+            List<Tuple<KBObject, string>> recommended_list = new List<Tuple<KBObject, string>>();
 
             List<KBObject> atts = new List<KBObject>();
             foreach (KBObject obj in objs)
@@ -123,59 +123,41 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if (Utility.isRunable(obj) && !Utility.IsGeneratedByPattern(obj))
                 {
 
-                    /*
-              
-                AddKeyToIni();
-                AddKeyToIni(data, SectionName, "ParamINOUT", "true", "Check if all parameters have IN: OUT: INOUT: keywords");
-                AddKeyToIni();
-                AddKeyToIni();
-                AddKeyToIni();
-
-                AddKeyToIni();
-                AddKeyToIni(data,;
-               
-                AddKeyToIni(data, SectionName, "AttributeWithoutTable", "true", "All attributes must be in table");
-                
-
-        
-                     
-                     */
-
                     //Check objects with parameteres without inout
-                    if (CheckKeyInINI(parsedData, SectionName, "ParamINOUT",  "true", "Check if all parameters have IN: OUT: INOUT: keywords",filename))
+                    if (CheckKeyInINI(parsedData, SectionName, "ParamINOUT", "true", "Check if all parameters have IN: OUT: INOUT: keywords", filename))
                         Objects.ParmWOInOut(objlist, output, ref recommendations);
 
                     //Clean variables not used
-                    if (CheckKeyInINI(parsedData, SectionName, "CleanUnusedVariables", "true", "Remove unused variables from objects",filename))
+                    if (CheckKeyInINI(parsedData, SectionName, "CleanUnusedVariables", "true", "Remove unused variables from objects", filename))
                         CleanKB.CleanKBObjectVariables(obj, output, ref recommendations);
 
                     //Check commit on exit
-                    if (CheckKeyInINI(parsedData, SectionName, "CheckCommitOnExit",  "true", "Check if property Commit on exit = YES",filename))
+                    if (CheckKeyInINI(parsedData, SectionName, "CheckCommitOnExit", "true", "Check if property Commit on exit = YES", filename))
                         Objects.CommitOnExit(objlist, output, ref recommendations);
 
                     //Is in module
-                    if (CheckKeyInINI(parsedData, SectionName, "CheckModule",  "true", "Use of modules is required",filename))
+                    if (CheckKeyInINI(parsedData, SectionName, "CheckModule", "true", "Use of modules is required", filename))
                         Objects.isInModule(objlist, output, ref recommendations);
 
                     //Fix variables not based in domains or attributes
                     bool fixvar = true;
-                    if (CheckKeyInINI(parsedData, SectionName, "FixVariables",  "false", "Fix variables definition, assinging Attribute or Domain",filename))
+                    if (CheckKeyInINI(parsedData, SectionName, "FixVariables", "false", "Fix variables definition, assinging Attribute or Domain", filename))
                         fixvar = false;
 
                     //With variables not based on attributes
-                    if (CheckKeyInINI(parsedData, SectionName, "VariablesBasedAttOrDomain",  "true", "Variables must be based on Attributes or Domains",filename))
+                    if (CheckKeyInINI(parsedData, SectionName, "VariablesBasedAttOrDomain", "true", "Variables must be based on Attributes or Domains", filename))
                         Objects.ObjectsWithVarNotBasedOnAtt(objlist, output, fixvar, ref recommendations);
 
                     //Code commented
-                    if (CheckKeyInINI(parsedData, SectionName, "CodeCommented",  "true", "Code commented is marked as error",filename))
+                    if (CheckKeyInINI(parsedData, SectionName, "CodeCommented", "true", "Code commented is marked as error", filename))
                         Objects.CodeCommented(objlist, output, ref recommendations);
 
                     //Assign types comparer
-                    if (CheckKeyInINI(parsedData, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain",filename))
-                        AssignTypesComprarer(KB, objlist);
+                    if (CheckKeyInINI(parsedData, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain", filename))
+                        AssignTypesComprarer(KB, objlist, ref recommendations);
                     //Parameter types comparer
                     if (CheckKeyInINI(parsedData, SectionName, "ParameterTypes", "true", "Check if call parameters have the correct Type or Domain", filename))
-                        ParametersTypeComparer(KB, objlist);
+                        ParametersTypeComparer(KB, objlist, ref recommendations);
                     //Empty conditional blocks
                     if (CheckKeyInINI(parsedData, SectionName, "EmptyConditionalBlocks", "true", "Checks if exists any IF/Else block without code in it", filename))
                         EmptyConditionalBlocks(KB, objlist);
@@ -188,15 +170,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     //News without when duplicate
                     if (CheckKeyInINI(parsedData, SectionName, "NewsWithoutWhenDuplicate", "true", "Check if there is any 'New' block without 'When Duplicate' clause", filename))
                         NewsWithoutWhenDuplicate(KB, objlist);
+                    if (CheckKeyInINI(parsedData, SectionName, "ProceduresCalledAsFuction", "true", "Check if the procedures are called as functions", filename))
+                        ProceduresCalledAsFunction(KB, objlist, ref recommendations);
+
 
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
 
                     bool aux;
-                    aux = CheckKeyInINI(parsedData, SectionName, "MaxNestLevel",  "7", "Maximun nesting level allowed in source",filename);
-                    aux = CheckKeyInINI(parsedData, SectionName, "MaxComplexity",  "30", "Maximun Complexity level allowed in sources", filename);
-                    aux = CheckKeyInINI(parsedData, SectionName, "MaxBlockSize",  "500", "Maximun block of code", filename);
-                    aux = CheckKeyInINI(parsedData, SectionName, "MaxParameterCount",  "6", "Maximun Number of parameters allowed in parm rule", filename);
+                    aux = CheckKeyInINI(parsedData, SectionName, "MaxNestLevel", "7", "Maximun nesting level allowed in source", filename);
+                    aux = CheckKeyInINI(parsedData, SectionName, "MaxComplexity", "30", "Maximun Complexity level allowed in sources", filename);
+                    aux = CheckKeyInINI(parsedData, SectionName, "MaxBlockSize", "500", "Maximun block of code", filename);
+                    aux = CheckKeyInINI(parsedData, SectionName, "MaxParameterCount", "6", "Maximun Number of parameters allowed in parm rule", filename);
 
                     int maxNestLevel = 7;
                     Int32.TryParse(parsedData[SectionName]["MaxNestLevel"], out maxNestLevel);
@@ -212,24 +197,23 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     Objects.CheckComplexityMetrics(objlist, output, maxNestLevel, complexityLevel, maxCodeBlock, maxParametersCount, ref recommendations);
 
-
                 }
-                if (obj is Artech.Genexus.Common.Objects.Attribute && CheckKeyInINI(parsedData,  SectionName, "AttributeBasedOnDomain",  "true", "Attributes must be based on domains", filename))
+                if (obj is Artech.Genexus.Common.Objects.Attribute && CheckKeyInINI(parsedData, SectionName, "AttributeBasedOnDomain", "true", "Attributes must be based on domains", filename))
                 {
                     atts.Add(obj);
                     //Attribute Has Domain
                     Objects.AttributeHasDomain(objlist, output, ref recommendations);
                 }
-                if (obj is SDT && CheckKeyInINI(parsedData, SectionName, "SDTBasedAttOrDomain", "true", "SDT items must be based on attributes or domains",filename))
+                if (obj is SDT && CheckKeyInINI(parsedData, SectionName, "SDTBasedAttOrDomain", "true", "SDT items must be based on attributes or domains", filename))
                 {
                     //SDTItems Has Domain
-                     Objects.SDTBasedOnAttDomain(objlist, output, ref recommendations);
+                    Objects.SDTBasedOnAttDomain(objlist, output, ref recommendations);
                 }
-                if (obj is Transaction && CheckKeyInINI(parsedData,SectionName,"AttributeBasedOnDomain","true" , "Attributes must be based on domains",filename))
+                if (obj is Transaction && CheckKeyInINI(parsedData, SectionName, "AttributeBasedOnDomain", "true", "Attributes must be based on domains", filename))
                 {
                     Objects.AttributeHasDomain(Objects.GetAttributesFromTrn((Transaction)obj), output, ref recommendations);
                 }
-                
+
                 if (recommendations != "")
                 {
                     Tuple<KBObject, string> recommend_tuple = new Tuple<KBObject, string>(obj, recommendations);
@@ -237,7 +221,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
 
             }
-            if (atts.Count > 0 && CheckKeyInINI(parsedData, SectionName, "AttributeWithoutTable",  "true", "All attributes must be in table", filename))
+            if (atts.Count > 0 && CheckKeyInINI(parsedData, SectionName, "AttributeWithoutTable", "true", "All attributes must be in table", filename))
             {
                 // Attributes without table
                 Objects.AttributeWithoutTable(atts, output);
@@ -247,10 +231,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             output.UnselectOutput(KBDOCTOR_OUTPUTID);
             output.SelectOutput("General");
             lineswriter = new List<string[]>();
-            
+
             foreach (Tuple<KBObject, string> item in recommended_list)
             {
-                string[] line = new string[] {Utility.linkObject(item.Item1),item.Item2};
+                string[] line = new string[] { Utility.linkObject(item.Item1), item.Item2 };
                 lineswriter.Add(line);
             }
 
@@ -273,7 +257,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         }
 
-        private static bool CheckKeyInINI(IniData parsedData, string SectionName,string KeyName,  string KeyValue,  string Comment, string INIfilename )
+        private static bool CheckKeyInINI(IniData parsedData, string SectionName, string KeyName, string KeyValue, string Comment, string INIfilename)
         {
             string key = SectionName + parsedData.SectionKeySeparator + KeyName;
             string value;
@@ -287,7 +271,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 parser.WriteFile(INIfilename, parsedData);
                 value = KeyValue; //
             }
-            return value.ToLower() == KeyValue; 
+            return value.ToLower() == KeyValue;
 
         }
 
@@ -322,12 +306,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 AddKeyToIni(data, SectionName, "ConstantsInCode", "true", "Check if there are hardcoded constants");
                 AddKeyToIni(data, SectionName, "ForEachsWithoutWhenNone", "true", "Check if there is any 'ForEach' block without a 'When None' clause");
                 AddKeyToIni(data, SectionName, "NewsWithoutWhenDuplicate", "true", "Check if there is any 'New' block without 'When Duplicate' clause");
+                AddKeyToIni(data, SectionName, "ProceduresCalledAsFuction", "true", "Check if the procedures are called as functions");
 
                 AddKeyToIni(data, SectionName, "MaxNestLevel", "7", "Maximun nesting level allowed in source");
                 AddKeyToIni(data, SectionName, "MaxComplexity", "30", "Maximun Complexity level allowed in sources");
                 AddKeyToIni(data, SectionName, "MaxBlockSize", "300", "Maximun block of code");
                 AddKeyToIni(data, SectionName, "MaxParameterCount", "6", "Maximun Number of parameters allowed in parm rule");
-                
+
                 //Save the file
                 parser.WriteFile(filename, data);
             }
@@ -356,31 +341,37 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return Objects.ThemeClassesNotUsed(KB, output, themeclass);
         }
 
-        public static bool AssignTypesComprarer(KnowledgeBase KB, List<KBObject> objs)
+        public static bool AssignTypesComprarer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations)
         {
             foreach (KBObject obj in objs)
             {
-                Objects.AssignTypeComparer(KB.DesignModel, obj);
+                Objects.AssignTypeComparer(KB.DesignModel, obj, ref recommendations);
             }
             return true;
         }
 
-        public static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs)
+        public static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations)
         {
-            foreach(KBObject obj in objs)
+            foreach (KBObject obj in objs)
             {
-                Objects.ParameterTypeComparer(KB.DesignModel, obj);
+                Objects.ParameterTypeComparer(KB.DesignModel, obj, ref recommendations);
             }
         }
 
         public static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs)
-        {
+        {  
             foreach (KBObject obj in objs)
             {
                 Objects.ConstantsInCode(KB.DesignModel, obj);
             }
         }
-        
+
+        public static void ReivewCommits(KnowledgeBase KB)
+        {
+            //DateTime ayer = new DateTime(2018,08,01);
+            DateTime ayer = DateTime.Today.AddDays(-1);
+            Objects.TeamDevTest(KB, "http://concepto.genexusserver.com/xev3", "local\\*******", "*******", "LuciaX", "LuciaX", ayer, DateTime.Today);
+        }
         public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs)
         {
             foreach (KBObject obj in objs)
@@ -404,6 +395,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Objects.NewsWithoutWhenDuplicate(KB.DesignModel, obj);
             }
         }
+
+        public static void ProceduresCalledAsFunction(KnowledgeBase KB, List<KBObject> objs, ref string recommendations)
+        {
+            foreach (KBObject obj in objs)
+            {
+                Objects.ProceduresCalledAsFunction(KB.DesignModel, obj, ref recommendations);
+            }
+        }
+
+
 
 #if EVO3
         public class Tuple<T1, T2>

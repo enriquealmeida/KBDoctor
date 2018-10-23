@@ -7,12 +7,13 @@ using Artech.Architecture.Language.Services;
 using Artech.Genexus.Common.CustomTypes;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common;
+using Artech.Packages.TeamDevClient.CommandLine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using GeneXus.Server.Contracts;
 
 using System.Windows.Media;
 using Artech.Common.Diagnostics;
@@ -959,7 +960,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return false;
         }
 
-        internal static void ParameterTypeComparer(KBModel model, KBObject obj)
+        internal static void ParameterTypeComparer(KBModel model, KBObject obj, ref string recommendations)
         {
             if (!isGeneratedbyPattern(obj))
             {
@@ -970,11 +971,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     RulesPart rules = obj.Parts.Get<RulesPart>();
                     if (procpart != null)
                     {
-                        ProcessCallsInSource(model,procpart, vp);
+                        ProcessCallsInSource(model,procpart, vp, ref recommendations);
                     }
                     if (rules != null)
                     {
-                        ProcessCallsInSource(model, rules, vp);
+                        ProcessCallsInSource(model, rules, vp, ref recommendations);
                     }
                 }else if(obj is WebPanel || obj is Transaction)
                 {
@@ -983,17 +984,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     RulesPart rules = obj.Parts.Get<RulesPart>();
                     if (eventspart != null)
                     {
-                        ProcessCallsInSource(model, eventspart, vp);
+                        ProcessCallsInSource(model, eventspart, vp, ref recommendations);
                     }
                     if (rules != null)
                     {
-                        ProcessCallsInSource(model, rules, vp);
+                        ProcessCallsInSource(model, rules, vp, ref recommendations);
                     }
                 } 
             }
         }
 
-        private static void ProcessCallsInSource(KBModel model, SourcePart source, VariablesPart vp)
+        private static void ProcessCallsInSource(KBModel model, SourcePart source, VariablesPart vp, ref string recommendations)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
@@ -1022,7 +1023,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 {
                                     param.Add(call.Children.First());
                                 }
-                                CheckParameterTypeFunctionNode(model, call, fn, param, source, vp);
+                                CheckParameterTypeFunctionNode(model, call, fn, param, source, vp, ref recommendations);
                             }
                             else
                             {
@@ -1032,7 +1033,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     param.Add(an);
                                 }
                                 param.Add(((AssignmentNode)call).Left);
-                                CheckParameterTypeExplicitCall(model, call, fn, param, source, vp);
+                                CheckParameterTypeExplicitCall(model, call, fn, param, source, vp, ref recommendations);
                             }
                         }
                         else if(((AssignmentNode)call).Right is ObjectMethodNode)
@@ -1049,7 +1050,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 {
                                     param.Add(call.Children.First());
                                 }
-                                CheckParameterTypeObjectMethod(model, call, omn, param, source, vp);
+                                CheckParameterTypeObjectMethod(model, call, omn, param, source, vp, ref recommendations);
                             }
                         }       
                     }
@@ -1063,7 +1064,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             {
                                 param.Add(an);
                             }
-                            CheckParameterTypeFunctionNode(model, call, fn, param, source, vp);
+                            CheckParameterTypeFunctionNode(model, call, fn, param, source, vp, ref recommendations);
                         }
                         else
                         {
@@ -1072,26 +1073,26 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             {
                                 param.Add(an);
                             }
-                            CheckParameterTypeExplicitCall(model, call, fn, param, source, vp);
+                            CheckParameterTypeExplicitCall(model, call, fn, param, source, vp, ref recommendations);
                         }
                     }
                 }
             }
         }
 
-        private static void CheckParameterTypeExplicitCall(KBModel model, AbstractNode call, FunctionNode fn, List<AbstractNode> parms, KBObjectPart part, VariablesPart vp)
+        private static void CheckParameterTypeExplicitCall(KBModel model, AbstractNode call, FunctionNode fn, List<AbstractNode> parms, KBObjectPart part, VariablesPart vp, ref string recommendations)
         {
             if (fn.Element != null)
             {
                 KBObject obj = (KBObject)fn.Element.Name.Tag;
                 if (obj != null)
                 {
-                    CheckObjectCallsParameters(model, call, parms, obj, part, vp);
+                    CheckObjectCallsParameters(model, call, parms, obj, part, vp, ref recommendations);
                 }
             }
         }
 
-        private static void CheckParameterTypeFunctionNode(KBModel model, AbstractNode call, FunctionNode fn, List<AbstractNode> parms, KBObjectPart part, VariablesPart vp)
+        private static void CheckParameterTypeFunctionNode(KBModel model, AbstractNode call, FunctionNode fn, List<AbstractNode> parms, KBObjectPart part, VariablesPart vp, ref string recommendations)
         {
             if (fn.Children.First() is AttributeNameNode)
             {
@@ -1101,13 +1102,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     KBObject obj = (KBObject)ann.Element.Tag;
                     if (obj != null)
                     {
-                        CheckObjectCallsParameters(model, call, parms, obj, part, vp);
+                        CheckObjectCallsParameters(model, call, parms, obj, part, vp, ref recommendations);
                     }
                 }
             }
         }
 
-        private static void CheckParameterTypeObjectMethod(KBModel model, AbstractNode call, ObjectMethodNode omn, List<AbstractNode> parms, KBObjectPart part, VariablesPart vp)
+        private static void CheckParameterTypeObjectMethod(KBModel model, AbstractNode call, ObjectMethodNode omn, List<AbstractNode> parms, KBObjectPart part, VariablesPart vp, ref string recommendations)
         {
             if (omn.Target is AttributeNameNode)
             {
@@ -1119,14 +1120,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         KBObject obj = (KBObject)ann.Element.Tag;
                         if (obj != null)
                         {
-                            CheckObjectCallsParameters(model, call, parms, obj, part, vp);
+                            CheckObjectCallsParameters(model, call, parms, obj, part, vp, ref recommendations);
                         }
                     }
                 }
             }
         }
 
-        private static void CheckObjectCallsParameters(KBModel model, AbstractNode call, List<AbstractNode> parms, KBObject obj, KBObjectPart part, VariablesPart vp)
+        private static void CheckObjectCallsParameters(KBModel model, AbstractNode call, List<AbstractNode> parms, KBObject obj, KBObjectPart part, VariablesPart vp, ref string recommendations)
         {
             int cnt = parms.Count;
             List<Tuple<string, string>> types_accessors = Utility.GetParametersFormatedType(obj);
@@ -1151,7 +1152,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 if(call_type_domain.Item3 == 1) //String 
                                 {
                                     string extra_text = " -- Parameter: (" + parm.Text + ") ";
-                                    CheckAssignTypesStringConstant(call, parm_types_acc.Item1, part, int.Parse(call_type_domain.Item2), extra_text);
+                                    CheckAssignTypesStringConstant(call, parm_types_acc.Item1, part, int.Parse(call_type_domain.Item2), extra_text, ref recommendations);
                                 }
                                 if(call_type_domain.Item3 == 2) //Numeric
                                 {
@@ -1159,7 +1160,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     string[] definitionR = SplitDecimals(call_type_domain.Item2);
                                     string lengthFormatTypeL = getLengthFromFormattedType(parm_types_acc.Item1);
                                     string[] definitionL = SplitDecimals(lengthFormatTypeL);
-                                    CheckAssignTypesNumericConstant(call, parm_types_acc.Item1, part, definitionR, definitionL, extra_text);
+                                    CheckAssignTypesNumericConstant(call, parm_types_acc.Item1, part, definitionR, definitionL, extra_text, ref recommendations);
                                 }
                             }
                             else
@@ -1167,18 +1168,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 if (parm_domain_acc.Item2 == "PARM_IN")
                                 {
                                     string extra_text = " -- Parameter (IN): (" + parm.Text + ") ";
-                                    CompareTypes(call, parm_types_acc.Item1, parm_domain_acc.Item1, call_type_domain.Item2, call_type_domain.Item1, vp.KBObject.Name, part, extra_text);
+                                    CompareTypes(call, parm_types_acc.Item1, parm_domain_acc.Item1, call_type_domain.Item2, call_type_domain.Item1, vp.KBObject.Name, part, extra_text, ref recommendations);
                                 }
                                 if (parm_domain_acc.Item2 == "PARM_OUT")
                                 {
                                     string extra_text = " -- Parameter (OUT): (" + parm.Text + ") ";
-                                    CompareTypes(call, call_type_domain.Item2, call_type_domain.Item1, parm_types_acc.Item1, parm_domain_acc.Item1, vp.KBObject.Name, part, extra_text);
+                                    CompareTypes(call, call_type_domain.Item2, call_type_domain.Item1, parm_types_acc.Item1, parm_domain_acc.Item1, vp.KBObject.Name, part, extra_text, ref recommendations);
                                 }
                                 if (parm_domain_acc.Item2 == "PARM_INOUT")
                                 {
                                     string extra_text = " -- Parameter (INOUT): (" + parm.Text + ") ";
-                                    CompareTypes(call, call_type_domain.Item2, call_type_domain.Item1, parm_types_acc.Item1, parm_domain_acc.Item1, vp.KBObject.Name, part, extra_text);
-                                    CompareTypes(call, parm_types_acc.Item1, parm_domain_acc.Item1, call_type_domain.Item2, call_type_domain.Item1, vp.KBObject.Name, part, extra_text);
+                                    CompareTypes(call, call_type_domain.Item2, call_type_domain.Item1, parm_types_acc.Item1, parm_domain_acc.Item1, vp.KBObject.Name, part, extra_text, ref recommendations);
+                                    CompareTypes(call, parm_types_acc.Item1, parm_domain_acc.Item1, call_type_domain.Item2, call_type_domain.Item1, vp.KBObject.Name, part, extra_text, ref recommendations);
                                 }
                             }
                             
@@ -1719,7 +1720,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
-        internal static void AssignTypeComparer(KBModel model, KBObject obj)
+        internal static void AssignTypeComparer(KBModel model, KBObject obj, ref string recommendations)
         {
             if (!isGeneratedbyPattern(obj))
             {
@@ -1729,9 +1730,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     RulesPart rules = obj.Parts.Get<RulesPart>();
                     if (procpart != null)
-                        ProccessAssignmentsInSource(model, procpart, vp, obj.Name);
+                        ProccessAssignmentsInSource(model, procpart, vp, obj.Name, ref recommendations);
                     if (rules != null)
-                        ProccessAssignmentsInSource(model, rules, vp, obj.Name);
+                        ProccessAssignmentsInSource(model, rules, vp, obj.Name, ref recommendations);
                 }
                 else
                 {
@@ -1741,9 +1742,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         VariablesPart vp = obj.Parts.Get<VariablesPart>();
                         RulesPart rules = obj.Parts.Get<RulesPart>();
                         if (eventspart != null)
-                            ProccessAssignmentsInSource(model, eventspart, vp, obj.Name);
+                            ProccessAssignmentsInSource(model, eventspart, vp, obj.Name, ref recommendations);
                         if (rules != null)
-                            ProccessAssignmentsInSource(model, rules, vp, obj.Name);
+                            ProccessAssignmentsInSource(model, rules, vp, obj.Name, ref recommendations);
                     }
                 }
             }
@@ -1773,7 +1774,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static void ProccessAssignmentsInSource(KBModel model, SourcePart source, VariablesPart vp, string objname)
+        private static void ProccessAssignmentsInSource(KBModel model, SourcePart source, VariablesPart vp, string objname, ref string recommendations)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
@@ -1796,7 +1797,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             string formatType = Utility.FormattedTypeVariable(varL);
                             Domain domL = varL.DomainBasedOn;
-                            CompareAssignTypes(model, vp, assign, formatType, domL, objname, source);
+                            CompareAssignTypes(model, vp, assign, formatType, domL, objname, source, ref recommendations);
                         }
                     }
                     if (assign.Left is AttributeNameNode)
@@ -1808,19 +1809,19 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             string formatType = Utility.FormattedTypeAttribute(att);
                             Domain domL = att.DomainBasedOn;
-                            CompareAssignTypes(model, vp, assign, formatType, domL, objname, source);
+                            CompareAssignTypes(model, vp, assign, formatType, domL, objname, source, ref recommendations);
                         }
                     }
                     if (assign.Left is ObjectPropertyNode)
                     {
                         ObjectPropertyNode op = (ObjectPropertyNode)assign.Left;
-                        CompareAssignTypesSDT(model, source, vp, objname, assign, op);
+                        CompareAssignTypesSDT(model, source, vp, objname, assign, op, ref recommendations);
                     }
                 }
             }
         }
 
-        private static void CompareAssignTypesSDT(KBModel model, SourcePart procpart, VariablesPart vp, string objname, AssignmentNode assign, ObjectPropertyNode op)
+        private static void CompareAssignTypesSDT(KBModel model, SourcePart procpart, VariablesPart vp, string objname, AssignmentNode assign, ObjectPropertyNode op, ref string recommendations)
         {
             AttributeTree.Dependency.Types type;
             string ChildText = op.Children.Skip(1).First().Text;
@@ -1845,13 +1846,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             formatTypeL = Utility.FormattedTypeDomain(domL);
                         else
                             formatTypeL = Utility.ReturnFormattedType(sdtitem.Type, sdtitem.Length, sdtitem.Decimals, sdtitem.Signed);
-                        CompareAssignTypes(model, vp, assign, formatTypeL, domL, objname, procpart);
+                        CompareAssignTypes(model, vp, assign, formatTypeL, domL, objname, procpart, ref recommendations);
                     }
                 }
             }
         }
 
-        private static void CompareAssignTypes(KBModel model, VariablesPart vp, AssignmentNode assign, string formatTypeL, Domain domL, string objname, KBObjectPart part)
+        private static void CompareAssignTypes(KBModel model, VariablesPart vp, AssignmentNode assign, string formatTypeL, Domain domL, string objname, KBObjectPart part, ref string recommendations)
         {
             if (assign.Right is VariableNameNode)
             {
@@ -1859,7 +1860,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Variable varR = vp.GetVariable(vnr.VarName);
                 string formatTypeR = Utility.FormattedTypeVariable(varR);
                 Domain domR = varR.DomainBasedOn;
-                CompareTypes(assign, formatTypeL, domL, formatTypeR, domR, objname, part);
+                CompareTypes(assign, formatTypeL, domL, formatTypeR, domR, objname, part, ref recommendations);
 
             }
             if (assign.Right is AttributeNameNode)
@@ -1868,12 +1869,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if((assign.Right.Text.ToLower() != "true" && assign.Right.Text.ToLower() != "false") && formatTypeL.ToLower().Contains("boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
-                    CheckAssignTypesFromAttribute(assign, formatTypeL, domL, objname, part, att);
+                    CheckAssignTypesFromAttribute(assign, formatTypeL, domL, objname, part, att, ref recommendations);
                 }
                 if(!formatTypeL.ToLower().Contains("boolean"))
                 {
                     Artech.Genexus.Common.Objects.Attribute att = anR.Attribute;
-                    CheckAssignTypesFromAttribute(assign, formatTypeL, domL, objname, part, att);
+                    CheckAssignTypesFromAttribute(assign, formatTypeL, domL, objname, part, att, ref recommendations);
                 }
             }
             if (assign.Right is FunctionNode)
@@ -1883,7 +1884,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     KBObject proc = (KBObject)(((FunctionNode)assign.Right).Element.Name.Tag);
                     if(proc != null)
-                        CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, proc);
+                        CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, proc, ref recommendations);
                     else
                     {
                         if(fn.FunctionName.ToLower() == "udp")
@@ -1899,7 +1900,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     if (splits.Length > 1)
                                     {
                                         KBObject obj = Utility.GetObjectByNameModule(model, methodname, splits[splits.Length - 2]);
-                                        CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, obj);
+                                        CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, obj, ref recommendations);
                                     }
                                 }
                             }
@@ -1907,7 +1908,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             {
                                 AttributeNameNode ann = (AttributeNameNode)fn.Children.First();
                                 KBObject obj = (KBObject)ann.Element.Tag;
-                                CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, obj);
+                                CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, obj, ref recommendations);
                             }
                         }
                     }
@@ -1930,7 +1931,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 if (splits.Length > 1)
                                 {
                                     KBObject obj = Utility.GetObjectByNameModule(model, objectname, splits[splits.Length - 2]);
-                                    CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, obj);
+                                    CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, obj, ref recommendations);
                                 }
                             }
                         }
@@ -1938,7 +1939,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             AttributeNameNode ann = (AttributeNameNode)omn.Children.First();
                             KBObject obj = (KBObject)ann.Element.Tag;
-                            CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, obj);
+                            CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, obj, ref recommendations);
                         }
                     }
                     else
@@ -1948,7 +1949,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (splits.Length > 1)
                         {
                             KBObject obj = Utility.GetObjectByNameModule(model, methodname, splits[splits.Length - 2]);
-                            CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, obj);
+                            CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, obj, ref recommendations);
                         }
                     }
                 }
@@ -1958,7 +1959,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 StringConstantNode scn = (StringConstantNode)assign.Right;
                 string text = scn.Text;
                 int textlength = text.Length - 2;   //Chequeo logitud ignorando las 2 comillas
-                CheckAssignTypesStringConstant(assign, formatTypeL, part, textlength, "");
+                CheckAssignTypesStringConstant(assign, formatTypeL, part, textlength, "", ref recommendations);
             }
             if (assign.Right is NumberNode)
             {
@@ -1969,7 +1970,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     string[] definitionR = SplitDecimals(text);
                     string lengthFormatTypeL = getLengthFromFormattedType(formatTypeL);
                     string[] definitionL = SplitDecimals(lengthFormatTypeL);
-                    CheckAssignTypesNumericConstant(assign, formatTypeL, part, definitionR, definitionL, "");
+                    CheckAssignTypesNumericConstant(assign, formatTypeL, part, definitionR, definitionL, "", ref recommendations);
                 }
                 else
                 {
@@ -1978,41 +1979,41 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if(text.Trim() != "0" && text.Trim() != "1")
                     {
                         string msgOutput = " Number greater than 1 assigned to a boolean";
-                        OutputMsgAssignComparer(assign, part, msgOutput);
+                        OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
                     }
                 }
             }
         }
 
-        private static void CheckAssignTypesFromAttribute(AssignmentNode assign, string formatTypeL, Domain domL, string objname, KBObjectPart part, Artech.Genexus.Common.Objects.Attribute att)
+        private static void CheckAssignTypesFromAttribute(AssignmentNode assign, string formatTypeL, Domain domL, string objname, KBObjectPart part, Artech.Genexus.Common.Objects.Attribute att, ref string recommendations)
         {
             if (att != null)
             {
                 string formatTypeR = Utility.FormattedTypeAttribute(att);
                 Domain domR = att.DomainBasedOn;
-                CompareTypes(assign, formatTypeL, domL, formatTypeR, domR, objname, part);
+                CompareTypes(assign, formatTypeL, domL, formatTypeR, domR, objname, part, ref recommendations);
             }
         }
 
-        private static void CheckAssignTypesFromObject(AssignmentNode assign, string formatTypeL, Domain domL, string objname, KBObjectPart part, KBObject obj)
+        private static void CheckAssignTypesFromObject(AssignmentNode assign, string formatTypeL, Domain domL, string objname, KBObjectPart part, KBObject obj, ref string recommendations)
         {
             string formatTypeR = Utility.GetOutputFormatedType(obj);
             Domain domR = Utility.GetOutputDomains(obj);
             if (formatTypeR != "")
-                CompareTypes(assign, formatTypeL, domL, formatTypeR, domR, objname, part);
+                CompareTypes(assign, formatTypeL, domL, formatTypeR, domR, objname, part, ref recommendations);
         }
 
-        private static void CheckAssignTypesStringConstant(AbstractNode an, string formatTypeL, KBObjectPart part, int textlength, string extra_text)
+        private static void CheckAssignTypesStringConstant(AbstractNode an, string formatTypeL, KBObjectPart part, int textlength, string extra_text, ref string recommendations)
         {
             if (textlength > int.Parse(getLengthFromFormattedType(formatTypeL)))
             {
                 string msgOutput = " Text assigned is too long (" + textlength.ToString() + ") for " + formatTypeL;
                 msgOutput = extra_text + msgOutput;
-                OutputMsgAssignComparer(an, part, msgOutput);
+                OutputMsgAssignComparer(an, part, msgOutput, ref recommendations);
             }
         }
 
-        private static void CheckAssignTypesNumericConstant(AbstractNode assign, string formatTypeL, KBObjectPart part, string[] definitionR, string[] definitionL, string extra_text)
+        private static void CheckAssignTypesNumericConstant(AbstractNode assign, string formatTypeL, KBObjectPart part, string[] definitionR, string[] definitionL, string extra_text, ref string recommendations)
         {
             bool hasLength = false;
             if (definitionL[1] != "0")                                                                   //Chequeo de longitud (wiki genexus): If it is defined as numeric you must consider that the whole length includes the decimal places, the decimal point and the sign.
@@ -2026,24 +2027,24 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 string msgOutput = " Number assigned is too long (" + formatTypeL + ")";
                 msgOutput = extra_text + msgOutput;
-                OutputMsgAssignComparer(assign, part, msgOutput);
+                OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
             }
 
             if (hasLength && int.Parse(definitionR[1]) != 0 && int.Parse(definitionL[1]) < definitionR[1].Length) //Chequeo de decimales
             {
                 string msgOutput = " Number assigned decimals are too long (" + formatTypeL + ")";
-                OutputMsgAssignComparer(assign, part, msgOutput);
+                OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
             }
         }
 
-        private static void CompareTypes(AssignmentNode assign, string formatTypeL, Domain domL, string formatTypeR, Domain domR, string objname, KBObjectPart part)
+        private static void CompareTypes(AssignmentNode assign, string formatTypeL, Domain domL, string formatTypeR, Domain domR, string objname, KBObjectPart part, ref string recommendations)
         {
             if (formatTypeL.ToLower().Contains("char") && formatTypeR.ToLower().Contains("char"))
             {
                 string lengthPicL = getLengthFromFormattedType(formatTypeL);
                 string lengthPicR = getLengthFromFormattedType(formatTypeR);
-                CheckAssignTypesLengthString(assign, formatTypeL, formatTypeR, part, lengthPicL, lengthPicR);
-                CheckAssignTypesDomains(assign, domL, domR, objname, part);
+                CheckAssignTypesLengthString(assign, formatTypeL, formatTypeR, part, lengthPicL, lengthPicR, ref recommendations);
+                CheckAssignTypesDomains(assign, domL, domR, objname, part, ref recommendations);
             }
             else if (formatTypeL.ToLower().Contains("numeric") && formatTypeR.ToLower().Contains("numeric"))
             {
@@ -2051,8 +2052,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string lengthPicR = getLengthFromFormattedType(formatTypeR);
                 string[] splitsL = SplitDecimals(lengthPicL);
                 string[] splitsR = SplitDecimals(lengthPicR);
-                CheckAssignTypesLengthNumeric(assign, formatTypeL, formatTypeR, part, splitsL, splitsR, "");
-                CheckAssignTypesDomains(assign, domL, domR, objname, part);
+                CheckAssignTypesLengthNumeric(assign, formatTypeL, formatTypeR, part, splitsL, splitsR, "", ref recommendations);
+                CheckAssignTypesDomains(assign, domL, domR, objname, part, ref recommendations);
 
             }
             else
@@ -2062,20 +2063,20 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (formatTypeR != formatTypeL)
                     {
                         string msgOutput = " " + formatTypeL + "<>" + formatTypeR;
-                        OutputMsgAssignComparer(assign, part, msgOutput);
+                        OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
                     }
                 }
             }
         }
 
-        private static void CompareTypes(AbstractNode an, string formatTypeL, Domain domL, string formatTypeR, Domain domR, string objname, KBObjectPart part, string extra_text)
+        private static void CompareTypes(AbstractNode an, string formatTypeL, Domain domL, string formatTypeR, Domain domR, string objname, KBObjectPart part, string extra_text, ref string recommendations)
         {
             if (formatTypeL.ToLower().Contains("char") && formatTypeR.ToLower().Contains("char"))
             {
                 string lengthPicL = getLengthFromFormattedType(formatTypeL);
                 string lengthPicR = getLengthFromFormattedType(formatTypeR);
-                CheckAssignTypesLengthString(an, formatTypeL, formatTypeR, part, lengthPicL, lengthPicR, extra_text);
-                CheckParametersTypesDomains(an, domL, domR, objname, part, extra_text);
+                CheckAssignTypesLengthString(an, formatTypeL, formatTypeR, part, lengthPicL, lengthPicR, extra_text, ref recommendations);
+                CheckParametersTypesDomains(an, domL, domR, objname, part, extra_text, ref recommendations);
             }
             else if (formatTypeL.ToLower().Contains("numeric") && formatTypeR.ToLower().Contains("numeric"))
             {
@@ -2083,8 +2084,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string lengthPicR = getLengthFromFormattedType(formatTypeR);
                 string[] splitsL = SplitDecimals(lengthPicL);
                 string[] splitsR = SplitDecimals(lengthPicR);
-                CheckAssignTypesLengthNumeric(an, formatTypeL, formatTypeR, part, splitsL, splitsR, extra_text);
-                CheckParametersTypesDomains(an, domL, domR, objname, part, extra_text);
+                CheckAssignTypesLengthNumeric(an, formatTypeL, formatTypeR, part, splitsL, splitsR, extra_text, ref recommendations);
+                CheckParametersTypesDomains(an, domL, domR, objname, part, extra_text, ref recommendations);
             }
             else
             {
@@ -2094,48 +2095,48 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     {
                         string msgOutput = " " + formatTypeL + "<>" + formatTypeR;
                         msgOutput = extra_text + msgOutput;
-                        OutputMsgAssignComparer(an, part, msgOutput);
+                        OutputMsgAssignComparer(an, part, msgOutput, ref recommendations);
                     }
                 }
             }
         }
 
-        private static void CheckAssignTypesLengthString(AssignmentNode assign, string formatTypeL, string formatTypeR, KBObjectPart part, string lengthPicL, string lengthPicR)
+        private static void CheckAssignTypesLengthString(AssignmentNode assign, string formatTypeL, string formatTypeR, KBObjectPart part, string lengthPicL, string lengthPicR, ref string recommendations)
         {
             if (int.Parse(lengthPicL) < int.Parse(lengthPicR))
             {
                 string msgOutput = " String assigned is too long " + formatTypeL + "<" + formatTypeR;
-                OutputMsgAssignComparer(assign, part, msgOutput);
+                OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
             }
         }
 
-        private static void CheckAssignTypesLengthString(AbstractNode an, string formatTypeL, string formatTypeR, KBObjectPart part, string lengthPicL, string lengthPicR, string extra_text)
+        private static void CheckAssignTypesLengthString(AbstractNode an, string formatTypeL, string formatTypeR, KBObjectPart part, string lengthPicL, string lengthPicR, string extra_text, ref string recommendations)
         {
             if (int.Parse(lengthPicL) < int.Parse(lengthPicR))
             {
                 string msgOutput = " String assigned is too long " + formatTypeL + "<" + formatTypeR;
                 msgOutput = extra_text + msgOutput;
-                OutputMsgAssignComparer(an, part, msgOutput);
+                OutputMsgAssignComparer(an, part, msgOutput, ref recommendations);
             }
         }
 
-        private static void CheckAssignTypesLengthNumeric(AbstractNode an, string formatTypeL, string formatTypeR, KBObjectPart part, string[] splitsL, string[] splitsR, string extra_text)
+        private static void CheckAssignTypesLengthNumeric(AbstractNode an, string formatTypeL, string formatTypeR, KBObjectPart part, string[] splitsL, string[] splitsR, string extra_text, ref string recommendations)
         {
             if ((int.Parse(splitsL[0]) - int.Parse(splitsL[1])) < (int.Parse(splitsR[0]) - int.Parse(splitsR[1])))
             {
                 string msgOutput = " Number assigned is too long " + formatTypeL + "<" + formatTypeR;
                 msgOutput = extra_text + msgOutput;
-                OutputMsgAssignComparer(an, part, msgOutput);
+                OutputMsgAssignComparer(an, part, msgOutput, ref recommendations);
             }
             else if (int.Parse(splitsL[1]) < int.Parse(splitsR[1]))
             {
                 string msgOutput = " Number decimals assigned are too long " + formatTypeL + "<" + formatTypeR;
                 msgOutput = extra_text + msgOutput;
-                OutputMsgAssignComparer(an, part, msgOutput);
+                OutputMsgAssignComparer(an, part, msgOutput, ref recommendations);
             }
         }
 
-        private static void CheckAssignTypesDomains(AssignmentNode assign, Domain domL, Domain domR, string objname, KBObjectPart part)
+        private static void CheckAssignTypesDomains(AssignmentNode assign, Domain domL, Domain domR, string objname, KBObjectPart part, ref string recommendations)
         {
             if (domL != null)
             {
@@ -2144,13 +2145,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (domL.Name != domR.Name)
                     {
                         string msgOutput = " Variables are based on different domains " + domL.Name + "<>" + domR.Name;
-                        OutputMsgAssignComparer(assign, part, msgOutput);
+                        OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
                     }
                 }
                 else
                 {
                     string msgOutput = " (" + assign.Right.Text + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name;
-                    OutputMsgAssignComparer(assign, part, msgOutput);
+                    OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
                 }
             }
             else
@@ -2158,12 +2159,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if (domR != null)
                 {
                     string msgOutput = " (" + assign.Left.Text + ") Doesn't have domain but (" + assign.Right.Text + ") is BasedOn " + domR.Name;
-                    OutputMsgAssignComparer(assign, part, msgOutput);
+                    OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
                 }
             }
         }
 
-        private static void CheckParametersTypesDomains(AbstractNode an, Domain domL, Domain domR, string objname, KBObjectPart part, string extra_text)
+        private static void CheckParametersTypesDomains(AbstractNode an, Domain domL, Domain domR, string objname, KBObjectPart part, string extra_text, ref string recommendations)
         {
             if (domL != null)
             {
@@ -2173,14 +2174,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     {
                         string msgOutput = " Variables are based on different domains " + domL.Name + "<>" + domR.Name;
                         msgOutput = extra_text + msgOutput;
-                        OutputMsgAssignComparer(an, part, msgOutput);
+                        OutputMsgAssignComparer(an, part, msgOutput, ref recommendations);
                     }
                 }
                 else
                 {
                     string msgOutput = " Variables are based on different domains " + domL.Name + "<>(No Domain)";
                     msgOutput = extra_text + msgOutput;
-                    OutputMsgAssignComparer(an, part, msgOutput);
+                    OutputMsgAssignComparer(an, part, msgOutput, ref recommendations);
                 }
             }
             else
@@ -2189,14 +2190,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     string msgOutput = " Variables are based on different domains (No Domain)<>" + domR.Name;
                     msgOutput = extra_text + msgOutput;
-                    OutputMsgAssignComparer(an, part, msgOutput);
+                    OutputMsgAssignComparer(an, part, msgOutput, ref recommendations);
                 }
             }
         }
 
-        private static void OutputMsgAssignComparer(AbstractNode an, KBObjectPart part, string msgOutput)
+        private static void OutputMsgAssignComparer(AbstractNode an, KBObjectPart part, string msgOutput, ref string recommendations)
         {
             string printText = Utility.ExtractCommentsAndBreakLines(an.Text.Replace(System.Environment.NewLine, " "));
+            recommendations += printText + "<br>" + msgOutput + "<br>";
             OutputError err = new OutputError(printText + msgOutput, MessageLevel.Warning, new SourcePosition(part, an.Node.Row, 0));
             KBDoctorOutput.OutputError(err);
         }
@@ -2260,6 +2262,128 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 output.AddLine(themeclass.Name);
             }
+            return true;
+        }
+
+        internal static void ProceduresCalledAsFunction(KBModel model, KBObject obj, ref string recommendations)
+        {
+            if (!isGeneratedbyPattern(obj))
+            {
+                if (obj is Procedure)
+                {
+                    ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    RulesPart rules = obj.Parts.Get<RulesPart>();
+                    if (procpart != null)
+                    {
+                        ProcessCallsAsFuctions(model, procpart, vp, ref recommendations);
+                    }
+                    if (rules != null)
+                    {
+                        ProcessCallsAsFuctions(model, rules, vp, ref recommendations);
+                    }
+                }
+                else if (obj is WebPanel || obj is Transaction)
+                {
+                    EventsPart eventspart = obj.Parts.Get<EventsPart>();
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    RulesPart rules = obj.Parts.Get<RulesPart>();
+                    if (eventspart != null)
+                    {
+                        ProcessCallsAsFuctions(model, eventspart, vp, ref recommendations);
+                    }
+                    if (rules != null)
+                    {
+                        ProcessCallsAsFuctions(model, rules, vp, ref recommendations);
+                    }
+                }
+            }
+        }
+
+        private static void ProcessCallsAsFuctions(KBModel model, SourcePart source, VariablesPart vp, ref string recommendations)
+        {
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+            ParserInfo parserInfo;
+            parserInfo = new ParserInfo(source);
+            var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+
+            if (parser.Validate(info, source.Source))
+            {
+                AbstractNode paramRootNode = ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                List<AbstractNode> calls = getCallsInSource(paramRootNode);
+                foreach (AbstractNode call in calls)
+                {
+                    if (call is AssignmentNode)
+                    {
+                        if (((AssignmentNode)call).Right is FunctionNode)
+                        {
+                            FunctionNode fn = ((FunctionNode)((AssignmentNode)call).Right);
+                            if (!(fn.FunctionName.ToLower() == "udp" || fn.FunctionName.ToLower() == "create"))
+                            {
+                                if(fn.Element != null)
+                                    if(fn.Element.Name.Tag != null)
+                                    {
+                                        MsgOutputProcessCallAsAFunction(source, ref recommendations, fn);
+                                    }
+                            }
+                        }
+                    }
+                    else if (call is FunctionNode)
+                    {
+                        FunctionNode fn = (FunctionNode)call;
+                        if (!(fn.FunctionName.ToLower() == "call" || fn.FunctionName.ToLower() == "submit"))
+                        {
+                            if (fn.Element != null)
+                                if (fn.Element.Name.Tag != null)
+                                {
+                                    MsgOutputProcessCallAsAFunction(source, ref recommendations, fn);
+                                }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void MsgOutputProcessCallAsAFunction(SourcePart source, ref string recommendations, FunctionNode fn)
+        {
+            string msgOutput = "Procedure called as a function";
+            string printText = Utility.ExtractCommentsAndBreakLines(fn.Text.Replace(System.Environment.NewLine, " "));
+            recommendations += printText + "<br>" + msgOutput + "<br>";
+            OutputError err = new OutputError(printText + msgOutput, MessageLevel.Warning, new SourcePosition(source, fn.Node.Row, 0));
+            KBDoctorOutput.OutputError(err);
+        }
+
+        internal static bool TeamDevTest(KnowledgeBase KB, string urlserver, string user, string passw, string Kbname, string KBversion, DateTime from, DateTime to)
+        {
+            HistoryOperation ho = new HistoryOperation(urlserver,user, passw, Kbname, KBversion, from, to);
+            ho.Execute();
+            KBModel kbm = KB.DesignModel;
+            foreach (KBRevisionData revision in ho.revisions)
+            {
+                string UserName = revision.UserName;
+                string Comments = revision.Comments;
+                foreach (KBRevisionActionData action in revision.Actions)
+                {
+                    KBDoctorOutput.Message(string.Format("{0},{1},{2},{3},{4},{5}",
+                                UserName,
+                                Comments.Replace(",", " ").Replace(Environment.NewLine, " "),
+                                action.Operation,
+                                action.ObjectType,
+                                action.ObjectName, revision.Timestamp.ToString()));
+                   if (action.Operation.ToLower() != "delete")
+                    {
+                        foreach (KBObject obj in kbm.Objects.GetByPropertyValue("Name", action.ObjectName))
+                        {
+                            IOutputService output = CommonServices.Output;
+                            List<KBObject> objs = new List<KBObject>();
+                            objs.Add(obj);
+                            List<string[]> lines = new List<string[]>();
+                            API.PreProcessPendingObjects(KB, output, objs, out lines);
+                            objs.Clear();
+                        }
+                    }
+                }
+            }   
             return true;
         }
 

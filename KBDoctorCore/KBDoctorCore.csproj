@@ -74,9 +74,14 @@
     <Reference Include="Artech.Udm.Framework">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Udm.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="GeneXus.Server.Contracts">
+      <HintPath>..\..\..\..\Program Files (x86)\GeneXus\GeneXus15\GeneXus.Server.Contracts.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -143,6 +148,13 @@
       <Project>{5e46dcf4-c473-4171-9f9b-f3910b5ec407}</Project>
       <Name>INIFileParser</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TeamDevConcepto\TeamDevCommand.csproj">
+      <Project>{adee514c-d396-49ea-bc3b-ba9a963f0a9e}</Project>
+      <Name>TeamDevCommand</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

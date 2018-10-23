@@ -54,7 +54,7 @@ namespace KBDoctorCmd
                     else
                     {
                         DateTime ayer = DateTime.Today.AddDays(-1);
-                        dt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day - 1);
+                        dt = ayer;
                     }
 
                     foreach (KBObject obj in KB.DesignModel.Objects.GetAll())

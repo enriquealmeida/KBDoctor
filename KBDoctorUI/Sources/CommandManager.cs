@@ -81,6 +81,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.NewsWithoutWhenDuplicate, new ExecHandler(ExecNewsWithoutWhenDuplicate), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ForEachsWithoutWhenNone, new ExecHandler(ExecForEachsWithoutWhenNone), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ConstantsInCode, new ExecHandler(ExecConstantsInCode), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ReviewCommits, new ExecHandler(ExecReviewCommits), new QueryHandler(QueryKBDoctor));
 
             //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
@@ -556,7 +557,8 @@ namespace Concepto.Packages.KBDoctor
         private static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs)
         {
             KBDoctorOutput.StartSection("KBDoctor - Parameters Type Comparer");
-            API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs);
+            string recommendations = "";
+            API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs, ref recommendations);
             KBDoctorOutput.EndSection("KBDoctor - Parameters Type Comparer");
         }
 
@@ -584,6 +586,14 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecReviewCommits(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            ReviewCommits();
+            return true;
+        }
+
         private static void ConstantsInCode()
         {
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
@@ -605,7 +615,21 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
         }
 
-            public bool ExecForEachsWithoutWhenNone(CommandData cmdData)
+        private static void ReviewCommits()
+        {
+            Thread thread = new Thread(() => ReviewCommits(UIServices.KB.CurrentKB));
+            thread.Start();
+        }
+
+        private static void ReviewCommits(KnowledgeBase KB)
+        {
+            KBDoctorOutput.StartSection("KBDoctor - Review commits");
+            API.ReivewCommits(UIServices.KB.CurrentKB);
+            KBDoctorOutput.EndSection("KBDoctor - Review commits");
+        }
+
+
+        public bool ExecForEachsWithoutWhenNone(CommandData cmdData)
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
