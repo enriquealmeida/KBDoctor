@@ -2446,7 +2446,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     foreach (Variable v in vp.Variables)
                     {
                         if ((!v.IsStandard) && (v.AttributeBasedOn == null) && (v.DomainBasedOn == null) && (v.Type != eDBType.GX_USRDEFTYP)
-                            && (v.Type != eDBType.GX_SDT) && (v.Type != eDBType.GX_EXTERNAL_OBJECT) && (v.Type != eDBType.Boolean) && v.Type != eDBType.GX_BUSCOMP && v.Type != eDBType.GX_BUSCOMP_LEVEL)
+                            && (v.Type != eDBType.GX_SDT) && (v.Type != eDBType.GX_EXTERNAL_OBJECT) && (v.Type != eDBType.Boolean) && v.Type != eDBType.GX_BUSCOMP && v.Type != eDBType.GX_BUSCOMP_LEVEL && v.Type != eDBType.BITMAP)
                         {
                             tieneVarSinDomain = true;
                             cantVar += 1;                

@@ -761,7 +761,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] {
-                "Name", "Description", "Visibility", "Best", "Best Module", "Modules","Transaction", "Trn(NoGenerate)", "Referenced Modules" , "Referenced"  });
+                "Name", "Description", "Visibility", "Best", "Best Module", "Modules","Transaction", "Trn(NoGenerate)", "Referenced Modules" , "Not in Module", "Count"  });
 
                 SelectObjectOptions selectObjectOption = new SelectObjectOptions();
                 selectObjectOption.MultipleSelection = true;
@@ -829,7 +829,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
                             writer.AddTableData(new string[] {
                             objNameLink, t.Description,objVisibility.ToString(),trnBest.QualifiedName.ToString(),mdlTrnBest.Name,
-                                 mdlListstr, trnGen, trnNoGen ,mdlReferencedListstr, objListQNames});
+                                 mdlListstr, trnGen, trnNoGen ,mdlReferencedListstr, objListQNames, objList2.Count.ToString()});
 
                         }
                     }

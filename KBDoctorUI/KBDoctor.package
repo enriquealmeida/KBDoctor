@@ -320,6 +320,7 @@
               <Command refid="ForEachsWithoutWhenNone" />
               <Command refid="NewsWithoutWhenDuplicate" />
               <Command refid="ConstantsInCode" />
+              <Command refid="GenerateGraph"/>
             </Popup>
           </Group>
           
@@ -341,7 +342,7 @@
                 <Command refid="ObjectsWithConstants" />
                 <Command refid="RenameAttributesAndTables"  />
                 <Command refid="GenerateSQLScripts"/>
-                <Command refid="GenerateGraph"/>
+
                 <Command refid="GenerateLocationXML" />
                 <Command refid="CleanObjects" />
 

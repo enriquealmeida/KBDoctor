@@ -49,7 +49,15 @@ namespace Concepto.Packages.KBDoctor
                 string Check = "";
                 string Name = "";
                 string FileName = "";
+
+                Check = "MDG Graph";
+                Name = Functions.CleanFileName(Check);
+                FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".txt";
+                GenerateMDGGraph2(Name, FileName);
+                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+
                 /*
+                 
                 Check = "KB Table Graph";
                 Name = Functions.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
@@ -62,12 +70,13 @@ namespace Concepto.Packages.KBDoctor
                 GenerateKBObjectGraph(Name, FileName);
                 writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
                 */
+                /*
                 Check = "KB Object Edges txt";
                 Name = Functions.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".txt";
                 GenerateKBObjectEdgesTxt(Name, FileName);
                 writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-                /*
+                
                 Check = "KB Module Graph";
                 Name = Functions.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
@@ -361,6 +370,43 @@ namespace Concepto.Packages.KBDoctor
             scriptFile.Close();
         }
 
+        private static void GenerateMDGGraph2(string name, string fileName)
+        {
+            IKBService kbserv = UIServices.KB;
+            KBModel model = kbserv.CurrentModel;
+            StreamWriter scriptFile = new StreamWriter(fileName);
+            IOutputService output = CommonServices.Output;
+            StringCollection aristas = new StringCollection();
+            output.AddLine("KBDoctor", "Generating " + name);
+
+            string objName = "";
+            StringCollection nodos = new StringCollection();
+            foreach (KBObject obj in model.Objects.GetAll())
+            {
+
+                bool includedInGraph = (Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table);
+                if (includedInGraph)
+                {
+
+                    objName = NombreNodo(obj);
+                    string modulename = ModulesHelper.ObjectModuleName(obj);
+
+                    foreach (EntityReference r in obj.GetReferencesTo())
+                    {
+                        KBObject objRef = KBObject.Get(obj.Model, r.From);
+                        if ((objRef != null) && (Functions.isRunable(objRef) || objRef is Table) && obj != objRef)
+
+                        {
+                            string objRefName = NombreNodo(objRef);
+                            scriptFile.WriteLine(objRefName + " " + objName + " " + ReferenceWeight(objRef, obj).ToString());
+                        }
+                        
+                    }
+                }
+            }
+            scriptFile.Close();
+        }
+
 
         private static void GenerateKBObjectEdgesTxt(string name, string fileName)
         {
@@ -374,7 +420,7 @@ namespace Concepto.Packages.KBDoctor
             StringCollection aristas = new StringCollection();
             output.AddLine("KBDoctor","Generating " + name);
 #if EVO3
-            Dictionary<string, API.Tuple<int, string>> dictionary = new Dictionary<string, API.Tuple<int, string>>();
+            Dictionary<string, Tuple<int, string>> dictionary = new Dictionary<string, Tuple<int, string>>();
 #else
             Dictionary<string, Tuple<int, string>> dictionary = new Dictionary<string, Tuple<int, string>>();
 #endif
@@ -586,7 +632,7 @@ namespace Concepto.Packages.KBDoctor
         private static int ReferenceWeight(KBObject obj, KBObject objRef)
         {
             if (objRef is Table)
-                return 10;
+                return 33;
             else
                 return 1; 
         }
