@@ -420,7 +420,7 @@ namespace Concepto.Packages.KBDoctor
             StringCollection aristas = new StringCollection();
             output.AddLine("KBDoctor","Generating " + name);
 #if EVO3
-            Dictionary<string, Tuple<int, string>> dictionary = new Dictionary<string, Tuple<int, string>>();
+            Dictionary<string, API.Tuple<int, string>> dictionary = new Dictionary<string, API.Tuple<int, string>>();
 #else
             Dictionary<string, System.Tuple<int, string>> dictionary = new Dictionary<string, System.Tuple<int, string>>();
 #endif

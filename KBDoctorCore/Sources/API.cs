@@ -370,7 +370,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             //DateTime ayer = new DateTime(2018,08,01);
             DateTime ayer = DateTime.Today.AddDays(-1);
-            Objects.TeamDevTest(KB, "http://concepto.genexusserver.com/xev3", "local\\*******", "*******", "LuciaX", "LuciaX", ayer, DateTime.Today);
+            Objects.TeamDevTest(KB, "http://concepto.genexusserver.com/xev3", "local\\genexus", "artech", "LuciaX", "LuciaX", ayer, DateTime.Today);
         }
         public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs)
         {

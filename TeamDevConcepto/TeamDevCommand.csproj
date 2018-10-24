@@ -91,7 +91,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonPackageInfo.cs" />
     <Compile Include="HistoryOperation.cs" />
     <Compile Include="TeamDevOperation.cs" />
     <Compile Include="TeamDevCommandLineParser.cs" />
