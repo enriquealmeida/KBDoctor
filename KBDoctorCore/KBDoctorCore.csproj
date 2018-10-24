@@ -16,7 +16,7 @@
     <DefineConstants Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">EVO3</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -74,8 +74,13 @@
     <Reference Include="Artech.Udm.Framework">
       <HintPath>$(GX_SDK_DIR)\Bin\Artech.Udm.Framework.dll</HintPath>
     </Reference>
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="GeneXus.Server.Common">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(GX_PROGRAM_DIR)\GeneXus.Server.Common.dll</HintPath>
+    </Reference>
     <Reference Include="GeneXus.Server.Contracts">
-      <HintPath>..\..\..\..\Program Files (x86)\GeneXus\GeneXus15\GeneXus.Server.Contracts.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(GX_PROGRAM_DIR)\GeneXus.Server.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />

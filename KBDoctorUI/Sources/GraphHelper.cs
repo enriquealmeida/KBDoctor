@@ -422,7 +422,7 @@ namespace Concepto.Packages.KBDoctor
 #if EVO3
             Dictionary<string, Tuple<int, string>> dictionary = new Dictionary<string, Tuple<int, string>>();
 #else
-            Dictionary<string, Tuple<int, string>> dictionary = new Dictionary<string, Tuple<int, string>>();
+            Dictionary<string, System.Tuple<int, string>> dictionary = new Dictionary<string, System.Tuple<int, string>>();
 #endif
             Dictionary<int, int> initialpartition = new Dictionary<int, int>();
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Artech.Common.Caching;
+//using Artech.Common.Caching;
 using Artech.Common.Exceptions;
 using Artech.Common.Helpers.Assemblies;
 using Artech.Common.Helpers.IO;
@@ -49,7 +49,7 @@ namespace Artech.Packages.TeamDevClient.CommandLine
 		{
 			string configurationFile = Path.Combine(AssemblyHelper.GetAssemblyDirectory(), "genexus.exe.config");
 			ExceptionManager.ConfigurationFile = configurationFile;
-			CacheManager.ConfigurationFile = configurationFile;
+			//CacheManager.ConfigurationFile = configurationFile;
 			PathHelper.SetAssemblyInfo("Artech", "Genexus", "10Ev1");
 			Artech.Core.Connector.StartBL();
 		}

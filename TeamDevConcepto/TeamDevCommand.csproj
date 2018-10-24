@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Artech.Packages.TeamDevClient.CommandLine</RootNamespace>
     <AssemblyName>TeamDev_Concepto</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion> 	
+    <TargetFrameworkVersion>$(TargetFrameworkVersion)</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -34,7 +34,6 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -44,6 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -59,26 +59,30 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Artech.Architecture.Common">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Artech.Architecture.Common.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Artech.Common.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common.Helpers">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Artech.Common.Helpers.dll</HintPath>
-    </Reference>
-    <Reference Include="Artech.Packages.TeamDevClient.BL">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3\Packages\Artech.Packages.TeamDevClient.BL.dll</HintPath>
-    </Reference>
-    <Reference Include="Artech.TeamDevClient.Common">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3\Artech.TeamDevClient.Common.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="Connector">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Artech\GeneXus\GeneXusXEv3PlatformSDK\Bin\Connector.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Connector.dll</HintPath>
     </Reference>
-    <Reference Include="GeneXus.Server.Contracts, Version=10.1.0.0, Culture=neutral, PublicKeyToken=6f5bf81c27b6b8aa, processorArchitecture=MSIL">
+    <Reference Include="Artech.Packages.TeamDevClient.BL">
+      <HintPath>$(GX_PROGRAM_DIR)\Packages\Artech.Packages.TeamDevClient.BL.dll</HintPath>
+    </Reference>
+    <Reference Include="Artech.TeamDevClient.Common">
+      <HintPath>$(GX_PROGRAM_DIR)\Artech.TeamDevClient.Common.dll</HintPath>
+    </Reference>
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="GeneXus.Server.Common">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\GeneXus\GeneXus15\GeneXus.Server.Contracts.dll</HintPath>
+      <HintPath>$(GX_PROGRAM_DIR)\GeneXus.Server.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="GeneXus.Server.Contracts">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(GX_PROGRAM_DIR)\GeneXus.Server.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
