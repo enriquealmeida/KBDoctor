@@ -2222,7 +2222,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module", "Inserts", "Updates", "Delete", "Read", "Total" });
+                writer.AddTableHeader(new string[] { "Object", "Type", "Description", "Module", "Inserts", "Updates", "Delete", "Read", "Total", "Out Module","Out Module Tables" });
 
 
 
@@ -2248,8 +2248,29 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                        where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
                                        where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
                                        select model.Objects.Get(r.To)).ToList().Count;
+                        readers = readers - updaters - inserters - deleters;
                         int total = updaters + inserters + deleters + readers;
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.TypeDescriptor.Name, obj.Description, obj.Module.Name, updaters.ToString(), inserters.ToString(), deleters.ToString(), readers.ToString(), total.ToString() });
+
+                        List<KBObject> outmodule = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                                                    where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                                                    where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo) 
+                                                       || ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
+                                                   // where obj.Module != TablesHelper.TableModule(model, (Table)model.Objects.Get(r.To))
+                                                    select model.Objects.Get(r.To)).ToList();
+                        //Busco las tablas fuera del modulo. 
+                        int outmoduleint = 0;
+                        string tablas = "";
+                        foreach (KBObject o2 in outmodule)
+                        {
+                            Table tbl = (Table)o2;
+
+                            if (TablesHelper.TableModule(model, tbl) != obj.Module)
+                            {
+                                outmoduleint += 1;
+                                tablas += " " + tbl.Name;
+                            }
+                        }
+                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.TypeDescriptor.Name, obj.Description, obj.Module.Name, updaters.ToString(), inserters.ToString(), deleters.ToString(), readers.ToString(), total.ToString(),outmoduleint.ToString(),tablas });
 
                     }
 
@@ -2371,7 +2392,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             return countparm;
         }
 
-        public static void ObjectsDiagnostics()
+        public static void FixVariablesNotBasedInAttributesOrDomain()
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;

@@ -133,7 +133,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey objectsRefactoringCandidates = new CommandKey(Package.guid, "ObjectsRefactoringCandidates");
         private static CommandKey countTableAccess = new CommandKey(Package.guid, "CountTableAccess");
         private static CommandKey objectsWithConstants = new CommandKey(Package.guid, "ObjectsWithConstants");
-        private static CommandKey objectsDiagnostics = new CommandKey(Package.guid, "ObjectsDiagnostics");
+        private static CommandKey fixVariablesNotBasedInAttributesOrDomain = new CommandKey(Package.guid, "FixVariablesNotBasedInAttributesOrDomain");
 
         private static CommandKey objectsWIWEB = new CommandKey(Package.guid, "ObjectsWINWEB");
         private static CommandKey listProcedureCallWebpanelTransaction = new CommandKey(Package.guid, "ListProcedureCallWebpanelTransaction");
@@ -184,7 +184,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey objectsUpdateAttribute = new CommandKey(Package.guid, "ObjectsUpdateAttribute");
         public static CommandKey ObjectsUpdateAttribute { get { return objectsUpdateAttribute; } }
 
-        public static CommandKey ObjectsDiagnostics { get { return objectsDiagnostics; } }
+        public static CommandKey FixVariablesNotBasedInAttributesOrDomain { get { return fixVariablesNotBasedInAttributesOrDomain; } }
         public static CommandKey ObjectsWINWEB { get { return objectsWIWEB; } }
         public static CommandKey ListProcedureCallWebpanelTransaction { get { return listProcedureCallWebpanelTransaction; } }
         public static CommandKey MainTableUsed { get { return mainTableUsed; } }

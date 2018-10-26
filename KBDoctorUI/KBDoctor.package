@@ -63,7 +63,7 @@
     <CommandDefinition id="ObjectsRefactoringCandidates" />
     <CommandDefinition id="CountTableAccess"  />
     <CommandDefinition id="ObjectsWithConstants" />
-    <CommandDefinition id="ObjectsDiagnostics" />
+    <CommandDefinition id="FixVariablesNotBasedInAttributesOrDomain" />
     <CommandDefinition id="ObjectsWINWEB" />
     <CommandDefinition id="ListProcedureCallWebpanelTransaction" />
     <CommandDefinition id="ListObjWarningsErrors" />
@@ -219,14 +219,14 @@
             <Command refid="ObjectsUpdateAttribute"/>
             <Group>
               <Command refid="ReviewObjects" />
-              <Command refid="EditReviewObjects" />
+
             </Group>
 
             <Group >
               <Command refid="CalculateCheckSum"  />
               <Command refid="CompareLastOBJDirectory" />
               <Command refid="OpenFolderObjComparerNavigation"  />
-			  <Command refid="ObjectsDiagnostics" />
+			  <Command refid="FixVariablesNotBasedInAttributesOrDomain" />
             </Group>
 
           </Popup>
@@ -254,10 +254,14 @@
               <Command refid="MoveTransactions" />
             </Group>
           </Popup>
-          <Group id="Utilities" >
-            <Popup name ="Utilities">
-              <Command refid="SearchAndReplace"/>
-              <Command refid="GenerateLocationXML" />
+          <Group id="CleanKB" >
+            <Popup name ="Clean KB">
+              <Command refid="AttWithoutBaseTable" />
+              <Command refid="ObjectsNotCalled"/>
+              <Command refid="CleanVarsNotUsed" />
+              <Command refid="RemovableTransactions"/>
+              <Command refid="CleanObjects" />
+              <Command refid="FixVariablesNotBasedInAttributesOrDomain" />
             </Popup>
           </Group>
           <Group id="KBstats" >
@@ -267,24 +271,20 @@
               <Command refid="ListModulesStatistics" />
             </Popup>
           </Group>
-          <Group id="CleanKB" >
-            <Popup name ="Clean KB">
-              <Command refid="AttWithoutBaseTable" />
-              <Command refid="ObjectsNotCalled"/>
+          
 
-              <Command refid="CleanVarsNotUsed" />
-              <Command refid="RemovableTransactions"/>
-              <Command refid="CleanObjects" />
+          <Popup name="AboutKBDoctor" >
+            <Group id="Configuration" >
+              <Command refid="EditReviewObjects" />
+            </Group>
+            <Popup name="Utilities" >
+                <Command refid="SearchAndReplace"/>
+                <Command refid="GenerateLocationXML" />
             </Popup>
-          </Group>
-          <Group id="LastReports" >
-            <Command refid="ListLastReports"  />
-          </Group>
-
-          <Group id="AboutKBDoctor" >
-            <Command refid="AboutKBDoctor"  />
             <Command refid="HelpKBDoctor" />
-          </Group>
+            <Command refid="ListLastReports"  />
+            <Command refid="AboutKBDoctor"  />
+          </Popup>
 
           <Group id="LABS" >
             <Popup name ="Labs">
@@ -315,7 +315,7 @@
               <Command refid="ObjectsWithConstants" />
               <Command refid="ThemeClassesNotUsed"/>
               <Command refid="AssignTypeComparer"/>
-              <Command refid="ObjectsDiagnostics" />
+
               <Command refid="ParameterTypeComparer" />
               <Command refid="EmptyConditionalBlocks" />
               <Command refid="ForEachsWithoutWhenNone" />
@@ -331,7 +331,7 @@
           <Group id="LABS2" >
               <Popup>
                 <Command refid="ChangeCommitOnExit" />
-                <Command refid="ObjectsDiagnostics" />
+
             
                 <Popup name ="Themes" >
                   <Group>
