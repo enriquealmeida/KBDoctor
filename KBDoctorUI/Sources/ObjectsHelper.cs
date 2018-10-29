@@ -322,6 +322,8 @@ namespace Concepto.Packages.KBDoctor
         {
             if (obj is DataSelector)  //Los Dataselector no tienen la propiedad de generarlos o no , por lo que siempre devuelven falso y sin son referenciados se generan. 
                 return true;
+            if (obj is Artech.Architecture.Common.Objects.Module)
+                return false;
             object aux = obj.GetPropertyValue(Properties.TRN.GenerateObject);
             return ((aux != null) && (aux.ToString() == "True"));
 

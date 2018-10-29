@@ -10,6 +10,7 @@ using Artech.Genexus.Common.Services;
 using Artech.Genexus.Common.Wiki;
 using Artech.Udm.Framework.References;
 using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -235,6 +236,62 @@ El módulo tiene objetos públicos no referenciados por externos?
            
           //  Functions.AddLineSummary("moduleStats.txt", Resumen);
 
+        }
+
+        public static void ListModularizationQuality()
+        {
+            IKBService kbserv = UIServices.KB;
+            Model model = kbserv.CurrentModel;
+            IOutputService output = CommonServices.Output;
+            bool success = true;
+            int objInRoot = 0;
+            int objSinRoot = 0;
+            string title = "KBDoctor - List Modularization Quality (More is better)";
+            output.StartSection("KBDoctor", title);
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Module", "Description", "CF" });
+
+               
+
+                foreach (Module mdl in Module.GetAll(kbserv.CurrentModel))
+                {
+
+                    output.AddLine("KBDoctor", "Calculating " + mdl.Name + " CF");
+                    double cf = CF(mdl);
+                    writer.AddTableData(new string[] { mdl.Name, mdl.Description, "1" });
+
+
+                }
+                output.AddLine("KBDoctor", "");
+                output.EndSection("KBDoctor", title, success);
+                
+   
+                writer.AddFooter();
+                writer.Close();
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+               // Functions.AddLineSummary("moduleQuality.txt", Resumen);
+            }
+            catch
+            {
+                success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
+        }
+
+    
+
+        private static double CF(Module mdl)
+        {
+            foreach (KBObject obj in mdl.GetAllMembers())
+            {
+
+
+            }
+            return 1.0;
         }
 
         public static void ListModulesStatistics()
@@ -810,7 +867,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                                                                                                            //where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
                                                        select model.Objects.Get(r.From)).ToList();
 
-                            IList<KBObject> objList2 = objList.Where(r => r.Module != mdlTrnBest).ToList();
+                            IList<KBObject> objList2 = objList.Where(r => r.Module != mdlTrnBest & !(r is Transaction)).ToList();
 
                             string objListQNames = null;
                             objList2.ToList().ForEach(v => objListQNames += " " + Functions.linkObject(v));

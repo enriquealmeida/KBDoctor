@@ -29,8 +29,8 @@ namespace Concepto.Packages.KBDoctor
 
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Generate Graph ";
-            try
-            {
+            //try
+           // {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
                 KBModel model = kbserv.CurrentKB.DesignModel;
@@ -63,7 +63,8 @@ namespace Concepto.Packages.KBDoctor
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
                 GenerateKBTableGraph(Name, FileName); 
                 writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-
+                */
+                /*
                 Check = "KB Object Graph";
                 Name = Functions.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
@@ -76,7 +77,8 @@ namespace Concepto.Packages.KBDoctor
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".txt";
                 GenerateKBObjectEdgesTxt(Name, FileName);
                 writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
-                
+                */
+                  /*
                 Check = "KB Module Graph";
                 Name = Functions.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
@@ -89,13 +91,114 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+           // }
+           // catch
+           // {
+            //    bool success = false;
+              //  KBDoctor.KBDoctorOutput.EndSection(title, success);
+           // }
         }
+
+        private static void GenerateMDGGraph2(string name, string fileName)
+        {
+            IKBService kbserv = UIServices.KB;
+            KBModel model = kbserv.CurrentModel;
+
+            // IOutputService output = CommonServices.Output;
+            StreamWriter nodesFiles = new StreamWriter(kbserv.CurrentKB.UserDirectory + @"\kbdoctor.Nodes.CSV");
+            Dictionary<string,int> aristas = new Dictionary<string, int>();
+            KBDoctorOutput.Message( "Generating " + name);
+
+            string objRefName = "";
+
+            foreach (KBObject objRef in model.Objects.GetAll())
+            {
+                objRefName = NombreNodo(objRef);
+             //   KBDoctorOutput.Message(Environment.NewLine + objRefName);
+                bool includedInGraph = (Functions.isRunable(objRef) && ObjectsHelper.isGenerated(objRef)) || (objRef is Table) || (objRef is SDT);
+                if (includedInGraph)
+                {
+                    nodesFiles.WriteLine(objRefName + " " + ModulesHelper.ObjectModuleName(objRef));
+                   // KBDoctorOutput.Message(objRefName + " Included in Graph" );
+                    foreach (EntityReference r in objRef.GetReferencesTo())
+                    {
+                        KBObject obj = KBObject.Get(objRef.Model, r.From);
+                       // if (obj != null)
+                           // KBDoctorOutput.Message(objRefName + " Included in Graph " + obj.Name + NombreNodo(obj));
+                        if ((obj != null) && Functions.isRunable(obj) && obj != objRef)
+                        {
+                                string objName = NombreNodo(obj);
+                            if (objName != objRefName)
+                            {
+                                string arista = objName + " " + objRefName;
+                                int weight = ReferenceWeight(obj, objRef);
+                                if (!aristas.ContainsKey(arista))
+                                    aristas.Add(arista, weight);
+                                else
+                                    if (aristas[arista] < weight)
+                                          aristas[arista] = weight;
+                                //scriptFile.WriteLine(objName + " " + objRefName + " " + weight);
+                               // KBDoctorOutput.Message(objName + " " + objRefName + " " + weight);
+                               // KBDoctorOutput.Message(obj.TypeDescriptor.Name + "->" + objRef.TypeDescriptor.Name);
+                            }
+                            else
+                                KBDoctorOutput.Message("Iguales " + obj.Name + " " + objRef.Name);
+                        }
+
+                    }
+
+
+                }
+       /*         else
+                {
+                    KBDoctorOutput.Message(">>> Ignoring " + objRefName);
+                }*/
+            }
+            nodesFiles.Close();
+
+            StreamWriter scriptFile = new StreamWriter(fileName);
+            foreach (string arista in aristas.Keys)
+            {
+                scriptFile.WriteLine(arista + " " + aristas[arista]);
+            }
+            scriptFile.Close();
+
+
+        }
+
+
+        private static int ReferenceWeight(KBObject obj, KBObject objRef)
+        {
+            int weight = 2;
+            //2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, and 97
+            if (objRef is WebPanel)
+                weight = 1;
+
+            if ((objRef is Transaction) & (objRef.GetPropertyValue<bool>("idISBUSINESSCOMPONENT")))
+                weight = 1;
+
+            if (objRef is Table)
+                if (obj is Transaction)
+                {
+                    Table t = (Table)objRef;
+                    foreach (Transaction trn in t.AssociatedTransactions)
+                    {
+                        if (obj == trn)
+                            weight = 97; //Esta tabla es generada por esa transaccion
+                    }
+                }
+                else
+                {
+                    weight = 13;
+                }
+               
+
+          //  KBDoctorOutput.Message(",," + obj.TypeDescriptor.Name + "," + objRef.TypeDescriptor.Name + "," + weight.ToString());
+
+            return weight;
+        }
+
+
 
         private static void GenerateKBConexComponentGraph(string name)
         {
@@ -370,42 +473,6 @@ namespace Concepto.Packages.KBDoctor
             scriptFile.Close();
         }
 
-        private static void GenerateMDGGraph2(string name, string fileName)
-        {
-            IKBService kbserv = UIServices.KB;
-            KBModel model = kbserv.CurrentModel;
-            StreamWriter scriptFile = new StreamWriter(fileName);
-            IOutputService output = CommonServices.Output;
-            StringCollection aristas = new StringCollection();
-            output.AddLine("KBDoctor", "Generating " + name);
-
-            string objName = "";
-            StringCollection nodos = new StringCollection();
-            foreach (KBObject obj in model.Objects.GetAll())
-            {
-
-                bool includedInGraph = (Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table);
-                if (includedInGraph)
-                {
-
-                    objName = NombreNodo(obj);
-                    string modulename = ModulesHelper.ObjectModuleName(obj);
-
-                    foreach (EntityReference r in obj.GetReferencesTo())
-                    {
-                        KBObject objRef = KBObject.Get(obj.Model, r.From);
-                        if ((objRef != null) && (Functions.isRunable(objRef) || objRef is Table) && obj != objRef)
-
-                        {
-                            string objRefName = NombreNodo(objRef);
-                            scriptFile.WriteLine(objRefName + " " + objName + " " + ReferenceWeight(objRef, obj).ToString());
-                        }
-                        
-                    }
-                }
-            }
-            scriptFile.Close();
-        }
 
 
         private static void GenerateKBObjectEdgesTxt(string name, string fileName)
@@ -493,7 +560,7 @@ namespace Concepto.Packages.KBDoctor
                             string objRefName = NombreNodo(objRef);
                             if (objName != objRefName)
                             {
-                                int weight = ReferenceWeight(objRef,obj);
+                                int weight = ReferenceWeight(obj,objRef);
                                 String edge = objRefName + " " + objName;
                                
                                 if (!aristas.Contains(edge))
@@ -563,9 +630,11 @@ namespace Concepto.Packages.KBDoctor
                 //Cantidad de modulo nuevo y modulo viejo. 
                 foreach (KeyValuePair<string, int> entry in sortedDict)
                 {
-                 //   output.AddLine("KBDoctor",entry.Key + " " + entry.Value.ToString());
-                    Module m = new Module(model);
-                    m.Name = entry.Key.Replace(" ", "_") + string.Format("_{0:yyyy_MM_dd_hh_mm_ss}",DateTime.Now);
+                    //   output.AddLine("KBDoctor",entry.Key + " " + entry.Value.ToString());
+                    Module m = new Module(model)
+                    {
+                        Name = entry.Key.Replace(" ", "_") + string.Format("_{0:yyyy_MM_dd_hh_mm_ss}", DateTime.Now)
+                    };
                     output.AddLine("KBDoctor",m.Name);
                     m.Module= kbserv.CurrentModel.GetDesignModel().RootModule;
                     m.Save();
@@ -629,13 +698,7 @@ namespace Concepto.Packages.KBDoctor
             catch (Exception e) {  };
         }
 
-        private static int ReferenceWeight(KBObject obj, KBObject objRef)
-        {
-            if (objRef is Table)
-                return 33;
-            else
-                return 1; 
-        }
+
 
         private static string NombreNodo(KBObject obj)
         {

@@ -520,6 +520,15 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Modularization Quality.
+        /// </summary>
+        internal static string ListModularizationQuality {
+            get {
+                return ResourceManager.GetString("ListModularizationQuality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a List Modules Errors.
         /// </summary>
         internal static string ListModules {

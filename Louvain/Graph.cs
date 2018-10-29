@@ -38,11 +38,13 @@ namespace LouvainCommunityPL {
         }
 
         private Dictionary<int, Dictionary<int, double>> AdjacencyMatrix;
+        private Dictionary<int, Tuple<string, string>> NodeName;
         private int NumEdges = 0;
         private double CurrSize = 0;
 
         public Graph() {
             AdjacencyMatrix = new Dictionary<int, Dictionary<int, double>>();
+            NodeName = new Dictionary<int, Tuple<string, string>>();
         }
 
         public Graph(Graph g) {
@@ -58,9 +60,12 @@ namespace LouvainCommunityPL {
         /// Adds a node to the graph.
         /// </summary>
         /// <param name="node">The node to add.</param>
-        public void AddNode(int node) {
+        public void AddNode(int node, string name, string guid) {
             EnsureIncidenceList(node);
+            EnsureNodeNameList(node, name, guid);
         }
+
+
 
         /// <summary>
         /// Adds to the weight between node1 and node2 (edges are assumed to start with weight 0).
@@ -102,11 +107,20 @@ namespace LouvainCommunityPL {
         }
 
         private Dictionary<int, double> EnsureIncidenceList(int node) {
-            Dictionary<int, double> ilist;
-            if (!AdjacencyMatrix.TryGetValue(node, out ilist)) {
+            if (!AdjacencyMatrix.TryGetValue(node, out Dictionary<int, double> ilist))
+            {
                 ilist = AdjacencyMatrix[node] = new Dictionary<int, double>();
             }
             return ilist;
+        }
+
+        private Tuple<string, string> EnsureNodeNameList(int node, string name, string guid)
+        {
+            if (!NodeName.TryGetValue(node, out Tuple < string, string> ilistname))
+            {
+                ilistname = NodeName[node] = new Tuple<string,string>(name,guid.ToString());
+            }
+            return ilistname;
         }
 
         /// <summary>
@@ -198,7 +212,7 @@ namespace LouvainCommunityPL {
         public Graph Quotient(Dictionary<int, int> partition) {
             Graph ret = new Graph();
             foreach (int com in partition.Values) {
-                ret.AddNode(com);
+                ret.AddNode(com,"","");
             }
             foreach (var edge in this.Edges) {
                 ret.AddEdge(partition[edge.FromNode], partition[edge.ToNode], edge.Weight);

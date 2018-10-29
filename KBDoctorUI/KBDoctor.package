@@ -76,6 +76,7 @@
     <CommandDefinition id="MarkPublicObjects" />
     <CommandDefinition id="ListModules" />
     <CommandDefinition id="ListModulesStatistics" />
+    <CommandDefinition id="ListModularizationQuality" />
     <CommandDefinition id="MoveTransactions" />
     <CommandDefinition id="ModuleDependencies" />
     <CommandDefinition id="CalculateCheckSum" />
@@ -262,6 +263,9 @@
               <Command refid="RemovableTransactions"/>
               <Command refid="CleanObjects" />
               <Command refid="FixVariablesNotBasedInAttributesOrDomain" />
+              <Command refid="ResetWINForm"/>
+
+              
             </Popup>
           </Group>
           <Group id="KBstats" >
@@ -269,6 +273,8 @@
               <Command refid="ObjectsRefactoringCandidates" />
               <Command refid="CountTableAccess" />
               <Command refid="ListModulesStatistics" />
+              <Command refid="ListModularizationQuality" />
+              <Command refid="CountGeneratedByPattern"  />
             </Popup>
           </Group>
           
@@ -280,6 +286,7 @@
             <Popup name="Utilities" >
                 <Command refid="SearchAndReplace"/>
                 <Command refid="GenerateLocationXML" />
+                <Command refid="RenameAttributesAndTables"  />
             </Popup>
             <Command refid="HelpKBDoctor" />
             <Command refid="ListLastReports"  />
@@ -308,7 +315,7 @@
               <Command refid="ObjectsLegacyCode" />
               <Command refid="MarkPublicObjects" />
               <Command refid="GenerateTrnFromTabless" />
-              <Command refid="ResetWINForm"/>
+
               <Command refid="ObjectsNotReacheable"/>
               <Command refid="CleanKBAsMuchAsPossible"/>
               <Command refid="ListTableAttributesUsingDomain"/>
@@ -340,9 +347,9 @@
                     <Command refid="ListClassUsed" />
                   </Group>
                 </Popup>
-                <Command refid="CountGeneratedByPattern"  />
+
                 <Command refid="ObjectsWithConstants" />
-                <Command refid="RenameAttributesAndTables"  />
+
                 <Command refid="GenerateSQLScripts"/>
 
                 <Command refid="GenerateLocationXML" />

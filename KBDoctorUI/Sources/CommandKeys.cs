@@ -288,6 +288,9 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey listModulesStatistics = new CommandKey(Package.guid, "ListModulesStatistics");
         public static CommandKey ListModulesStatistics { get { return listModulesStatistics; } }
 
+        private static CommandKey listModularizationQuality = new CommandKey(Package.guid, "ListModularizationQuality");
+        public static CommandKey ListModularizationQuality { get { return listModularizationQuality; } }
+
         private static CommandKey moveTransactions = new CommandKey(Package.guid, "MoveTransactions");
         public static CommandKey MoveTransactions { get { return moveTransactions; } }
 

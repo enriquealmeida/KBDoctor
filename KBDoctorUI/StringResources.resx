@@ -361,6 +361,9 @@
   <data name="ListModulesStatistics" xml:space="preserve">
     <value>List Modules Statistics</value>
   </data>
+  <data name="ListModularizationQuality" xml:space="preserve">
+    <value>Modularization Quality</value>
+  </data>
   <data name="MoveTransactions" xml:space="preserve">
     <value>Move Transactions to Folders</value>
   </data>

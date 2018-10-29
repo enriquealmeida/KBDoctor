@@ -165,6 +165,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.MarkPublicObjects, new ExecHandler(ExecMarkPublicObjects), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListModules, new ExecHandler(ExecListModules), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListModulesStatistics, new ExecHandler(ExecListModulesStatistics), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListModularizationQuality, new ExecHandler(ExecListModularizationQuality), new QueryHandler(QueryKBDoctor));
+
             AddCommand(CommandKeys.MoveTransactions, new ExecHandler(ExecMoveTransactions), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ModuleDependencies, new ExecHandler(ExecModuleDependencies), new QueryHandler(QueryKBDoctor));
 
@@ -1466,10 +1468,17 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            ModulesHelper.ListModulesStatisticsTotal();
+            ModulesHelper.ListModulesStatistics();
             return true;
         }
 
+        public bool ExecListModularizationQuality(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            ModulesHelper.ListModularizationQuality();
+            return true;
+        }
         public bool ExecMoveTransactions(CommandData cmdData)
         {
             IOutputService output = CommonServices.Output;
