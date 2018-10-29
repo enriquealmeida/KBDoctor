@@ -623,9 +623,25 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ReviewCommits(KnowledgeBase KB)
         {
-            KBDoctorOutput.StartSection("KBDoctor - Review commits");
-            API.ReivewCommits(UIServices.KB.CurrentKB);
-            KBDoctorOutput.EndSection("KBDoctor - Review commits");
+            bool success;
+            string error_message = "";
+            try
+            {
+                KBDoctorOutput.StartSection("KBDoctor - Review commits");
+                DateTime FromDate = new DateTime(2018, 10, 24);
+                DateTime ToDate = new DateTime(2018, 10, 25);
+                string querystring = KBDoctorCore.Sources.Utility.GetQueryStringFromToDate(FromDate, ToDate);
+                List<IKBVersionRevision> revisions_list = (List<IKBVersionRevision>)UIServices.TeamDevClient.GetRevisions(KB.DesignModel.KBVersion, querystring, 1);
+
+                success = API.ReivewCommits(UIServices.KB.CurrentKB, revisions_list);
+            }
+            catch(Exception e)
+            {
+                success = false;
+                error_message = e.Message;
+                KBDoctorOutput.InternalError(error_message, e);
+            }
+            KBDoctorOutput.EndSection("KBDoctor - Review commits", success);
         }
 
 

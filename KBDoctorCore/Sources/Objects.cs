@@ -2321,6 +2321,63 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+        internal static bool ReviewCommitsFromTo(KnowledgeBase KB, List<IKBVersionRevision> list)
+        {
+            bool success;
+            try {
+                List<string> objs_reviewed = new List<string>();
+                foreach (IKBVersionRevision revision in list)
+                {
+                    foreach (IRevisionAction action in revision.Actions)
+                    {
+                        
+                        string name = "";
+                        string module = "";
+                        if (action.Operation.ToString().ToLower() != "delete")
+                        {
+                            QualifiedName qn = null;
+
+                            if (KB.DesignModel.Objects.GetName(action.Key) != null)
+                            {
+                                name = KB.DesignModel.Objects.GetName(action.Key).QualifiedName.ObjectName;
+                                qn = KB.DesignModel.Objects.GetName(action.Key).QualifiedName;
+                            }
+                            else
+                            {
+                                qn = null;
+                            }
+                            KBDoctorOutput.Message(string.Format("{0},{1},{2},{3},{4},{5},{6}", revision.UserName, revision.Comment.Replace(",", " ").Replace(Environment.NewLine, " "),
+                                                                                            action.Operation, action.Type, name, action.Description, revision.CommitDate.ToString()));
+                            if (name != "")
+                            {
+                                KBObject obj = KB.DesignModel.Objects.Get(action.Key);
+                                if (!(objs_reviewed.Contains(qn.ToString())))
+                                {
+                                    objs_reviewed.Add(qn.ToString());
+                                    IOutputService output = CommonServices.Output;
+                                    List<KBObject> objs = new List<KBObject>();
+                                    objs.Add(obj);
+                                    List<string[]> lines = new List<string[]>();
+                                    API.PreProcessPendingObjects(KB, output, objs, out lines);
+                                    objs.Clear();
+                                }
+                                else
+                                {
+                                    KBDoctorOutput.Message("Object already reviewed.");
+                                }
+                            }
+                        }
+                    }
+                }
+                success = true;
+            }
+            catch
+            {
+                success = false;
+            }
+            return success;
+        }
+
         private static void ProcessCallsAsFuctions(KBModel model, SourcePart source, VariablesPart vp, ref string recommendations)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
@@ -2374,40 +2431,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             KBDoctorOutput.OutputError(err);
         }
 
-        internal static bool TeamDevTest(KnowledgeBase KB, DateTime from, DateTime to)
-        {
-           /* HistoryOperation ho = new HistoryOperation(urlserver,user, passw, Kbname, KBversion, from, to);
-            ho.Execute();
-            
-            KBModel kbm = KB.DesignModel;
-            foreach (KBRevisionData revision in ho.revisions)
-            {
-                string UserName = revision.UserName;
-                string Comments = revision.Comments;
-                foreach (KBRevisionActionData action in revision.Actions)
-                {
-                    KBDoctorOutput.Message(string.Format("{0},{1},{2},{3},{4},{5}",
-                                UserName,
-                                Comments.Replace(",", " ").Replace(Environment.NewLine, " "),
-                                action.Operation,
-                                action.ObjectType,
-                                action.ObjectName, revision.Timestamp.ToString()));
-                   if (action.Operation.ToLower() != "delete")
-                    {
-                        foreach (KBObject obj in kbm.Objects.GetByPropertyValue("Name", action.ObjectName))
-                        {
-                            IOutputService output = CommonServices.Output;
-                            List<KBObject> objs = new List<KBObject>();
-                            objs.Add(obj);
-                            List<string[]> lines = new List<string[]>();
-                            API.PreProcessPendingObjects(KB, output, objs, out lines);
-                            objs.Clear();
-                        }
-                    }
-                }
-            }   */
-            return true;
-        }
 
 #if EVO3
     public class Tuple<T1, T2>

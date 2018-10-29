@@ -368,53 +368,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        public static void ReivewCommits(KnowledgeBase KB)
+        public static bool ReivewCommits(KnowledgeBase KB, List<IKBVersionRevision> revisions_list)
         {
-            //DateTime ayer = new DateTime(2018,08,01);
-            DateTime ayer = DateTime.Today.AddDays(-1);
-            List<IKBVersionRevision> list = (List<IKBVersionRevision>)UIServices.TeamDevClient.GetRevisions(KB.DesignModel.KBVersion, "", 1);
-            foreach (IKBVersionRevision revision in list)
-            {
-                foreach( IRevisionAction action in revision.Actions)
-                {
-                    List<string> objs_reviewed = new List<string>(); 
-                    string name = "";
-                    string module = "";
-                    if (action.Operation.ToString().ToLower() != "delete")
-                    {
-                        QualifiedName qn = null;
-
-                        if (KB.DesignModel.Objects.GetName(action.Key) != null)
-                        {
-                            name = KB.DesignModel.Objects.GetName(action.Key).QualifiedName.ObjectName;
-                            qn = KB.DesignModel.Objects.GetName(action.Key).QualifiedName;
-                        }
-                        else
-                        {
-                            name = "";
-                            module = "";
-                            qn = null;
-                        }
-                        KBDoctorOutput.Message(string.Format("{0},{1},{2},{3},{4},{5}", revision.UserName,revision.Comment.Replace(",", " ").Replace(Environment.NewLine, " "),
-                                                                                        action.Operation,action.Type,name,action.Description, revision.CommitDate.ToString()));
-                        foreach (KBObject obj in KB.DesignModel.Objects.GetByPropertyValue("Name", name))
-                        {
-                            if (obj.QualifiedName == qn && !(objs_reviewed.Contains(qn.ToString())))
-                            {
-                                objs_reviewed.Add(qn.ToString());
-                                IOutputService output = CommonServices.Output;
-                                List<KBObject> objs = new List<KBObject>();
-                                objs.Add(obj);
-                                List<string[]> lines = new List<string[]>();
-                                PreProcessPendingObjects(KB, output, objs, out lines);
-                                objs.Clear();
-                            }
-                        }
-                    }
-                }
-            }
-             //   Objects.TeamDevTest(KB, "http://concepto.genexusserver.com/xev3", "local\\*****", "***", "LuciaX", "LuciaX", ayer, DateTime.Today);
+            return Objects.ReviewCommitsFromTo(KB, revisions_list); ;
         }
+
         public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs, ref string recommendations)
         {
             foreach (KBObject obj in objs)
