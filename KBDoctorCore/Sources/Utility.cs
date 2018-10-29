@@ -689,8 +689,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             foreach (KBObject obj in model.Objects.GetByPropertyValue("Name", name))
             {
-                if (obj.Module.Name.ToLower() == module.ToLower())
-                    return obj;
+                if(obj.Module.Name != null)
+                    if (obj.Module.Name.ToLower() == module.ToLower())
+                        return obj;
             }
             return null;
         }

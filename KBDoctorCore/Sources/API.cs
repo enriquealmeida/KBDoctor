@@ -18,6 +18,8 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Practices.CompositeUI.EventBroker;
 using Artech.Architecture.Common.Events;
+using Concepto.Packages.KBDoctor;
+using static Artech.Architecture.Common.Objects.KBVersionRevision;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -160,7 +162,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         ParametersTypeComparer(KB, objlist, ref recommendations);
                     //Empty conditional blocks
                     if (CheckKeyInINI(parsedData, SectionName, "EmptyConditionalBlocks", "true", "Checks if exists any IF/Else block without code in it", filename))
-                        EmptyConditionalBlocks(KB, objlist);
+                        EmptyConditionalBlocks(KB, objlist, ref recommendations);
                     //Constants in code
                     if (CheckKeyInINI(parsedData, SectionName, "ConstantsInCode", "true", "Check if there are hardcoded constants", filename))
                         ConstantsInCode(KB, objlist);
@@ -370,13 +372,54 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             //DateTime ayer = new DateTime(2018,08,01);
             DateTime ayer = DateTime.Today.AddDays(-1);
-            Objects.TeamDevTest(KB, "http://concepto.genexusserver.com/xev3", "local\\***", "***", "LuciaX", "LuciaX", ayer, DateTime.Today);
+            List<IKBVersionRevision> list = (List<IKBVersionRevision>)UIServices.TeamDevClient.GetRevisions(KB.DesignModel.KBVersion, "", 1);
+            foreach (IKBVersionRevision revision in list)
+            {
+                foreach( IRevisionAction action in revision.Actions)
+                {
+                    List<string> objs_reviewed = new List<string>(); 
+                    string name = "";
+                    string module = "";
+                    if (action.Operation.ToString().ToLower() != "delete")
+                    {
+                        QualifiedName qn = null;
+
+                        if (KB.DesignModel.Objects.GetName(action.Key) != null)
+                        {
+                            name = KB.DesignModel.Objects.GetName(action.Key).QualifiedName.ObjectName;
+                            qn = KB.DesignModel.Objects.GetName(action.Key).QualifiedName;
+                        }
+                        else
+                        {
+                            name = "";
+                            module = "";
+                            qn = null;
+                        }
+                        KBDoctorOutput.Message(string.Format("{0},{1},{2},{3},{4},{5}", revision.UserName,revision.Comment.Replace(",", " ").Replace(Environment.NewLine, " "),
+                                                                                        action.Operation,action.Type,name,action.Description, revision.CommitDate.ToString()));
+                        foreach (KBObject obj in KB.DesignModel.Objects.GetByPropertyValue("Name", name))
+                        {
+                            if (obj.QualifiedName == qn && !(objs_reviewed.Contains(qn.ToString())))
+                            {
+                                objs_reviewed.Add(qn.ToString());
+                                IOutputService output = CommonServices.Output;
+                                List<KBObject> objs = new List<KBObject>();
+                                objs.Add(obj);
+                                List<string[]> lines = new List<string[]>();
+                                PreProcessPendingObjects(KB, output, objs, out lines);
+                                objs.Clear();
+                            }
+                        }
+                    }
+                }
+            }
+             //   Objects.TeamDevTest(KB, "http://concepto.genexusserver.com/xev3", "local\\*****", "***", "LuciaX", "LuciaX", ayer, DateTime.Today);
         }
-        public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs)
+        public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs, ref string recommendations)
         {
             foreach (KBObject obj in objs)
             {
-                Objects.EmptyConditionalBlocks(KB.DesignModel, obj);
+                Objects.EmptyConditionalBlocks(KB.DesignModel, obj, ref recommendations);
             }
         }
 

@@ -1347,7 +1347,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
-        internal static void ProcessIfElseInSource(KBModel model, SourcePart source, VariablesPart vp)
+        internal static void ProcessIfElseInSource(KBModel model, SourcePart source, VariablesPart vp, ref string recommendations)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
@@ -1363,15 +1363,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     if(cond.Children.Count() == 0)
                     {
-                        
-                        OutputError error = new OutputError("This conditional block has no code.", MessageLevel.Warning, new SourcePosition(source, cond.Node.Row, 0));
+                        string msgOutput = "This conditional block has no code. Line " + cond.Node.Row.ToString();
+                        recommendations += msgOutput + "<br>";
+                        OutputError error = new OutputError(msgOutput, MessageLevel.Warning, new SourcePosition(source, cond.Node.Row, 0));
                         KBDoctorOutput.OutputError(error);
                     }
                     else if(cond.Children.Count() == 1)
                     {
                         if (cond.Children.First() is CommandBlockNode && cond.Children.First().Node.Token == 110) //else
                         {
-                            OutputError error = new OutputError("This conditional block has no code.", MessageLevel.Warning, new SourcePosition(source, cond.Node.Row, 0));
+                            string msgOutput = "This conditional block has no code. Line " + cond.Node.Row.ToString();
+                            recommendations += msgOutput + "<br>";
+                            OutputError error = new OutputError(msgOutput, MessageLevel.Warning, new SourcePosition(source, cond.Node.Row, 0));
                             KBDoctorOutput.OutputError(error);
                         }
                     }
@@ -1750,7 +1753,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        internal static void EmptyConditionalBlocks(KBModel model, KBObject obj)
+        internal static void EmptyConditionalBlocks(KBModel model, KBObject obj, ref string recommendations)
         {
             if (!isGeneratedbyPattern(obj))
             {
@@ -1759,7 +1762,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     if (procpart != null)
-                        ProcessIfElseInSource(model, procpart, vp);
+                        ProcessIfElseInSource(model, procpart, vp, ref recommendations);
                 }
                 else
                 {
@@ -1768,7 +1771,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
                         VariablesPart vp = obj.Parts.Get<VariablesPart>();
                         if (eventspart != null)
-                            ProcessIfElseInSource(model, eventspart, vp);
+                            ProcessIfElseInSource(model, eventspart, vp, ref recommendations);
                     }
                 }
             }
@@ -2150,7 +2153,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 else
                 {
-                    string msgOutput = " (" + assign.Right.Text + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name;
+                    string textRight = "";
+                    if (assign.Right.Text == "udp" || assign.Right.Text == "call")
+                    {
+                        textRight = assign.Right.Children.First<AbstractNode>().Text;
+                    }
+                    else
+                    {
+                        textRight = assign.Right.Text;
+                    }
+                    string msgOutput = " (" + textRight + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name;
                     OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
                 }
             }
@@ -2158,7 +2170,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (domR != null)
                 {
-                    string msgOutput = " (" + assign.Left.Text + ") Doesn't have domain but (" + assign.Right.Text + ") is BasedOn " + domR.Name;
+                    string textRight = "";
+                    if (assign.Right.Text == "udp" || assign.Right.Text == "call")
+                    {
+                        textRight = assign.Right.Children.First<AbstractNode>().Text;
+                    }
+                    else
+                    {
+                        textRight = assign.Right.Text;
+                    }
+                    string msgOutput = " (" + assign.Left.Text + ") Doesn't have domain but (" + textRight + ") is BasedOn " + domR.Name;
                     OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
                 }
             }
@@ -2353,10 +2374,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             KBDoctorOutput.OutputError(err);
         }
 
-        internal static bool TeamDevTest(KnowledgeBase KB, string urlserver, string user, string passw, string Kbname, string KBversion, DateTime from, DateTime to)
+        internal static bool TeamDevTest(KnowledgeBase KB, DateTime from, DateTime to)
         {
-            HistoryOperation ho = new HistoryOperation(urlserver,user, passw, Kbname, KBversion, from, to);
+           /* HistoryOperation ho = new HistoryOperation(urlserver,user, passw, Kbname, KBversion, from, to);
             ho.Execute();
+            
             KBModel kbm = KB.DesignModel;
             foreach (KBRevisionData revision in ho.revisions)
             {
@@ -2383,7 +2405,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         }
                     }
                 }
-            }   
+            }   */
             return true;
         }
 
