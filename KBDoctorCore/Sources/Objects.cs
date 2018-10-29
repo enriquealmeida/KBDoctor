@@ -7,7 +7,6 @@ using Artech.Architecture.Language.Services;
 using Artech.Genexus.Common.CustomTypes;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common;
-using Artech.Packages.TeamDevClient.CommandLine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -1347,7 +1346,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
-        internal static void ProcessIfElseInSource(KBModel model, SourcePart source, VariablesPart vp)
+        internal static void ProcessIfElseInSource(KBModel model, SourcePart source, VariablesPart vp, ref string recommendations)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
@@ -1363,15 +1362,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     if(cond.Children.Count() == 0)
                     {
-                        
-                        OutputError error = new OutputError("This conditional block has no code.", MessageLevel.Warning, new SourcePosition(source, cond.Node.Row, 0));
+                        string msgOutput = "This conditional block has no code. Line " + cond.Node.Row.ToString();
+                        recommendations += msgOutput + "<br>";
+                        OutputError error = new OutputError(msgOutput, MessageLevel.Warning, new SourcePosition(source, cond.Node.Row, 0));
                         KBDoctorOutput.OutputError(error);
                     }
                     else if(cond.Children.Count() == 1)
                     {
                         if (cond.Children.First() is CommandBlockNode && cond.Children.First().Node.Token == 110) //else
                         {
-                            OutputError error = new OutputError("This conditional block has no code.", MessageLevel.Warning, new SourcePosition(source, cond.Node.Row, 0));
+                            string msgOutput = "This conditional block has no code. Line " + cond.Node.Row.ToString();
+                            recommendations += msgOutput + "<br>";
+                            OutputError error = new OutputError(msgOutput, MessageLevel.Warning, new SourcePosition(source, cond.Node.Row, 0));
                             KBDoctorOutput.OutputError(error);
                         }
                     }
@@ -1750,7 +1752,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        internal static void EmptyConditionalBlocks(KBModel model, KBObject obj)
+        internal static void EmptyConditionalBlocks(KBModel model, KBObject obj, ref string recommendations)
         {
             if (!isGeneratedbyPattern(obj))
             {
@@ -1759,7 +1761,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     if (procpart != null)
-                        ProcessIfElseInSource(model, procpart, vp);
+                        ProcessIfElseInSource(model, procpart, vp, ref recommendations);
                 }
                 else
                 {
@@ -1768,7 +1770,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
                         VariablesPart vp = obj.Parts.Get<VariablesPart>();
                         if (eventspart != null)
-                            ProcessIfElseInSource(model, eventspart, vp);
+                            ProcessIfElseInSource(model, eventspart, vp, ref recommendations);
                     }
                 }
             }
@@ -2150,7 +2152,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 else
                 {
-                    string msgOutput = " (" + assign.Right.Text + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name;
+                    string textRight = "";
+                    if (assign.Right.Text == "udp" || assign.Right.Text == "call")
+                    {
+                        textRight = assign.Right.Children.First<AbstractNode>().Text;
+                    }
+                    else
+                    {
+                        textRight = assign.Right.Text;
+                    }
+                    string msgOutput = " (" + textRight + ") Doesn't have domain but (" + assign.Left.Text + ") is BasedOn " + domL.Name;
                     OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
                 }
             }
@@ -2158,7 +2169,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (domR != null)
                 {
-                    string msgOutput = " (" + assign.Left.Text + ") Doesn't have domain but (" + assign.Right.Text + ") is BasedOn " + domR.Name;
+                    string textRight = "";
+                    if (assign.Right.Text == "udp" || assign.Right.Text == "call")
+                    {
+                        textRight = assign.Right.Children.First<AbstractNode>().Text;
+                    }
+                    else
+                    {
+                        textRight = assign.Right.Text;
+                    }
+                    string msgOutput = " (" + assign.Left.Text + ") Doesn't have domain but (" + textRight + ") is BasedOn " + domR.Name;
                     OutputMsgAssignComparer(assign, part, msgOutput, ref recommendations);
                 }
             }
@@ -2300,6 +2320,63 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+        internal static bool ReviewCommitsFromTo(KnowledgeBase KB, List<IKBVersionRevision> list)
+        {
+            bool success;
+            try {
+                List<string> objs_reviewed = new List<string>();
+                foreach (IKBVersionRevision revision in list)
+                {
+                    foreach (IRevisionAction action in revision.Actions)
+                    {
+                        
+                        string name = "";
+                        string module = "";
+                        if (action.Operation.ToString().ToLower() != "delete")
+                        {
+                            QualifiedName qn = null;
+
+                            if (KB.DesignModel.Objects.GetName(action.Key) != null)
+                            {
+                                name = KB.DesignModel.Objects.GetName(action.Key).QualifiedName.ObjectName;
+                                qn = KB.DesignModel.Objects.GetName(action.Key).QualifiedName;
+                            }
+                            else
+                            {
+                                qn = null;
+                            }
+                            KBDoctorOutput.Message(string.Format("{0},{1},{2},{3},{4},{5},{6}", revision.UserName, revision.Comment.Replace(",", " ").Replace(Environment.NewLine, " "),
+                                                                                            action.Operation, action.Type, name, action.Description, revision.CommitDate.ToString()));
+                            if (name != "")
+                            {
+                                KBObject obj = KB.DesignModel.Objects.Get(action.Key);
+                                if (!(objs_reviewed.Contains(qn.ToString())))
+                                {
+                                    objs_reviewed.Add(qn.ToString());
+                                    IOutputService output = CommonServices.Output;
+                                    List<KBObject> objs = new List<KBObject>();
+                                    objs.Add(obj);
+                                    List<string[]> lines = new List<string[]>();
+                                    API.PreProcessPendingObjects(KB, output, objs, out lines);
+                                    objs.Clear();
+                                }
+                                else
+                                {
+                                    KBDoctorOutput.Message("Object already reviewed.");
+                                }
+                            }
+                        }
+                    }
+                }
+                success = true;
+            }
+            catch
+            {
+                success = false;
+            }
+            return success;
+        }
+
         private static void ProcessCallsAsFuctions(KBModel model, SourcePart source, VariablesPart vp, ref string recommendations)
         {
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
@@ -2353,39 +2430,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             KBDoctorOutput.OutputError(err);
         }
 
-        internal static bool TeamDevTest(KnowledgeBase KB, string urlserver, string user, string passw, string Kbname, string KBversion, DateTime from, DateTime to)
-        {
-            HistoryOperation ho = new HistoryOperation(urlserver,user, passw, Kbname, KBversion, from, to);
-            ho.Execute();
-            KBModel kbm = KB.DesignModel;
-            foreach (KBRevisionData revision in ho.revisions)
-            {
-                string UserName = revision.UserName;
-                string Comments = revision.Comments;
-                foreach (KBRevisionActionData action in revision.Actions)
-                {
-                    KBDoctorOutput.Message(string.Format("{0},{1},{2},{3},{4},{5}",
-                                UserName,
-                                Comments.Replace(",", " ").Replace(Environment.NewLine, " "),
-                                action.Operation,
-                                action.ObjectType,
-                                action.ObjectName, revision.Timestamp.ToString()));
-                   if (action.Operation.ToLower() != "delete")
-                    {
-                        foreach (KBObject obj in kbm.Objects.GetByPropertyValue("Name", action.ObjectName))
-                        {
-                            IOutputService output = CommonServices.Output;
-                            List<KBObject> objs = new List<KBObject>();
-                            objs.Add(obj);
-                            List<string[]> lines = new List<string[]>();
-                            API.PreProcessPendingObjects(KB, output, objs, out lines);
-                            objs.Clear();
-                        }
-                    }
-                }
-            }   
-            return true;
-        }
 
 #if EVO3
     public class Tuple<T1, T2>

@@ -18,6 +18,8 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Practices.CompositeUI.EventBroker;
 using Artech.Architecture.Common.Events;
+using Concepto.Packages.KBDoctor;
+using static Artech.Architecture.Common.Objects.KBVersionRevision;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -160,7 +162,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         ParametersTypeComparer(KB, objlist, ref recommendations);
                     //Empty conditional blocks
                     if (CheckKeyInINI(parsedData, SectionName, "EmptyConditionalBlocks", "true", "Checks if exists any IF/Else block without code in it", filename))
-                        EmptyConditionalBlocks(KB, objlist);
+                        EmptyConditionalBlocks(KB, objlist, ref recommendations);
                     //Constants in code
                     if (CheckKeyInINI(parsedData, SectionName, "ConstantsInCode", "true", "Check if there are hardcoded constants", filename))
                         ConstantsInCode(KB, objlist);
@@ -366,17 +368,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        public static void ReivewCommits(KnowledgeBase KB)
+        public static bool ReivewCommits(KnowledgeBase KB, List<IKBVersionRevision> revisions_list)
         {
-            //DateTime ayer = new DateTime(2018,08,01);
-            DateTime ayer = DateTime.Today.AddDays(-1);
-            Objects.TeamDevTest(KB, "http://concepto.genexusserver.com/xev3", "local\\***", "***", "LuciaX", "LuciaX", ayer, DateTime.Today);
+            return Objects.ReviewCommitsFromTo(KB, revisions_list); ;
         }
-        public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs)
+
+        public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs, ref string recommendations)
         {
             foreach (KBObject obj in objs)
             {
-                Objects.EmptyConditionalBlocks(KB.DesignModel, obj);
+                Objects.EmptyConditionalBlocks(KB.DesignModel, obj, ref recommendations);
             }
         }
 

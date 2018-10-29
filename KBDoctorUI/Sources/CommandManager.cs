@@ -625,9 +625,25 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ReviewCommits(KnowledgeBase KB)
         {
-            KBDoctorOutput.StartSection("KBDoctor - Review commits");
-            API.ReivewCommits(UIServices.KB.CurrentKB);
-            KBDoctorOutput.EndSection("KBDoctor - Review commits");
+            bool success;
+            string error_message = "";
+            try
+            {
+                KBDoctorOutput.StartSection("KBDoctor - Review commits");
+                DateTime FromDate = DateTime.Today.AddDays(-1);
+                DateTime ToDate = DateTime.Today;
+                string querystring = KBDoctorCore.Sources.Utility.GetQueryStringFromToDate(FromDate, ToDate);
+                List<IKBVersionRevision> revisions_list = (List<IKBVersionRevision>)UIServices.TeamDevClient.GetRevisions(KB.DesignModel.KBVersion, querystring, 1);
+
+                success = API.ReivewCommits(UIServices.KB.CurrentKB, revisions_list);
+            }
+            catch(Exception e)
+            {
+                success = false;
+                error_message = e.Message;
+                KBDoctorOutput.InternalError(error_message, e);
+            }
+            KBDoctorOutput.EndSection("KBDoctor - Review commits", success);
         }
 
 
@@ -701,7 +717,8 @@ namespace Concepto.Packages.KBDoctor
         private static void EmptyConditionalBlock(KnowledgeBase KB, List<KBObject> objs)
         {
             KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
-            API.EmptyConditionalBlocks(UIServices.KB.CurrentKB, objs);
+            string recommendations = ""; 
+            API.EmptyConditionalBlocks(UIServices.KB.CurrentKB, objs, ref recommendations);
             KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
         }
 
@@ -789,7 +806,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             KBModel kbModel = kbserv.CurrentModel;
 
-            List<string[]> lineswriter = new List<string[]>(); ;
+            
 
             string title = "KBDoctor - Review Objects";
             try
@@ -808,23 +825,29 @@ namespace Concepto.Packages.KBDoctor
                         selectedObjects.Add(obj);
                     }
                 }
-                string rec = "";
-                KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter);
-                foreach (string[] line in lineswriter)
-                {
-                    writer.AddTableData(line);
-                }
-                writer.AddFooter();
-                writer.Close();
-                bool success = true;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                Thread thread = new Thread(() => ExecuteReviewAndShowResults(output, title, outputFile, writer, selectedObjects));
+                thread.Start();
             }
             catch
             {
                 bool success = false;
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
+        }
+
+        private static void ExecuteReviewAndShowResults(IOutputService output, string title, string outputFile, KBDoctorXMLWriter writer, List<KBObject> selectedObjects)
+        {
+            List<string[]> lineswriter = new List<string[]>(); ;
+            API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter);
+            foreach (string[] line in lineswriter)
+            {
+                writer.AddTableData(line);
+            }
+            writer.AddFooter();
+            writer.Close();
+            bool success = true;
+            KBDoctorOutput.EndSection(title, success);
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
 
         public bool ExecReviewObject(CommandData cmdData)

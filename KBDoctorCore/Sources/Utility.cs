@@ -26,6 +26,7 @@ using Artech.Packages.Patterns;
 using Artech.Packages.Patterns.Objects;
 using Artech.Genexus.Common.Helpers;
 using static Concepto.Packages.KBDoctorCore.Sources.Objects;
+using Concepto.Packages.KBDoctor;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -689,8 +690,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             foreach (KBObject obj in model.Objects.GetByPropertyValue("Name", name))
             {
-                if (obj.Module.Name.ToLower() == module.ToLower())
-                    return obj;
+                if(obj.Module.Name != null)
+                    if (obj.Module.Name.ToLower() == module.ToLower())
+                        return obj;
             }
             return null;
         }
@@ -961,6 +963,26 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 ret = splits[5];
             }
             return ret;
+        }
+
+        public static string GetQueryStringFromToDate(DateTime FromDate, DateTime ToDate)
+        {
+            string querystring = "operation:Commit";
+            if (FromDate != null)
+            {
+                querystring += " after:" + FromDate.Year.ToString() + "/" + FromDate.Month.ToString().PadLeft(2, '0') + "/" + FromDate.Day.ToString().PadLeft(2, '0');
+            }
+            else
+            {
+                DateTime ayer = DateTime.Today.AddDays(-1);
+                querystring += " after:" + ayer.Year.ToString() + "/" + ayer.Month.ToString().PadLeft(2, '0') + "/" + ayer.Day.ToString().PadLeft(2, '0');
+            }
+            if (ToDate != null)
+            {
+                querystring += " before:" + ToDate.Year.ToString() + "/" + ToDate.Month.ToString().PadLeft(2, '0') + "/" + ToDate.Day.ToString().PadLeft(2, '0');
+            }
+
+            return querystring;
         }
 
         private static string[] ReadQnameFromLine(string Line, IOutputService output)
