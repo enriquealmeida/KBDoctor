@@ -153,10 +153,6 @@
       <Project>{5e46dcf4-c473-4171-9f9b-f3910b5ec407}</Project>
       <Name>INIFileParser</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TeamDevConcepto\TeamDevCommand.csproj">
-      <Project>{adee514c-d396-49ea-bc3b-ba9a963f0a9e}</Project>
-      <Name>TeamDevCommand</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

@@ -7,7 +7,6 @@ using Artech.Architecture.Language.Services;
 using Artech.Genexus.Common.CustomTypes;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common;
-using Artech.Packages.TeamDevClient.CommandLine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
