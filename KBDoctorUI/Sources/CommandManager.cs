@@ -628,8 +628,8 @@ namespace Concepto.Packages.KBDoctor
             try
             {
                 KBDoctorOutput.StartSection("KBDoctor - Review commits");
-                DateTime FromDate = new DateTime(2018, 10, 24);
-                DateTime ToDate = new DateTime(2018, 10, 25);
+                DateTime FromDate = DateTime.Today.AddDays(-1);
+                DateTime ToDate = DateTime.Today;
                 string querystring = KBDoctorCore.Sources.Utility.GetQueryStringFromToDate(FromDate, ToDate);
                 List<IKBVersionRevision> revisions_list = (List<IKBVersionRevision>)UIServices.TeamDevClient.GetRevisions(KB.DesignModel.KBVersion, querystring, 1);
 
