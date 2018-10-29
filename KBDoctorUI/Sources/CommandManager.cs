@@ -108,7 +108,7 @@ namespace Concepto.Packages.KBDoctor
 
             AddCommand(CommandKeys.ObjectsWithConstants, new ExecHandler(ExecObjectsWithConstants), new QueryHandler(QueryKBDoctor));
            
-            AddCommand(CommandKeys.ObjectsDiagnostics, new ExecHandler(ExecObjectsDiagnostics), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.FixVariablesNotBasedInAttributesOrDomain, new ExecHandler(ExecFixVariablesNotBasedInAttributesOrDomain), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.KBInterfaces, new ExecHandler(ExecKBInterfaces), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWINWEB, new ExecHandler(ExecObjectsWINWEB), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListProcedureCallWebpanelTransaction, new ExecHandler(ExecListProcedureCallWebpanelTransaction), new QueryHandler(QueryKBDoctor));
@@ -1186,11 +1186,11 @@ namespace Concepto.Packages.KBDoctor
             return true;*/
         }
 
-        public bool ExecObjectsDiagnostics(CommandData cmdData)
+        public bool ExecFixVariablesNotBasedInAttributesOrDomain(CommandData cmdData)
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            ObjectsHelper.ObjectsDiagnostics();
+            ObjectsHelper.FixVariablesNotBasedInAttributesOrDomain();
             return true;
         }
 

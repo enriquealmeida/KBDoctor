@@ -222,7 +222,7 @@
   <data name="CountTableAccess" xml:space="preserve">
     <value>Count table access</value>
   </data>
-  <data name="ObjectsDiagnostics" xml:space="preserve">
+  <data name="FixVariablesNotBasedInAttributesOrDomain" xml:space="preserve">
     <value>Fix variables not based in Domain/Attributes</value>
   </data>
   <data name="AttInOneTrnOnly" xml:space="preserve">
