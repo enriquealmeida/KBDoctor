@@ -3,6 +3,8 @@ if %1%a==a goto nada
 	rmdir  /s /q %targetDir%
 	md %targetDir%
 	xcopy KBDoctorCmd\bin\debug\KBDoctorCmd.dll %targetDir%
+	xcopy KBDoctorCmd\KBDoctorCmd.msbuild %targetDir%
+	xcopy KBDoctorCmd\KBDoctorCmd.Tasks.targets %targetDir%
 	xcopy KBDoctorCore\bin\debug\KBDoctorCore.dll %targetDir%
 	xcopy IniFileParser\bin\debug\IniFileParser.dll %targetDir%
 	xcopy Louvain\bin\debug\LouvainCommunityPL.dll %targetDir%

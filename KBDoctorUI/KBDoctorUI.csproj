@@ -220,7 +220,6 @@
     <Compile Include="Sources\Functions.cs" />
     <Compile Include="CodeGeneration\CodeGeneration.cs" />
     <Compile Include="Sources\GraphHelper.cs" />
-    <Compile Include="Sources\Labs.cs" />
     <Compile Include="Sources\ModulesHelper.cs" />
     <Compile Include="Sources\NavigationHelper.cs" />
     <Compile Include="Icons.Designer.cs">

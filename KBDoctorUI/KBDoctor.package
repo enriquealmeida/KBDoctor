@@ -31,7 +31,7 @@
     <CommandDefinition id="GenerateSimpleTransactionFromNotGeneratedTransactions" />
     <CommandDefinition id="TableUpdate" />
     <CommandDefinition id="TableInsertNew" />
-    <CommandDefinition id="GenerateTrnFromTabless" />
+
     <CommandDefinition id="GenerateTrnFromTables2" />
     <CommandDefinition id="ListTablesInModules" />
     <CommandDefinition id="ListObjectsWithTableInOtherModule" />    
@@ -70,6 +70,7 @@
     <CommandDefinition id="ListObjSimilarNavigation" />
     <CommandDefinition id="ListAPIObjects" />
     <CommandDefinition id="RecomendedModule" />
+    <CommandDefinition id="RecomendedModule2" />
     <CommandDefinition id="SplitMainObject" />
     <CommandDefinition id="MainTableUsed" />
     <CommandDefinition id="CreateDeployUnits" />
@@ -187,6 +188,7 @@
               <Command refid="AttWithoutDescription"/>
               <Command refid="AttInOneTrnOnly"/>
               <Command refid="AttFormula"/>
+              <Command refid="AttUpdated"/>
             </Group>
             <Group>
               <Command refid="AttCharToVarchar"/>
@@ -208,6 +210,7 @@
             <Command refid="TableTransaction" />
             <Command refid="TableUpdate" />
             <Command refid="IndexWithNotRefAtt"/>
+            <Command refid ="TablesWidth"/>
           </Popup>
 
           <Popup name ="Objects">
@@ -253,6 +256,8 @@
               <Command refid="RecomendedModule" />
               <Command refid="SplitMainObject" />
               <Command refid="MoveTransactions" />
+              <Command refid="GenerateGraph"/>
+              <Command refid="RecomendedModule2" />
             </Group>
           </Popup>
           <Group id="CleanKB" >
@@ -264,7 +269,8 @@
               <Command refid="CleanObjects" />
               <Command refid="FixVariablesNotBasedInAttributesOrDomain" />
               <Command refid="ResetWINForm"/>
-
+              <Command refid="ReplaceNullCompatible"  />
+              <Command refid="ChangeCommitOnExit" />
               
             </Popup>
           </Group>
@@ -277,7 +283,13 @@
               <Command refid="CountGeneratedByPattern"  />
             </Popup>
           </Group>
-          
+          <Group id="ModularizationG" >
+            <Popup name ="Modularization">
+              <Command refid="GenerateGraph"/>
+              <Command refid="RecomendedModule2" />
+              <Command refid="ListModularizationQuality" />
+            </Popup>
+          </Group>
 
           <Popup name="AboutKBDoctor" >
             <Group id="Configuration" >
@@ -314,7 +326,7 @@
               <Command refid="ListProcedureCallWebpanelTransaction" />
               <Command refid="ObjectsLegacyCode" />
               <Command refid="MarkPublicObjects" />
-              <Command refid="GenerateTrnFromTabless" />
+
 
               <Command refid="ObjectsNotReacheable"/>
               <Command refid="CleanKBAsMuchAsPossible"/>
@@ -329,7 +341,7 @@
               <Command refid="NewsWithoutWhenDuplicate" />
               <Command refid="ConstantsInCode" />
               <Command refid="ReviewCommits" />
-              <Command refid="GenerateGraph"/>
+
             </Popup>
           </Group>
           
@@ -337,7 +349,7 @@
           <!--
           <Group id="LABS2" >
               <Popup>
-                <Command refid="ChangeCommitOnExit" />
+           
 
             
                 <Popup name ="Themes" >
@@ -355,18 +367,18 @@
                 <Command refid="GenerateLocationXML" />
                 <Command refid="CleanObjects" />
 
-                <Command refid="AttUpdated"/>
+
                 <Command refid="ObjectsComplex" />
                 <Group>
-                  <Command refid="GenerateGraph"/>
+
                   <Command refid="ObjectsMainCalled"/>
                   <Command refid="ChangeLegacyCode" />
                   <Command refid="EditLegacyCodeToReplace" />
                   <Command refid="UDPCallables"/>
                 </Group>
-                <Command refid="ReplaceNullCompatible"  />
+           
 
-                <Command refid ="TablesWidth"/>
+        
               </Popup>
 
           </Group>

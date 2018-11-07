@@ -315,6 +315,9 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey recomendedModule = new CommandKey(Package.guid, "RecomendedModule");
         public static CommandKey RecomendedModule { get { return recomendedModule; } }
 
+        private static CommandKey recomendedModule2 = new CommandKey(Package.guid, "RecomendedModule2");
+        public static CommandKey RecomendedModule2 { get { return recomendedModule2; } }
+
         private static CommandKey splitMainObject = new CommandKey(Package.guid, "SplitMainObject");
         public static CommandKey SplitMainObject { get { return splitMainObject; } }
 

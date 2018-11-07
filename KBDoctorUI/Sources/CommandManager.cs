@@ -178,6 +178,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ListAPIObjects, new ExecHandler(ExecListAPIObjects), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.RecomendedModule, new ExecHandler(ExecRecomendedModule), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.RecomendedModule2, new ExecHandler(ExecRecomendedModule2), new QueryHandler(QueryKBDoctor));
+
             AddCommand(CommandKeys.SplitMainObject, new ExecHandler(ExecSplitMainObject), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.UDPCallables, new ExecHandler(ExecUDPCallables), new QueryHandler(QueryKBDoctor));
 
@@ -1445,7 +1447,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            Labs.ReplaceNullsCompatible();
+            AttributesHelper.ReplaceNullsCompatible();
             return true;
         }
 
@@ -1565,6 +1567,13 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecRecomendedModule2(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            ModulesHelper.RecomendedModule2();
+            return true;
+        }
         public bool ExecSplitMainObject(CommandData cmdData)
         {
             IOutputService output = CommonServices.Output;

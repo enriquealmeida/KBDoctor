@@ -622,7 +622,7 @@ namespace Concepto.Packages.KBDoctor
             // Object with parm() rule without in: out: or inout:
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            string title = "KBDoctor - Object referenced by object ";
+            string title = "KBDoctor - Change Commit on Exit ";
 
             output.StartSection("KBDoctor", title);
             try

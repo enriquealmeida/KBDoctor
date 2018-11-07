@@ -8,6 +8,7 @@ using Artech.Architecture.UI.Framework.Services;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Services;
 using Artech.Genexus.Common.Wiki;
+using Artech.Architecture.Common.Descriptors;
 using Artech.Udm.Framework.References;
 using System;
 using System.Data;
@@ -186,6 +187,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             KBModel kbmodel = kbserv.CurrentModel;
+            Module Root = kbserv.CurrentModel.GetDesignModel().RootModule;
             bool success = true;
             int objInRoot = 0;
             int objInModule = 0;
@@ -195,11 +197,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             int modules = 0;
             string title = "KBDoctor - List Modules Statistics Total";
             output.StartSection("KBDoctor",title);
-            //  string outputFile = Functions.CreateOutputFile(kbserv, title);
-            //  KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            //  writer.AddHeader(title);
-            //  writer.AddTableHeader(new string[] { "Module", "Description", "Tables", "Public Tables", "Objects", "Public Obj", "Obj/Publ %", "In References", "Out References" });
-
+           
 
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
@@ -208,14 +206,14 @@ El módulo tiene objetos públicos no referenciados por externos?
                     objTot += 1;
                     if (obj is Table)
                     {
-                        if (TablesHelper.TableModule(kbmodel, (Table)obj) == kbserv.CurrentModel.GetDesignModel().RootModule)
+                        if (TablesHelper.TableModule(kbmodel, (Table)obj) == Root)
                             tblInRoot += 1;
                         else
                             tblInModule += 1;
                     }
                     else
                     {
-                        if (obj.Module == kbserv.CurrentModel.GetDesignModel().RootModule)
+                        if (obj.Module == Root)
                             objInRoot += 1;
                         else
                             objInModule += 1;
@@ -241,31 +239,88 @@ El módulo tiene objetos públicos no referenciados por externos?
         public static void ListModularizationQuality()
         {
             IKBService kbserv = UIServices.KB;
-            Model model = kbserv.CurrentModel;
             IOutputService output = CommonServices.Output;
             bool success = true;
             int objInRoot = 0;
             int objSinRoot = 0;
             string title = "KBDoctor - List Modularization Quality (More is better)";
             output.StartSection("KBDoctor", title);
-            try
+
+            Dictionary<string,int> interModule = new Dictionary<string, int>();
+            Dictionary<string, int> intraModule = new Dictionary<string, int>();
+
+            KBModel  model = kbserv.CurrentModel;
+            foreach (Module mdl in Module.GetAll(model))
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Module", "Description", "CF" });
+                interModule[mdl.Name] = 0;
+                intraModule[mdl.Name] = 0;
+            }
 
-               
-
-                foreach (Module mdl in Module.GetAll(kbserv.CurrentModel))
+            foreach (KBObject objTo in kbserv.CurrentModel.Objects.GetAll())
+            {
+                //     KBDoctorOutput.Message(objTo.Name + ":" + objTo.TypeDescriptor.Name );
+                int intraAcum = 0;
+                int interAcum = 0;
+                foreach (EntityReference refer in objTo.GetReferencesTo())
                 {
+                    KBObject objFrom = KBObject.Get(objTo.Model, refer.From);
+                    if (objFrom != null )
+                    {
+                        if (GraphHelper.IncludedInGraph(objTo) && GraphHelper.IncludedInGraph(objFrom))
+                        {
+                            string mdlTo = ObjectModuleName(objTo);
+                            string mdlFrom = ObjectModuleName(objFrom);
+                            int weight = GraphHelper.ReferenceWeight(objFrom, objTo);
 
-                    output.AddLine("KBDoctor", "Calculating " + mdl.Name + " CF");
-                    double cf = CF(mdl);
-                    writer.AddTableData(new string[] { mdl.Name, mdl.Description, "1" });
+                            // KBDoctorOutput.Message(objFrom.Name + ":" + objFrom.TypeDescriptor.Name + "," + mdlFrom + "," + objTo.Name + ":" + objTo.TypeDescriptor.Name + "," + mdlTo + "," + weight.ToString());
 
 
+                            if (mdlTo == mdlFrom)
+                            {
+                                intraModule[mdlTo] += (2 * weight);
+                                intraAcum += (2 * weight);
+                            }
+                            else
+                            {
+                                interModule[mdlTo] += weight;
+                                interModule[mdlFrom] += weight;
+                                interAcum += (2 * weight);
+                                // KBDoctorOutput.Message(objFrom.Name +":" +objFrom.TypeDescriptor.Name  +"," + mdlFrom +","+ objTo.Name + ":" + objFrom.TypeDescriptor.Name + "," + mdlTo + "," + weight.ToString());
+                            }
+
+                        }
+                    }
+                  
                 }
+                if (GraphHelper.IncludedInGraph(objTo))
+                    KBDoctorOutput.Message(objTo.Name + ":" + objTo.TypeDescriptor.Name + "," + intraAcum + "," + interAcum);
+
+            }
+
+            //  try
+            //  {
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Module", "Intra", "Inter * 2", "CF", "Order" });
+
+            double TurboMQ = 0;
+            foreach (string mdl in intraModule.Keys)
+            {
+
+                    //output.AddLine("KBDoctor", "Calculating " + mdl + " CF");
+                double cf = 0.00;
+                if (interModule[mdl] > 0 || intraModule[mdl] > 0)
+                {
+                    cf = ((2.0 * intraModule[mdl]) / ((2.0 * intraModule[mdl]) + interModule[mdl]));
+                    TurboMQ += cf;
+                    int ord = (int) (cf * 1000);
+                    writer.AddTableData(new string[] { mdl, intraModule[mdl].ToString(), interModule[mdl].ToString(), cf.ToString(),ord.ToString() });
+                }
+            }
+
+
+            writer.AddTableData(new string[] { "TurboMQ = "  , "", "", TurboMQ.ToString("N" + 6) });
                 output.AddLine("KBDoctor", "");
                 output.EndSection("KBDoctor", title, success);
                 
@@ -274,12 +329,13 @@ El módulo tiene objetos públicos no referenciados por externos?
                 writer.Close();
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                // Functions.AddLineSummary("moduleQuality.txt", Resumen);
-            }
-            catch
+           // }
+            /*catch
             {
                 success = false;
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
+            */
         }
 
     
@@ -675,6 +731,8 @@ El módulo tiene objetos públicos no referenciados por externos?
 
             return isReferencedFromOutside;
         }
+
+        
         private static KBObjectCollection ObjectsReferencesFromOutside(KBObject obj)
         {
             KBObjectCollection objCol = new KBObjectCollection();
@@ -1252,6 +1310,101 @@ El módulo tiene objetos públicos no referenciados por externos?
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
 
+        }
+
+        public static void RecomendedModule2()
+        {
+            KBDoctorOutput.StartSection("Modularization");
+            KBModel model = UIServices.KB.CurrentModel;
+            // Displays an OpenFileDialog so the user can select a Cursor.  
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "Modularization|*.bunch";
+            openFileDialog1.Filter = "Todos|*.*";
+            openFileDialog1.Title = "Select a Bunch modularization File";
+
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                System.IO.StreamReader sr = new System.IO.StreamReader(openFileDialog1.FileName);
+                string line = "";
+                using (sr)
+                {
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        string[] words = line.Split('=');
+                        string mdl = words[0].Trim();
+                        mdl = FixObjectName(mdl);
+
+                        // MessageBox.Show("Module:" + mdl);
+                        Module newmodule = new Module(model);
+
+                        Random rnd = new Random();
+                        int length = 5;
+                        var str = "";
+                        for (var i = 0; i < length; i++)
+                        {
+                            str += ((char)(rnd.Next(1, 26) + 64)).ToString();
+                        }
+                        newmodule.Name = mdl + "_" + str;
+                        newmodule.Module = Module.GetRoot(model);
+                        newmodule.Save();
+
+                        string[] objects = words[1].Split(',');
+
+
+                        foreach (string objAndType in objects)
+                        {
+                            string[] parts = objAndType.Split(':');
+                            string objname = parts[0].Trim();
+
+                            Guid typeguid;
+                            string objtype = parts[1].Trim();
+
+                            if (objtype != "Table")
+                            {
+                                KBObjectDescriptor kbod = KBObjectDescriptor.Get(objtype);
+
+                                string[] ns = new[] { "Objects" };
+
+                                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetByPartialName(ns, objname))
+                                {
+                                    if (obj != null && obj.Name == objname && obj.Type == kbod.Id)
+                                    {
+                                        KBDoctorOutput.Message(obj.Name + obj.TypeDescriptor.Name);
+                                        obj.Module = newmodule;
+                                        obj.Save();
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+
+                }
+                sr.Close();
+            }
+
+            //Borro modulos vacios
+            foreach (Module mdl in Module.GetAll(model))
+            {
+                try
+                {
+                    mdl.Delete();
+                }
+                catch { Exception e; }
+            }
+            KBDoctorOutput.EndSection("Modularization");
+        }
+
+        private static string FixObjectName(string mdl)
+        {
+            mdl = mdl.Replace("SS(", "");
+            mdl = mdl.Replace(".ss)", "");
+            mdl = mdl.Replace(".", "");
+            mdl = mdl.Replace(":", "");
+            mdl = mdl.Replace(")", "");
+            mdl = mdl.Replace("(", "");
+            return mdl;
         }
 
         private static List<Module> ListModulesOfReferencedTables(KBObject obj)

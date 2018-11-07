@@ -809,6 +809,15 @@ namespace Concepto.Packages.KBDoctorCore {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Apply External Modularization.
+        /// </summary>
+        internal static string RecomendedModule2 {
+            get {
+                return ResourceManager.GetString("RecomendedModule2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Removable Transactions.
         /// </summary>
         internal static string RemovableTransactions {

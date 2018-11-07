@@ -388,6 +388,9 @@
   <data name="RecomendedModule" xml:space="preserve">
     <value>Recommended Module</value>
   </data>
+  <data name="RecomendedModule2" xml:space="preserve">
+    <value>Apply External Modularization</value>
+  </data>
   <data name="SplitMainObject" xml:space="preserve">
     <value>Split main object</value>
   </data>
