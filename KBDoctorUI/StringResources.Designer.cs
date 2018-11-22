@@ -79,6 +79,15 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Apply External Modularization.
+        /// </summary>
+        internal static string ApplyExternalModularization {
+            get {
+                return ResourceManager.GetString("ApplyExternalModularization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Assign Type Comparer.
         /// </summary>
         internal static string AssignTypeComparer {
@@ -745,7 +754,7 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Objects With Constants.
+        ///   Busca una cadena traducida similar a Anonimize KB.
         /// </summary>
         internal static string ObjectsWithConstants {
             get {
@@ -858,15 +867,6 @@ namespace Concepto.Packages.KBDoctor {
         internal static string RecomendedModule {
             get {
                 return ResourceManager.GetString("RecomendedModule", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Apply External Modularization.
-        /// </summary>
-        internal static string RecomendedModule2 {
-            get {
-                return ResourceManager.GetString("RecomendedModule2", resourceCulture);
             }
         }
         

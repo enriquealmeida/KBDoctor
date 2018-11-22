@@ -1312,7 +1312,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
         }
 
-        public static void RecomendedModule2()
+        public static void ApplyExternalModularization()
         {
             KBDoctorOutput.StartSection("Modularization");
             KBModel model = UIServices.KB.CurrentModel;

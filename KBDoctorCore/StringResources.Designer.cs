@@ -79,6 +79,15 @@ namespace Concepto.Packages.KBDoctorCore {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Apply External Modularization.
+        /// </summary>
+        internal static string ApplyExternalModularization {
+            get {
+                return ResourceManager.GetString("ApplyExternalModularization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Char that should be VarChar.
         /// </summary>
         internal static string AttCharToVarchar {
@@ -805,15 +814,6 @@ namespace Concepto.Packages.KBDoctorCore {
         internal static string RecomendedModule {
             get {
                 return ResourceManager.GetString("RecomendedModule", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Apply External Modularization.
-        /// </summary>
-        internal static string RecomendedModule2 {
-            get {
-                return ResourceManager.GetString("RecomendedModule2", resourceCulture);
             }
         }
         

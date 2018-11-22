@@ -2106,79 +2106,52 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
         public static void ObjectsWithConstants()
         {
             IKBService kbserv = UIServices.KB;
-         //   IOutputService output = CommonServices.Output;
-            string title = "KBDoctor - Objects with Constants";
-            try
-            {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+            KBModel model = kbserv.CurrentModel;
 
-                KBDoctorOutput.StartSection(title);
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Description", "Line", "Constant" });
-
-                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                selectObjectOption.MultipleSelection = true;
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-
-                ILanguageService parserSrv = Artech.Architecture.Common.Services.Services.GetService(new Guid("C26F529E-9A69-4df5-B825-9194BA3983A3")) as ILanguageService;
-
-                var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
-
-                ParserInfo parserInfo;
-
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-
+            var sorted = from obj in model.Objects.GetAll()
+                         where (!obj.Name.StartsWith("KBD_"))
+                         select obj;
+            KBDoctorOutput.Message(sorted.ToList().Count.ToString());
+            foreach (KBObject obj in sorted )
                 {
-                    Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
-                    Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                string objTypeName = obj.TypeDescriptor.Name;
+               // KBDoctorOutput.Message(obj.Name);
 
-                    if (source != null)
+                if (objTypeName.Contains("Pattern"))
+                    continue;
+                if (obj is ThemeClass)
+                    continue;
+                if (obj.Name.Contains("Context"))
+                    continue;
+                if (obj.Name.Contains("WorkWith"))
+                    continue;
+                if (isGeneratedbyPattern(obj))
+                    continue;
+                if (obj is Domain)
+                    continue;
+                if (obj is SDT)
+                    continue;
+                if (obj is GeneratorCategory)
+                    continue;
+                if (obj is DataStoreCategory)
+                    continue;
+
+               // KBDoctorOutput.Message(obj.Name);
+                string objName = "KBD_" + obj.Guid.ToString().Replace("-", "");
+                obj.Name = objName;
+                obj.Description = objName;
+               
+                try
                     {
-
-                        parserInfo = new ParserInfo(source);
-
-                        /*
-                        var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
-                        if (parser.Validate(info, source.Source))
-                        {
-                            Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
-                            AttributeTree at = new AttributeTree(obj.Model);
-                            AttributeTree.CallTree dep = new AttributeTree.CallTree(obj.Model, at);
-                            AttributeTree.ParseSource2(paramRootNode, obj.Model, dep);
-                            // KBDoctorOutput.Message(dep.Items.ToString());
-
-                            dep.m_AttributeTree.ScanDependencies(obj.Model);
-                            foreach (AttributeTree.Dependency d in dep.Items)
-                                KBDoctorOutput.Message(d.ObjectName + " - " + d.Name + " type=" +d.Type);
-                            //AttributeTree.ParseSource2(paramRootNode, obj.Model, dep);
-                        }
-                        */
-                        foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
-                        {
-                            if (TokenIsConstant(token))
-                            {
-                                writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, token.Row.ToString(), token.Word });
-                                KBDoctorOutput.Message(obj.Name + " has constant " + token.Word);
-                            }
-                        }
-
-
+                        obj.Save();
                     }
-                }
-                KBDoctorOutput.EndSection(title);
+                    catch (Exception e)
+                    {
+                       // KBDoctorOutput.Error(obj.Name + " " + obj.TypeDescriptor.Name + " " + e.Message + " " + e.InnerException);
+                    }          
 
-                writer.AddFooter();
-                writer.Close();
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+            
         }
 
         private static bool TokenIsConstant(TokenData token)

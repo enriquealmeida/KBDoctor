@@ -70,7 +70,7 @@
     <CommandDefinition id="ListObjSimilarNavigation" />
     <CommandDefinition id="ListAPIObjects" />
     <CommandDefinition id="RecomendedModule" />
-    <CommandDefinition id="RecomendedModule2" />
+    <CommandDefinition id="ApplyExternalModularization" />
     <CommandDefinition id="SplitMainObject" />
     <CommandDefinition id="MainTableUsed" />
     <CommandDefinition id="CreateDeployUnits" />
@@ -257,7 +257,7 @@
               <Command refid="SplitMainObject" />
               <Command refid="MoveTransactions" />
               <Command refid="GenerateGraph"/>
-              <Command refid="RecomendedModule2" />
+              <Command refid="ApplyExternalModularization" />
             </Group>
           </Popup>
           <Group id="CleanKB" >
@@ -286,7 +286,7 @@
           <Group id="ModularizationG" >
             <Popup name ="Modularization">
               <Command refid="GenerateGraph"/>
-              <Command refid="RecomendedModule2" />
+              <Command refid="ApplyExternalModularization" />
               <Command refid="ListModularizationQuality" />
             </Popup>
           </Group>
@@ -342,6 +342,8 @@
               <Command refid="ConstantsInCode" />
               <Command refid="ReviewCommits" />
 
+
+
             </Popup>
           </Group>
           
@@ -360,7 +362,7 @@
                   </Group>
                 </Popup>
 
-                <Command refid="ObjectsWithConstants" />
+        
 
                 <Command refid="GenerateSQLScripts"/>
 
