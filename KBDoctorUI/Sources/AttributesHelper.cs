@@ -241,7 +241,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     string Picture = Utility.FormattedTypeAttribute(a);
                     bool isSubtype = Functions.AttIsSubtype(a);
-                    if ((a.DomainBasedOn == null) && !isSubtype)
+                    if ((a.DomainBasedOn == null) && !isSubtype && a.Type!=eDBType.BINARY && a.Type!=eDBType.Boolean && a.Length < 100 )
                     {
                         // search for domains with the same data type
                         output.AddLine("KBDoctor", "Procesing " + a.Name);
@@ -272,9 +272,11 @@ namespace Concepto.Packages.KBDoctor
                 bool success = true;
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-            catch
+            catch (Exception e)
             {
                 bool success = false;
+                KBDoctor.KBDoctorOutput.Error(e.Message);
+                KBDoctor.KBDoctorOutput.Error(e.InnerException.ToString());
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
