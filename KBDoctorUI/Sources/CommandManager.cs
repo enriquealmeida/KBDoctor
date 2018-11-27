@@ -546,6 +546,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ParametersTypeComparer()
         {
+            
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
@@ -553,16 +554,17 @@ namespace Concepto.Packages.KBDoctor
             selectObjectOption.MultipleSelection = true;
 
             List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
-            
-            Thread thread = new Thread(() => ParametersTypeComparer(UIServices.KB.CurrentKB, objs));
+            int cant = 0;
+            Thread thread = new Thread(() => ParametersTypeComparer(UIServices.KB.CurrentKB, objs, out cant));
             thread.Start();
         }
 
-        private static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs)
+        private static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs, out int cant)
         {
+            cant = 0;  
             KBDoctorOutput.StartSection("KBDoctor - Parameters Type Comparer");
             string recommendations = "";
-            API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs, ref recommendations);
+            API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs, ref recommendations, out cant);
             KBDoctorOutput.EndSection("KBDoctor - Parameters Type Comparer");
         }
 
@@ -614,8 +616,9 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs)
         {
+            int cant;
             KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
-            API.ConstantsInCode(UIServices.KB.CurrentKB, objs);
+            API.ConstantsInCode(UIServices.KB.CurrentKB, objs, out cant);
             KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
         }
 
@@ -718,9 +721,10 @@ namespace Concepto.Packages.KBDoctor
 
         private static void EmptyConditionalBlock(KnowledgeBase KB, List<KBObject> objs)
         {
+            int cant;
             KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
-            string recommendations = ""; 
-            API.EmptyConditionalBlocks(UIServices.KB.CurrentKB, objs, ref recommendations);
+            string recommendations = "";
+            API.EmptyConditionalBlocks(UIServices.KB.CurrentKB, objs, ref recommendations, out cant);
             KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
         }
 
@@ -739,7 +743,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Problems" });
+                writer.AddTableHeader(new string[] { "Object", "Problems", "Technical Debt (min)" });
                 List<string[]> lineswriter = new List<string[]>(); ;
 
 
@@ -775,7 +779,8 @@ namespace Concepto.Packages.KBDoctor
                         }
                     }
                 }
-                KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter);
+                double cant = 0;
+                KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter, out cant);
                 foreach (string[] line in lineswriter)
                 {
                     writer.AddTableData(line);
@@ -839,8 +844,9 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ExecuteReviewAndShowResults(IOutputService output, string title, string outputFile, KBDoctorXMLWriter writer, List<KBObject> selectedObjects)
         {
+            double cant = 0;
             List<string[]> lineswriter = new List<string[]>(); ;
-            API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter);
+            API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter, out cant);
             foreach (string[] line in lineswriter)
             {
                 writer.AddTableData(line);
@@ -869,13 +875,14 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             try
             {
+                double cant = 0;
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
                 List<string[]> lineswriter = new List<string[]>();
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Problems" });
+                writer.AddTableHeader(new string[] { "Object", "Problems", "Technical Debt (min)" });
                 List<KBObject> selectedObjects = GetObjects(cmdData);
-                KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter);
+                KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter, out cant);
                 foreach (string[] line in lineswriter)
                 {
                     writer.AddTableData(line);
@@ -915,10 +922,11 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             try
             {
+                double cant = 0;
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Problems" });
+                writer.AddTableHeader(new string[] { "Object", "Problems", "Technical Debt (min)" });
                 foreach (KBObject obj in selectedModulesFolders)
                 {
                     List<KBObject> objsInContainer = new List<KBObject>();
@@ -942,7 +950,7 @@ namespace Concepto.Packages.KBDoctor
                     }
                 }
 
-                KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter);
+                KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter, out cant);
                 foreach (string[] line in lineswriter)
                 {
                     writer.AddTableData(line);

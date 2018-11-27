@@ -4258,7 +4258,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             output.SelectOutput("KBDoctor");
             output.StartSection("KBDoctor - Assign Types Comparer");
             string recommendations = "";
-            Thread thread = new Thread(() => KBDoctorCore.Sources.API.AssignTypesComprarer(kbserv.CurrentKB, objs, ref recommendations));
+            int cant;
+            Thread thread = new Thread(() => KBDoctorCore.Sources.API.AssignTypesComprarer(kbserv.CurrentKB, objs, ref recommendations, out cant));
             thread.Start();
         }
 

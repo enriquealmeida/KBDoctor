@@ -67,7 +67,8 @@ namespace KBDoctorCmd
 
                     output.AddLine("Review objects from " + dt.ToString());
                     List<string[]> lines = new List<string[]>();
-                    API.PreProcessPendingObjects(KB, output, objects, out lines);
+                    double cant; 
+                    API.PreProcessPendingObjects(KB, output, objects, out lines, out cant);
                     lines.Clear();
                 }
             }

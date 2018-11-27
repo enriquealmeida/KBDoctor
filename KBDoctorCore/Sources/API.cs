@@ -101,9 +101,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return Objects.ParmWOInOut(KB, output);
         }
         //
-        public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs, out List<string[]> lineswriter)
+        public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs, out List<string[]> lineswriter, out double tech_debt_total)
         {
-
+            tech_debt_total = 0;
             const string KBDOCTOR_OUTPUTID = "KBDoctor";
             output.SelectOutput(KBDOCTOR_OUTPUTID);
 
@@ -114,20 +114,25 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             IniData parsedData = fileIniData.ReadFile(filename);
             string SectionName = "ReviewObject";
 
-            List<Tuple<KBObject, string>> recommended_list = new List<Tuple<KBObject, string>>();
+            List<Tuple<KBObject, string, double>> recommended_list = new List<Tuple<KBObject, string, double>>();
 
             List<KBObject> atts = new List<KBObject>();
             foreach (KBObject obj in objs)
             {
+                int obj_tech_debt = 0;
+                int cant = 0;
+                int valor = 1;
                 string recommendations = "";
                 List<KBObject> objlist = new List<KBObject>();
                 objlist.Add(obj);
                 if (Utility.isRunable(obj) && !Utility.IsGeneratedByPattern(obj))
                 {
-
                     //Check objects with parameteres without inout
                     if (CheckKeyInINI(parsedData, SectionName, "ParamINOUT", "true", "Check if all parameters have IN: OUT: INOUT: keywords", filename))
-                        Objects.ParmWOInOut(objlist, output, ref recommendations);
+                    { 
+                        Objects.ParmWOInOut(objlist, output, ref recommendations, out cant);
+                        obj_tech_debt += cant * valor;
+                    }
 
                     //Clean variables not used
                     if (CheckKeyInINI(parsedData, SectionName, "CleanUnusedVariables", "true", "Remove unused variables from objects", filename))
@@ -135,11 +140,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     //Check commit on exit
                     if (CheckKeyInINI(parsedData, SectionName, "CheckCommitOnExit", "true", "Check if property Commit on exit = YES", filename))
-                        Objects.CommitOnExit(objlist, output, ref recommendations);
+                    { 
+                        Objects.CommitOnExit(objlist, output, ref recommendations, out cant);
+                        obj_tech_debt += cant * valor;
+                    }
 
                     //Is in module
                     if (CheckKeyInINI(parsedData, SectionName, "CheckModule", "true", "Use of modules is required", filename))
-                        Objects.isInModule(objlist, output, ref recommendations);
+                    {
+                        Objects.isInModule(objlist, output, ref recommendations, out cant);
+                        obj_tech_debt += cant * valor;
+                    }
 
                     //Fix variables not based in domains or attributes
                     bool fixvar = true;
@@ -148,24 +159,43 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     //With variables not based on attributes
                     if (CheckKeyInINI(parsedData, SectionName, "VariablesBasedAttOrDomain", "true", "Variables must be based on Attributes or Domains", filename))
-                        Objects.ObjectsWithVarNotBasedOnAtt(objlist, output, fixvar, ref recommendations);
-
+                    { 
+                        Objects.ObjectsWithVarNotBasedOnAtt(objlist, output, fixvar, ref recommendations, out cant);
+                        obj_tech_debt += cant * valor;
+                    }
                     //Code commented
                     if (CheckKeyInINI(parsedData, SectionName, "CodeCommented", "true", "Code commented is marked as error", filename))
-                        Objects.CodeCommented(objlist, output, ref recommendations);
+                    { 
+                        Objects.CodeCommented(objlist, output, ref recommendations, out cant);
+                        obj_tech_debt += cant * valor;
+                    }
 
                     //Assign types comparer
                     if (CheckKeyInINI(parsedData, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain", filename))
-                        AssignTypesComprarer(KB, objlist, ref recommendations);
+                    { 
+                        AssignTypesComprarer(KB, objlist, ref recommendations, out cant);
+                        obj_tech_debt += cant * valor;
+                    }
+
                     //Parameter types comparer
                     if (CheckKeyInINI(parsedData, SectionName, "ParameterTypes", "true", "Check if call parameters have the correct Type or Domain", filename))
-                        ParametersTypeComparer(KB, objlist, ref recommendations);
+                    { 
+                        ParametersTypeComparer(KB, objlist, ref recommendations, out cant);
+                        obj_tech_debt += cant * valor;
+                    }
+
                     //Empty conditional blocks
                     if (CheckKeyInINI(parsedData, SectionName, "EmptyConditionalBlocks", "true", "Checks if exists any IF/Else block without code in it", filename))
-                        EmptyConditionalBlocks(KB, objlist, ref recommendations);
+                    {
+                        EmptyConditionalBlocks(KB, objlist, ref recommendations, out cant);
+                        obj_tech_debt += cant * valor; 
+                    }
                     //Constants in code
                     if (CheckKeyInINI(parsedData, SectionName, "ConstantsInCode", "true", "Check if there are hardcoded constants", filename))
-                        ConstantsInCode(KB, objlist);
+                    { 
+                        ConstantsInCode(KB, objlist, out cant);
+                        obj_tech_debt += cant * valor;
+                    }
                     //For eachs without when none
                     if (CheckKeyInINI(parsedData, SectionName, "ForEachsWithoutWhenNone", "true", "Check if there is any 'ForEach' block without a 'When None' clause", filename))
                         ForEachsWithoutWhenNone(KB, objlist);
@@ -173,7 +203,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (CheckKeyInINI(parsedData, SectionName, "NewsWithoutWhenDuplicate", "true", "Check if there is any 'New' block without 'When Duplicate' clause", filename))
                         NewsWithoutWhenDuplicate(KB, objlist);
                     if (CheckKeyInINI(parsedData, SectionName, "ProceduresCalledAsFuction", "true", "Check if the procedures are called as functions", filename))
-                        ProceduresCalledAsFunction(KB, objlist, ref recommendations);
+                    { 
+                        ProceduresCalledAsFunction(KB, objlist, ref recommendations, out cant);
+                        obj_tech_debt += cant * valor;
+                    }
 
 
                     //Check complexity metrics
@@ -197,31 +230,45 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     int maxParametersCount = 6;
                     Int32.TryParse(parsedData[SectionName]["MaxParameterCount"], out maxParametersCount);
 
-                    Objects.CheckComplexityMetrics(objlist, output, maxNestLevel, complexityLevel, maxCodeBlock, maxParametersCount, ref recommendations);
+                    int diffNestLevel;
+                    int diffcomplexityLevel;
+                    int diffCodeBlock;
+                    int diffParametersCount;
+
+                    Objects.CheckComplexityMetrics(obj, output, maxNestLevel, complexityLevel, maxCodeBlock, maxParametersCount, ref recommendations, out diffNestLevel, out diffcomplexityLevel, out diffCodeBlock, out diffParametersCount);
+
+                    obj_tech_debt += diffCodeBlock * (10/60);
+                    obj_tech_debt += diffcomplexityLevel * 1;
+                    obj_tech_debt += diffParametersCount * 1;
+                    obj_tech_debt += diffNestLevel * 1;
 
                 }
                 if (obj is Artech.Genexus.Common.Objects.Attribute && CheckKeyInINI(parsedData, SectionName, "AttributeBasedOnDomain", "true", "Attributes must be based on domains", filename))
                 {
                     atts.Add(obj);
                     //Attribute Has Domain
-                    Objects.AttributeHasDomain(objlist, output, ref recommendations);
+                    Objects.AttributeHasDomain(objlist, output, ref recommendations, out cant);
+                    obj_tech_debt += cant * valor;
+
                 }
                 if (obj is SDT && CheckKeyInINI(parsedData, SectionName, "SDTBasedAttOrDomain", "true", "SDT items must be based on attributes or domains", filename))
                 {
                     //SDTItems Has Domain
-                    Objects.SDTBasedOnAttDomain(objlist, output, ref recommendations);
+                    Objects.SDTBasedOnAttDomain(objlist, output, ref recommendations, out cant);
+                    obj_tech_debt += cant * valor;
                 }
                 if (obj is Transaction && CheckKeyInINI(parsedData, SectionName, "AttributeBasedOnDomain", "true", "Attributes must be based on domains", filename))
                 {
-                    Objects.AttributeHasDomain(Objects.GetAttributesFromTrn((Transaction)obj), output, ref recommendations);
+                    Objects.AttributeHasDomain(Objects.GetAttributesFromTrn((Transaction)obj), output, ref recommendations, out cant);
+                    obj_tech_debt += cant * valor;
                 }
 
                 if (recommendations != "")
                 {
-                    Tuple<KBObject, string> recommend_tuple = new Tuple<KBObject, string>(obj, recommendations);
+                    Tuple<KBObject, string, double> recommend_tuple = new Tuple<KBObject, string, double>(obj, recommendations, obj_tech_debt);
                     recommended_list.Add(recommend_tuple);
                 }
-
+                tech_debt_total += obj_tech_debt;
             }
             if (atts.Count > 0 && CheckKeyInINI(parsedData, SectionName, "AttributeWithoutTable", "true", "All attributes must be in table", filename))
             {
@@ -234,28 +281,28 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             output.SelectOutput("General");
             lineswriter = new List<string[]>();
 
-            foreach (Tuple<KBObject, string> item in recommended_list)
+            foreach (Tuple<KBObject, string, double> item in recommended_list)
             {
-                string[] line = new string[] { Utility.linkObject(item.Item1), item.Item2 };
+                string[] line = new string[] { Utility.linkObject(item.Item1), item.Item2, item.Item3.ToString() };
                 lineswriter.Add(line);
             }
 
-            /*
-* Tiene todas las referencias?
-* Tiene calls que pueden ser UDP
-* Mas de un parametro de salida
-* Constantes en el código
-* Nombre "poco claro" / Descripcion "poco clara"
-* Si es modulo, revisar que no tenga objetos publicos no llamados
-* Si es modulo, revisar que no tenga objetos privados llamados desde fuera
-* Si es modulo, Valor de la propiedad ObjectVisibility <> Private
-* Atributo Varchar que debe ser char
-* Atributo Char que debe ser varchar
-* Column Title muy ancho para el ancho del atributo
-* Nombre del Control en pantalla por Default
-* Todos los eventos son invocados
-*
-*/
+                /*
+                * Tiene todas las referencias?
+                * Tiene calls que pueden ser UDP
+                * Mas de un parametro de salida
+                * Constantes en el código
+                * Nombre "poco claro" / Descripcion "poco clara"
+                * Si es modulo, revisar que no tenga objetos publicos no llamados
+                * Si es modulo, revisar que no tenga objetos privados llamados desde fuera
+                * Si es modulo, Valor de la propiedad ObjectVisibility <> Private
+                * Atributo Varchar que debe ser char
+                * Atributo Char que debe ser varchar
+                * Column Title muy ancho para el ancho del atributo
+                * Nombre del Control en pantalla por Default
+                * Todos los eventos son invocados
+                *
+                */
 
         }
 
@@ -343,28 +390,37 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return Objects.ThemeClassesNotUsed(KB, output, themeclass);
         }
 
-        public static bool AssignTypesComprarer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations)
+        public static bool AssignTypesComprarer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            int cant_aux;
+            cant = 0;
             foreach (KBObject obj in objs)
             {
-                Objects.AssignTypeComparer(KB.DesignModel, obj, ref recommendations);
+                Objects.AssignTypeComparer(KB.DesignModel, obj, ref recommendations, out cant_aux);
+                cant += cant_aux;
             }
             return true;
         }
 
-        public static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations)
+        public static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            int cant_aux;
+            cant = 0;
             foreach (KBObject obj in objs)
             {
-                Objects.ParameterTypeComparer(KB.DesignModel, obj, ref recommendations);
+                Objects.ParameterTypeComparer(KB.DesignModel, obj, ref recommendations, out cant_aux);
+                cant += cant_aux;
             }
         }
 
-        public static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs)
-        {  
+        public static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs, out int cant)
+        {
+            int cant_aux;
+            cant = 0;
             foreach (KBObject obj in objs)
             {
-                Objects.ConstantsInCode(KB.DesignModel, obj);
+                Objects.ConstantsInCode(KB.DesignModel, obj, out cant_aux);
+                cant += cant_aux;
             }
         }
 
@@ -373,11 +429,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return Objects.ReviewCommitsFromTo(KB, revisions_list); ;
         }
 
-        public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs, ref string recommendations)
+        public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            int cant_aux;
+            cant = 0;
             foreach (KBObject obj in objs)
             {
-                Objects.EmptyConditionalBlocks(KB.DesignModel, obj, ref recommendations);
+                Objects.EmptyConditionalBlocks(KB.DesignModel, obj, ref recommendations, out cant_aux);
+                cant += cant_aux;
             }
         }
 
@@ -397,11 +456,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        public static void ProceduresCalledAsFunction(KnowledgeBase KB, List<KBObject> objs, ref string recommendations)
+        public static void ProceduresCalledAsFunction(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            int cant_aux;
+            cant = 0;
             foreach (KBObject obj in objs)
             {
-                Objects.ProceduresCalledAsFunction(KB.DesignModel, obj, ref recommendations);
+                Objects.ProceduresCalledAsFunction(KB.DesignModel, obj, ref recommendations, out cant_aux);
+                cant += cant_aux; 
             }
         }
 
@@ -417,13 +479,31 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Item1 = item1;
                 Item2 = item2;
             }
+            
         }
-
+        public class Tuple<T1, T2, T3>
+        {
+            public T1 Item1 { get; private set; }
+            public T2 Item2 { get; private set; }
+            public T3 Item3 { get; private set; }
+            public Tuple(T1 item1, T2 item2, T3 item3)
+            {
+                Item1 = item1;
+                Item2 = item2;
+                Item3 = item3;
+            }
+        }
         public static class Tuple
         {
             public static Tuple<T1, T2> New<T1, T2>(T1 item1, T2 item2)
             {
                 var tuple = new Tuple<T1, T2>(item1, item2);
+                return tuple;
+            }
+
+            public static Tuple<T1, T2, T3> New<T1, T2, T3>(T1 item1, T2 item2, T3 item3)
+            {
+                var tuple = new Tuple<T1, T2, T3>(item1, item2, item3);
                 return tuple;
             }
         }
