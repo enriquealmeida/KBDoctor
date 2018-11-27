@@ -163,36 +163,25 @@ namespace Concepto.Packages.KBDoctor
                     foreach (EntityReference r in objRef.GetReferencesTo())
                     {
                         KBObject obj = KBObject.Get(objRef.Model, r.From);
-                        // if (obj != null)
-                        // KBDoctorOutput.Message(objRefName + " Included in Graph " + obj.Name + NombreNodo(obj));
                         if ((obj != null) && Functions.isRunable(obj) && obj != objRef)
                         {
                             string objName = NombreNodo(obj);
                             if (objName != objRefName)
                             {
-                                string arista = objName + " " + objRefName;
                                 int weight = ReferenceWeight(obj, objRef);
-                                if (!aristas.ContainsKey(arista))
-                                    aristas.Add(arista, weight);
-                                else
-                                    if (aristas[arista] < weight)
-                                             aristas[arista] = weight;
-                                //scriptFile.WriteLine(objName + " " + objRefName + " " + weight);
-                                // KBDoctorOutput.Message(objName + " " + objRefName + " " + weight);
-                                // KBDoctorOutput.Message(obj.TypeDescriptor.Name + "->" + objRef.TypeDescriptor.Name);
+                                AgregoArista(aristas, objName, objRefName, weight);
                             }
-                           // else
-                             //   KBDoctorOutput.Message("Iguales " + obj.Name + " " + objRef.Name);
                         }
-
                     }
-
-
                 }
-                /*         else
-                         {
-                             KBDoctorOutput.Message(">>> Ignoring " + objRefName);
-                         }*/
+            }
+
+            //Cargo todas las transacciones y sus tablas generadas
+            foreach (Table tbl in Table.GetAll(model))
+            {
+                Transaction trn = Artech.Genexus.Common.Services.GenexusBLServices.Tables.GetBestAssociatedTransaction(model, tbl.Key);
+                int weight = ReferenceWeight(trn, tbl);
+                AgregoArista(aristas, NombreNodo(trn), NombreNodo(tbl), weight);
             }
             nodesFiles.Close();
 
@@ -207,10 +196,20 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
+        private static void AgregoArista(Dictionary<string, int> aristas, string objName, string objRefName, int weight)
+        {
+            string arista = objName + " " + objRefName;
+            if (!aristas.ContainsKey(arista))
+                aristas.Add(arista, weight);
+            else
+                if (aristas[arista] < weight)
+                aristas[arista] = weight;
+        }
 
         public static bool IncludedInGraph(KBObject objRef)
         {
-            return (Functions.isRunable(objRef) && ObjectsHelper.isGenerated(objRef)) || (objRef is Table) || (objRef is SDT);
+            return (Functions.isRunable(objRef) && ObjectsHelper.isGenerated(objRef)) || 
+                (objRef is Table) || (objRef is SDT) || (objRef is ExternalObject) || (objRef is Transaction);
         }
 
         public static int ReferenceWeight(KBObject obj, KBObject objRef)
