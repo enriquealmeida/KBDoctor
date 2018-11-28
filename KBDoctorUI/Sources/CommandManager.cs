@@ -821,7 +821,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Problems" });
+                writer.AddTableHeader(new string[] { "Object", "Problems" , "Technical debt (min)" });
 
                 List<KBObject> selectedObjects = new List<KBObject>();
 
