@@ -208,6 +208,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         obj_tech_debt += cant * valor;
                     }
 
+                    if (CheckKeyInINI(parsedData, SectionName, "DocumentsInWebPanels", "true", "Check if there are File management variables (and some others) in WebPanels", filename))
+                    {
+                        DocumentsInWebPanels(KB, objlist, ref recommendations, out cant);
+                        obj_tech_debt += cant * valor;
+                    }
 
                     //Check complexity metrics
                     //maxNestLevel  6 - ComplexityLevel  30 - MaxCodeBlock  500 - parametersCount  6
@@ -356,6 +361,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 AddKeyToIni(data, SectionName, "ForEachsWithoutWhenNone", "true", "Check if there is any 'ForEach' block without a 'When None' clause");
                 AddKeyToIni(data, SectionName, "NewsWithoutWhenDuplicate", "true", "Check if there is any 'New' block without 'When Duplicate' clause");
                 AddKeyToIni(data, SectionName, "ProceduresCalledAsFuction", "true", "Check if the procedures are called as functions");
+                AddKeyToIni(data, SectionName, "DocumentsInWebPanels", "true", "Check if there are File management variables (and some others) in WebPanels");
 
                 AddKeyToIni(data, SectionName, "MaxNestLevel", "7", "Maximun nesting level allowed in source");
                 AddKeyToIni(data, SectionName, "MaxComplexity", "30", "Maximun Complexity level allowed in sources");
@@ -466,6 +472,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 cant += cant_aux; 
             }
         }
+
+        public static void DocumentsInWebPanels(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
+        {
+            int cant_aux;
+            cant = 0;
+            foreach (KBObject obj in objs)
+            {
+                Objects.DocumentsInWebPanels(KB, obj, ref recommendations, out cant);
+            }
+        }
+
 
 
 

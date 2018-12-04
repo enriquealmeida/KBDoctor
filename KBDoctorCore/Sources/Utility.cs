@@ -1156,6 +1156,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+        internal static string GetStringType(Variable v)
+        {
+            string type = v.Type.ToString();
+            string name = v.Name;
+            string txtDimensions = "";
+            if ((!v.IsStandard) && (v.AttributeBasedOn == null) && (type == "GX_USRDEFTYP")) //|| (type==) || (type == "GX_BUSCOMP_LEVEL") )
+            {
+                txtDimensions = v.GetPropertyValue<string>(Artech.Genexus.Common.Properties.ATT.DataTypeString);
+            }
+            return txtDimensions;
+        }
+
         internal static bool IsGeneratedByPattern(KBObject obj)
         {
             Boolean isGeneratedWithPattern = false;
@@ -1176,6 +1188,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 return false;
             }
+        }
+
+        internal static bool IsTypeAllowedInWP(string type)
+        {
+            if (type == "Directory" || type == "ExcelDocument" || type == "HttpClient" || type == "HttpRequest" || type == "HttpResponse" ||
+                type == "MailMessage" || type == "POP3Session" || type == "SMTPSession" || type == "WebWrapper" || type == "XMLReader" || type == "XMLWriter")
+            {
+                return false;
+            }
+            return true;
         }
 
         public static List<KBObject> ModuleObjects(Module module)

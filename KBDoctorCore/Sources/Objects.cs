@@ -2379,9 +2379,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static string getLengthFromFormattedType(string formatType)
         {
-            string[] splits = formatType.Split('(');
-            splits = splits[1].Split(')');
-            return splits[0];
+            if(formatType.Contains('(') && formatType.Contains(')'))
+            {
+                string[] splits = formatType.Split('(');
+                splits = splits[1].Split(')');
+                return splits[0];
+            }
+            else
+            {
+                return "0";
+            }
+            
         }
 
         private static List<AbstractNode> getAssignmentsInSource(Artech.Genexus.Common.AST.AbstractNode root)
@@ -2578,6 +2586,29 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             KBDoctorOutput.OutputError(err);
         }
 
+        public static void DocumentsInWebPanels(KnowledgeBase KB, KBObject obj, ref string recommendations, out int cant)
+        {
+            cant = 0;
+            if (obj is WebPanel && !Utility.IsGeneratedByPattern(obj))
+            {
+                VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                if (vp != null)
+                {
+                    foreach (Variable v in vp.Variables)
+                    {
+                        string txtType = Utility.GetStringType(v);
+                        if (!Utility.IsTypeAllowedInWP(txtType))
+                        {
+                            cant++;
+                            string msgOutput = "Variable of type " + txtType + " used in a WebPanel";
+                            recommendations +=  msgOutput + "<br>";
+                            OutputError err = new OutputError(msgOutput, MessageLevel.Warning, new KBObjectPosition(obj.Parts.Get<VariablesPart>()));
+                            KBDoctorOutput.OutputError(err);
+                        }
+                    }
+                }
+            }
+        }
 
 #if EVO3
     public class Tuple<T1, T2>
