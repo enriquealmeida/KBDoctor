@@ -2496,8 +2496,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             {
                                 qn = null;
                             }
-                            KBDoctorOutput.Message(string.Format("{0},{1},{2},{3},{4},{5},{6}", revision.UserName, revision.Comment.Replace(",", " ").Replace(Environment.NewLine, " "),
-                                                                                            action.Operation, action.Type, name, action.Description, revision.CommitDate.ToString()));
+                            KBDoctorOutput.Message(string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", revision.UserName, revision.Comment.Replace(",", " ").Replace(Environment.NewLine, " "),
+                                                                                            action.Operation, action.Type, name, action.Name, action.Description, revision.CommitDate.ToString()));
                             if (name != "")
                             {
                                 KBObject obj = KB.DesignModel.Objects.Get(action.Key);

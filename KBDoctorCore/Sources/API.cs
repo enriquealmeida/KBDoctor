@@ -432,7 +432,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static bool ReivewCommits(KnowledgeBase KB, List<IKBVersionRevision> revisions_list)
         {
-            return Objects.ReviewCommitsFromTo(KB, revisions_list); ;
+            return Objects.ReviewCommitsFromTo(KB, revisions_list);
         }
 
         public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
