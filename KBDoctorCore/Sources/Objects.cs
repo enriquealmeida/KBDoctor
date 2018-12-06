@@ -2489,8 +2489,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                             if (KB.DesignModel.Objects.GetName(action.Key) != null)
                             {
-                                name = KB.DesignModel.Objects.GetName(action.Key).QualifiedName.ObjectName;
-                                qn = KB.DesignModel.Objects.GetName(action.Key).QualifiedName;
+                                KBObject obj_act =KB.DesignModel.Objects.Get(action.Guid);
+                                qn = obj_act.QualifiedName;
+                                name = qn.ObjectName;
                             }
                             else
                             {
