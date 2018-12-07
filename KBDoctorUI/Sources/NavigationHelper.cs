@@ -46,7 +46,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
-                string path2 = kbserv.CurrentKB.UserDirectory + "Navigation.txt";
+                string path2 = kbserv.CurrentKB.UserDirectory + @"\Navigation.txt";
                 try
                 {
                     File.Delete(path2);
@@ -72,7 +72,7 @@ namespace Concepto.Packages.KBDoctor
                 writer2.Close();
 
                 //    string inFile = @"Navigation.txt";
-                string outFile = kbserv.CurrentKB.UserDirectory + @"NavigationOrdered.csv";
+                string outFile = kbserv.CurrentKB.UserDirectory + @"\NavigationOrdered.csv";
                 var contents = File.ReadAllLines(path2);
                 //string[]  q = contents.Distinct().ToArray();
                 Array.Sort(contents);
@@ -138,9 +138,10 @@ namespace Concepto.Packages.KBDoctor
                 bool success = true;
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
-            catch
+            catch (Exception ex)
             {
                 bool success = false;
+                KBDoctorOutput.Error(ex.Message);
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
@@ -161,17 +162,17 @@ namespace Concepto.Packages.KBDoctor
                 if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
                 {
                     
-                    if ((numFiles % 200) == 0 )
+                    //if ((numFiles % 200) == 0 )
                             output.AddLine("KBDoctor",x);
                     numFiles += 1;
 
                     string xmlstring = AddXMLHeader(x);
                     
                     KBObject obj = ExtractObject(xmlstring);
-                    if (!ObjectsHelper.isGeneratedbyPattern(obj))
-                    {
+                   // if (!ObjectsHelper.isGeneratedbyPattern(obj))
+                   // {
                         ProcesoNavigation(xmlstring, output, writer2, obj);
-                    }
+                   /// }
                 }
             }
         }
@@ -292,9 +293,9 @@ namespace Concepto.Packages.KBDoctor
                                 //Cuento Cantidad de tablas. 
                                 hash = TableNames.Count(Char.IsWhiteSpace).ToString("D2") + hash;
 
-                               // output.AddLine("KBDoctor",String.Format("{0} ,  {1} ,  {2} ,  {3} , {4}, {5}  ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
+                               KBDoctorOutput.Message(String.Format("{0} ,  {1} ,  {2} ,  {3} , {4}, {5}  ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
                                // writer.AddTableData(new string[] { hash, Functions.linkObject(obj), EventName, LevelRow, LevelType, TableNames, AttNames });
-                                writer2.WriteLine( LevelType +  "," + TableNames + ","  + AttNames + "," +  Functions.linkObject(obj) + "," + EventName + "," + LevelRow.PadLeft(10,' '));
+                                writer2.WriteLine( LevelType +  "," + TableNames + ","  + AttNames + "," + ObjName + "," + EventName + "," + LevelRow.PadLeft(10,' '));
                                 LevelType = "";
                                 LevelRow = "";
                                 TableNames = "";

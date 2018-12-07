@@ -701,8 +701,8 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Tree Commit  ";
 
             output.StartSection("KBDoctor", title);
-            try
-            {
+          //  try
+           // {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -734,17 +734,13 @@ namespace Concepto.Packages.KBDoctor
                 output.EndSection("KBDoctor", title, success);
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+
         }
 
         private static void GraboLlamado(Procedure obj, string Anidacion, KBObjectCollection yaIncluido, KBDoctorXMLWriter writer)
         {
-            if (yaIncluido.Contains(obj))
+
+            if (yaIncluido.Contains(obj) || !(obj is Procedure))
             {
                 writer.AddTableData(new string[] { Anidacion + Functions.linkObject(obj), "", "----already included ", "", "", "", "" });
             }
@@ -768,7 +764,8 @@ namespace Concepto.Packages.KBDoctor
                 {
                     source = Functions.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper());
                 }
-                catch { Exception e; };
+                catch (Exception e)
+                    { KBDoctorOutput.Error("ERROR Grabollamado:" + e.Message); };
 
                 if (source.Contains("COMMIT"))
                     commitInSource = "YES";
@@ -837,8 +834,8 @@ namespace Concepto.Packages.KBDoctor
 
                         EntityKey objKey = new EntityKey(ObjClass.Procedure, token.Id);
                         KBObject objRef = KBObject.Get(obj.Model, objKey);
-
-                        GraboLlamado((Procedure)objRef, Anidacion + "____", yaIncluido, writer);
+                        if (objRef != null)
+                             GraboLlamado((Procedure)objRef, Anidacion + "____", yaIncluido, writer);
                         //Parse(obj.Model, objRef, Anidacion + "____");
                     }
                     if (token.Token == (int)TokensIds.DTCMM)

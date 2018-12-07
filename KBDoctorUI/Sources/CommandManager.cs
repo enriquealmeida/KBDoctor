@@ -845,12 +845,15 @@ namespace Concepto.Packages.KBDoctor
         private static void ExecuteReviewAndShowResults(IOutputService output, string title, string outputFile, KBDoctorXMLWriter writer, List<KBObject> selectedObjects)
         {
             double cant = 0;
+            double cantSum = 0;
             List<string[]> lineswriter = new List<string[]>(); ;
             API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter, out cant);
             foreach (string[] line in lineswriter)
             {
                 writer.AddTableData(line);
+                cantSum += cant;
             }
+            writer.AddTableData(new string[] { "Technical debt (min) Total:", "", cantSum.ToString() });
             writer.AddFooter();
             writer.Close();
             bool success = true;
@@ -876,6 +879,7 @@ namespace Concepto.Packages.KBDoctor
             try
             {
                 double cant = 0;
+                double cantSum = 0;
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
                 List<string[]> lineswriter = new List<string[]>();
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -886,7 +890,9 @@ namespace Concepto.Packages.KBDoctor
                 foreach (string[] line in lineswriter)
                 {
                     writer.AddTableData(line);
+                    cantSum += cant;
                 }
+                writer.AddTableData(new string[] { "Technical debt (min) Total:", "", cantSum.ToString() });
                 writer.AddFooter();
                 writer.Close();
                 bool success = true;
@@ -950,11 +956,14 @@ namespace Concepto.Packages.KBDoctor
                     }
                 }
 
+                double cantSum = 0;
                 KBDoctorCore.Sources.API.PreProcessPendingObjects(UIServices.KB.CurrentKB, output, selectedObjects, out lineswriter, out cant);
                 foreach (string[] line in lineswriter)
                 {
                     writer.AddTableData(line);
+                    cantSum += cant;
                 }
+                writer.AddTableData(new string[] { "Technical debt (min) Total:", "", cantSum.ToString() });
                 writer.AddFooter();
                 writer.Close();
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);

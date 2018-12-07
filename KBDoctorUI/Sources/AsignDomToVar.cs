@@ -30,7 +30,7 @@ namespace Concepto.Packages.KBDoctor
             objRules = obj.Parts.Get<RulesPart>().Source;
 
             model = obj.Model;
-
+      
 
             VariablesPart vp = obj.Parts.Get<VariablesPart>();
             if (vp != null)
@@ -65,7 +65,6 @@ namespace Concepto.Packages.KBDoctor
             {
                 if (Regex.IsMatch(line, toSearch, RegexOptions.IgnoreCase) )
                     tt += line.Trim() + Environment.NewLine;
-               // Match m = Regex.Match(line, toSearch, RegexOptions.IgnoreCase);
             }
 
             string rr = "";
@@ -129,6 +128,8 @@ namespace Concepto.Packages.KBDoctor
 
                         if (dom != null)
                         {
+                            if (v3.Type != dom.Type)
+                                MessageBox.Show("Different types !! " + v3.Type.ToString() + " " + dom.TypeDescriptor.Name);
                             v3.DomainBasedOn = dom;
                             v3.KBObject.Save();
                             comboVar.Items.Remove(it);
@@ -147,9 +148,12 @@ namespace Concepto.Packages.KBDoctor
                         }
                         else
                         {
+                           
                             Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)selectedAtts[0];
                             if (att != null)
                             {
+                                if (v3.Type != att.Type)
+                                    MessageBox.Show("Different types!!" + v3.Type.ToString() + " " + att.TypeDescriptor.Name);
                                 v3.AttributeBasedOn = att;
                                 v3.KBObject.Save();
                                 comboVar.Items.Remove(it);
