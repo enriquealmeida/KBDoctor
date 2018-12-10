@@ -748,7 +748,7 @@ namespace Concepto.Packages.KBDoctor
 
            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(titulo);
-            writer.AddTableHeader(new string[] { "Object", "Variable", "Type", "mains" });
+            writer.AddTableHeader(new string[] {"Type", "Object", "Variable", "Type", "Module" });
 
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
@@ -775,14 +775,14 @@ namespace Concepto.Packages.KBDoctor
                             if (objRef is ExternalObject)
                             {
                                 tipo = "External Object:" + objRef.GetPropertyValueString("ExoType");
-                                writer.AddTableData(new string[] { Functions.linkObject(obj), Functions.linkObject(objRef), tipo, mainss });
+                                writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), Functions.linkObject(objRef), tipo, obj.Module.Name });
                             }
                             else
                             {
                                 if (objRef is MissingKBObject)
                                 {
                                     tipo = "Missing Object";
-                                    writer.AddTableData(new string[] { Functions.linkObject(obj), Functions.linkObject(objRef), tipo, mainss });
+                                    writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), Functions.linkObject(objRef), tipo, obj.Module.Name });
                                 }
                             }
 
@@ -798,10 +798,10 @@ namespace Concepto.Packages.KBDoctor
 
                     sourceWOComments = sourceWOComments.Replace("\t", " ");
 
-                    AddLineKBInterfazSource(writer, obj, "SHELL ", "CMD.", sourceWOComments, mainss);
-                    AddLineKBInterfazSource(writer, obj, "JAVA ", "CMD.", sourceWOComments, mainss);
-                    AddLineKBInterfazSource(writer, obj, "CSHARP ", "CMD.", sourceWOComments, mainss);
-                    AddLineKBInterfazSource(writer, obj, "SQL ", "CMD.", sourceWOComments, mainss);
+                    AddLineKBInterfazSource(writer, obj, "SHELL ", "CMD.", sourceWOComments, obj.Module.Name);
+                    AddLineKBInterfazSource(writer, obj, "JAVA ", "CMD.", sourceWOComments, obj.Module.Name);
+                    AddLineKBInterfazSource(writer, obj, "CSHARP ", "CMD.", sourceWOComments, obj.Module.Name);
+                    AddLineKBInterfazSource(writer, obj, "SQL ", "CMD.", sourceWOComments, obj.Module.Name);
 
 
                     ObjectsVariablesExternal(obj, writer, mainss);
@@ -827,7 +827,7 @@ namespace Concepto.Packages.KBDoctor
 
             if (sourceWOComments.Contains(texto))
             {
-                writer.AddTableData(new string[] { Functions.linkObject(obj), "", "CMD." + texto, mainss });
+                writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), "", "CMD." + texto, obj.Module.Name });
             }
 
         }
@@ -855,7 +855,7 @@ namespace Concepto.Packages.KBDoctor
                         {
                             variables += name + " " + type + " ";
                             string txtDimensions = v.GetPropertyValue<string>(Properties.ATT.DataTypeString);
-                            writer.AddTableData(new string[] { Functions.linkObject(obj), name, "Data Type." + txtDimensions, mainss });
+                            writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), name, "Data Type." + txtDimensions, obj.Module.Name });
 
                         }
 
@@ -885,7 +885,7 @@ namespace Concepto.Packages.KBDoctor
                     {
                         string ucType = tag.Properties.GetPropertyValueString("UserControlType");
                         string ctrlName = tag.Properties.GetPropertyValueString("ControlName");
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), ctrlName, "UC." + ucType, mainss });
+                        writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), ctrlName, "UC." + ucType, mainss });
                     }
                 }
             }
