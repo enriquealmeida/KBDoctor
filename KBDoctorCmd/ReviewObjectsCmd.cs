@@ -39,7 +39,7 @@ namespace KBDoctorCmd
 
                 if (KB == null)
                 {
-                    output.AddErrorLine("No hay ninguna KB abierta en el contexto actual, asegúrese de incluír la tarea OpenKnowledgeBase antes de ejecutar la comparación de navegaciones.");
+                    output.AddErrorLine("No hay ninguna KB abierta en el contexto actual, asegúrese de incluír la tarea OpenKnowledgeBase antes de ejecutar la revisión de objetos.");
                     isSuccess = false;
                 }
                 else
@@ -79,7 +79,7 @@ namespace KBDoctorCmd
             }
             finally
             {
-                output.EndSection("Clean process", isSuccess);
+                output.EndSection("Review objects", isSuccess);
                 OutputUnsubscribe();
             }
             return isSuccess;

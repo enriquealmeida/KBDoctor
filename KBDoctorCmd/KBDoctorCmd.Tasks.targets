@@ -9,4 +9,5 @@
   <UsingTask TaskName="KBDoctorCmd.UpdateSourceObjectsWSDLCmd" AssemblyFile="KBDoctorCmd.dll"/>
   <UsingTask TaskName="KBDoctorCmd.ObjectsWithoutInOutCmd" AssemblyFile="KBDoctorCmd.dll"/>
   <UsingTask TaskName="KBDoctorCmd.ReviewObjectsCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.ReviewCommitCmd" AssemblyFile="KBDoctorCmd.dll"/>
 </Project>

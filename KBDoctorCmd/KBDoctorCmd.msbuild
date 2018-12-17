@@ -80,5 +80,13 @@
     <ReviewObjectsCmd  DateFrom="$(DateFrom)" />
     <CloseKnowledgeBase />
   </Target>
+
+  <Target  Name="ReviewCommits">
+    <Message Text="Using GeneXus DIR = $(GX_PROGRAM_DIR)" />
+    <Message Text="KB DIR = $(KBPath)" />
+    <OpenKnowledgeBase Directory="$(KBPath)" />
+    <ReviewCommitCmd  DateFrom="$(DateFrom)" DateTo="$(DateTo)" ServerUser="$(ServerUser)" ServerPassword="$(ServerPassword)"/> 
+    <CloseKnowledgeBase />
+  </Target>
 </Project>
 
