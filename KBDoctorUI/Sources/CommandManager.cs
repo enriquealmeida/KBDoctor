@@ -635,11 +635,13 @@ namespace Concepto.Packages.KBDoctor
             try
             {
                 KBDoctorOutput.StartSection("KBDoctor - Review commits");
-                DateTime FromDate = DateTime.Today.AddDays(-1);
+                DateTime FromDate = DateTime.Today.AddDays(-5);
                 DateTime ToDate = DateTime.Today;
                 string querystring = KBDoctorCore.Sources.Utility.GetQueryStringFromToDate(FromDate, ToDate);
                 List<IKBVersionRevision> revisions_list = (List<IKBVersionRevision>)UIServices.TeamDevClient.GetRevisions(KB.DesignModel.KBVersion, querystring, 1);
 
+                Comparison<IKBVersionRevision> comparison = new Comparison<IKBVersionRevision>(CompareRevisionList);
+                revisions_list.Sort(comparison);
                 success = API.ReivewCommits(UIServices.KB.CurrentKB, revisions_list);
             }
             catch(Exception e)
@@ -651,6 +653,10 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorOutput.EndSection("KBDoctor - Review commits", success);
         }
 
+        private static int CompareRevisionList(IKBVersionRevision x, IKBVersionRevision y)
+        {
+            return x.UserName.CompareTo(y.UserName);
+        }
 
         public bool ExecForEachsWithoutWhenNone(CommandData cmdData)
         {
