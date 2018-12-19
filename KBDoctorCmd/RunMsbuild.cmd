@@ -1,7 +1,9 @@
 cd ..
-call setEnvKBDoctor.cmd EVO3
+call setEnvKBDoctor.cmd GX15_U11_and_UP
 cd KBDoctorCmd
-set KBPath=C:\Models\ev3\LUCIAX_V81
+set KBPath=C:\Models\nsanguinetti\MT15
+set ServerUser="USER"
+set ServerPassword="PASSWORD"
 
 del salida.txt
 echo %KBPath%  > salida.txt
@@ -12,6 +14,6 @@ echo %TargetFrameworkVersion% >> salida.txt
 
 rem "%GX_PROGRAM_DIR%\GeneXus" /install
 
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe KBDoctorCmd.msbuild   /t:ReviewObjects /p:GX_PROGRAM_DIR="%GX_PROGRAM_DIR%" /p:DateFrom=01-01-2018 >> salida.txt
-notepad salida.txt
+C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe KBDoctorCmd.msbuild /t:ReviewCommits /p:GX_PROGRAM_DIR="%GX_PROGRAM_DIR%";ServerUser=%ServerUser%;ServerPassword=%ServerPassword% >> salida.txt
+notepad++.exe salida.txt
 pause
