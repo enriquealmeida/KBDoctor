@@ -9,6 +9,8 @@ using Artech.Architecture.UI.Framework.Services;
 using KBDoctor = Concepto.Packages.KBDoctor;
 using Artech.Genexus.Common;
 using System.IO;
+using Concepto.Packages.KBDoctor.Sources;
+using System.Threading;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -16,11 +18,17 @@ namespace Concepto.Packages.KBDoctor
     {
         public static void ShowKBDoctorResults(string outputFile)
         {
-            UIServices.StartPage.OpenPage(outputFile, "KBDoctor", null);
-            UIServices.ToolWindows.FocusToolWindow(UIServices.StartPage.ToolWindow.Id);
-
+            Thread t = new Thread(() => CreateWindow(outputFile));
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
         }
 
+        public static void CreateWindow(string outputFile)
+        {
+            KBDoctorWindow sw = new KBDoctorWindow();
+            sw.Navigate(outputFile);
+            DialogResult dr = sw.ShowDialog();
+        }
         public static string SpcDirectory(IKBService kbserv ) 
         {
             GxModel gxModel = kbserv.CurrentKB.DesignModel.Environment.TargetModel.GetAs<GxModel>();

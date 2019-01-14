@@ -67,6 +67,9 @@
   <PropertyGroup>
     <DefineConstants Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">EVO3</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Icons\Red-Cross.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Artech.Architecture.BL.Framework">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.BL.Framework.dll</HintPath>
@@ -234,6 +237,12 @@
     <Compile Include="Sources\ReplaceDomain.Designer.cs">
       <DependentUpon>ReplaceDomain.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sources\KBDoctorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sources\KBDoctorWindow.Designer.cs">
+      <DependentUpon>KBDoctorWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="StringResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -328,6 +337,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sources\ReplaceDomain.resx">
       <DependentUpon>ReplaceDomain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sources\KBDoctorWindow.resx">
+      <DependentUpon>KBDoctorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StringResources.resx">
       <SubType>Designer</SubType>

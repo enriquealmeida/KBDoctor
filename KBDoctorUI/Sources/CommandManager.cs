@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Linq;
+using System.Windows.Forms;
 using Artech.Architecture.UI.Framework.Helper;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Common.Framework.Commands;
@@ -639,10 +640,10 @@ namespace Concepto.Packages.KBDoctor
                 DateTime ToDate = DateTime.Today;
                 string querystring = KBDoctorCore.Sources.Utility.GetQueryStringFromToDate(FromDate, ToDate);
                 List<IKBVersionRevision> revisions_list = (List<IKBVersionRevision>)UIServices.TeamDevClient.GetRevisions(KB.DesignModel.KBVersion, querystring, 1);
+                Dictionary<string, List<string[]>> review_by_user;
+                success = API.ReivewCommits(UIServices.KB.CurrentKB, revisions_list, out review_by_user);
 
-                Comparison<IKBVersionRevision> comparison = new Comparison<IKBVersionRevision>(CompareRevisionList);
-                revisions_list.Sort(comparison);
-                success = API.ReivewCommits(UIServices.KB.CurrentKB, revisions_list);
+                
             }
             catch(Exception e)
             {
@@ -651,11 +652,6 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorOutput.InternalError(error_message, e);
             }
             KBDoctorOutput.EndSection("KBDoctor - Review commits", success);
-        }
-
-        private static int CompareRevisionList(IKBVersionRevision x, IKBVersionRevision y)
-        {
-            return x.UserName.CompareTo(y.UserName);
         }
 
         public bool ExecForEachsWithoutWhenNone(CommandData cmdData)

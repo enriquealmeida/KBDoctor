@@ -2471,16 +2471,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        internal static bool ReviewCommitsFromTo(KnowledgeBase KB, List<IKBVersionRevision> list)
+        internal static bool ReviewCommitsFromTo(KnowledgeBase KB, List<IKBVersionRevision> list, out Dictionary<string, List<string[]>> reviews_by_user)
         {
             bool success;
-            try {
+            reviews_by_user = new Dictionary<string, List<string[]>>();
+            try
+            {
                 List<string> objs_reviewed = new List<string>();
                 foreach (IKBVersionRevision revision in list)
                 {
                     foreach (IRevisionAction action in revision.Actions)
                     {
-                        
                         string name = "";
                         string module = "";
                         if (action.Operation.ToString().ToLower() != "delete")
@@ -2489,7 +2490,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                             if (KB.DesignModel.Objects.GetName(action.Key) != null)
                             {
-                                KBObject obj_act =KB.DesignModel.Objects.Get(action.Guid);
+                                KBObject obj_act = KB.DesignModel.Objects.Get(action.Guid);
                                 qn = obj_act.QualifiedName;
                                 name = qn.ObjectName;
                             }
@@ -2498,7 +2499,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 qn = null;
                             }
                             KBDoctorOutput.Message(string.Format("{8}{0},{1},{2},{3},{4},{5},{6},{7}", revision.UserName, revision.Comment.Replace(",", " ").Replace(Environment.NewLine, " "),
-                                                                                            action.Operation, action.Type, name, action.Name, action.Description, revision.CommitDate.ToString(),Environment.NewLine));
+                                                                                            action.Operation, action.Type, name, action.Name, action.Description, revision.CommitDate.ToString(), Environment.NewLine));
                             if (name != "")
                             {
                                 KBObject obj = KB.DesignModel.Objects.Get(action.Key);
@@ -2511,6 +2512,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     List<string[]> lines = new List<string[]>();
                                     double technical_debt;
                                     API.PreProcessPendingObjects(KB, output, objs, out lines, out technical_debt);
+                                    if (lines.Count > 0)
+                                    {
+                                        if (!reviews_by_user.ContainsKey(revision.UserName))
+                                        {
+                                            List<string[]> reviews = new List<string[]>();
+                                            reviews_by_user.Add(revision.UserName, reviews);
+                                        }
+                                        foreach (string[] line in lines)
+                                        {
+                                            reviews_by_user[revision.UserName].Add(line);
+                                        }
+                                    }
                                     objs.Clear();
                                 }
                                 else

@@ -430,9 +430,72 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        public static bool ReivewCommits(KnowledgeBase KB, List<IKBVersionRevision> revisions_list)
+        public static bool ReivewCommits(KnowledgeBase KB, List<IKBVersionRevision> revisions_list, out Dictionary<string, List<string[]>> review_by_user)
         {
-            return Objects.ReviewCommitsFromTo(KB, revisions_list);
+            Comparison<IKBVersionRevision> comparison = new Comparison<IKBVersionRevision>(Utility.CompareRevisionList);
+            revisions_list.Sort(comparison);
+            bool success = Objects.ReviewCommitsFromTo(KB, revisions_list, out review_by_user);
+            bool successfile = CreateReviewFiles(KB, review_by_user, success, out List<string> cmdlines);
+            successfile = successfile && CreateCmdMailReview(KB, cmdlines);
+            
+            return success && successfile;
+        }
+
+        private static bool CreateCmdMailReview(KnowledgeBase KB, List<string> cmdlines)
+        {
+            try
+            {
+                string cmdfilename = KB.UserDirectory + @"\KBDoctor_Review_Commits\reviewcommitsmail.cmd";
+                StreamWriter sw = new StreamWriter(cmdfilename);
+                foreach (string line in cmdlines)
+                {
+                    sw.WriteLine(line);
+                }
+                sw.Close();
+            }
+            catch (Exception e)
+            {
+                OutputError oe = new OutputError(e.Message);
+                KBDoctorOutput.OutputError(oe);
+                return false;
+            }
+            return true;
+        }
+
+        private static bool CreateReviewFiles(KnowledgeBase KB, Dictionary<string, List<string[]>> review_by_user, bool success, out List<string> cmdlines)
+        {
+            cmdlines = new List<string>();
+            try
+            {
+                string dirname = KB.UserDirectory + @"\KBDoctor_Review_Commits";
+                if (!Directory.Exists(dirname))
+                    Directory.CreateDirectory(dirname);
+                cmdlines.Add("call setvalues.cmd");
+                foreach (KeyValuePair<string, List<string[]>> kvp in review_by_user)
+                {
+                    string[] splits = kvp.Key.Split('\\');
+                    string username = splits[1];
+                    string filename = dirname + @"\KBDoctor_Review_Commits_" + username + ".htm";
+                    KBDoctorXMLWriter writer = new KBDoctorXMLWriter(filename, Encoding.UTF8);
+                    writer.AddHeader("Review Commits - KBDoctor - " + username);
+                    writer.AddTableHeader(new string[] { "Object", "Problems", "Technical Debt (min)" });
+                    string cmdline = "call mailsend -to %" + username + "_mail% -from %emailfrom% -ssl -port %port% -auth -smtp %smtp% -sub \"Review Commits - KBDoctor\" -user %emailfrom% -pass %email_pass% -attach \"KBDoctor_Review_Commits_" + username + ".htm,text/html,i\"";
+                    cmdlines.Add(cmdline);
+                    foreach (string[] text_review in kvp.Value)
+                    {
+                        writer.AddTableData(text_review);
+                    }
+                    writer.AddFooter();
+                    writer.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                OutputError oe = new OutputError(e.Message);
+                KBDoctorOutput.OutputError(oe);
+                success = false;
+            }
+            return success;
         }
 
         public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
