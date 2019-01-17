@@ -389,7 +389,9 @@
     </Popup>
     </Menu>
   </Menus>
-
+  <ToolWindows>
+    <ToolWindow id="37fc47d7-03d7-4389-9017-b8b711870599" title="KBDoctor" location ="right" visible="true"/>
+  </ToolWindows>
 </Package>
      
 

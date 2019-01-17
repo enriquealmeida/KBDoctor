@@ -223,6 +223,12 @@
     <Compile Include="Sources\Functions.cs" />
     <Compile Include="CodeGeneration\CodeGeneration.cs" />
     <Compile Include="Sources\GraphHelper.cs" />
+    <Compile Include="Sources\KBDoctorToolWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sources\KBDoctorToolWindow.Designer.cs">
+      <DependentUpon>KBDoctorToolWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sources\ModulesHelper.cs" />
     <Compile Include="Sources\NavigationHelper.cs" />
     <Compile Include="Icons.Designer.cs">
@@ -236,12 +242,6 @@
     </Compile>
     <Compile Include="Sources\ReplaceDomain.Designer.cs">
       <DependentUpon>ReplaceDomain.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sources\KBDoctorWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Sources\KBDoctorWindow.Designer.cs">
-      <DependentUpon>KBDoctorWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="StringResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -323,6 +323,9 @@
     <EmbeddedResource Include="Sources\AsignDomToVar.resx">
       <DependentUpon>AsignDomToVar.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sources\KBDoctorToolWindow.resx">
+      <DependentUpon>KBDoctorToolWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sources\PromptDescription.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PromptDescription.cs</DependentUpon>
@@ -337,9 +340,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sources\ReplaceDomain.resx">
       <DependentUpon>ReplaceDomain.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sources\KBDoctorWindow.resx">
-      <DependentUpon>KBDoctorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StringResources.resx">
       <SubType>Designer</SubType>
