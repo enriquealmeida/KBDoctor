@@ -33,6 +33,8 @@ namespace Concepto.Packages.KBDoctor
         public static string ObjectModuleName(KBObject obj)
         {
             string modulename = "";
+            if (obj is null)
+                return "";
             if (obj is Table)
                 modulename = TablesHelper.TableModule(obj.Model, (Table)obj).Name;
             else

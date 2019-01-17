@@ -163,7 +163,11 @@ namespace Concepto.Packages.KBDoctor
                     foreach (EntityReference r in objRef.GetReferencesTo())
                     {
                         KBObject obj = KBObject.Get(objRef.Model, r.From);
-                        if ((obj != null) && Functions.isRunable(obj) && obj != objRef)
+                        String mdlObjName = ModulesHelper.ObjectModuleName(obj);
+                        String mdlObjRefName = ModulesHelper.ObjectModuleName(objRef);
+                        if ((obj != null) && (Functions.isRunable(obj)) && (obj != objRef) 
+                            && (mdlObjRefName =="Dua" || mdlObjName == "Dua")
+                            )
                         {
                             string objName = NombreNodo(obj);
                             if (objName != objRefName)
@@ -179,9 +183,11 @@ namespace Concepto.Packages.KBDoctor
             //Cargo todas las transacciones y sus tablas generadas
             foreach (Table tbl in Table.GetAll(model))
             {
-                Transaction trn = Artech.Genexus.Common.Services.GenexusBLServices.Tables.GetBestAssociatedTransaction(model, tbl.Key);
-                int weight = ReferenceWeight(trn, tbl);
-                AgregoArista(aristas, NombreNodo(trn), NombreNodo(tbl), weight);
+                if (TablesHelper.TableModule(tbl.Model, tbl).Name == "Dua") {
+                    Transaction trn = Artech.Genexus.Common.Services.GenexusBLServices.Tables.GetBestAssociatedTransaction(model, tbl.Key);
+                    int weight = ReferenceWeight(trn, tbl);
+                    AgregoArista(aristas, NombreNodo(trn), NombreNodo(tbl), weight);
+                }
             }
             nodesFiles.Close();
 
