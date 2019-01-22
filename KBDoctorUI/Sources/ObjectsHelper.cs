@@ -2261,6 +2261,91 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             }
         }
 
+        public static void GenerateCSV_ObjectsRefactoring()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            string title = "KBDoctor - Refactoring candidates";
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title) + ".csv";
+
+                output.StartSection("KBDoctor", title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                // writer.AddHeader(title);
+                writer.AddCSVLine(new string[] { "Object", "Description", "Type", "Module",
+                                "#ParmIN", "#ParamOUT", "#ParamINOUT", "#Parameters",
+                                "#Comments", "#Lines", "Max Nest", "Longest Code Block", "Cyclomatic Complexity",
+                                "#Rules", "#FormControls", "#Var", "#ReadTables", "#UpdateTables", "#InsertTables", "#DeleteTables", "#FromRef", "#ToRef", "TimeStamp", "#Commits" });
+
+                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+                {
+
+                    if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
+                    {
+                        if (isGenerated(obj) && !isGeneratedbyPattern(obj))
+                        {
+                            output.AddLine("KBDoctor", obj.Name);
+
+                            string source = Functions.ObjectSourceUpper(obj);
+                            source = Functions.RemoveEmptyLines(source);
+
+                            string sourceWOComments = Functions.ExtractComments(source);
+                            sourceWOComments = Functions.RemoveEmptyLines(sourceWOComments);
+
+                            int linesSource, linesComment;
+                            float PercentComment;
+
+                            CountCommentsLines(source, sourceWOComments, out linesSource, out linesComment, out PercentComment);
+
+                            int MaxCodeBlock = Functions.MaxCodeBlock(sourceWOComments);
+                            int MaxNestLevel = Functions.MaxNestLevel(sourceWOComments);
+                            int ComplexityLevel = Functions.ComplexityLevel(sourceWOComments);
+
+                            int parametersCount = ParametersCountObject(obj);
+
+
+                            //Faltan Cargar
+                            int ParamIn = 0;
+                            int ParamOUT = 0;
+                            int ParamINOUT = 0;
+                            int RulesNumber = 0;
+                            int FormControlsNumber = 0;
+                            int VarNumber = 0;
+                            int ReadTables = 0;
+                            int UpdateTables = 0;
+                            int InsertTables = 0;
+                            int DeleteTables = 0;
+                            int FromRef = 0;
+                            int ToRef = 0;
+                            DateTime TimeStamp = DateTime.Now;
+                            int CommitTotal = 0;
+
+                            writer.AddCSVLine(new string[] { obj.Name, obj.Description, obj.TypeDescriptor.Name, obj.Module.Name,
+                                ParamIn.ToString(), ParamOUT.ToString(), ParamINOUT.ToString(), parametersCount.ToString(),
+                                linesComment.ToString(), linesSource.ToString(), MaxNestLevel.ToString(), MaxCodeBlock.ToString(), ComplexityLevel.ToString(),
+                                RulesNumber.ToString(), FormControlsNumber.ToString(), VarNumber.ToString(),
+                                ReadTables.ToString(), UpdateTables.ToString(), InsertTables.ToString(), DeleteTables.ToString() , FromRef.ToString(), ToRef.ToString(), TimeStamp.ToString(), CommitTotal.ToString()
+                            });
+
+                        }
+                    }
+                }
+
+                writer.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+            }
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
+        }
+
         public static void ObjectsRefactoringCandidates()
         {
             IKBService kbserv = UIServices.KB;
@@ -2274,7 +2359,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module", "Folder", "Parm/IN:OUT:", "#Parameters", "Code commented?", "% Comments", "# Comments", "# Lines", "Max Nest", "Longest Code Block", "Cyclomatic Complexity", "Candidate", "Complexity Index" });
+                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Module", "Folder", "Parm/IN:OUT:", "#Parameters",  "#Comments", "#Lines", "Max Nest", "Longest Code Block", "Cyclomatic Complexity", "#Rules", "#FormControls","#Var","#ReadTables", "#UpdateTables", "#InsertTables", "#DeleteTables","#FromRef", "#ToRef", "TimeStamp","Candidate", "Complexity Index" });
 
                 int ComplexityIndexTotal = 0;
                 int ObjectsTotal = 0;

@@ -1193,7 +1193,8 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsRefactoringCandidates));
+            //  Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsRefactoringCandidates));
+            Thread t = new Thread(new ThreadStart(ObjectsHelper.GenerateCSV_ObjectsRefactoring));
             t.Start();
             return true;
         }

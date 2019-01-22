@@ -106,5 +106,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             File.WriteAllText(outputFile, StringResources.jquery_tablesorter);
 
         }
+
+        public void AddCSVLine(string[] datos)
+        {
+            //WriteStartElement("tr");
+            foreach (string s in datos)
+            {
+                string str = s.Replace(',', '-');
+                WriteRaw(str + ","); 
+                
+            }
+            WriteRaw(Environment.NewLine);
+        }
     }
 }

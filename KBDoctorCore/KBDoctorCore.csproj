@@ -39,40 +39,41 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Artech.Architecture.BL.Framework">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.BL.Framework.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.BL.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.Common">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Common.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.Language">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Language.dll</HintPath>
+	   <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Language.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.UI.Framework">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.UI.Framework.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.UI.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common.Framework">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Framework.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common.Helpers">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Helpers.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common.Language">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Language.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Language.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Common.Properties">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Common.Properties.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Common.Properties.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Genexus.Common">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Genexus.Common.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Genexus.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Packages.Patterns">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Packages.Patterns.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Packages.Patterns.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Udm.Framework">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Udm.Framework.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Framework.dll</HintPath>
     </Reference>
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="GeneXus.Server.Common">
       <SpecificVersion>False</SpecificVersion>
