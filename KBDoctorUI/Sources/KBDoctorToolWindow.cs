@@ -16,6 +16,8 @@ using Artech.Common.Helpers.Dates;
 using Artech.FrameworkDE;
 using Artech.Udm.Framework;
 using System.Runtime.InteropServices;
+using Artech.Architecture.Common;
+using Artech.Common.Framework.Commands;
 
 namespace Concepto.Packages.KBDoctor.Sources
 {
@@ -61,10 +63,53 @@ namespace Concepto.Packages.KBDoctor.Sources
             }
         }
 
+
+
+        private void webBrowser2_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            string kbPath;
+            IDictionary<string, string> parms = new Dictionary<string, string>();
+
+            if (UriHelper.Parse(e.Url.ToString(), out kbPath, parms))
+            {
+                CommandKey cmdKey = CommandKey.Empty;
+                object[] cmdParams = null;
+                if (parms.ContainsKey(UriHelper.CommandKey))
+                {
+                    string[] commandKey = parms[UriHelper.CommandKey].Split(';');
+                    if (commandKey.Length == 2)
+                    {
+                        cmdKey.Package = new Guid(commandKey[0]);
+                        cmdKey.Name = commandKey[1];
+                        cmdParams = new object[1];
+                        cmdParams[0] = parms;
+                    }
+                    else
+                    {
+                        if (commandKey.Length == 1)
+                        {
+                            cmdKey.Package = Guid.Empty;
+                            cmdKey.Name = commandKey[0];
+                            cmdParams = new object[1];
+                            cmdParams[0] = parms;
+                        }
+                    }
+                }
+                else
+                {
+                    /*cmdKey = CommandKeys..Core.OpenKnowledgeBase;
+                    cmdParams = new object[1] { url };*/
+                }
+
+                ICommandDispatcherService service = UIServices.CommandDispatcher;
+                if (service != null)
+                    service.Dispatch(cmdKey, new CommandData(cmdParams));
+            }
+        }
+
         private void webBrowser2_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
 
         }
-
     }
 }

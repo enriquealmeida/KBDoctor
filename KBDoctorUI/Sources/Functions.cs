@@ -191,6 +191,27 @@ namespace Concepto.Packages.KBDoctor
             return source.ToUpper();
         }
 
+        public static string ObjectRulesUpper(KBObject obj)
+        {
+            string rules = "";
+            try
+            {
+                if (obj is Procedure) rules = obj.Parts.Get<RulesPart>().Source;
+
+                if (obj is Transaction) rules = obj.Parts.Get<RulesPart>().Source;
+
+                if (obj is WorkPanel) rules = obj.Parts.Get<RulesPart>().Source;
+
+                if (obj is WebPanel) rules = obj.Parts.Get<RulesPart>().Source;
+            }
+            catch (Exception e)
+            {
+                rules = "";
+            }
+
+            return rules.ToUpper();
+        }
+
         public static bool isRunable(KBObject obj)
         {
             return (obj is Transaction || obj is WorkPanel || obj is WebPanel
@@ -269,7 +290,7 @@ namespace Concepto.Packages.KBDoctor
 
         public static string RemoveEmptyLines(string lines)
         {
-            return Regex.Replace(lines, @"^\s*$\n|\r", "", RegexOptions.Multiline);
+            return Regex.Replace(lines, @"^(\s)*$\n|\r", "", RegexOptions.Multiline);
         }
 
         public static int LineCount(string s)

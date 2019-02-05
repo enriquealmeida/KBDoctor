@@ -1,4 +1,6 @@
-﻿namespace Concepto.Packages.KBDoctor.Sources
+﻿using System.Drawing;
+
+namespace Concepto.Packages.KBDoctor.Sources
 {
     partial class KBDoctorToolWindow
     {
@@ -28,9 +30,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            
+            this.Icon = (System.Drawing.Icon)(Icons.ResourceManager.GetObject("Red_Cross"));
             this.components = new System.ComponentModel.Container();
             this.webBrowser2 = new System.Windows.Forms.WebBrowser();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.notifyIcon2 = new System.Windows.Forms.NotifyIcon(this.components);
             this.SuspendLayout();
             // 
             // webBrowser2
@@ -42,11 +48,22 @@
             this.webBrowser2.Size = new System.Drawing.Size(150, 150);
             this.webBrowser2.TabIndex = 0;
             this.webBrowser2.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser2_DocumentCompleted);
+            this.webBrowser2.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser2_Navigating);
             // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            // 
+            // notifyIcon2
+            // 
+            this.notifyIcon2.Text = "notifyIcon2";
+            this.notifyIcon2.Visible = true;
             // 
             // KBDoctorToolWindow
             // 
@@ -62,5 +79,7 @@
         private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.WebBrowser webBrowser2;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.NotifyIcon notifyIcon2;
     }
 }

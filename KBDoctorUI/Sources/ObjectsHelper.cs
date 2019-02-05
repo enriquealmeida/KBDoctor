@@ -35,6 +35,7 @@ using Artech.Architecture.Common.Descriptors;
 using Artech.Architecture.Common.Collections;
 using Artech.Architecture.BL.Framework;
 using Artech.Architecture.BL.Framework.Services;
+using GeneXus.Server.Contracts;
 using Artech.Architecture.Language.ComponentModel;
 
 using Artech.Udm.Framework;
@@ -43,6 +44,7 @@ using Artech.Genexus.Common.AST;
 using Artech.Architecture.Common.Location;
 using Artech.Genexus.Common.Types;
 using System.Threading;
+using Artech.Genexus.Common.Parts.WebForm;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -2220,7 +2222,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                        where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
                                        where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
                                        select model.Objects.Get(r.To)).ToList().Count;
-                        readers = readers - updaters - inserters - deleters;
+                        // ESTO DEJO DE SER NECESARIO EN GX15
+                        // readers = readers - updaters - inserters - deleters;
                         int total = updaters + inserters + deleters + readers;
 
                         List<KBObject> outmodule = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
@@ -2261,6 +2264,44 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             }
         }
 
+        private static int FindTrunkVersion(IEnumerable<KBVersionData> versions)
+        {
+            foreach (KBVersionData data in versions)
+            {
+                if (data.IsTrunk)
+                {
+                    return data.Id;
+                }
+            }
+            throw new Exception("Could not find Trunk KBversion");
+        }
+
+        private static int FindKBVersion(IEnumerable<KBVersionData> versions, string serverKbVersion)
+        {
+            if (string.IsNullOrEmpty(serverKbVersion))
+                return FindTrunkVersion(versions);
+
+            foreach (KBVersionData data in versions)
+            {
+                if (string.Compare(data.Name, serverKbVersion, true) == 0)
+                {
+                    return data.Id;
+                }
+            }
+            throw new Exception(string.Format("Could not find KBversion '{0}'", serverKbVersion));
+        }
+
+        private static IEnumerable<KBRevisionData> FilterRevisions(IEnumerable<KBRevisionData> revisions, DateTime FromDate, DateTime ToDate)
+        {
+            foreach (KBRevisionData data in revisions)
+            {
+                if (data.Timestamp < FromDate || data.Timestamp > ToDate)
+                    continue;
+
+                yield return data;
+            }
+        }
+
         public static void GenerateCSV_ObjectsRefactoring()
         {
             IKBService kbserv = UIServices.KB;
@@ -2279,14 +2320,64 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                 "#Comments", "#Lines", "Max Nest", "Longest Code Block", "Cyclomatic Complexity",
                                 "#Rules", "#FormControls", "#Var", "#ReadTables", "#UpdateTables", "#InsertTables", "#DeleteTables", "#FromRef", "#ToRef", "TimeStamp", "#Commits" });
 
-                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+                DateTime FromDate = new DateTime(1970, 01, 01);
+                DateTime ToDate = DateTime.Today;
+                string querystring = KBDoctorCore.Sources.Utility.GetQueryStringFromToDate(FromDate, ToDate);
+                List<IKBVersionRevision> revisions_list = new List<IKBVersionRevision>();
+                List<IKBVersionRevision> revisions_list_iter = new List<IKBVersionRevision>();
+                bool fin = false;
+                int retrys = 0;
+                int i = 1;
+                while (!fin)
                 {
+                    try
+                    {
+                        revisions_list_iter = (List<IKBVersionRevision>)UIServices.TeamDevClient.GetRevisions(kbserv.CurrentModel.KBVersion, querystring, i);
+                        if (revisions_list_iter.Count > 0)
+                        {
+                            revisions_list.AddRange(revisions_list_iter);
+                        }
+                        retrys = 0;
+                        i++;
+                    }
+                    catch(Exception e)
+                    {
+                        retrys++;
+                        if (retrys == 5)
+                        {
+                            fin=true;
+                        }
+                        KBDoctorOutput.Message("Error: " + e.Message);
+                        KBDoctorOutput.Message("Retry nro: " + retrys.ToString());
+                    }
+                    
+                    if (revisions_list_iter.Count < 50)
+                    {
+                        fin = true;
+                    }
+                    KBDoctorOutput.Message("Iteración: " + i.ToString());
+                }
 
+                KBDoctorOutput.Message("Processing commits");
+                Dictionary<string,int> dict_commits = GenerateCommitsDictionary(revisions_list, kbserv.CurrentModel);
+                IEnumerable<KBObject> kbobjs = UIServices.KB.CurrentModel.Objects.GetAll();
+                int total = kbobjs.Count();
+                int percent_cant = Convert.ToInt32(Math.Round((double)(total / 100)));
+                int nro_iter = 0;
+                foreach (KBObject obj in kbobjs)
+                {
+                    nro_iter++;
+                    if(nro_iter % percent_cant == 0)
+                    {
+                        double percent = ((double)nro_iter / (double)total)*100;
+                        KBDoctorOutput.Message(percent.ToString() + "%");
+                    }
                     if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
                     {
                         if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                         {
-                            output.AddLine("KBDoctor", obj.Name);
+                           // KBDoctorOutput.Message("Processing :" + obj.Name);
+                            
 
                             string source = Functions.ObjectSourceUpper(obj);
                             source = Functions.RemoveEmptyLines(source);
@@ -2305,22 +2396,26 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                             int parametersCount = ParametersCountObject(obj);
 
-
-                            //Faltan Cargar
-                            int ParamIn = 0;
-                            int ParamOUT = 0;
-                            int ParamINOUT = 0;
-                            int RulesNumber = 0;
-                            int FormControlsNumber = 0;
-                            int VarNumber = 0;
-                            int ReadTables = 0;
-                            int UpdateTables = 0;
-                            int InsertTables = 0;
-                            int DeleteTables = 0;
-                            int FromRef = 0;
-                            int ToRef = 0;
+                            int ParamIn = ParametersTypeCountObject(obj, "PARM_IN");
+                            int ParamOUT = ParametersTypeCountObject(obj, "PARM_OUT"); 
+                            int ParamINOUT = ParametersTypeCountObject(obj, "PARM_INOUT"); 
+                            int VarNumber = VariablesCountObject(obj);
+                            int FromRef = ReferencesFromCountObject(obj);
+                            int ToRef = ReferencesToCountObject(obj);
+                            TablesAccessCountObject(obj, out int UpdateTables, out int InsertTables, out int DeleteTables, out int ReadTables);
                             DateTime TimeStamp = DateTime.Now;
-                            int CommitTotal = 0;
+
+                            int RulesNumber = CountRules(obj);
+                            int FormControlsNumber = CountWebFormTags(obj);
+                            int CommitTotal;
+                            if (dict_commits.ContainsKey(obj.QualifiedName.ObjectName))
+                            {
+                                CommitTotal = dict_commits[obj.QualifiedName.ObjectName];
+                            }
+                            else
+                            {
+                                CommitTotal = 0;
+                            }
 
                             writer.AddCSVLine(new string[] { obj.Name, obj.Description, obj.TypeDescriptor.Name, obj.Module.Name,
                                 ParamIn.ToString(), ParamOUT.ToString(), ParamINOUT.ToString(), parametersCount.ToString(),
@@ -2345,7 +2440,178 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
+        
+        private static Dictionary<string, int> GenerateCommitsDictionary(IEnumerable<KBRevisionData> revisions_list, KBModel model)
+        {
+            Dictionary<string, int> dict_commits = new Dictionary<string, int>();
+            foreach (KBRevisionData data in revisions_list)
+            {
+                foreach (KBRevisionActionData action in data.Actions)
+                {
+                    if (dict_commits.ContainsKey(action.ObjectName))
+                    {
+                        dict_commits[action.ObjectName] = dict_commits[action.ObjectName] + 1;
+                    }
+                    else
+                    {
+                        dict_commits.Add(action.ObjectName, 1);
+                    }
+                }
+            }
+            return dict_commits;
+        }
+            
+        private static Dictionary<string, int> GenerateCommitsDictionary(List<IKBVersionRevision> revisions_list, KBModel model)
+        {
+            Dictionary<string, int> dict_commits = new Dictionary<string, int>();
+            foreach (IKBVersionRevision revision in revisions_list)
+            {
+                foreach (IRevisionAction action in revision.Actions)
+                {
+                    QualifiedName qn;
+                    KBObject obj_act = model.Objects.Get(action.Guid);
+                    if (obj_act != null)
+                    {
+                        qn = obj_act.QualifiedName;
+                        if (dict_commits.ContainsKey(qn.ObjectName))
+                        {
+                            dict_commits[qn.ObjectName] = dict_commits[qn.ObjectName] + 1;
+                        }
+                        else
+                        {
+                            dict_commits.Add(qn.ObjectName, 1);
+                        }
+                    }
+                }
+            }
+            return dict_commits;
+        }
+        /*
+        private static int CountCommits(KBObject obj, List<IKBVersionRevision> revisions_list)
+        {
+            int commits = 0;
+            Dictionary<string, List<string[]>> review_by_user;
+            List<string> objs_reviewed = new List<string>();
+            foreach (IKBVersionRevision revision in revisions_list)
+            {
+                foreach (IRevisionAction action in revision.Actions)
+                {
+                    QualifiedName qn;
+                    string name = "";
+                    if (obj.Model.Objects.GetName(action.Key) != null)
+                    {
+                        KBObject obj_act = obj.KB.DesignModel.Objects.Get(action.Guid);
+                        qn = obj_act.QualifiedName;
+                        name = qn.ObjectName;
+                    }
+                    if (name != "")
+                    {
+                        if(name == obj.QualifiedName.ObjectName)
+                        {
+                            commits++;
+                        }
+                    }
+                }
+            }
+            return commits;
+        }*/
 
+        private static int CountRules(KBObject obj)
+        {
+            string rules = Functions.ObjectRulesUpper(obj);
+            rules = Functions.RemoveEmptyLines(rules);
+
+            string rulesWOComments = Functions.ExtractComments(rules);
+            rulesWOComments = Functions.RemoveEmptyLines(rulesWOComments);
+
+            int linesRules, linesComment;
+            float PercentComment;
+
+            CountCommentsLines(rules, rulesWOComments, out linesRules, out linesComment, out PercentComment);
+
+            return linesRules;
+        }
+
+        private static int CountWebFormTags(KBObject obj)
+        {
+            int tagcant = 0;
+            if (((obj is Transaction) || (obj is WebPanel) || obj is ThemeClass) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
+            {
+                WebFormPart webForm = obj.Parts.Get<WebFormPart>();
+
+                foreach (IWebTag tag in WebFormHelper.EnumerateWebTag(webForm))
+                {
+                    tagcant++;
+                }
+            }
+            return tagcant;
+        }
+        private static void TablesAccessCountObject(KBObject obj, out int updaters, out int inserters, out int deleters, out int readers)
+        {
+            updaters = 0;
+            inserters = 0;
+            deleters = 0;
+            readers = 0;
+
+            updaters = (from r in obj.Model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                            where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                            where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
+                            select obj.Model.Objects.Get(r.To)).ToList().Count;
+            inserters = (from r in obj.Model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                             where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                             where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
+                             select obj.Model.Objects.Get(r.To)).ToList().Count;
+            deleters = (from r in obj.Model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                            where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                            where ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo)
+                            select obj.Model.Objects.Get(r.To)).ToList().Count;
+            readers = (from r in obj.Model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
+                           where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
+                           where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
+                           select obj.Model.Objects.Get(r.To)).ToList().Count;
+
+        }
+
+        private static int ReferencesToCountObject(KBObject obj)
+        {
+            int callers = 0;
+            foreach (EntityReference auxer in obj.Model.GetReferencesFrom(obj.Key))
+            {
+                KBObject auxobj = KBObject.Get(obj.Model, auxer.To);
+                if(auxobj != null && auxer.ReferenceType != ReferenceType.Weak && auxer.LinkType != LinkType.Parent)
+                {
+                    string name = auxobj.Name;
+                    callers++;
+                }
+            }
+
+          //  callers = list_ref.Count();
+            return callers;
+        }
+
+        private static int ReferencesFromCountObject(KBObject obj)
+        {
+            int callers = 0;
+            callers = obj.GetReferencesTo(LinkType.UsedObject).Count();
+            return callers;
+        }
+
+        private static int VariablesCountObject(KBObject obj)
+        {
+            int cantVar = 0;
+            VariablesPart vp = obj.Parts.Get<VariablesPart>();
+            if (vp != null)
+            {
+                foreach(Variable var in vp.Variables)
+                {
+                    if (!var.IsStandard)
+                    {
+                        cantVar++;
+                    }
+                }
+            }
+            return cantVar;
+        }
         public static void ObjectsRefactoringCandidates()
         {
             IKBService kbserv = UIServices.KB;
@@ -2444,6 +2710,28 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 foreach (Signature signature in callableObject.GetSignatures())
                 {
                     countparm = signature.ParametersCount;
+                }
+            }
+            return countparm;
+        }
+
+        
+        private static int ParametersTypeCountObject(KBObject obj, string type)
+        {
+            int countparm = 0;
+            ICallableObject callableObject = obj as ICallableObject;
+            if (callableObject != null)
+            {
+                foreach (Signature signature in callableObject.GetSignatures())
+                {
+                    foreach(Parameter parm in signature.Parameters)
+                    {
+                        string accessor = parm.Accessor.ToString();
+                        if (accessor == type)
+                        {
+                            countparm++;
+                        }
+                    }
                 }
             }
             return countparm;

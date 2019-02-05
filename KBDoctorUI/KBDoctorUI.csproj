@@ -155,6 +155,9 @@
     <Reference Include="DeklaritLibrary">
       <HintPath>$(GX_SDK_DIR)\bin\DeklaritLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="GeneXus.Server.Contracts">
+      <HintPath>$(GX_PROGRAM_DIR)\GeneXus.Server.Contracts.dll</HintPath>
+    </Reference>
     <Reference Include="GxDataLayer">
       <HintPath>$(GX_SDK_DIR)\bin\GxDataLayer.dll</HintPath>
     </Reference>
@@ -273,6 +276,8 @@
     <Content Include="Documentacion\Cambios.txt" />
     <Content Include="Documentacion\HowTo.txt" />
     <Content Include="Documentacion\LoQueFaltaHacer.txt" />
+    <None Include="Resources\RedCross.ico" />
+    <None Include="Resources\IconRedCross.bmp" />
     <Content Include="Resources\Icons\file-find.ico" />
     <None Include="packages.config" />
     <None Include="Resources\Replace.txt" />
