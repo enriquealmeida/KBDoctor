@@ -2536,9 +2536,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
                 success = true;
             }
-            catch
+            catch(Exception e)
             {
                 success = false;
+                KBDoctorOutput.InternalError("Error processing commits.", e);
             }
             return success;
         }

@@ -219,7 +219,6 @@
   <data name="ObjectsRefactoringCandidates" xml:space="preserve">
     <value>Calculate KBDoctor complexity index</value>
   </data>
-
   <data name="CountTableAccess" xml:space="preserve">
     <value>#Table access x object</value>
   </data>
@@ -338,16 +337,9 @@
   <data name="ListTablesInModules" xml:space="preserve">
     <value>List tables in modules</value>
   </data>
-  <data name="jquery_latest" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\jquery-latest.js;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="jquery_tablesorter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\jquery.tablesorter.js;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
   <data name="ListObjectsWithTableInOtherModule" xml:space="preserve">
     <value>List tables in modules</value>
   </data>
-  
   <data name="GenerateSimpleTransactionFromNotGeneratedTransactions" xml:space="preserve">
     <value>Generate Simple Trn from Not Generate Transactions</value>
   </data>
@@ -410,5 +402,11 @@
   </data>
   <data name="TreeCommit" xml:space="preserve">
     <value>Tree call - Commit</value>
+  </data>
+  <data name="mailsend" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\mailsend.exe;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sender" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\sender.cmd;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

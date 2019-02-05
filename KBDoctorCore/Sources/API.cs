@@ -467,10 +467,33 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             cmdlines = new List<string>();
             try
             {
-                string dirname = KB.UserDirectory + @"\KBDoctor_Review_Commits";
+
+                string dirname = KB.UserDirectory + @"\KBDoctor_Review_Commits";                
+
                 if (!Directory.Exists(dirname))
                     Directory.CreateDirectory(dirname);
-                cmdlines.Add("call setvalues.cmd");
+
+                List<string> setinilines = new List<string>();
+
+                string outputFile = dirname + @"\setini.cmd";
+                if (!File.Exists(outputFile))
+                {
+                    //File.Create(outputFile);
+                    setinilines.Add("set emailfrom=<insert email>");
+                    setinilines.Add("set email_pass=<insert password>");
+                    setinilines.Add("set smtp=<insert smtp>");
+                    setinilines.Add("set port=<insert port>");
+                    setinilines.Add("set domain=<insert domain>");
+                    File.AppendAllLines(outputFile, setinilines);
+                }
+                    
+                outputFile = dirname + @"\sender.cmd";
+                File.WriteAllText(outputFile, StringResources.sender);
+
+                outputFile = dirname + @"\mailsend.exe";
+                File.WriteAllBytes(outputFile, StringResources.mailsend);
+
+                cmdlines.Add("call setini.cmd");
                 foreach (KeyValuePair<string, List<string[]>> kvp in review_by_user)
                 {
                     string[] splits = kvp.Key.Split('\\');
@@ -479,8 +502,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     KBDoctorXMLWriter writer = new KBDoctorXMLWriter(filename, Encoding.UTF8);
                     writer.AddHeader("Review Commits - KBDoctor - " + username);
                     writer.AddTableHeader(new string[] { "Object", "Problems", "Technical Debt (min)" });
-                    string cmdline = "call mailsend -to %" + username + "_mail% -from %emailfrom% -ssl -port %port% -auth -smtp %smtp% -sub \"Review Commits - KBDoctor\" -user %emailfrom% -pass %email_pass% -attach \"KBDoctor_Review_Commits_" + username + ".htm,text/html,i\"";
-                    cmdlines.Add(cmdline);
+
+                    cmdlines.Add("set emailto=" + username);
+                    cmdlines.Add("set attach=\"KBDoctor_Review_Commits_" + username + ".htm, i\"");
+                    cmdlines.Add("call sender.cmd");
                     foreach (string[] text_review in kvp.Value)
                     {
                         writer.AddTableData(text_review);
