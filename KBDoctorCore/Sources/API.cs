@@ -478,13 +478,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string outputFile = dirname + @"\setini.cmd";
                 if (!File.Exists(outputFile))
                 {
-                    //File.Create(outputFile);
-                    setinilines.Add("set emailfrom=<insert email>");
-                    setinilines.Add("set email_pass=<insert password>");
-                    setinilines.Add("set smtp=<insert smtp>");
-                    setinilines.Add("set port=<insert port>");
-                    setinilines.Add("set domain=<insert domain>");
-                    File.AppendAllLines(outputFile, setinilines);
+
+                    File.AppendAllText(outputFile, "set emailfrom=<insert email>" + Environment.NewLine);
+                    File.AppendAllText(outputFile, "set email_pass=<insert password>" + Environment.NewLine);
+                    File.AppendAllText(outputFile, "set smtp=<insert smtp>" + Environment.NewLine);
+                    File.AppendAllText(outputFile, "set port=<insert port>" + Environment.NewLine);
+                    File.AppendAllText(outputFile, "set domain=<insert domain>" + Environment.NewLine);
+
                 }
                     
                 outputFile = dirname + @"\sender.cmd";
@@ -513,6 +513,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     writer.AddFooter();
                     writer.Close();
                 }
+                outputFile = dirname + @"\ReviewObjects.cmd";
+                foreach (string li in cmdlines)
+                    File.AppendAllText(outputFile, li + Environment.NewLine);
+
             }
             catch (Exception e)
             {

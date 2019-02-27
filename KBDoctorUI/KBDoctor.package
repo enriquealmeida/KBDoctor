@@ -70,6 +70,7 @@
     <CommandDefinition id="ListObjSimilarNavigation" />
     <CommandDefinition id="ListAPIObjects" />
     <CommandDefinition id="RecomendedModule" />
+    <CommandDefinition id="ListDynamicCombo" />
     <CommandDefinition id="ApplyExternalModularization" />
     <CommandDefinition id="SplitMainObject" />
     <CommandDefinition id="MainTableUsed" />
@@ -281,6 +282,7 @@
               <Command refid="ListModulesStatistics" />
               <Command refid="ListModularizationQuality" />
               <Command refid="CountGeneratedByPattern"  />
+              <Command refid="GenerateCSV_ObjectsRefactoring" />
             </Popup>
           </Group>
           <Group id="ModularizationG" >
@@ -313,7 +315,7 @@
               <Command refid="ProcedureGetSet"/>
               <Command refid="CreateDeployUnits" />
               <Command refid="GenerateSimpleTransactionFromNotGeneratedTransactions" />
-              <Command refid="ObjectsWithVarNotBasedOnAtt"/>
+              <Command refid="ListDynamicCombo"/>
               <Command refid="RenameVariables"/>
               <Command refid="ObjectsWithVarsNotUsed"/>
               <Command refid="GenerateTrnFromTables2" />
@@ -390,7 +392,7 @@
     </Menu>
   </Menus>
   <ToolWindows>
-    <ToolWindow id="37fc47d7-03d7-4389-9017-b8b711870599" title="KBDoctor" location ="right" visible="true"/>
+    <ToolWindow id="37fc47d7-03d7-4389-9017-b8b711870599" title="KBDoctor" location ="navigator" visible="true"/>
   </ToolWindows>
 </Package>
      

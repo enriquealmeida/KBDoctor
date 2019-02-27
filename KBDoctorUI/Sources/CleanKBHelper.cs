@@ -222,21 +222,23 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Description", "Param rule" });
+                writer.AddTableHeader(new string[] { "Object", "Description", "Tipo" });
                 int cantObjChanged = 0;
 
-                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                selectObjectOption.MultipleSelection = true;
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions
+                {
+                    MultipleSelection = true
+                };
+             //   selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+               // selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
 
                 foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    string oldParm = Functions.ExtractRuleParm(obj);
-                    string newParm = ChangeRuleParmWithIN(obj);
-                    if (newParm != "")
+                    if (obj.Description.StartsWith("Work With"))
                     {
-                        cantObjChanged += 1;
-                        PrintNewRuleParm(writer, obj, oldParm, newParm);
+                        writer.AddTableData(new string[] { obj.Name, obj.Description, obj.TypeDescriptor.Name });
+                        obj.Description=obj.Description.Replace("Work With ", "Trabajar con ");
+                        obj.Save();
                     }
 
                 }

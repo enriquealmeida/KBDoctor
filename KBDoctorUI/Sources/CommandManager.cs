@@ -74,6 +74,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ObjectsMainCalled, new ExecHandler(ExecObjectsMainsCalled), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsReferenced, new ExecHandler(ExecObjectsReferenced), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWithVarNotBasedOnAtt, new ExecHandler(ExecObjectsWithVarNotBasedOnAtt), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListDynamicCombo, new ExecHandler(ExecListDynamicCombo), new QueryHandler(QueryKBDoctor));
+
             AddCommand(CommandKeys.RenameVariables, new ExecHandler(ExecRenameVariables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildModule, new ExecHandler(ExecBuildModule), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignTypeComparer, new ExecHandler(ExecAssignTypeComparer), new QueryHandler(QueryKBDoctor));
@@ -1027,6 +1029,15 @@ namespace Concepto.Packages.KBDoctor
             output.SelectOutput("KBDoctor");
             // Cambiar las variables para que se basen en atributos o dominios.
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsWithVarNotBasedOnAtt));
+            t.Start();
+            return true;
+        }
+        public bool ExecListDynamicCombo(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            // Cambiar las variables para que se basen en atributos o dominios.
+            Thread t = new Thread(new ThreadStart(ThemeHelper.ListDynamicCombo));
             t.Start();
             return true;
         }
