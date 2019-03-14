@@ -45,6 +45,7 @@ using Artech.Architecture.Common.Location;
 using Artech.Genexus.Common.Types;
 using System.Threading;
 using Artech.Genexus.Common.Parts.WebForm;
+using Artech.Common.Helpers.Structure;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -4187,91 +4188,70 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 // Procedure proc = new 
                 Artech.Genexus.Common.Objects.WebPanel nuevo = new Artech.Genexus.Common.Objects.WebPanel(kbModel);
                 string pdName = "";
-                /*
-                foreach (PropDefinition pd in nuevo.GetPropertiesDefinition())
-                {
-
-                    output.AddLine("KBDoctor",pd.DisplayName);
-                    pdName = pd.Name;
-                    //output.AddLine("KBDoctor",pd.DefaultValue.ToString());
-                //    output.AddLine("KBDoctor",pd.ValuesResolver.GetHashCode||||||)
-                }
-
-                foreach (KBObject obj in kbModel.Objects.GetAll() ) 
-                {
-                    if (obj.Name=="Webpanel1" )
-                           output.AddLine("KBDoctor",obj.Name);
-                }
-                */
+          
                 output.AddLine("KBDoctor", "===== ENCRYPT URL PARAMETERS ========");
                 foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("USE_ENCRYPTION", "SITE"))
                 {
                     output.AddLine("KBDoctor", obj.Name);
                 }
-
+                output.AddLine("KBDoctor", "");
                 output.AddLine("KBDoctor", "===== SOAP ========");
                 foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "SOAP"))
                 {
                     output.AddLine("KBDoctor", obj.Name);
                 }
-
+                output.AddLine("KBDoctor", "");
                 output.AddLine("KBDoctor", "===== HTTP ========");
                 foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "HTTP"))
                 {
                     output.AddLine("KBDoctor", obj.Name);
                 }
 
-                //pd.GetByPropertyValue wbp in WebPanel.GetPropertiesReferences() .GetByPropertyValue)
-                /*
-               // foreach ( nuevo.GetPropertiesDefinition() )
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Description", "Visibility", "Is Referenced by" });
-
-
-                KBObjectCollection objToBuild = new KBObjectCollection();
-
-                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                selectObjectOption.MultipleSelection = true;
-
-                foreach (KBObject obj in kbModel.KB.Properties.)
+                output.AddLine("KBDoctor", "");
+                output.AddLine("KBDoctor", "===== SOAP NAMESPACE IN PROCEDURE ========");
+                foreach (Procedure p in Procedure.GetAll(kbModel))
                 {
-
-                    if (KBObjectHelper.IsSpecifiable(obj))
+                    string propval = p.GetPropertyValueString("SOAP_NAMESPACE");
+                    Artech.Common.Properties.Property prop =  p.GetProperty("SOAP_NAMESPACE");
+                    
+                    if (propval != "" && !prop.IsDefault)
                     {
-                        output.AddLine("KBDoctor",obj.TypeDescriptor.Name + " " + obj.Name);
-                        if (!objToBuild.Contains(obj))
-                        {
-                            objToBuild.Add(obj);
-                            writer.AddTableData(new string[] { obj.QualifiedName.ToString(), obj.Description, obj.IsPublic ? "Public" : "", "" });
-                        }
+                        output.AddLine("KBDoctor", p.Name + " Namespace:" + propval );
                     }
-                    ModulesHelper.AddObjectsReferenceTo(obj, objToBuild, writer);
 
                 }
 
-                writer.AddFooter();
-                writer.Close();
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-
-                GenexusUIServices.Build.BuildWithTheseOnly(objToBuild.Keys);
-
-                do
+                output.AddLine("KBDoctor", "");
+                output.AddLine("KBDoctor", "===== xml NAMESPACE IN SDT ========");
+                foreach (SDT sdt in SDT.GetAll(kbModel))
                 {
-                    Application.DoEvents();
-                } while (GenexusUIServices.Build.IsBuilding);
+                    ListSdtNamespace(sdt.SDTStructure.Root, sdt.Name);
 
-                output.EndSection("KBDoctor", title, true);
-                */
+                }
+
             }
-            catch
+            catch (Exception e)
             {
                 success = false;
+                output.AddErrorLine(e.Message + " " +e.InnerException);
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
 
-        public static void ListAPIObjects()
+private static void ListSdtNamespace(SDTLevel level, string sdtName)
+{
+            foreach (var childItem in level.GetItems<SDTItem>())
+            {
+                string sp = childItem.GetPropertyValue<string>("idXmlNamespace");
+                if (sp != "") 
+                 KBDoctorOutput.Message("SDT: " + sdtName + " Element: " + childItem.Name + " Namespace: " + childItem.GetPropertyValue<string>("idXmlNamespace"));
+            }
+            foreach (var childLevel in level.GetItems<SDTLevel>())
+                    ListSdtNamespace(childLevel, sdtName);
+
+}
+
+public static void ListAPIObjects()
         {
             IKBService kbserv = UIServices.KB;
 
