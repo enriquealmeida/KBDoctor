@@ -241,7 +241,7 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Build objects with property.
+        ///   Busca una cadena traducida similar a List objects with property.
         /// </summary>
         internal static string BuildObjectWithProperty {
             get {
