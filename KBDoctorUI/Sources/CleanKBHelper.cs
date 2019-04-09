@@ -110,8 +110,8 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Class not in Theme";
-            try
-            {
+  //          try
+  //          {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
@@ -159,12 +159,12 @@ namespace Concepto.Packages.KBDoctor
                 output.EndSection("KBDoctor", title, true);
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            }
-            catch
+           /* }
+            catch  (Exception e)
             {
                 bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+                KBDoctor.KBDoctorOutput.EndSection(title + " " + e.Message  + " " + e.InnerException, success);
+            }*/
         }
 
 
@@ -1013,14 +1013,14 @@ namespace Concepto.Packages.KBDoctor
                             {
                                 //arreglar acan cancela con la Evo3. 
                                 ThemeClassReferenceList miclasslist = new ThemeClassReferenceList();
-                                try
-                                {
-                                    miclasslist = (ThemeClassReferenceList)prop.GetValue(new object());
-                                }
-                                catch (Exception e) {
-                                    // Excepción no implementada
-                                    throw e;
-                                };
+                           //    try
+                            //    {
+                                   // miclasslist = (ThemeClassReferenceList)prop.GetValue(new object());
+                              //  }
+                               // catch (Exception e) {
+                               //     KBDoctorOutput.Error("LoadAndCheckUsedClasses:" + e.Message + " " + e.InnerException);
+                               //     throw e;
+                               // };
                                 foreach (ThemeClass miclass in miclasslist.GetThemeClasses(obj.Model))
                                 {
                                     if (miclass != null)

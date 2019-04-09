@@ -344,7 +344,13 @@
               <Command refid="ConstantsInCode" />
               <Command refid="ReviewCommits" />
 
-
+                <Popup name ="Themes" >
+                  <Group>
+                    <Command refid="ClassNotInTheme" />
+                    <Command refid="ClassUsed" />
+                    <Command refid="ListClassUsed" />
+                  </Group>
+                </Popup>
 
             </Popup>
           </Group>
@@ -356,13 +362,7 @@
            
 
             
-                <Popup name ="Themes" >
-                  <Group>
-                    <Command refid="ClassNotInTheme" />
-                    <Command refid="ClassUsed" />
-                    <Command refid="ListClassUsed" />
-                  </Group>
-                </Popup>
+
 
         
 
