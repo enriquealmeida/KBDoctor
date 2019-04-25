@@ -60,7 +60,7 @@ namespace Concepto.Packages.KBDoctor
 
                 foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    output.AddLine("KBDoctor", "Object " + obj.Name);
+                    KBDoctorOutput.Message( "Object " + obj.Name);
                     ICallableObject callableObject = obj as ICallableObject;
                     if (((callableObject != null) || obj is ExternalObject || obj is SDT || obj is DataSelector) && (!(obj is Transaction)))
                     {
@@ -74,11 +74,11 @@ namespace Concepto.Packages.KBDoctor
                             Functions.SaveObject(output, obj);
                             string objNameLink = Functions.linkObject(obj);
                             writer.AddTableData(new string[] { objNameLink, obj.TypeDescriptor.Name, obj.Description, newObjVisibility.ToString() });
-                            output.AddLine("KBDoctor", "....Change Object " + obj.Name);
+                            KBDoctorOutput.Message( "....Change Object " + obj.Name);
                         }
                     }
                 }
-                output.AddLine("KBDoctor", "");
+                KBDoctorOutput.Message( "");
                 output.EndSection("KBDoctor", title, success);
                 writer.AddFooter();
                 writer.Close();
@@ -111,7 +111,7 @@ namespace Concepto.Packages.KBDoctor
                         cant += 1;
                     }
                 }
-                output.AddLine("KBDoctor","Cambio " + cant.ToString());
+                KBDoctorOutput.Message("Cambio " + cant.ToString());
             } while (ToContinue);
 
         }
@@ -227,9 +227,9 @@ El módulo tiene objetos públicos no referenciados por externos?
                 }
             }
             int ratio = (objInRoot == 0) ? 0 : (objInModule * 100) / objInRoot;
-            output.AddLine("KBDoctor","# Objects: " + objTot + " in Module: " + objInModule.ToString() + " in Root: " + objInRoot.ToString() );
-            output.AddLine("KBDoctor","% Modularization:  " + ratio.ToString());
-            output.AddLine("KBDoctor","# Tables in Module: " + tblInModule.ToString() + " in Root: " + tblInRoot.ToString());
+            KBDoctorOutput.Message("# Objects: " + objTot + " in Module: " + objInModule.ToString() + " in Root: " + objInRoot.ToString() );
+            KBDoctorOutput.Message("% Modularization:  " + ratio.ToString());
+            KBDoctorOutput.Message("# Tables in Module: " + tblInModule.ToString() + " in Root: " + tblInRoot.ToString());
 
 
             output.EndSection("KBDoctor", title, success);
@@ -310,7 +310,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             foreach (string mdl in intraModule.Keys)
             {
 
-                    //output.AddLine("KBDoctor", "Calculating " + mdl + " CF");
+                    //KBDoctorOutput.Message( "Calculating " + mdl + " CF");
                 double cf = 0.00;
                 if (interModule[mdl] > 0 || intraModule[mdl] > 0)
                 {
@@ -323,7 +323,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
 
             writer.AddTableData(new string[] { "TurboMQ = "  , "", "", TurboMQ.ToString("N" + 6) });
-                output.AddLine("KBDoctor", "");
+                KBDoctorOutput.Message( "");
                 output.EndSection("KBDoctor", title, success);
                 
    
@@ -374,7 +374,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 foreach (Module mdl in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
 
-                    output.AddLine("KBDoctor", mdl.Name + "....");
+                    KBDoctorOutput.Message( mdl.Name + "....");
                     string[] mdlStat = ModuleStats2(mdl);
 
                     if (mdl.Name == "Root Module")
@@ -390,7 +390,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
 
                 }
-                output.AddLine("KBDoctor", "");
+                KBDoctorOutput.Message( "");
                 output.EndSection("KBDoctor", title, success);
                 int ratio = (objInRoot == 0) ? 0 : (objSinRoot * 100) / objInRoot;
                 string Resumen = "Obj in Modules, Obj Root, Ratio  " + objSinRoot.ToString() + "," + objInRoot.ToString() + "," + ratio.ToString();
@@ -566,12 +566,12 @@ El módulo tiene objetos públicos no referenciados por externos?
                 }
                 
             }
-            output.AddLine("KBDoctor"," ");
-            output.AddLine("KBDoctor","============> " + tbl.Name);
+            KBDoctorOutput.Message(" ");
+            KBDoctorOutput.Message("============> " + tbl.Name);
             
             list.Sort();
             foreach (string s in list)
-                output.AddLine("KBDoctor",s);
+                KBDoctorOutput.Message(s);
             return list;
         }
 
@@ -598,14 +598,14 @@ El módulo tiene objetos públicos no referenciados por externos?
                 {
                     if (mdl is Module)
                     {
-                        output.AddLine("KBDoctor", mdl.Name + "....");
+                        KBDoctorOutput.Message( mdl.Name + "....");
                         string[] mdlStat = ModuleStats((Module)mdl);
 
                         writer.AddTableData(mdlStat);
                     }
 
                 }
-                output.AddLine("KBDoctor", "");
+                KBDoctorOutput.Message( "");
                 output.EndSection("KBDoctor", title, success);
 
                 writer.AddFooter();
@@ -892,7 +892,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                         {
                             string objNameLink = Functions.linkObject(t);
 
-                            output.AddLine("KBDoctor", "Processing... " + t.Name);
+                            KBDoctorOutput.Message( "Processing... " + t.Name);
 
                             int countAttr = 0;
                             int countKeyAttr = 0;
@@ -1009,7 +1009,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                             {
                                 string objNameLink = Functions.linkObject(obj);
 
-                                output.AddLine("KBDoctor", "Processing... " + obj.Name + " reference table " + t.Name + " Object module:" + modulename + " Table module:" + tablemodulename);
+                                KBDoctorOutput.Message( "Processing... " + obj.Name + " reference table " + t.Name + " Object module:" + modulename + " Table module:" + tablemodulename);
 
                                 writer.AddTableData(new string[] { objNameLink, obj.Description, modulename, t.Name, tablemodulename });
 
@@ -1062,7 +1062,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 {
                     module2 = module;
 
-                    output.AddLine("KBDoctor", "Procesing " + module.Name + "....");
+                    KBDoctorOutput.Message( "Procesing " + module.Name + "....");
 
                     foreach (KBObject obj in ModuleObjects(module))
                     {
@@ -1116,7 +1116,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                     Module oModule = ((o is Table) ? TablesHelper.TableModule(o.Model, (Table)o) : o.Module);
                     writer.AddTableData(new string[] { Functions.linkObject(o), oModule.Name, o.TypeDescriptor.Name, listObj });
                 }
-                output.AddLine("KBDoctor", "");
+                KBDoctorOutput.Message( "");
                 output.EndSection("KBDoctor", title, success);
 
                 writer.AddFooter();
@@ -1159,7 +1159,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 {
                     module2 = module;
 
-                    output.AddLine("KBDoctor", "Procesing " + module.Name + "....");
+                    KBDoctorOutput.Message( "Procesing " + module.Name + "....");
 
                     foreach (KBObject obj in ModuleObjects(module))
                     {
@@ -1213,7 +1213,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                     Module oModule = ((o is Table) ? TablesHelper.TableModule(o.Model, (Table)o) : o.Module);
                     writer.AddTableData(new string[] { Functions.linkObject(o), oModule.Name, o.TypeDescriptor.Name, listObj });
                 }
-                output.AddLine("KBDoctor", "");
+                KBDoctorOutput.Message( "");
                 output.EndSection("KBDoctor", title, success);
 
                 writer.AddFooter();
@@ -1289,7 +1289,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                         if (Functions.hasModule(obj))
                         {
 
-                            output.AddLine("KBDoctor", obj.Name);
+                            KBDoctorOutput.Message( obj.Name);
                             string moduleListString = "";
                             foreach (Module mod in ListModulesOfReferencedTables(obj))
                                 moduleListString += mod.Name + " ";

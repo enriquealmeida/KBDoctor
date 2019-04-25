@@ -52,7 +52,7 @@ namespace Concepto.Packages.KBDoctor
                     description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
                     string objNameLink = Functions.linkObject(t);
 
-                    output.AddLine("KBDoctor", "Processing... " + t.Name);
+                    KBDoctorOutput.Message( "Processing... " + t.Name);
 
                     int countAttr = 0;
                     int countKeyAttr = 0;
@@ -266,7 +266,7 @@ namespace Concepto.Packages.KBDoctor
                     description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
                     string objNameLink = Functions.linkObject(t);
 
-                    output.AddLine("KBDoctor", "Processing... " + t.Name);
+                    KBDoctorOutput.Message( "Processing... " + t.Name);
 
                     int countAttr = 0;
                     int countKeyAttr = 0;
@@ -381,8 +381,8 @@ namespace Concepto.Packages.KBDoctor
             {
                 if (!KBDoctorCore.Sources.Utility.isGenerated(trn) && !trn.Name.StartsWith("KBDoctor_"))
                 {
-                    output.AddLine("KBDoctor","");
-                    output.AddLine("KBDoctor","Processing transaction " + trn.Name);
+                    KBDoctorOutput.Message("");
+                    KBDoctorOutput.Message("Processing transaction " + trn.Name);
 
                     foreach (TransactionLevel lvl in trn.Structure.GetLevels())
                     {
@@ -392,7 +392,7 @@ namespace Concepto.Packages.KBDoctor
                     try
                     {
                         trn.Delete();
-                        output.AddLine("KBDoctor"," Deleted transaction " + trn.Name);
+                        KBDoctorOutput.Message(" Deleted transaction " + trn.Name);
                     }
                     catch (Exception e) { output.AddErrorLine("ERROR: Can't delete transaction " + trn.Name + e.Message); };
                 }
@@ -678,7 +678,7 @@ namespace Concepto.Packages.KBDoctor
                 TransactionAttribute trnAtt = trn.Structure.Root.AddAttribute(attr);
                 trnAtt.IsKey = attr.IsKey;
             };
-            output.AddLine("KBDoctor","Create transaction " + trn.Name + " from table " + t.Name);
+            KBDoctorOutput.Message("Create transaction " + trn.Name + " from table " + t.Name);
             try {
                 trn.Save();
             } catch (Exception e) { output.AddErrorLine("ERROR: Can't Save. Transaction " + trn.Name + " already exists." + e.Message); }
@@ -863,7 +863,7 @@ namespace Concepto.Packages.KBDoctor
             StreamWriter scriptFile = new StreamWriter(fileName);
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
-            output.AddLine("KBDoctor","Generating " + name);
+            KBDoctorOutput.Message("Generating " + name);
 
             scriptFile.WriteLine("<?xml version = '1.0' encoding = 'UTF-8'?>");
 
@@ -911,7 +911,7 @@ namespace Concepto.Packages.KBDoctor
             StreamWriter scriptFile = new StreamWriter(fileName);
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
-            output.AddLine("KBDoctor","Generating " + name);
+            KBDoctorOutput.Message("Generating " + name);
 
             scriptFile.WriteLine("<?xml version = '1.0' encoding = 'UTF-8'?>");
 
@@ -971,7 +971,7 @@ namespace Concepto.Packages.KBDoctor
             KBModel model = kbserv.CurrentModel;
             StreamWriter scriptFile = new StreamWriter(fileName);
             IOutputService output = CommonServices.Output;
-            output.AddLine("KBDoctor","Generating " + name);
+            KBDoctorOutput.Message("Generating " + name);
 
             scriptFile.WriteLine("/* KBDoctor - CopyTestData " + DateTime.Now.ToString("yyyy/MM/dd"));
             scriptFile.WriteLine("");
@@ -1038,7 +1038,7 @@ namespace Concepto.Packages.KBDoctor
             KBModel model = kbserv.CurrentModel;
             StreamWriter scriptFile = new StreamWriter(FileName);
             IOutputService output = CommonServices.Output;
-            output.AddLine("KBDoctor","Generating " + Name);
+            KBDoctorOutput.Message("Generating " + Name);
 
             scriptFile.WriteLine("/* KBDoctor - CheckDBStructure " + DateTime.Now.ToString("yyyy/MM/dd"));
             scriptFile.WriteLine("");
@@ -1077,7 +1077,7 @@ namespace Concepto.Packages.KBDoctor
             KBModel model = kbserv.CurrentModel;
             StreamWriter scriptFile = new StreamWriter(FileName);
             IOutputService output = CommonServices.Output;
-            output.AddLine("KBDoctor","Generating " + Name);
+            KBDoctorOutput.Message("Generating " + Name);
 
             scriptFile.WriteLine("/* KBDoctor - " + Name + " " + DateTime.Now.ToString("yyyy/MM/dd"));
             scriptFile.WriteLine("");
@@ -1110,7 +1110,7 @@ namespace Concepto.Packages.KBDoctor
             string comilla = "\'";
 
             IOutputService output = CommonServices.Output;
-            output.AddLine("KBDoctor","Generating " + Name);
+            KBDoctorOutput.Message("Generating " + Name);
 
             StreamWriter scriptFile = new StreamWriter(FileName);
             scriptFile.WriteLine("/* KBDoctor - " + Name + " " + DateTime.Now.ToString("yyyy/MM/dd"));
@@ -1169,7 +1169,7 @@ namespace Concepto.Packages.KBDoctor
             KBModel model = kbserv.CurrentModel;
             StreamWriter scriptFile = new StreamWriter(FileName);
             IOutputService output = CommonServices.Output;
-            output.AddLine("KBDoctor","Generating " + Name);
+            KBDoctorOutput.Message("Generating " + Name);
 
             scriptFile.WriteLine("/* KBDoctor - " + Name + " " + DateTime.Now.ToString("yyyy/MM/dd"));
             scriptFile.WriteLine("");
@@ -1197,7 +1197,7 @@ namespace Concepto.Packages.KBDoctor
                         + comilla + "," + baseAttributes + " from " + ShortName(TBLNAME_LEN,relation.BaseTable.Name) 
                         + " where not exists  " + "(select * from " + ShortName(TBLNAME_LEN,relation.RelatedTable.Name) + " where " 
                         + whereJoinCondition + ") " + whereCondition + ";");
-                    output.AddLine("KBDoctor",relation.BaseTable.Name + "," + relation.RelatedTable.Name);
+                    KBDoctorOutput.Message(relation.BaseTable.Name + "," + relation.RelatedTable.Name);
                 }
 
             }
@@ -1210,7 +1210,7 @@ namespace Concepto.Packages.KBDoctor
             KBModel model = kbserv.CurrentModel;
             StreamWriter scriptFile = new StreamWriter(FileName);
             IOutputService output = CommonServices.Output;
-            output.AddLine("KBDoctor","Generating " + Name);
+            KBDoctorOutput.Message("Generating " + Name);
 
             scriptFile.WriteLine("/* KBDoctor - " + Name + " " + DateTime.Now.ToString("yyyy/MM/dd"));
             scriptFile.WriteLine("");
@@ -1233,7 +1233,7 @@ namespace Concepto.Packages.KBDoctor
                     if (tbl != null && tbl is Table)
                     {
                         string line = "Select " + comilla + tbl.Name + comilla + " , COUNT(*) from genexus." + tbl.Name + " where " + att.Name + " not in (select TO_NUMERIC(CODI_MONED) FROM GENEXUS.RGMONED);";
-                        output.AddLine("KBDoctor",line);
+                        KBDoctorOutput.Message(line);
                         scriptFile.WriteLine(line);
                     }
                        
@@ -1251,7 +1251,7 @@ namespace Concepto.Packages.KBDoctor
             KBModel model = kbserv.CurrentModel;
             StreamWriter scriptFile = new StreamWriter(FileName);
             IOutputService output = CommonServices.Output;
-            output.AddLine("KBDoctor","Generating " + Name);
+            KBDoctorOutput.Message("Generating " + Name);
 
             scriptFile.WriteLine("/* KBDoctor - " + Name + " " + DateTime.Now.ToString("yyyy/MM/dd"));
             scriptFile.WriteLine("");
@@ -1293,7 +1293,7 @@ namespace Concepto.Packages.KBDoctor
             KBModel model = kbserv.CurrentModel;
             StreamWriter scriptFile = new StreamWriter(fileName);
             IOutputService output = CommonServices.Output;
-            output.AddLine("KBDoctor","Generating " + name);
+            KBDoctorOutput.Message("Generating " + name);
 
             scriptFile.WriteLine("/* KBDoctor - " + name + " " + DateTime.Now.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture));
             scriptFile.WriteLine("");

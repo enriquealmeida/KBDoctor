@@ -480,7 +480,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     numObj += 1;
                     if ((numObj % 100) == 0)
-                        output.AddLine("KBDoctor", "Processing " + obj.Name);
+                        KBDoctorOutput.Message( "Processing " + obj.Name);
                     foreach (Signature signature in callableObject.GetSignatures())
                     {
                         Boolean someInOut = false;
@@ -912,7 +912,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (obj is Procedure)
                 {
-                    output.AddLine("KBDoctor", obj.Name);
+                    KBDoctorOutput.Message( obj.Name);
                     string name = obj.Name;
                     if (ProcedureUpdateAttribute(obj, att))
                     {

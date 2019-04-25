@@ -163,7 +163,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     
                     //if ((numFiles % 200) == 0 )
-                            output.AddLine("KBDoctor",x);
+                            KBDoctorOutput.Message(x);
                     numFiles += 1;
 
                     string xmlstring = AddXMLHeader(x);
@@ -240,7 +240,7 @@ namespace Concepto.Packages.KBDoctor
                             {
                                 //IMPRIMO EL LEVEL ANTERIOR
                                 //      if (LevelType!="") 
-                                //             output.AddLine("KBDoctor",String.Format("OBJECT= {0} EVENTNAME= {1} ROW= {2} LEVELTYPE= {3} TABLES= {4} ATTRIBUTES= {5} ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
+                                //             KBDoctorOutput.Message(String.Format("OBJECT= {0} EVENTNAME= {1} ROW= {2} LEVELTYPE= {3} TABLES= {4} ATTRIBUTES= {5} ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
                                 reader.Read();
                                 LevelType = reader.Value;
                                 //VACIO TABLAS Y ATRIBUTOS PUES CAMBIO DE LEVEL
@@ -348,7 +348,7 @@ namespace Concepto.Packages.KBDoctor
                 ts.Hours, ts.Minutes, ts.Seconds,
                 ts.Milliseconds / 10);
 
-            output.AddLine("KBDoctor",title + " elepsed time: " + elapsedTime);
+            KBDoctorOutput.Message(title + " elepsed time: " + elapsedTime);
             output.EndSection("KBDoctor", title, true);
         }
 
@@ -378,7 +378,7 @@ namespace Concepto.Packages.KBDoctor
 
                 if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
                 {
-                    output.AddLine("KBDoctor",x);
+                    KBDoctorOutput.Message(x);
                     string xTxt = newDir + generator + Path.GetFileNameWithoutExtension(x) + ".nvg";
 
                    
@@ -457,7 +457,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void SearchNVGFiles(IOutputService output, KBDoctorXMLWriter writer, string[] fileWildcardsArg, string directoryArg, System.IO.SearchOption searchSubDirsArg, string containsTextArg, bool ignoreCaseArg, List<string> objWarnErr)
         {
-            output.AddLine("KBDoctor",">>Searching for " + containsTextArg);
+            KBDoctorOutput.Message(">>Searching for " + containsTextArg);
             foreach (string file in FindInFiles(directoryArg, containsTextArg, ignoreCaseArg, searchSubDirsArg, (string[])fileWildcardsArg))
             {
                 if (!objWarnErr.Contains(file))
@@ -471,7 +471,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void AddFileWithWarningsErrors(IOutputService output, KBDoctorXMLWriter writer, string containsTextArg, string file)
         {
-            output.AddLine("KBDoctor",file);
+            KBDoctorOutput.Message(file);
             string objName = Path.GetFileNameWithoutExtension(file);
             containsTextArg = containsTextArg.Replace("<", "");
             containsTextArg = containsTextArg.Replace(">", "");
@@ -655,10 +655,10 @@ namespace Concepto.Packages.KBDoctor
 
                     foreach (string x in xFiles)
                     {
-                        // output.AddLine("KBDoctor",x);
+                        // KBDoctorOutput.Message(x);
                         IndFiles += 1;
                         if (IndFiles % 100 == 0)
-                            output.AddLine("KBDoctor", " Procesing " + IndFiles.ToString() + " navigation files.");
+                            KBDoctorOutput.Message( " Procesing " + IndFiles.ToString() + " navigation files.");
 
                         string filename = Path.GetFileNameWithoutExtension(x);
 

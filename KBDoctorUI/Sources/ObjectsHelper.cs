@@ -89,7 +89,7 @@ namespace Concepto.Packages.KBDoctor
                 //saco los objetos alcanzables. 
                 unreachablesObjects.RemoveAll(reachablesObjects);
                 int cantUnObj = unreachablesObjects.Count;
-                output.AddLine("KBDoctor", "(Re)creating KBDoctor.Unreachable category");
+                KBDoctorOutput.Message( "(Re)creating KBDoctor.Unreachable category");
                 KBCategory catR = KBCategory.Get(kbserv.CurrentModel, "KBDoctor.UnReachable");
                 if (catR == null)
                 {
@@ -103,7 +103,7 @@ namespace Concepto.Packages.KBDoctor
 
                 foreach (KBObject obj in catR.AllMembers)
                 {
-                    output.AddLine("KBDoctor", "Removing " + obj.Name + " from  KBDoctor.Unreachable category");
+                    KBDoctorOutput.Message( "Removing " + obj.Name + " from  KBDoctor.Unreachable category");
                     obj.RemoveCategory(catR);
                     if (!obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject) && (obj is Procedure | obj is WebPanel | obj is WorkPanel | obj is Transaction | obj is DataProvider | obj is Menubar))
                     {
@@ -151,7 +151,7 @@ namespace Concepto.Packages.KBDoctor
                         {
                             try
                             {
-                                output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable (SAVING) ");
+                                KBDoctorOutput.Message( obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable (SAVING) ");
                                 obj.Save();
                             }
                             catch
@@ -162,15 +162,15 @@ namespace Concepto.Packages.KBDoctor
                         }
                         else
                         {
-                            output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable ");
+                            KBDoctorOutput.Message( obj.TypeDescriptor.Name + "-" + obj.Name + " is unreachable ");
                         }
                     }
 
 
                 }
 
-                output.AddLine("KBDoctor", "");
-                output.AddLine("KBDoctor", "Total Objects:" + cantObj.ToString() + ". Unreachable Objects: " + cantUnObj.ToString());
+                KBDoctorOutput.Message( "");
+                KBDoctorOutput.Message( "Total Objects:" + cantObj.ToString() + ". Unreachable Objects: " + cantUnObj.ToString());
                 output.EndSection("KBDoctor", title, success);
                 writer.AddFooter();
                 writer.Close();
@@ -197,13 +197,13 @@ namespace Concepto.Packages.KBDoctor
                     //    if (reference.ReferenceType == ReferenceType.Hard)
                     //      {
                     string objname = obj.Name;
-                    output.AddLine("KBDoctor", obj.Name + " reference to(" + reference.ReferenceType.ToString() + "):" + objRef.Name);
+                    KBDoctorOutput.Message( obj.Name + " reference to(" + reference.ReferenceType.ToString() + "):" + objRef.Name);
                     MarkReachables(output, objRef, reachablesObjects);
                     //       }
 
                     /*       if ((objRef is Table) | (objRef is Menubar))
                            {
-                               output.AddLine("KBDoctor",obj.Name + " reference to(" + reference.ReferenceType.ToString() + "):" + objRef.Name);
+                               KBDoctorOutput.Message(obj.Name + " reference to(" + reference.ReferenceType.ToString() + "):" + objRef.Name);
                                reachablesObjects.Add(objRef);
                            }*/
                 }
@@ -212,7 +212,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void WriteOutputLine(IOutputService output, KBObject obj)
         {
-            output.AddLine("KBDoctor", "Processing.. " + obj.TypeDescriptor.DefaultName + "-" + obj.Name + ".");
+            KBDoctorOutput.Message( "Processing.. " + obj.TypeDescriptor.DefaultName + "-" + obj.Name + ".");
         }
 
         public static void ObjectsMainsCalled()
@@ -251,11 +251,11 @@ namespace Concepto.Packages.KBDoctor
                     {
                         try
                         {
-                            output.AddLine("KBDoctor",obj.Name);
+                            KBDoctorOutput.Message(obj.Name);
                             obj.SetPropertyValue("isMain", false);
                             obj.Save();
                         }
-                        catch (Exception e) { output.AddLine("KBDoctor",e.Message.ToString()); };
+                        catch (Exception e) { KBDoctorOutput.Message(e.Message.ToString()); };
                     }
                     */
                 }
@@ -355,7 +355,7 @@ namespace Concepto.Packages.KBDoctor
                     ICallableObject callableObject = obj as ICallableObject;
                     if (callableObject != null)
                     {
-                        output.AddLine("KBDoctor", "Processing " + obj.TypeDescriptor.Name + " " + obj.Name);
+                        KBDoctorOutput.Message( "Processing " + obj.TypeDescriptor.Name + " " + obj.Name);
 
                         hasParameters = false;
                         foreach (Signature signature in callableObject.GetSignatures())
@@ -452,7 +452,7 @@ namespace Concepto.Packages.KBDoctor
                                         try
                                         {
                                             obj.Delete();
-                                            output.AddLine("KBDoctor", "REMOVING..." + obj.Name);
+                                            KBDoctorOutput.Message( "REMOVING..." + obj.Name);
                                             remove = "REMOVED!";
                                             objNameLink = obj.Name;
                                             continuar = true;
@@ -516,7 +516,7 @@ namespace Concepto.Packages.KBDoctor
 
                     if (!isGenerated(trn))
                     {
-                        output.AddLine("KBDoctor", "Procesing... " + trn.Name);
+                        KBDoctorOutput.Message( "Procesing... " + trn.Name);
                         bool isRemovable, isRemovableWithWarning;
                         string lstTrns, tblName;
                         KBObjectCollection attExclusive;
@@ -525,7 +525,7 @@ namespace Concepto.Packages.KBDoctor
 
                         if (isRemovable)
                         {
-                            output.AddLine("KBDoctor", "Procesing... " + trn.Name + " REMOVABLE ");
+                            KBDoctorOutput.Message( "Procesing... " + trn.Name + " REMOVABLE ");
                             remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
                             writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, "" });
                         }
@@ -533,7 +533,7 @@ namespace Concepto.Packages.KBDoctor
                             if (isRemovableWithWarning)
 
                         {
-                            output.AddLine("KBDoctor", "Procesing... " + trn.Name + " REMOVABLE with warning ");
+                            KBDoctorOutput.Message( "Procesing... " + trn.Name + " REMOVABLE with warning ");
                             remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
                             writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, lstTrns + " WHIT WARNING" });
                         }
@@ -595,7 +595,7 @@ namespace Concepto.Packages.KBDoctor
 
                     if (!attLvl.Contains(a))
                     {
-                        output.AddLine("KBDoctor", "Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
+                        KBDoctorOutput.Message( "Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
                             + a.Name + " not in any generated transaction");
                         isRemovable = false;
                         isLevelRemovable = false;
@@ -603,7 +603,7 @@ namespace Concepto.Packages.KBDoctor
 
                     if (!attLvlAll.Contains(a))
                     {
-                        output.AddLine("KBDoctor", "Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
+                        KBDoctorOutput.Message( "Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
                             + a.Name + " not in any other transaction");
                         isRemovableWithWarning = false;
                         isLevelRemovable = false;
@@ -833,7 +833,7 @@ namespace Concepto.Packages.KBDoctor
                     if (token.Token == (int)TokensIds.FOI)
                     {
                         FCIobjName = token.Word;
-                        CommonServices.Output.AddLine("KBDoctor", Anidacion + FCLobjClass.ToString() + "-" + FCIobjName);
+                        KBDoctorOutput.Message( Anidacion + FCLobjClass.ToString() + "-" + FCIobjName);
 
                         EntityKey objKey = new EntityKey(ObjClass.Procedure, token.Id);
                         KBObject objRef = KBObject.Get(obj.Model, objKey);
@@ -1090,7 +1090,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
        if (!attLvl.Contains(a))
        {
-           output.AddLine("KBDoctor","Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
+           KBDoctorOutput.Message("Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
                + a.Name + " not in any generated transaction");
            isRemovable = false;
            isLevelRemovable = false;
@@ -1098,7 +1098,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
        if (!attLvlAll.Contains(a))
        {
-           output.AddLine("KBDoctor","Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
+           KBDoctorOutput.Message("Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
                + a.Name + " not in any other transaction");
            isRemovableWithWarning = false;
            isLevelRemovable = false;
@@ -1186,8 +1186,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 {
                     StringCollection tableOperation = new StringCollection();
                     KBObjectCollection objMarked = new KBObjectCollection();
-                    output.AddLine("KBDoctor", " ");
-                    output.AddLine("KBDoctor", " =============================> " + obj.Name);
+                    KBDoctorOutput.Message( " ");
+                    KBDoctorOutput.Message( " =============================> " + obj.Name);
 
                     string mainstr = obj.Name + " " + obj.GetPropertyValueString("AppLocation");
                     TablesUsed(output, obj, tableOperation, objMarked, mainstr, writer);
@@ -1235,7 +1235,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                                 if (!tableOperation.Contains(linea))
                                 {
-                                    output.AddLine("KBDoctor", linea);
+                                    KBDoctorOutput.Message( linea);
                                     tableOperation.Add(linea);
                                     writer.AddTableData(new string[] { mainstr, objRef.Name, "SELECT" });
                                 };
@@ -1245,7 +1245,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                 linea = mainstr + " , " + objRef.Name + " , " + "INSERT";
                                 if (!tableOperation.Contains(linea))
                                 {
-                                    output.AddLine("KBDoctor", linea);
+                                    KBDoctorOutput.Message( linea);
                                     tableOperation.Add(linea);
                                     writer.AddTableData(new string[] { mainstr, objRef.Name, "INSERT" });
                                 };
@@ -1256,7 +1256,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                 linea = mainstr + " , " + objRef.Name + " , " + "UPDATE";
                                 if (!tableOperation.Contains(linea))
                                 {
-                                    output.AddLine("KBDoctor", linea);
+                                    KBDoctorOutput.Message( linea);
                                     tableOperation.Add(linea);
                                     writer.AddTableData(new string[] { mainstr, objRef.Name, "UPDATE" });
                                 };
@@ -1267,7 +1267,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                 linea = mainstr + " , " + objRef.Name + " , " + "DELETE";
                                 if (!tableOperation.Contains(linea))
                                 {
-                                    output.AddLine("KBDoctor", linea);
+                                    KBDoctorOutput.Message( linea);
                                     tableOperation.Add(linea);
                                     writer.AddTableData(new string[] { mainstr, objRef.Name, "DELETE" });
                                 };
@@ -1334,8 +1334,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
 
                     KBObjectCollection objMarked = new KBObjectCollection();
-                    output.AddLine("KBDoctor", " ");
-                    output.AddLine("KBDoctor", "ECHO  **** " + obj.Name + " ***** ");
+                    KBDoctorOutput.Message( " ");
+                    KBDoctorOutput.Message( "ECHO  **** " + obj.Name + " ***** ");
 
                     if (obj.GetPropertyValueString("AppLocation") == "")
                     {
@@ -1357,13 +1357,13 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     string mainstr = obj.GetPropertyValueString("AppLocation");
 
                     string linea = "XCOPY /y/d " + Dircopia + @"bin\" + letra + obj.Name + exts + " %" + mainstr + @"%\bin\";
-                    output.AddLine("KBDoctor", linea);
+                    KBDoctorOutput.Message( linea);
                     objReferenced.Add(linea);
 
                     if (!(obj is Procedure) && !(obj is WorkPanel) && Dircopia == @".\Web\")
                     {
                         linea = "XCOPY /y/d " + Dircopia + letra + obj.Name + ".js %" + mainstr + "%";
-                        output.AddLine("KBDoctor", linea);
+                        KBDoctorOutput.Message( linea);
                         objReferenced.Add(linea);
                     }
                     WriteCopyObject(output, obj, objReferenced, objMarked, mainstr, Dircopia);
@@ -1457,7 +1457,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 {
                     output.AddErrorLine(e.Message + " - " + e.InnerException);
                     output.AddErrorLine("Can't save object" + objName + ". Try to save commented");
-                    output.AddLine("KBDoctor", "Parm = " + parm + " Parm2= " + parm2);
+                    KBDoctorOutput.Message( "Parm = " + parm + " Parm2= " + parm2);
 
                     nuevo.ProcedurePart.Source = "//" + objName + "_core.call(" + parm2 + ") ";
                     nuevo.Rules.Source = "//" + parm + ";";
@@ -1495,7 +1495,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     iObj += 1;
                     if ((iObj % 200) == 0)
                     {
-                        output.AddLine("KBDoctor", obj.GetFullName());
+                        KBDoctorOutput.Message( obj.GetFullName());
                     }
                     WriteObjectToTextFile(obj, newDir);
                 }
@@ -1519,7 +1519,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             }
 
             output.StartSection("KBDoctor", title);
-            output.AddLine("KBDoctor", "Generate Location.xml template in " + outputFile);
+            KBDoctorOutput.Message( "Generate Location.xml template in " + outputFile);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.WriteStartElement("GXLocations");
@@ -1750,8 +1750,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             if (!(obj is Procedure) && !(obj is WorkPanel) && !(tableOperation.Contains(linea)))
             {
-                output.AddLine("KBDoctor", linea);
-                output.AddLine("KBDoctor", String.Format(@"XCOPY /y/d {0}{1}.js  %{2}%\ ", Dircopia, obj.Name, mainstr));
+                KBDoctorOutput.Message( linea);
+                KBDoctorOutput.Message( String.Format(@"XCOPY /y/d {0}{1}.js  %{2}%\ ", Dircopia, obj.Name, mainstr));
                 tableOperation.Add(linea);
             }
 
@@ -1808,7 +1808,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         if ((obj.Name == objName) && (length > 200000))
                         {
                             writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, length.ToString("N0") });
-                            output.AddLine("KBDoctor", fileName);
+                            KBDoctorOutput.Message( fileName);
                         }
 
                     }
@@ -1852,7 +1852,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                         if (isGenerated(obj))
                         {
-                            output.AddLine("KBDoctor", obj.Name);
+                            KBDoctorOutput.Message( obj.Name);
 
                             string source = ObjectSource(obj);
                             source = Functions.RemoveEmptyLines(source);
@@ -1990,7 +1990,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         string source = ObjectSource(obj);
                         string newSource = source;
 
-                        output.AddLine("KBDoctor", "Object " + obj.Name);
+                        KBDoctorOutput.Message( "Object " + obj.Name);
 
                         string callers = ChangeUDPCallWhenNecesary(obj);
                         // CleanKBHelper.CleanKBObjectVariables(obj);
@@ -2012,14 +2012,14 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                             {
                                 try
                                 {
-                                    output.AddLine("KBDoctor", "..Saving.." + obj.Name);
+                                    KBDoctorOutput.Message( "..Saving.." + obj.Name);
                                     SaveNewSource(obj, newSource);
                                 }
                                 catch (Exception e)
                                 {
                                     output.AddErrorLine(e.Message);
                                     output.AddErrorLine("========= newsource ===============");
-                                    output.AddLine("KBDoctor", newSource);
+                                    KBDoctorOutput.Message( newSource);
                                     success = false;
                                 };
 
@@ -2085,7 +2085,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             foreach (var token in aux.Split(new char[] { ',', ')', ' ' }))
             {
                 objeto = token;
-                //  output.AddLine("KBDoctor","Token>" + token + "<FinToken");
+                //  KBDoctorOutput.Message("Token>" + token + "<FinToken");
                 break;
             }
             if (objeto != "" && objeto.Substring(0, 1) != "&") //Call Dinamico si esta llamando a una variable
@@ -2206,7 +2206,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     if (Functions.isRunable(obj))
 
                     {
-                        output.AddLine("KBDoctor", obj.Name);
+                        KBDoctorOutput.Message( obj.Name);
                         int updaters = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
                                         where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
                                         where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
@@ -2638,7 +2638,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     {
                         if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                         {
-                            output.AddLine("KBDoctor", obj.Name);
+                            KBDoctorOutput.Message( obj.Name);
 
                             string source = Functions.ObjectSourceUpper(obj);
                             source = Functions.RemoveEmptyLines(source);
@@ -2855,7 +2855,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    output.AddLine("KBDoctor", obj.Name);
+                    KBDoctorOutput.Message( obj.Name);
                     callers = ChangeUDPCallWhenNecesary(obj);
 
                     if (callers != "")
@@ -2915,7 +2915,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 KBObject objRef = KBObject.Get(obj.Model, reference.From);
 
-                // output.AddLine("KBDoctor",objRef.Name + "->" + obj.Name);
+                // KBDoctorOutput.Message(objRef.Name + "->" + obj.Name);
 
                 string source = Functions.ObjectSourceUpper(objRef);
                 source = Functions.RemoveEmptyLines(source);
@@ -2930,7 +2930,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 if (sourceWOComments.Contains(callAux))
                 {
                     isInvokedWithCall = true;
-                    output.AddLine("KBDoctor", objRef.Name + " ---> " + obj.Name);
+                    KBDoctorOutput.Message( objRef.Name + " ---> " + obj.Name);
                     callers += " " + Functions.linkObject(objRef);
 
                     ReplaceCallForUdpInObject(objRef, obj.Name);
@@ -2954,9 +2954,9 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             if (source != sourcemodified)
             {
                 SaveNewSource(obj, sourcemodified);
-                output.AddLine("KBDoctor", "=====================================");
-                output.AddLine("KBDoctor", "Modified .. " + obj.Name);
-                //output.AddLine("KBDoctor",sourcemodified);
+                KBDoctorOutput.Message( "=====================================");
+                KBDoctorOutput.Message( "Modified .. " + obj.Name);
+                //KBDoctorOutput.Message(sourcemodified);
                 modified = true;
             }
             return modified;
@@ -3011,8 +3011,8 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string sourceWOComments = Functions.ExtractComments(source);
             string callSentences = "";
             string lista = "";
-            //     output.AddLine("KBDoctor","");
-            //     output.AddLine("KBDoctor","Processing : " + obj.Name);
+            //     KBDoctorOutput.Message("");
+            //     KBDoctorOutput.Message("Processing : " + obj.Name);
 
             foreach (EntityReference reference in obj.GetReferences())
             {
@@ -3022,7 +3022,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 //    List<string> Spec = new List<string>();
                 if (IsCallalable(objRef))
                 {
-                    //           output.AddLine("KBDoctor","     Calling : " + objRef.Name);
+                    //           KBDoctorOutput.Message("     Calling : " + objRef.Name);
                     StringCollection interfazCalledObject = InspectCall(objRef);
 
                     using (StringReader reader = new StringReader(sourceWOComments))
@@ -3040,13 +3040,13 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                                 line.Replace("call(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace("udp(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace(objRef.Name, "Ñ", StringComparison.CurrentCultureIgnoreCase);
-                                //                     output.AddLine("KBDoctor","............ Line . " + line);
+                                //                     KBDoctorOutput.Message("............ Line . " + line);
 
                                 StringCollection interfazCallerObject = ProcessingObjectCall(obj, line);
                                 for (int i = 0; i < interfazCallerObject.Count; i++)
                                 {
                                     if (interfazCallerObject[i] != interfazCalledObject[i])
-                                        output.AddLine("KBDoctor", "Diferencia: " + line + " Parametro: " + i.ToString() + " - " + interfazCallerObject[i] + "-" + interfazCalledObject[i]);
+                                        KBDoctorOutput.Message( "Diferencia: " + line + " Parametro: " + i.ToString() + " - " + interfazCallerObject[i] + "-" + interfazCalledObject[i]);
                                 }
                             }
                         }
@@ -3078,11 +3078,11 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                 if (substring != "")
                 {
-                    // output.AddLine("KBDoctor","................ Substring ." + substring);
+                    // KBDoctorOutput.Message("................ Substring ." + substring);
                     if (substring.StartsWith("&"))
                     {
                         lista.Add(TypeOfVariable(substring.Replace("&", ""), obj));
-                        //output.AddLine("KBDoctor","_________________________" + TypeOfVariable(substring.Replace("&", ""), obj));
+                        //KBDoctorOutput.Message("_________________________" + TypeOfVariable(substring.Replace("&", ""), obj));
                     }
                     else
                     {
@@ -3096,10 +3096,10 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                             {
                                 string type = (TypeOfAttribute((Artech.Genexus.Common.Objects.Attribute)att));
                                 lista.Add(type);
-                                //output.AddLine("KBDoctor","__________x______________" + TypeOfAttribute((Artech.Genexus.Common.Objects.Attribute)att));
+                                //KBDoctorOutput.Message("__________x______________" + TypeOfAttribute((Artech.Genexus.Common.Objects.Attribute)att));
                                 if (type == "")
                                 {
-                                    output.AddLine("KBDoctor", "__________no se pudo______________" + substring);
+                                    KBDoctorOutput.Message( "__________no se pudo______________" + substring);
                                 }
                             }
                         }
@@ -3128,7 +3128,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         string p = TypeOfParm(parm, objRef);
 
                         lista.Add(p);
-                        // output.AddLine("KBDoctor","        parameter : " + parm.Name + " - " + p);
+                        // KBDoctorOutput.Message("        parameter : " + parm.Name + " - " + p);
                     }
                 }
             }
@@ -3316,7 +3316,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                             if ((objRef != null) && (objRef is Transaction || objRef is WorkPanel || objRef is WebPanel))
                             {
                                 writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, Functions.linkObject(objRef), objRef.Description });
-                                output.AddLine("KBDoctor", obj.Name + " => " + objRef.Name);
+                                KBDoctorOutput.Message( obj.Name + " => " + objRef.Name);
                             }
                         }
                     }
@@ -3449,7 +3449,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     Boolean SaveObj = false;
                     if (isGenerated(obj) && (/*obj is Transaction || obj is WebPanel || obj is WorkPanel ||*/ obj is Procedure))
                     {
-                        output.AddLine("KBDoctor", "Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
+                        KBDoctorOutput.Message( "Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
                         string pic2 = (string)obj.GetPropertyValue("ATT_PICTURE");
 
 
@@ -3902,7 +3902,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
                     if ((vp != null) && isGenerated(obj))
                     {
-                        output.AddLine("KBDoctor", "Procesing.." + obj.Name);
+                        KBDoctorOutput.Message( "Procesing.." + obj.Name);
                         varsNotUsed = "";
                         foreach (Variable v in vp.Variables)
                         {
@@ -4067,7 +4067,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 {
                     if (isGenerated(obj))
                     {
-                        output.AddLine("KBDoctor", "Procesing.." + obj.Name);
+                        KBDoctorOutput.Message( "Procesing.." + obj.Name);
 
                         List<KBObjectPart> parts = new List<KBObjectPart>() { obj.Parts[typeof(WinFormPart).GUID] };
                         parts.ForEach(part =>
@@ -4159,7 +4159,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     Application.DoEvents();
                 } while (GenexusUIServices.Build.IsBuilding);
 
-                output.AddLine("KBDoctor", lista);
+                KBDoctorOutput.Message( lista);
                 output.EndSection("KBDoctor", title, true);
             }
             catch
@@ -4189,26 +4189,26 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 Artech.Genexus.Common.Objects.WebPanel nuevo = new Artech.Genexus.Common.Objects.WebPanel(kbModel);
                 string pdName = "";
           
-                output.AddLine("KBDoctor", "===== ENCRYPT URL PARAMETERS ========");
+                KBDoctorOutput.Message( "===== ENCRYPT URL PARAMETERS ========");
                 foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("USE_ENCRYPTION", "SITE"))
                 {
-                    output.AddLine("KBDoctor", obj.Name);
+                    KBDoctorOutput.Message( obj.Name);
                 }
-                output.AddLine("KBDoctor", "");
-                output.AddLine("KBDoctor", "===== SOAP ========");
+                KBDoctorOutput.Message( "");
+                KBDoctorOutput.Message( "===== SOAP ========");
                 foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "SOAP"))
                 {
-                    output.AddLine("KBDoctor", obj.Name);
+                    KBDoctorOutput.Message( obj.Name);
                 }
-                output.AddLine("KBDoctor", "");
-                output.AddLine("KBDoctor", "===== HTTP ========");
+                KBDoctorOutput.Message( "");
+                KBDoctorOutput.Message( "===== HTTP ========");
                 foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "HTTP"))
                 {
-                    output.AddLine("KBDoctor", obj.Name);
+                    KBDoctorOutput.Message( obj.Name);
                 }
 
-                output.AddLine("KBDoctor", "");
-                output.AddLine("KBDoctor", "===== SOAP NAMESPACE IN PROCEDURE ========");
+                KBDoctorOutput.Message( "");
+                KBDoctorOutput.Message( "===== SOAP NAMESPACE IN PROCEDURE ========");
                 foreach (Procedure p in Procedure.GetAll(kbModel))
                 {
                     string propval = p.GetPropertyValueString("SOAP_NAMESPACE");
@@ -4216,13 +4216,13 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     
                     if (propval != "" && !prop.IsDefault)
                     {
-                        output.AddLine("KBDoctor", p.Name + " Namespace:" + propval );
+                        KBDoctorOutput.Message( p.Name + " Namespace:" + propval );
                     }
 
                 }
 
-                output.AddLine("KBDoctor", "");
-                output.AddLine("KBDoctor", "===== xml NAMESPACE IN SDT ========");
+                KBDoctorOutput.Message( "");
+                KBDoctorOutput.Message( "===== xml NAMESPACE IN SDT ========");
                 foreach (SDT sdt in SDT.GetAll(kbModel))
                 {
                     ListSdtNamespace(sdt.SDTStructure.Root, sdt.Name);
@@ -4319,7 +4319,7 @@ public static void ListAPIObjects()
                         }
                         numObj += 1;
                         if ((numObj % 100) == 0)
-                            output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
+                            KBDoctorOutput.Message( obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                     }
                 }
                 //     writer.AddFooter();
@@ -4345,7 +4345,7 @@ public static void ListAPIObjects()
 
                 string fileName2 = directoryArg + @"\API3-" + fechahora + ".txt";
                 System.IO.File.WriteAllText(fileName2, sw2);
-                output.AddLine("KBDoctor", "URL/URI file generated in " + fileName2);
+                KBDoctorOutput.Message( "URL/URI file generated in " + fileName2);
                 output.EndSection("KBDoctor", title, success);
             }
             catch
@@ -4409,13 +4409,13 @@ public static void ListAPIObjects()
                                 {
                                     updatetablestring += Functions.linkObject(obj) + " ";
                                 }
-                                output.AddLine("KBDoctor", obj.Name);
+                                KBDoctorOutput.Message( obj.Name);
                             }
 
                             foreach (KBObject obj in updatersAtt)
                             {
                                 updateattstring += Functions.linkObject(obj) + " ";
-                                // output.AddLine("KBDoctor",obj.Name);
+                                // KBDoctorOutput.Message(obj.Name);
                             }
 
                             writer.AddTableData(new string[] { Functions.linkObject(t), trnstring, updatetablestring, updateattstring });

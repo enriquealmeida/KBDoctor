@@ -269,7 +269,7 @@ namespace Concepto.Packages.KBDoctor
                         i += 1;
                         visited.Add(obj);
                         IOutputService output = CommonServices.Output;
-                        output.AddLine("KBDoctor","");
+                        KBDoctorOutput.Message("");
                         output.AddWarningLine("START Componente conexo " + i.ToString());
                         
                         ComponenteConexo(obj, visited);
@@ -312,7 +312,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             if (isNode(objRef))
             {
-                output.AddLine("KBDoctor", NombreNodo(obj) + ";" + NombreNodo(objRef));
+                KBDoctorOutput.Message( NombreNodo(obj) + ";" + NombreNodo(objRef));
 
                 if (!visited.Contains(objRef))
                 {
@@ -333,7 +333,7 @@ namespace Concepto.Packages.KBDoctor
             StreamWriter scriptFile = new StreamWriter(fileName);
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
-            output.AddLine("KBDoctor","Generating " + name);
+            KBDoctorOutput.Message("Generating " + name);
 
             scriptFile.WriteLine("<?xml version = '1.0' encoding = 'UTF-8'?>");
 
@@ -381,7 +381,7 @@ namespace Concepto.Packages.KBDoctor
             StreamWriter scriptFile = new StreamWriter(fileName);
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
-            output.AddLine("KBDoctor","Generating " + name);
+            KBDoctorOutput.Message("Generating " + name);
            
             scriptFile.WriteLine("      </edges>");
             scriptFile.WriteLine("  </graph>");
@@ -396,7 +396,7 @@ namespace Concepto.Packages.KBDoctor
             StreamWriter scriptFile = new StreamWriter(fileName);
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
-            output.AddLine("KBDoctor","Generating " + name);
+            KBDoctorOutput.Message("Generating " + name);
 
             scriptFile.WriteLine("<?xml version = '1.0' encoding = 'UTF-8'?>");
 
@@ -468,7 +468,7 @@ namespace Concepto.Packages.KBDoctor
             StreamWriter scriptFile = new StreamWriter(fileName);
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
-            output.AddLine("KBDoctor","Generating MDG " + name);
+            KBDoctorOutput.Message("Generating MDG " + name);
 
             string objName = "";
             StringCollection nodos = new StringCollection();
@@ -536,7 +536,7 @@ namespace Concepto.Packages.KBDoctor
 
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
-            output.AddLine("KBDoctor","Generating " + name);
+            KBDoctorOutput.Message("Generating " + name);
 #if EVO3
             Dictionary<string, API.Tuple<int, string>> dictionary = new Dictionary<string, API.Tuple<int, string>>();
 #else
@@ -639,13 +639,13 @@ namespace Concepto.Packages.KBDoctor
                 initialpartition.Add(node, moduleId);
             }
 
-            output.AddLine("KBDoctor","Before automatic modularization. TurboMQ = " + TurboMQ(g, initialpartition).ToString());
+            KBDoctorOutput.Message("Before automatic modularization. TurboMQ = " + TurboMQ(g, initialpartition).ToString());
 
             //Empiezo modularizacion
             Stopwatch stopwatch = new Stopwatch();
            // stopwatch.Restart();
             Dictionary<int, int> partition = Community.BestPartition(g);
-            output.AddLine("KBDoctor","BestPartition: "+ stopwatch.Elapsed );
+            KBDoctorOutput.Message("BestPartition: "+ stopwatch.Elapsed );
             var communities = new Dictionary<int, List<int>>();
             foreach (var kvp in partition)
             {
@@ -655,19 +655,19 @@ namespace Concepto.Packages.KBDoctor
                     nodeset = communities[kvp.Value] = new List<int>();
                 }
                 nodeset.Add(kvp.Key);
-            //    output.AddLine("KBDoctor",kvp.Key.ToString() +"  "+kvp.Value);
+            //    KBDoctorOutput.Message(kvp.Key.ToString() +"  "+kvp.Value);
             }
-            output.AddLine("KBDoctor",communities.Count + " modules found");
+            KBDoctorOutput.Message(communities.Count + " modules found");
             Dictionary<string, int> modu = new Dictionary<string, int>();
             int counter = 0;
             foreach (var kvp in communities)
             {
-                output.AddLine("KBDoctor",String.Format("module {0}: {1} objects", counter, kvp.Value.Count));
+                KBDoctorOutput.Message(String.Format("module {0}: {1} objects", counter, kvp.Value.Count));
                 foreach (var objid in kvp.Value)
                 {
                     var objname = IdToName[objid];
                     int cantidad = 0;
-                    // output.AddLine("KBDoctor","Module :" + counter.ToString() + " " + objname);
+                    // KBDoctorOutput.Message("Module :" + counter.ToString() + " " + objname);
                     string pareja = IdToModule[objid] + " " + counter.ToString() ;
                     if (modu.ContainsKey(pareja))
                         modu[pareja] = modu[pareja] + 1;
@@ -681,12 +681,12 @@ namespace Concepto.Packages.KBDoctor
                 //Cantidad de modulo nuevo y modulo viejo. 
                 foreach (KeyValuePair<string, int> entry in sortedDict)
                 {
-                    //   output.AddLine("KBDoctor",entry.Key + " " + entry.Value.ToString());
+                    //   KBDoctorOutput.Message(entry.Key + " " + entry.Value.ToString());
                     Module m = new Module(model)
                     {
                         Name = entry.Key.Replace(" ", "_") + string.Format("_{0:yyyy_MM_dd_hh_mm_ss}", DateTime.Now)
                     };
-                    output.AddLine("KBDoctor",m.Name);
+                    KBDoctorOutput.Message(m.Name);
                     m.Module= kbserv.CurrentModel.GetDesignModel().RootModule;
                     m.Save();
 
@@ -780,7 +780,7 @@ namespace Concepto.Packages.KBDoctor
             StreamWriter scriptFile = new StreamWriter(fileName);
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
-            output.AddLine("KBDoctor","Generating " + name);
+            KBDoctorOutput.Message("Generating " + name);
 
             scriptFile.WriteLine("<?xml version = '1.0' encoding = 'UTF-8'?>");
 

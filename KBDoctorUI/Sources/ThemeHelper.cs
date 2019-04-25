@@ -17,64 +17,295 @@ using Artech.Udm.Framework.References;
 using Artech.Genexus.Common.Parts.WebForm;
 using Artech.Common.Collections;
 using Concepto.Packages.KBDoctorCore.Sources;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using Artech.Genexus.Common.CustomTypes;
 
 namespace Concepto.Packages.KBDoctor
 {
     class ThemeHelper
     {
-        public static void ListDynamicCombo()
+
+        public static void ClassNotInTheme()
         {
             IKBService kbserv = UIServices.KB;
 
-            string title = "KBDoctor - List objects with dynamic combobox in grid columns";
+            string title = "KBDoctor - Class not in Theme";
+
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+
+            //IOutputService output = CommonServices.Output;
+            KBDoctorOutput.StartSection(title);
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Class", "Error" });
+
+            //Cargo todas las clases de todos los theme de la KB. 
+            StringCollection ThemeClasses = LoadThemeClasses();
+
+            StringCollection UsedClasses = LoadUsedClasses();
+
+
+            foreach (string sd in UsedClasses)
+            {
+                if (!ThemeClasses.Contains(sd))
+                {
+                    writer.AddTableData(new string[] { "", sd, "Application Class not in theme" });
+                    KBDoctorOutput.Message( "Application Class not in theme " + sd);
+
+                }
+                else
+                {
+                    ThemeClasses.Remove(sd);
+                }
+            }
+
+
+            writer.AddTableData(new string[] { "-----------------", "--------------", "---" });
+            foreach (string ss in ThemeClasses)
+                if (!UsedClasses.Contains(ss))
+                {
+                    writer.AddTableData(new string[] { "", ss, "Class not referenced" });
+                    KBDoctorOutput.Message("Class not referenced in application " + ss);
+                }
+            writer.AddTableData(new string[] { "-------", "-----------------", "--------------" });
+            writer.AddFooter();
+            writer.Close();
+            KBDoctorOutput.EndSection(title,true);
+
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            
+        }
+
+
+        private static bool VeoSiClassEstaContenidaEnAlgunaClassDelTheme(StringCollection ThemeClasses, string miclstr)
+        {
+            bool classEstaEnElTheme = false;
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Description", "Control Name", "Col Visible" });
-
-
-                //All useful objects are added to a collection
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
-
+                foreach (string thmcls in ThemeClasses)
                 {
-                        string objName = obj.Name;
-                       
-                        if (obj is WebPanel)
+                    if (thmcls.Contains(miclstr))
+                    {
+                        classEstaEnElTheme = true;
+                        break;
+                    }
+                }
+            }
+            catch (Exception e) { Console.WriteLine(); };
+            return classEstaEnElTheme;
+        }
+
+        private static StringCollection LoadThemeClasses()
+        {
+            StringCollection ThemeClasses = new StringCollection();
+            foreach (Theme thm in Theme.GetAll(UIServices.KB.CurrentModel))
+            {
+                KBDoctorOutput.Message( "Procesing theme .." + thm.Name);
+                ThemeStylesPart part = thm.Parts.Get<ThemeStylesPart>();
+                foreach (Artech.Genexus.Common.Objects.Themes.ThemeStyle thmclass in part.GetAllStyles())
+                {
+                    string thmstr = thmclass.Name;
+                    if (!ThemeClasses.Contains(thmstr) && (!(thmstr.Contains("Dragging") || thmstr.Contains("AcceptDrag") || thmstr.Contains("NoAcceptDrag")))) //Excluyo clases especiales
+                    {
+                        ThemeClasses.Add(thmstr.ToLower());
+                    }
+                }
+            }
+            return ThemeClasses;
+        }
+
+        public static void LoadAndCheckUsedClasses(IKBService kbserv, IOutputService output, StringCollection UsedClasses, StringCollection ThemeClasses, KBDoctorXMLWriter writer)
+        {
+
+            int cant = 0;
+
+            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            {
+                if ((cant % 100) == 0)
+                {
+                    KBDoctorOutput.Message( "Procesing.." + cant.ToString() + " objects ");
+                }
+                cant += 1;
+                if (((obj is Transaction) || (obj is WebPanel)) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
+                {
+                    WebFormPart webForm = obj.Parts.Get<WebFormPart>();
+                    foreach (IWebTag tag in WebFormHelper.EnumerateWebTag(webForm))
+                    {
+                        if (tag.Properties != null)
                         {
-                            //output.AddLine("KBDoctor", "Procesing.." + obj.Name);
-                            WebFormPart webForm = obj.Parts.Get<WebFormPart>();
-                            foreach (IWebTag current in WebFormHelper.EnumerateWebTag(webForm))
+                            PropertyDescriptor prop = tag.Properties.GetPropertyDescriptorByDisplayName("Class");
+                            if (prop != null)
                             {
-                                if (current.Node.ParentNode.Name == "gxGrid" && current.Type == WebTagType.Column)
+                                //arreglar acan cancela con la Evo3. 
+                                ThemeClassReferenceList miclasslist = new ThemeClassReferenceList();
+                                //    try
+                                //    {
+                                // miclasslist = (ThemeClassReferenceList)prop.GetValue(new object());
+                                //  }
+                                // catch (Exception e) {
+                                //     KBDoctorOutput.Error("LoadAndCheckUsedClasses:" + e.Message + " " + e.InnerException);
+                                //     throw e;
+                                // };
+                                foreach (ThemeClass miclass in miclasslist.GetThemeClasses(obj.Model))
                                 {
-                                    string controlName = current.Properties.GetPropertyValueString("ControlName");
-                                    string controltype = current.Properties.GetPropertyValueString("ControlType");
-                                    bool  hidden = current.Properties.GetPropertyValue<bool>("ColVisible");
-                                  //  string att = current.Properties.GetPropertyValueString("Attribute");
-                                    if (controltype == "Dynamic Combo Box")
+                                    if (miclass != null)
                                     {
-                                        output.AddLine("KBDoctor", ">>>>Procesing.." + obj.Name + "-" + current.Type);
-                                        writer.AddTableData(new string[] { Functions.linkObject(obj) , obj.Description, controlName,hidden.ToString()   });
+                                        string miclstr = miclass.Name.ToLower();
+                                        if (!UsedClasses.Contains(miclstr))
+                                        {
+                                            UsedClasses.Add(miclstr);
+                                        }
+                                        if (!ThemeClasses.Contains(miclstr))
+                                        {
+                                            bool classEstaEnElTheme = VeoSiClassEstaContenidaEnAlgunaClassDelTheme(ThemeClasses, miclstr);
+                                            if (!classEstaEnElTheme)
+                                            {
+                                                string objName = obj.Name;
+                                                KBDoctorOutput.Message( " Object : " + obj.Name + " reference class " + miclstr + " which not exist in Theme");
+                                                string objNameLink = Functions.linkObject(obj);
+                                                writer.AddTableData(new string[] { objNameLink, miclstr, " does not exist in theme" });
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
+                    }
                 }
+            }
+        }
+
+
+        public static StringCollection LoadUsedClasses()
+        {
+
+            StringCollection UsedClasses = new StringCollection();
+
+            foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+            {
+                //ShowSomeMessages("Processing " + obj.Name);
+                if (((obj is Transaction) || (obj is WebPanel)) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
+                {
+                    WebFormPart webForm = obj.Parts.Get<WebFormPart>();
+                    foreach (IWebTag tag in WebFormHelper.EnumerateWebTag(webForm))
+                    {
+                        if (tag.Properties != null)
+                        {
+                            PropertyDescriptor prop = tag.Properties.GetPropertyDescriptorByDisplayName("Class");
+                            if (prop != null)
+                            {
+                                var val = prop.GetValue(tag);
+                                string miclstr = val.ToString();
+                                if (!UsedClasses.Contains(miclstr))
+                                {
+                                    KBDoctorOutput.Message("Class : " + miclstr + " in " + obj.Name + " Tag: " + tag.Type.ToString() );
+                                    UsedClasses.Add(miclstr);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return UsedClasses;
+        }
+
+        private static void ShowSomeMessages(string message)
+        {
+         //   KBDoctorOutput.Message(message);
+        }
+        /*
+        public static void LoadUsedClasses(ollection UsedClasses)
+        {
+
+            int cant = 0;
+
+            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            {
+                if ((cant % 100) == 0)
+                {
+                    KBDoctorOutput.Message( "Procesing.." + cant.ToString() + " objects ");
+
+                }
+                cant += 1;
+                if (((obj is Transaction) || (obj is WebPanel) || obj is ThemeClass) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
+                {
+                    WebFormPart webForm = obj.Parts.Get<WebFormPart>();
+
+                    KBDoctorOutput.Message( " Object : " + obj.Name);
+
+                    foreach (IWebTag tag in WebFormHelper.EnumerateWebTag(webForm))
+                    {
+                        if (tag.Properties != null)
+                        {
+
+                            PropertyDescriptor prop = tag.Properties.GetPropertyDescriptorByDisplayName("Class");
+                            if (prop != null)
+                            {
+
+                                ThemeClassReferenceList miclasslist = new ThemeClassReferenceList();
+                                try
+                                {
+                                    miclasslist = (ThemeClassReferenceList)prop.GetValue(new object());
+                                }
+                                catch (Exception e) { Console.WriteLine(e.InnerException); };
+
+                                foreach (ThemeClass miclass in miclasslist.GetThemeClasses(obj.Model))
+                                {
+                                    if (miclass != null)
+                                    {
+                                        string miclstr = miclass.Root.Description + '-' + miclass.Name.ToLower();
+                                        if (!UsedClasses.Contains(miclstr))
+                                        {
+                                            UsedClasses.Add(miclstr);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        */
+        public static void ClassUsed()
+        {
+            IKBService kbserv = UIServices.KB;
+
+            string title = "KBDoctor - Classes Used";
+            try
+            {
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+               // IOutputService output = CommonServices.Output;
+                KBDoctorOutput.StartSection( title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Class", "Error" });
+
+                StringCollection UsedClasses =  LoadUsedClasses();
+                StringCollection ThemeClasses = new StringCollection();
+                //Reviso todos los objeto para ver las class usadas en cada control
+
+                foreach (string sd in UsedClasses)
+                {
+
+                    writer.AddTableData(new string[] { sd, "" });
+                    KBDoctorOutput.Message( "Application Class used " + sd);
+
+                }
+
+                writer.AddTableData(new string[] { "-----------------", "--------------", "---" });
+
                 writer.AddFooter();
                 writer.Close();
+                KBDoctorOutput.EndSection( title, true);
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                output.EndSection("KBDoctor", title, success);
-
-            
             }
             catch
             {

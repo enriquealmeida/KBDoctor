@@ -138,7 +138,7 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
 
-                output.AddLine("KBDoctor", "Listing objects...");
+                KBDoctorOutput.Message( "Listing objects...");
                 writer.AddTableHeader(new string[] { "Tipo", "Object", "Description", "Last Update", "Timestamp" });
                 foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
@@ -239,7 +239,7 @@ namespace Concepto.Packages.KBDoctor
                 int numObj = 0;
 
                 DateTime limite = new DateTime(2017, 06, 30);
-                output.AddLine("KBDoctor", "Fecha Limite : " + limite.ToString());
+                KBDoctorOutput.Message( "Fecha Limite : " + limite.ToString());
 
 
                 writer.AddTableHeader(new string[] { "Type", "Object", "Description", "Module", "Public", "Last Update", "Is Main", "TimeStamp", "Is Generated", "Protocol", "AppLocation" });
@@ -267,7 +267,7 @@ namespace Concepto.Packages.KBDoctor
 
                             numObj += 1;
                             if ((numObj % 200) == 0)
-                                output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
+                                KBDoctorOutput.Message( obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                         }
                 }
                 writer.AddFooter();
@@ -325,7 +325,7 @@ namespace Concepto.Packages.KBDoctor
                                 obj.Module.Name, obj.IsPublic.ToString(), objAppGenerator, objProtocol, obj.LastUpdate.ToShortDateString()});
 
 
-                        output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
+                        KBDoctorOutput.Message( obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                     }
                 }
                 writer.AddFooter();
@@ -385,7 +385,7 @@ namespace Concepto.Packages.KBDoctor
                                 obj.Module.Name, obj.IsPublic.ToString(), "", "", obj.LastUpdate.ToShortDateString()});
 
 
-                        output.AddLine("KBDoctor", obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
+                        KBDoctorOutput.Message( obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                     }
                 }
                 writer.AddFooter();
@@ -473,8 +473,8 @@ namespace Concepto.Packages.KBDoctor
 
                 if (location == objLocation)
                 {
-                    output.AddLine("KBDoctor","set DESTINO=" + objLocation);
-                    output.AddLine("KBDoctor","XCOPY " + Dircopia + obj.Name + ".dll %DESTINO%");
+                    KBDoctorOutput.Message("set DESTINO=" + objLocation);
+                    KBDoctorOutput.Message("XCOPY " + Dircopia + obj.Name + ".dll %DESTINO%");
 
                     if (obj is Procedure)
                         letra = "a";
@@ -483,7 +483,7 @@ namespace Concepto.Packages.KBDoctor
                     if (obj is Transaction)
                         letra = "";
 
-                    output.AddLine("KBDoctor","XCOPY " + Dircopia + letra + obj.Name + ".dll %DESTINO%");
+                    KBDoctorOutput.Message("XCOPY " + Dircopia + letra + obj.Name + ".dll %DESTINO%");
                     AddReferencedObj(objColl, obj, "");
 
                 }
@@ -509,7 +509,7 @@ namespace Concepto.Packages.KBDoctor
                     if ((objRef != null) && !(objColl.Contains(objRef)) && (reference.ReferenceType == ReferenceType.Hard) && (ObjectsHelper.IsCallalable(objRef)))
                     {
                         if (!(objRef is Procedure))
-                            output.AddLine("KBDoctor",tabs + "XCOPY " + objRef.Name + ".DLL %DESTINO% "); //+ " (" + obj.TypeDescriptor.Name + ")" );
+                            KBDoctorOutput.Message(tabs + "XCOPY " + objRef.Name + ".DLL %DESTINO% "); //+ " (" + obj.TypeDescriptor.Name + ")" );
 
                         AddReferencedObj(objColl, objRef, RefTabs);
 
@@ -562,7 +562,7 @@ namespace Concepto.Packages.KBDoctor
 
                     if (obj is Procedure || obj is Transaction)
                     {
-                        output.AddLine("KBDoctor", "Procesing up " + obj.Name);
+                        KBDoctorOutput.Message( "Procesing up " + obj.Name);
                         IEnumerable<int> generatorTypes = GetObjectGenerators(obj.Key);
 
                         string objNamePrior = "";
@@ -576,7 +576,7 @@ namespace Concepto.Packages.KBDoctor
                             KBObjectCollection objColl = new KBObjectCollection();
                             string mainss = "";
 
-                            output.AddLine("KBDoctor", "Procesing down " + obj.Name);
+                            KBDoctorOutput.Message( "Procesing down " + obj.Name);
                             foreach (EntityReference reference in obj.GetReferences())
                             {
                                 KBObject objRef = KBObject.Get(obj.Model, reference.To);
@@ -755,7 +755,7 @@ namespace Concepto.Packages.KBDoctor
 
                 if (obj != null)
                 {
-                    output.AddLine("KBDoctor","Procesing  " + obj.Name);
+                    KBDoctorOutput.Message("Procesing  " + obj.Name);
 
                  //   IEnumerable<int> generatorTypes = KbStats.GetObjectGenerators(obj.Key);
 

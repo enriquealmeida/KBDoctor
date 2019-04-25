@@ -57,7 +57,7 @@ namespace Concepto.Packages.KBDoctor
                 }
 
                 ProcessObjectsInCategory(output, UnreachableCategory);
-                output.AddLine("KBDoctor","Finish");
+                KBDoctorOutput.Message("Finish");
 
             }
         }
@@ -69,14 +69,14 @@ namespace Concepto.Packages.KBDoctor
             int borrados = 0;
             do
             {
-                output.AddLine("KBDoctor","Pass number " + pasada.ToString() + ". Cleaned objects: " + borrados.ToString());
+                KBDoctorOutput.Message("Pass number " + pasada.ToString() + ". Cleaned objects: " + borrados.ToString());
                 stay = false;
 
                 foreach (KBObject obj in Category.AllMembers)
                 {
                     if ((obj is Transaction) || (obj is Table) || (obj is Image) || (obj is Artech.Genexus.Common.Objects.Group) || (obj is DataView))
                     {
-                        output.AddLine("KBDoctor","Skipping " + obj.Name);
+                        KBDoctorOutput.Message("Skipping " + obj.Name);
 
                     }
                     else
@@ -84,13 +84,13 @@ namespace Concepto.Packages.KBDoctor
                         try
                         {
                             obj.Delete();
-                            output.AddLine("KBDoctor","Removing : " + obj.Name);
+                            KBDoctorOutput.Message("Removing : " + obj.Name);
                             stay = true;
                             borrados += 1;
                         }
                         catch
                         {
-                            output.AddLine("KBDoctor","ERROR: Can't remove :" + obj.Name);
+                            KBDoctorOutput.Message("ERROR: Can't remove :" + obj.Name);
 
                         }
 
@@ -105,104 +105,6 @@ namespace Concepto.Packages.KBDoctor
         }
 
 
-        public static void ClassNotInTheme()
-        {
-            IKBService kbserv = UIServices.KB;
-
-            string title = "KBDoctor - Class not in Theme";
-  //          try
-  //          {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Class", "Error" });
-
-                //Cargo todas las clases de todos los theme de la KB. 
-                StringCollection ThemeClasses = new StringCollection();
-                LoadThemeClasses(kbserv, output, ThemeClasses);
-
-                StringCollection UsedClasses = new StringCollection();
-                //Reviso todos los objeto para ver las class usadas en cada control
-                LoadAndCheckUsedClasses(kbserv, output, UsedClasses, ThemeClasses, writer);
-
-
-                foreach (string sd in UsedClasses)
-                {
-                    if (!ThemeClasses.Contains(sd))
-                    {
-                        writer.AddTableData(new string[] { "", sd, "Application Class not in theme" });
-                        output.AddLine("KBDoctor", "Application Class not in theme " + sd);
-
-                    }
-                    else
-                    {
-                        ThemeClasses.Remove(sd);
-                    }
-                }
-
-
-                writer.AddTableData(new string[] { "-----------------", "--------------", "---" });
-                foreach (string ss in ThemeClasses)
-                    if (!UsedClasses.Contains(ss))
-                    {
-                        writer.AddTableData(new string[] { "", ss, "Class not referenced" });
-                        output.AddLine("KBDoctor", "Class not referenced in application " + ss);
-                    }
-                writer.AddTableData(new string[] { "-------", "-----------------", "--------------" });
-                writer.AddFooter();
-                writer.Close();
-                output.EndSection("KBDoctor", title, true);
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-           /* }
-            catch  (Exception e)
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title + " " + e.Message  + " " + e.InnerException, success);
-            }*/
-        }
-
-
-        private static bool VeoSiClassEstaContenidaEnAlgunaClassDelTheme(StringCollection ThemeClasses, string miclstr)
-        {
-            bool classEstaEnElTheme = false;
-            try
-            {
-
-                foreach (string thmcls in ThemeClasses)
-                {
-                    if (thmcls.Contains(miclstr))
-                    {
-                        classEstaEnElTheme = true;
-                        break;
-                    }
-                }
-            }
-            catch (Exception e) { Console.WriteLine(); };
-            return classEstaEnElTheme;
-        }
-
-        private static void LoadThemeClasses(IKBService kbserv, IOutputService output, StringCollection ThemeClasses)
-        {
-            foreach (Theme thm in Theme.GetAll(kbserv.CurrentModel))
-            {
-                output.AddLine("KBDoctor","Procesing theme .." + thm.Name);
-                ThemeStylesPart part = thm.Parts.Get<ThemeStylesPart>();
-                foreach (Artech.Genexus.Common.Objects.Themes.ThemeStyle thmclass in part.GetAllStyles())
-                {
-                    string thmstr = thmclass.Name;
-                    if (!ThemeClasses.Contains(thmstr) && (!(thmstr.Contains("Dragging") || thmstr.Contains("AcceptDrag") || thmstr.Contains("NoAcceptDrag")))) //Excluyo clases especiales
-                    {
-                            ThemeClasses.Add(thmstr.ToLower());
-                    }
-                }
-            }
-        }
 
 
 
@@ -247,8 +149,8 @@ namespace Concepto.Packages.KBDoctor
                 writer.Close();
 
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
-                output.AddLine("KBDoctor", "Object changed " + cantObjChanged.ToString());
+                KBDoctorOutput.EndSection( title, success);
+                KBDoctorOutput.Message( "Object changed " + cantObjChanged.ToString());
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
@@ -480,7 +382,7 @@ namespace Concepto.Packages.KBDoctor
                 rulPart.Source = newRules;
 
             }
-                catch (Exception e) { output.AddLine("KBDoctor",e.Message); };
+                catch (Exception e) { KBDoctorOutput.Message(e.Message); };
             
 
             try
@@ -489,7 +391,7 @@ namespace Concepto.Packages.KBDoctor
             }
             catch (Exception e)
             {
-                output.AddLine("KBDoctor","Error SAVING " + obj.Name + " New parm rule " + newParm + " " + e.Message);
+                KBDoctorOutput.Message("Error SAVING " + obj.Name + " New parm rule " + newParm + " " + e.Message);
             }
         }
 
@@ -514,7 +416,7 @@ namespace Concepto.Packages.KBDoctor
                 //All useful objects are added to a collection
                 foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    output.AddLine("KBDoctor", "Procesing.... " + obj.Name + " - " + obj.Type.ToString());
+                    KBDoctorOutput.Message( "Procesing.... " + obj.Name + " - " + obj.Type.ToString());
                     Boolean SaveObj = false;
 
                     if (Utility.isGenerated(obj) && !ObjectsHelper.isGeneratedbyPattern(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel))
@@ -731,7 +633,7 @@ namespace Concepto.Packages.KBDoctor
                             if ((objtotales % 100) == 0)
                             {
 
-                                output.AddLine("KBDoctor","Searching in " + objtotales + " objects ");
+                                KBDoctorOutput.Message("Searching in " + objtotales + " objects ");
                             }
 
                             StringBuilder buffer = new StringBuilder();
@@ -749,7 +651,7 @@ namespace Concepto.Packages.KBDoctor
                                 try
                                 {
                                     obj.Save();
-                                    output.AddLine("KBDoctor","Changed >> '" + txtfind + "' to '" + txtreplace + "' in object " + obj.Name);
+                                    KBDoctorOutput.Message("Changed >> '" + txtfind + "' to '" + txtreplace + "' in object " + obj.Name);
                                     objcambiados += 1;
                                 }
                                 catch (Exception e)
@@ -989,165 +891,7 @@ namespace Concepto.Packages.KBDoctor
 
 
 
-        public static void LoadAndCheckUsedClasses(IKBService kbserv, IOutputService output, StringCollection UsedClasses, StringCollection ThemeClasses,KBDoctorXMLWriter writer)
-        {
 
-            int cant = 0;
-
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
-            {
-                if ((cant % 100) == 0)
-                {
-                    output.AddLine("KBDoctor","Procesing.." + cant.ToString() + " objects ");
-                }
-                cant += 1;
-                if (((obj is Transaction) || (obj is WebPanel)) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
-                {
-                    WebFormPart webForm = obj.Parts.Get<WebFormPart>();
-                    foreach (IWebTag tag in WebFormHelper.EnumerateWebTag(webForm))
-                    {
-                        if (tag.Properties != null)
-                        {
-                            PropertyDescriptor prop = tag.Properties.GetPropertyDescriptorByDisplayName("Class");
-                            if (prop != null)
-                            {
-                                //arreglar acan cancela con la Evo3. 
-                                ThemeClassReferenceList miclasslist = new ThemeClassReferenceList();
-                           //    try
-                            //    {
-                                   // miclasslist = (ThemeClassReferenceList)prop.GetValue(new object());
-                              //  }
-                               // catch (Exception e) {
-                               //     KBDoctorOutput.Error("LoadAndCheckUsedClasses:" + e.Message + " " + e.InnerException);
-                               //     throw e;
-                               // };
-                                foreach (ThemeClass miclass in miclasslist.GetThemeClasses(obj.Model))
-                                {
-                                    if (miclass != null)
-                                    {
-                                        string miclstr = miclass.Name.ToLower();
-                                        if (!UsedClasses.Contains(miclstr))
-                                        {
-                                            UsedClasses.Add(miclstr);
-                                        }
-                                        if (!ThemeClasses.Contains(miclstr))
-                                        {
-                                            bool classEstaEnElTheme = VeoSiClassEstaContenidaEnAlgunaClassDelTheme(ThemeClasses, miclstr);
-                                            if (!classEstaEnElTheme)
-                                            {
-                                                string objName = obj.Name;
-                                                output.AddLine("KBDoctor"," Object : " + obj.Name + " reference class " + miclstr + " which not exist in Theme");
-                                                string objNameLink = Functions.linkObject(obj);
-                                                writer.AddTableData(new string[] { objNameLink, miclstr, " does not exist in theme" });
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-
-        public static void LoadUsedClasses(IKBService kbserv, IOutputService output, StringCollection UsedClasses)
-        {
-
-            int cant = 0;
-
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
-            {
-                if ((cant % 100) == 0)
-                {
-                    output.AddLine("KBDoctor","Procesing.." + cant.ToString() + " objects ");
-
-                }
-                cant += 1;
-                if (((obj is Transaction) || (obj is WebPanel) || obj is ThemeClass) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
-                {
-                    WebFormPart webForm = obj.Parts.Get<WebFormPart>();
-
-                    output.AddLine("KBDoctor"," Object : " + obj.Name);
-
-                    foreach (IWebTag tag in WebFormHelper.EnumerateWebTag(webForm))
-                    {
-                        if (tag.Properties != null)
-                        {
-
-                            PropertyDescriptor prop = tag.Properties.GetPropertyDescriptorByDisplayName("Class");
-                            if (prop != null)
-                            {
-
-                                ThemeClassReferenceList miclasslist = new ThemeClassReferenceList();
-                                try
-                                {
-                                    miclasslist = (ThemeClassReferenceList)prop.GetValue(new object());
-                                }
-                                catch (Exception e) { Console.WriteLine(e.InnerException); };
-
-                                foreach (ThemeClass miclass in miclasslist.GetThemeClasses(obj.Model))
-                                {
-                                    if (miclass != null)
-                                    {
-                                        string miclstr = miclass.Root.Description + '-' + miclass.Name.ToLower();
-                                        if (!UsedClasses.Contains(miclstr))
-                                        {
-                                            UsedClasses.Add(miclstr);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public static void ClassUsed()
-        {
-            IKBService kbserv = UIServices.KB;
-
-            string title = "KBDoctor - Classes Used";
-            try
-            {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Class", "Error" });
-
-                StringCollection UsedClasses = new StringCollection();
-                StringCollection ThemeClasses = new StringCollection();
-                //Reviso todos los objeto para ver las class usadas en cada control
-                LoadUsedClasses(kbserv, output, UsedClasses);
-
-
-                foreach (string sd in UsedClasses)
-                {
-
-                    writer.AddTableData(new string[] { sd, "" });
-                    output.AddLine("KBDoctor", "Application Class used " + sd);
-
-                }
-
-                writer.AddTableData(new string[] { "-----------------", "--------------", "---" });
-
-                writer.AddFooter();
-                writer.Close();
-                output.EndSection("KBDoctor", title, true);
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
-        }
 
         public static void RenameAttributesAndTables()
         {
@@ -1185,7 +929,7 @@ namespace Concepto.Packages.KBDoctor
                         Boolean SaveObj = false;
                         if ((obj is Artech.Genexus.Common.Objects.Attribute) && (obj.Name.Length > ATTNAME_LEN))
                         {
-                            output.AddLine("KBDoctor", "RENAMING ATTRIBUTE " + obj.Name + " to " + obj.Name.Substring(0, ATTNAME_LEN));
+                            KBDoctorOutput.Message( "RENAMING ATTRIBUTE " + obj.Name + " to " + obj.Name.Substring(0, ATTNAME_LEN));
                             obj.Name = obj.Name.Substring(0, ATTNAME_LEN);
                             SaveObj = true;
                         }
@@ -1193,7 +937,7 @@ namespace Concepto.Packages.KBDoctor
                         {
                             if (((obj is Table) || (obj is Index)) && (obj.Name.Length > TBLNAME_LEN))
                             {
-                                output.AddLine("KBDoctor", "RENAMING TABLE/INDEX " + obj.Name + " to " + obj.Name.Substring(0, TBLNAME_LEN));
+                                KBDoctorOutput.Message( "RENAMING TABLE/INDEX " + obj.Name + " to " + obj.Name.Substring(0, TBLNAME_LEN));
                                 obj.Name = obj.Name.Substring(0, TBLNAME_LEN);
                                 SaveObj = true;
                             }
@@ -1201,7 +945,7 @@ namespace Concepto.Packages.KBDoctor
                             {
                                 if ((obj.Name.Length > OBJNAME_LEN) && ObjectsHelper.isGeneratedbyPattern(obj))
                                 {
-                                    output.AddLine("KBDoctor", "RENAMING OBJECT " + obj.Name + " to " + obj.Name.Substring(0, OBJNAME_LEN));
+                                    KBDoctorOutput.Message( "RENAMING OBJECT " + obj.Name + " to " + obj.Name.Substring(0, OBJNAME_LEN));
                                     obj.Name = obj.Name.Substring(0, OBJNAME_LEN);
                                     SaveObj = true;
                                 }
@@ -1217,7 +961,7 @@ namespace Concepto.Packages.KBDoctor
                             }
                             catch (Exception e)
                             {
-                                output.AddLine("KBDoctor", "ERROR saving  .. " + obj.Name + " - " + e.Message);
+                                KBDoctorOutput.Message( "ERROR saving  .. " + obj.Name + " - " + e.Message);
                             }
                         }
                     }
@@ -1226,7 +970,7 @@ namespace Concepto.Packages.KBDoctor
 
                     KBDoctorHelper.ShowKBDoctorResults(outputFile);
                     bool success = true;
-                    output.EndSection("KBDoctor", title, success);
+                    KBDoctorOutput.EndSection( title, success);
                 }
                 catch
                 {

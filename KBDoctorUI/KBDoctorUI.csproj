@@ -223,6 +223,7 @@
     <Compile Include="Sources\AsignDomToVar.Designer.cs">
       <DependentUpon>AsignDomToVar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sources\BadSmells.cs" />
     <Compile Include="Sources\Functions.cs" />
     <Compile Include="CodeGeneration\CodeGeneration.cs" />
     <Compile Include="Sources\GraphHelper.cs" />

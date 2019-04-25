@@ -118,12 +118,12 @@ namespace Concepto.Packages.KBDoctor
                     Formula formula = a.Formula;
                     if (formula == null)
                     {
-                        //  output.AddLine("KBDoctor",a.Name);
+                        //  KBDoctorOutput.Message(a.Name);
                     }
                     else
                     {
 
-                        output.AddLine("KBDoctor", "Formula " + a.Name);
+                        KBDoctorOutput.Message( "Formula " + a.Name);
                         string Picture = Utility.FormattedTypeAttribute(a);
                         string attNameLink = Functions.linkObject(a);
                         string redundantInTables = "";
@@ -244,7 +244,7 @@ namespace Concepto.Packages.KBDoctor
                     if ((a.DomainBasedOn == null) && !isSubtype && a.Type!=eDBType.BINARY && a.Type!=eDBType.Boolean && a.Length < 100 )
                     {
                         // search for domains with the same data type
-                        output.AddLine("KBDoctor", "Procesing " + a.Name);
+                        KBDoctorOutput.Message( "Procesing " + a.Name);
                         string suggestedDomains = "";
                         string value = "";
 
@@ -433,7 +433,7 @@ namespace Concepto.Packages.KBDoctor
                     string Picture = Utility.FormattedTypeAttribute(a);
                     string domlink = a.DomainBasedOn == null ? " " : Functions.linkObject(a.DomainBasedOn);
                     string superTypeName = a.SuperTypeKey == null ? " " : a.SuperType.Name;
-                    output.AddLine("KBDoctor", "Procesing " + a.Name);
+                    KBDoctorOutput.Message( "Procesing " + a.Name);
                     string isFormula = a.Formula == null ? "" : "*";
                     writer.AddTableData(new string[] { Functions.linkObject(a), a.Description, Picture, domlink, superTypeName, a.Title, a.ColumnTitle, a.ContextualTitleProperty, isFormula });
                 }
@@ -468,7 +468,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (Table t in Table.GetAll(kbserv.CurrentModel))
             {
-                output.AddLine("KBDoctor","Processing... " + t.Name);
+                KBDoctorOutput.Message("Processing... " + t.Name);
                 string objNameLink = Functions.linkObject(t); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + t.Guid.ToString() + "\">" + t.Name + "</a>";
 
 
@@ -476,7 +476,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     if ((attr.Attribute.Type == Artech.Genexus.Common.eDBType.VARCHAR) || (attr.Attribute.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR))
                     {
-                        output.AddLine("KBDoctor","Processing " + attr.Name);
+                        KBDoctorOutput.Message("Processing " + attr.Name);
                         if (!Functions.AttIsSubtype(attr))
                         {
                             string domLink = DomainLinkFromAttribute(attr);
@@ -757,18 +757,18 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddTableHeader(new string[] { "Attribute", "can delete", "Description", "Data type", "Tables", "Transactions" });
 
                 // grabo todos los atributos en una colección
-                output.AddLine("KBDoctor", "Loading attributes..");
+                KBDoctorOutput.Message( "Loading attributes..");
                 List<Artech.Genexus.Common.Objects.Attribute> attTodos = new List<Artech.Genexus.Common.Objects.Attribute>();
                 foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
                 {
                     attTodos.Add(a);
                 }
 
-                output.AddLine("KBDoctor", "Procesiong objects..");
+                KBDoctorOutput.Message( "Procesiong objects..");
 
                 foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
-                    // output.AddLine("KBDoctor","Procesing .. " + obj.Name);
+                    // KBDoctorOutput.Message("Procesing .. " + obj.Name);
 
                     if ((!(obj is Transaction) && !(obj is Table) && !(obj is SDT)) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT"))
                     {
@@ -787,7 +787,7 @@ namespace Concepto.Packages.KBDoctor
 
                 foreach (Artech.Genexus.Common.Objects.Attribute a in attTodos)
                 {
-                    output.AddLine("KBDoctor", "Procesing .. " + a.Name);
+                    KBDoctorOutput.Message( "Procesing .. " + a.Name);
 
                     string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
                     string Picture = Utility.FormattedTypeAttribute(a);
@@ -837,7 +837,7 @@ namespace Concepto.Packages.KBDoctor
                     foreach (EntityReference reference in od.GetReferencesTo()) // LinkType.UsedObject))
                     {
                         KBObject objRef = KBObject.Get(UIServices.KB.CurrentModel, reference.From);
-                        output.AddLine("KBDoctor","Procesing " + objRef.Name);
+                        KBDoctorOutput.Message("Procesing " + objRef.Name);
                         if (objRef is Artech.Genexus.Common.Objects.Attribute)
                         {
 
@@ -861,7 +861,7 @@ namespace Concepto.Packages.KBDoctor
                             }
                             else
                             {
-                                output.AddLine("KBDoctor","Replace " + od.Name + " domain manually in object " + objRef.Name);
+                                KBDoctorOutput.Message("Replace " + od.Name + " domain manually in object " + objRef.Name);
                                 success = false;
                             }
 
@@ -1011,7 +1011,7 @@ namespace Concepto.Packages.KBDoctor
 
                             foreach (TransactionAttribute a in LVL.Structure.GetAttributes())
                             {
-                                output.AddLine("KBDoctor", a.Name);
+                                KBDoctorOutput.Message( a.Name);
                                 writer.AddTableData(new string[] { Functions.linkObject(trn), trn.Description, Functions.linkObject(a), a.Attribute.Description, a.IsForeignKey.ToString(), a.IsNullable.ToString() });
                                 if (!a.IsForeignKey && !a.IsKey && (a.IsNullable == TableAttribute.IsNullableValue.Compatible || a.IsNullable == TableAttribute.IsNullableValue.True))
                                 {
@@ -1022,7 +1022,7 @@ namespace Concepto.Packages.KBDoctor
                         }
                         if (saveObj)
                         {
-                            output.AddLine("KBDoctor", "Saving ." + trn.Name);
+                            KBDoctorOutput.Message( "Saving ." + trn.Name);
                             trn.Save();
                         }
                     }

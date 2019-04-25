@@ -117,7 +117,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         public static void CleanObject(KBObject obj, IOutputService output)
         {
             int totalvarremoved = 0;
-            output.AddLine("KBDoctor","Cleaning object " + obj.Name);
+            KBDoctorOutput.Message("Cleaning object " + obj.Name);
             if (obj is Transaction)
             {
                 KBDoctorCore.Sources.API.CleanKBObjectVariables(obj, output);
@@ -160,7 +160,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             catch (Exception e)
             {
-                output.AddLine("KBDoctor","Can't clean " + obj.Name + " Message: " + e.Message + "--" + e.StackTrace);
+                KBDoctorOutput.Message("Can't clean " + obj.Name + " Message: " + e.Message + "--" + e.StackTrace);
             }
         }
 
@@ -205,7 +205,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     try
                                     {
                                         obj.Delete();
-                                        output.AddLine("KBDoctor","REMOVING..." + obj.Name);
+                                        KBDoctorOutput.Message("REMOVING..." + obj.Name);
                                         remove = "REMOVED!";
                                         objNameLink = obj.Name;
                                         continuar = true;
@@ -267,7 +267,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     try
                     {
                         a.Delete();
-                        output.AddLine("KBDoctor","Atribute deleted: " + a.Name);
+                        KBDoctorOutput.Message("Atribute deleted: " + a.Name);
                     }
                     catch (Exception e)
                     {
@@ -377,7 +377,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             kbObj.Save();
                             string recommend = "Object '" + kbObj.Name + "' cleaned successfully. Variables deleted: " + text2.Substring(2);
-                            output.AddLine("KBDoctor",recommend);
+                            KBDoctorOutput.Message(recommend);
                             recomendations += recommend + "<br>";
 
                         }

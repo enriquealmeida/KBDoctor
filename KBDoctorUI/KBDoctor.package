@@ -275,6 +275,12 @@
               
             </Popup>
           </Group>
+          <Group id="Common errors" >
+            <Popup name ="Common errors">
+                          <Command refid="ListDynamicCombo"/>
+            </Popup>
+          </Group>
+
           <Group id="KBstats" >
             <Popup name ="KB stats">
               <Command refid="ObjectsRefactoringCandidates" />
@@ -315,7 +321,7 @@
               <Command refid="ProcedureGetSet"/>
               <Command refid="CreateDeployUnits" />
               <Command refid="GenerateSimpleTransactionFromNotGeneratedTransactions" />
-              <Command refid="ListDynamicCombo"/>
+
               <Command refid="RenameVariables"/>
               <Command refid="ObjectsWithVarsNotUsed"/>
               <Command refid="GenerateTrnFromTables2" />
@@ -351,6 +357,8 @@
                     <Command refid="ListClassUsed" />
                   </Group>
                 </Popup>
+               <Command refid="GenerateSQLScripts"/>
+
 
             </Popup>
           </Group>

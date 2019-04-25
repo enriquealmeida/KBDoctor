@@ -1037,7 +1037,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
             // Cambiar las variables para que se basen en atributos o dominios.
-            Thread t = new Thread(new ThreadStart(ThemeHelper.ListDynamicCombo));
+            Thread t = new Thread(new ThreadStart(BadSmells.ListDynamicCombo));
             t.Start();
             return true;
         }
@@ -1450,19 +1450,19 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecClassNotInTheme(CommandData cmdData)
         {
-            CleanKBHelper.ClassNotInTheme();
+            ThemeHelper.ClassNotInTheme();
             return true;
         }
 
         public bool ExecClassUsed(CommandData cmdData)
         {
-            CleanKBHelper.ClassUsed();
+            ThemeHelper.ClassUsed();
             return true;
         }
 
         public bool ExecListClassUsed(CommandData cmdData)
         {
-            CleanKBHelper.ClassUsed();
+            ThemeHelper.ClassUsed();
             return true;
         }
         #endregion

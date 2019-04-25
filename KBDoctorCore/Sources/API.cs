@@ -281,7 +281,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Objects.AttributeWithoutTable(atts, output);
             }
 
-            output.AddLine("KBDoctor", "KBDoctor Review Object finished");
+            KBDoctorOutput.Message( "KBDoctor Review Object finished");
             output.UnselectOutput(KBDOCTOR_OUTPUTID);
             output.SelectOutput("General");
             lineswriter = new List<string[]>();
