@@ -56,7 +56,13 @@ namespace Concepto.Packages.KBDoctor
                 GenerateMDGGraph2(Name, FileName);
                 writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
 
-                Check = "SILFile";
+            Check = "MDGMinimized";
+            Name = Functions.CleanFileName(Check);
+            FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".mdg";
+            GenerateMDGMinimized(Name, FileName);
+            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+
+            Check = "SILFile";
                 Name = Functions.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sil";
                 GenerateSILFile(Name, FileName);
@@ -109,34 +115,51 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             KBModel model = kbserv.CurrentModel;
             StreamWriter scriptFile = new StreamWriter(fileName);
+            Dictionary<string, HashSet<string>> dic = new Dictionary<string, HashSet<string>>();
+            KBDoctorOutput.Message("Generating " + name);
 
-            foreach (Module mdl in Module.GetAll(model))
+            string[] modulosGeneXus = new string[] {"Client","Common","SD","Server","Social","Configuration","Notifications"
+                        ,"UI","iOS","Media","Notifications","Store","Synchronization" };
 
+            foreach (KBObject obj in model.Objects.GetAll())
             {
+                string objName = obj.Name; 
+                string nombrenodo = NombreNodoMinimized(obj);
+                string mdlObjName = ModulesHelper.ObjectModuleName(obj);
 
-                string modulename = mdl.Name;
-                string nodos = "";
-             
-                string vacioOcoma = "";
-                
-                foreach (KBObject obj in mdl.GetAllMembers())
+                if (!modulosGeneXus.Contains(mdlObjName))
                 {
-                    if (IncludedInGraph(obj))
+                    if (mdlObjName != null && IncludedInGraph(obj) )
                     {
-                        string objname = NombreNodo(obj);
-                        if (!nodos.Contains(objname))
+                        if (!dic.ContainsKey(mdlObjName))
                         {
-                            nodos += vacioOcoma + objname;
-                            vacioOcoma = " ,";
+                            HashSet<string> set = new HashSet<string>(new List<string> { nombrenodo });
+                            dic.Add(mdlObjName, set);
+                        }
+                        else
+                        {
+                            dic[mdlObjName].Add(nombrenodo);
                         }
                     }
                 }
+            }
+
+            foreach (string mdl in dic.Keys)
+            {
+                string modulename = mdl;
+                string nodos = "";
+             
+                string vacioOcoma = " ";
+                
+                foreach (string objname in dic[mdl])
+                {
+                    nodos += vacioOcoma + objname;
+                    vacioOcoma = ", ";
+                }
                 if (nodos != "")
-                    scriptFile.WriteLine("SS(" + mdl.Name + ".ss) = " + nodos);
+                    scriptFile.WriteLine("SS(" + modulename + ".ss) = " + nodos);
             }
             scriptFile.Close();
-
-
         }
 
 
@@ -158,19 +181,15 @@ namespace Concepto.Packages.KBDoctor
                 if (IncludedInGraph(objRef))
                 {
                     nodesFiles.WriteLine(objRefName + " " + ModulesHelper.ObjectModuleName(objRef));
-                    // KBDoctorOutput.Message(objRefName + " Included in Graph" );
 
                     foreach (EntityReference r in objRef.GetReferencesTo())
                     {
                         KBObject obj = KBObject.Get(objRef.Model, r.From);
-                        String mdlObjName = ModulesHelper.ObjectModuleName(obj);
-                        String mdlObjRefName = ModulesHelper.ObjectModuleName(objRef);
-                        if ((obj != null) && (Functions.isRunable(obj)) && (obj != objRef) 
-                            && (mdlObjRefName =="Dua" || mdlObjName == "Dua")
-                            )
+
+                        if ((obj != null) && (Functions.isRunable(obj)) && (obj != objRef))
                         {
                             string objName = NombreNodo(obj);
-                            if (objName != objRefName)
+                            if (IncludedInGraph(obj))
                             {
                                 int weight = ReferenceWeight(obj, objRef);
                                 AgregoArista(aristas, objName, objRefName, weight);
@@ -183,11 +202,9 @@ namespace Concepto.Packages.KBDoctor
             //Cargo todas las transacciones y sus tablas generadas
             foreach (Table tbl in Table.GetAll(model))
             {
-                if (TablesHelper.TableModule(tbl.Model, tbl).Name == "Dua") {
                     Transaction trn = Artech.Genexus.Common.Services.GenexusBLServices.Tables.GetBestAssociatedTransaction(model, tbl.Key);
                     int weight = ReferenceWeight(trn, tbl);
                     AgregoArista(aristas, NombreNodo(trn), NombreNodo(tbl), weight);
-                }
             }
             nodesFiles.Close();
 
@@ -202,14 +219,65 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
+        private static void GenerateMDGMinimized(string name, string fileName)
+        {
+            IKBService kbserv = UIServices.KB;
+            KBModel model = kbserv.CurrentModel;
+
+            Dictionary<string, int> aristas = new Dictionary<string, int>();
+            KBDoctorOutput.Message("Generating " + name);
+
+            string objRefName = "";
+
+            foreach (KBObject objRef in model.Objects.GetAll())
+            {
+                objRefName = NombreNodoMinimized(objRef);
+                if (IncludedInGraph(objRef))
+                {
+                    foreach (EntityReference r in objRef.GetReferencesTo())
+                    {
+                        KBObject obj = KBObject.Get(objRef.Model, r.From);
+
+                        if ((obj != null) && (Functions.isRunable(obj)) && (obj != objRef))
+                        {
+                            string objName = NombreNodoMinimized(obj);
+                            if (objName != objRefName && IncludedInGraph(obj))
+                            {
+                                int weight = ReferenceWeight(obj, objRef);
+                                AgregoArista(aristas, objName, objRefName, weight);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Cargo todas las transacciones y sus tablas generadas
+            foreach (Table tbl in Table.GetAll(model))
+            {
+                    int weight = ReferenceWeight(tbl.BestAssociatedTransaction, tbl);
+                    AgregoArista(aristas, NombreNodoMinimized(tbl.BestAssociatedTransaction), NombreNodoMinimized(tbl), weight);
+            }
+          
+
+            StreamWriter scriptFile = new StreamWriter(fileName);
+
+            foreach (string arista in aristas.Keys)
+            {
+                scriptFile.WriteLine(arista + " " + aristas[arista]);
+            }
+            scriptFile.Close();
+
+
+        }
+
+
         private static void AgregoArista(Dictionary<string, int> aristas, string objName, string objRefName, int weight)
         {
             string arista = objName + " " + objRefName;
             if (!aristas.ContainsKey(arista))
                 aristas.Add(arista, weight);
             else
-                if (aristas[arista] < weight)
-                aristas[arista] = weight;
+                aristas[arista] += weight;
         }
 
         public static bool IncludedInGraph(KBObject objRef)
@@ -243,8 +311,6 @@ namespace Concepto.Packages.KBDoctor
                     weight = 13;
                 }
                
-
-           // KBDoctorOutput.Message(">>" + obj.TypeDescriptor.Name + "," + objRef.TypeDescriptor.Name + "," + weight.ToString());
 
             return weight;
         }
@@ -757,20 +823,39 @@ namespace Concepto.Packages.KBDoctor
             if (obj != null)
             {
                 objName = obj.Name + ":" + obj.TypeDescriptor.Name;
+            }
+            return objName ;
+        }
+
+        private static string NombreNodoMinimized(KBObject obj)
+        {
+            string objName = "";
+            if (obj != null)
+            {
+                objName = obj.Name + ":" + obj.TypeDescriptor.Name;
                 if (obj.GetPropertyValue<bool>(KBObjectProperties.IsGeneratedObject))
                 {
 
-                    PatternDefinition pattern;
-                    if (InstanceManager.IsInstanceObject(obj, out pattern))
+                    if (InstanceManager.IsInstanceObject(obj, out PatternDefinition pattern))
                     {
-                        // objName = obj.Parent.Name +":" + obj.Parent.TypeDescriptor.Name;
-                        objName = obj.Parent.Name.Replace("WorkWithPlus", "");
-                        objName = objName.Replace("WorkWith", "");
-                        objName = objName + ":Transaction";
+                        if (obj.Parent.Parent != null)
+                        {
+                            objName = NombreNodo(obj.Parent.Parent);
+                        }
+                        else
+                            KBDoctorOutput.Error("Don't exist Parent.Parent of " + objName);
                     }
                 }
+                else
+                {
+                    if (obj is Table t)
+                    {
+                        objName = NombreNodo(t.BestAssociatedTransaction);
+                    }
+                }
+                    
             }
-            return objName ;
+            return objName;
         }
 
         private static void GenerateKBModuleGraph(string name, string fileName)

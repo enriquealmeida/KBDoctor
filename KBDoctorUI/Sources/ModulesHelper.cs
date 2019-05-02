@@ -1334,21 +1334,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                     {
                         string[] words = line.Split('=');
                         string mdl = words[0].Trim();
-                        mdl = FixObjectName(mdl);
-
-                        // MessageBox.Show("Module:" + mdl);
-                        Module newmodule = new Module(model);
-
-                        Random rnd = new Random();
-                        int length = 5;
-                        var str = "";
-                        for (var i = 0; i < length; i++)
-                        {
-                            str += ((char)(rnd.Next(1, 26) + 64)).ToString();
-                        }
-                        newmodule.Name = mdl + "_" + str;
-                        newmodule.Module = Module.GetRoot(model);
-                        newmodule.Save();
+                        Module newmodule = ModuloAAsignar(mdl);
 
                         string[] objects = words[1].Split(',');
 
@@ -1371,9 +1357,16 @@ El módulo tiene objetos públicos no referenciados por externos?
                                 {
                                     if (obj != null && obj.Name == objname && obj.Type == kbod.Id)
                                     {
-                                        KBDoctorOutput.Message(obj.Name + obj.TypeDescriptor.Name);
+                                        KBDoctorOutput.Message(obj.Name + " : " + obj.TypeDescriptor.Name);
                                         obj.Module = newmodule;
-                                        obj.Save();
+                                        try
+                                        {
+                                            obj.Save();
+                                        }
+                                        catch
+                                        {
+                                            KBDoctorOutput.Message("Can't save " + obj.Name);
+                                        }
                                     }
                                 }
                             }
@@ -1398,6 +1391,35 @@ El módulo tiene objetos públicos no referenciados por externos?
             KBDoctorOutput.EndSection("Modularization");
         }
 
+        private static Module ModuloAAsignar(string mdl)
+        {
+            string mdl2 = FixObjectName(mdl);
+            
+            Module modu = new Module(UIServices.KB.CurrentModel);
+            Guid moduletypeid = new Guid("c88fffcd-b6f8-0000-8fec-00b5497e2117");
+            foreach (KBObject obj in Module.GetAll(UIServices.KB.CurrentModel))
+            {
+                if (obj.Name==mdl2)
+                        modu = (Module)obj;
+            }
+
+            if (modu is null)
+            {
+                Random rnd = new Random();
+                int length = 5;
+                var str = "";
+                for (var i = 0; i < length; i++)
+                {
+                    str += ((char)(rnd.Next(1, 26) + 64)).ToString();
+                }
+
+                modu.Name = mdl2 + "_" + str;
+                modu.Module = Module.GetRoot(UIServices.KB.CurrentModel);
+                modu.Save();
+            }
+            return modu;
+        }
+
         private static string FixObjectName(string mdl)
         {
             mdl = mdl.Replace("SS(", "");
@@ -1406,6 +1428,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             mdl = mdl.Replace(":", "");
             mdl = mdl.Replace(")", "");
             mdl = mdl.Replace("(", "");
+            mdl = mdl.Replace(" ", "");
             return mdl;
         }
 
