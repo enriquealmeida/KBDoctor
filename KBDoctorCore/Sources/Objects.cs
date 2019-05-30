@@ -980,6 +980,52 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return false;
         }
 
+        internal static void ObjectsWithRuleOld(KBModel model, KBObject obj, ref string recommendations, out int cant)
+        {
+            cant = 0;
+            if (!isGeneratedbyPattern(obj))
+            {
+                if (obj is Transaction || obj is Procedure || obj is WebPanel)
+                {
+                    VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                    RulesPart rules = obj.Parts.Get<RulesPart>();
+                    RuleOldInSource(model, rules, vp, ref recommendations, out cant);
+                }
+            }
+        }
+
+        internal static bool RuleOldInSource(KBModel model, SourcePart source, VariablesPart vp, ref string recommendations, out int cant)
+        {
+            cant = 0;
+
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+            ParserInfo parserInfo;
+            parserInfo = new ParserInfo(source);
+            var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+
+            if (parser.Validate(info, source.Source))
+            {
+                AbstractNode paramRootNode = ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                List<AbstractNode> calls = getOldsInSource(paramRootNode);
+                foreach(AbstractNode an in calls)
+                {
+                    AbstractNode test = an.Children.First();
+                    if (test is AttributeNameNode)
+                    {
+                        if (test.Node.Tag is Artech.Genexus.Common.Objects.Attribute)
+                        {
+                            Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)test.Node.Tag;
+                            if(att.Type == eDBType.DATE || att.Type == eDBType.DATETIME)
+                            {
+                                OutputMsgAssignComparer(an, source, "Rule old with date attribute in transaction", ref recommendations);
+                            }
+                        }
+                    }
+                }
+            }
+                return true;
+        }
+
         internal static void ParameterTypeComparer(KBModel model, KBObject obj, ref string recommendations, out int cant)
         {
             cant = 0;
@@ -1346,6 +1392,40 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         return new Tuple<Domain, string, int>(domL, formatTypeL, 0);
                     }
                 }
+            }
+            return null;
+        }
+
+        private static List<AbstractNode> getOldsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+        {
+            if (root != null)
+            {
+                List<AbstractNode> olds = new List<AbstractNode>();
+                if(root is RuleNode && ((RuleNode)root).Conditions.Count > 0)
+                {
+                    foreach(AbstractNode an in ((RuleNode)root).Conditions)
+                    {
+                        olds.AddRange(getOldsInSource(an)); 
+                    }
+                }
+                foreach (AbstractNode node in root.Children)
+                {
+                    if (node.Node != null)
+                    {
+                        if (node is FunctionNode)
+                        {
+                            if (((FunctionNode)node).FunctionName.ToLower() == "old")
+                            {
+                                olds.Add(node);
+                            }
+                        }
+                        else
+                        {
+                            olds.AddRange(getOldsInSource(node));
+                        }
+                    }
+                }
+                return olds;
             }
             return null;
         }
