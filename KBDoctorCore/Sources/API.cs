@@ -419,6 +419,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+        public static void ObjectsWithRuleOld(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
+        {
+            cant = 0;
+            int cant_aux = 0;
+            foreach(KBObject obj in objs)
+            {
+                Objects.ObjectsWithRuleOld(KB.DesignModel, obj, ref recommendations, out cant_aux);
+                cant += cant_aux;
+            }
+        }
+
         public static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs, out int cant)
         {
             int cant_aux;

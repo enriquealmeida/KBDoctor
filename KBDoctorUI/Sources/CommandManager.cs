@@ -80,6 +80,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.BuildModule, new ExecHandler(ExecBuildModule), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignTypeComparer, new ExecHandler(ExecAssignTypeComparer), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ParameterTypeComparer, new ExecHandler(ExecParametersTypeComparer), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ObjectsWithRuleOld, new ExecHandler(ExecObjectsWithRuleOld), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.EmptyConditionalBlocks, new ExecHandler(ExecEmptyConditionalBlock), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.NewsWithoutWhenDuplicate, new ExecHandler(ExecNewsWithoutWhenDuplicate), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ForEachsWithoutWhenNone, new ExecHandler(ExecForEachsWithoutWhenNone), new QueryHandler(QueryKBDoctor));
@@ -558,6 +559,38 @@ namespace Concepto.Packages.KBDoctor
             output.SelectOutput("KBDoctor");
             ParametersTypeComparer();
             return true;
+        }
+
+        public bool ExecObjectsWithRuleOld(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            ObjectsWithRuleOld();
+            return true;
+        }
+
+
+        private static void ObjectsWithRuleOld()
+        {
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            selectObjectOption.MultipleSelection = true;
+
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            int cant = 0;
+            Thread thread = new Thread(() => ObjectsWithRuleOld(UIServices.KB.CurrentKB, objs, out cant));
+            thread.Start();
+        }
+
+        private static void ObjectsWithRuleOld(KnowledgeBase KB, List<KBObject> objs, out int cant)
+        {
+            cant = 0;
+            KBDoctorOutput.StartSection("KBDoctor - Objects With Rule Old");
+            string recommendations = "";
+            API.ObjectsWithRuleOld(UIServices.KB.CurrentKB, objs, ref recommendations, out cant);
+            KBDoctorOutput.EndSection("KBDoctor - Objects With Rule Old");
         }
 
         private static void ParametersTypeComparer()

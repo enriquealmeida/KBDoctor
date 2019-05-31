@@ -112,6 +112,7 @@
     <CommandDefinition id="ThemeClassesNotUsed" />
     <CommandDefinition id="AssignTypeComparer" />
     <CommandDefinition id="ParameterTypeComparer" />
+    <CommandDefinition id="ObjectsWithRuleOld" />
     <CommandDefinition id="EmptyConditionalBlocks" />
     <CommandDefinition id="NewsWithoutWhenDuplicate" />
     <CommandDefinition id="ForEachsWithoutWhenNone" />
@@ -326,6 +327,7 @@
               <Command refid="ThemeClassesNotUsed"/>
               <Command refid="AssignTypeComparer"/>
               <Command refid="ParameterTypeComparer" />
+              <Command refid="ObjectsWithRuleOld" />
               <Command refid="EmptyConditionalBlocks" />
               <Command refid="ForEachsWithoutWhenNone" />
               <Command refid="NewsWithoutWhenDuplicate" />
