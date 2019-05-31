@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Concepto")]
 [assembly: AssemblyProduct("KBDoctor")]
-[assembly: AssemblyCopyright("Copyright ©  2006-2018")]
+[assembly: AssemblyCopyright("Copyright ©  2006-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("10.18.*")]
-[assembly: AssemblyFileVersion("10.18.0")]
+[assembly: AssemblyVersion("10.19.*")]
+[assembly: AssemblyFileVersion("10.19.0")]

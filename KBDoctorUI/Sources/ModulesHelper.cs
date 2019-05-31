@@ -23,6 +23,7 @@ using Artech.Udm.Framework;
 using Artech.Genexus.Common;
 using Artech.Genexus.Common.Parts;
 using Concepto.Packages.KBDoctorCore.Sources;
+using System.IO;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -540,6 +541,56 @@ El módulo tiene objetos públicos no referenciados por externos?
                 success = false;
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
+
+        }
+
+        internal static void DetectMavericks()
+        {
+            IKBService kbserv = UIServices.KB;
+            KBModel model = kbserv.CurrentModel;
+            Dictionary<string, int> objectWeight = new Dictionary<string, int>();
+            KBDoctorOutput.StartSection("Detect Mavericks");
+
+            foreach (KBObject obj in model.Objects.GetAll())
+            {
+               // objRefName = GraphHelper.NombreNodo(objRef);
+                if (GraphHelper.IncludedInGraph(obj))
+                {
+                    int cantReferences = 0;
+                    int totWeight = 0;
+                    int cantReferencesTables = 0; 
+                    foreach (EntityReference r in obj.GetReferences())
+                    {
+                        KBObject objRef = KBObject.Get(model, r.To);
+                        if ((obj != null) && (Functions.isRunable(obj)) && (obj != objRef))
+                        {
+                            if (GraphHelper.IncludedInGraph(objRef))
+                            {
+                                int weight = GraphHelper.ReferenceWeight(obj, objRef);
+                                cantReferences += 1;
+                                totWeight += weight;
+                                if (objRef is Table)
+                                {
+                                    cantReferencesTables += 1;
+                                }
+                            }
+                        }
+                    }
+                    objectWeight[obj.TypeDescriptor.Name + "," + obj.Name + "," 
+                           + totWeight.ToString() + "," + cantReferences.ToString() + "," + cantReferencesTables.ToString()] = totWeight;
+
+                    //KBDoctorOutput.Message(obj.TypeDescriptor.Name + "," + obj.Name + "," + totWeight.ToString() + "," + cantReferences.ToString()+"," + cantReferencesTables.ToString()  );
+                 
+                }
+            }
+
+            KBDoctorOutput.Message("Type,Object,Weight,#References,#Tables ");
+
+            foreach (KeyValuePair<string,int> objweight in objectWeight.OrderByDescending(p => p.Value).Take(20))
+            {
+                KBDoctorOutput.Message(objweight.Key );
+            }
+            KBDoctorOutput.EndSection("Detect Mavericks",true);
 
         }
 

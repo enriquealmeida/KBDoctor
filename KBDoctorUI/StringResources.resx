@@ -439,4 +439,7 @@
   <data name="ParameterTypeComparer" xml:space="preserve">
     <value>Parameter type comparer</value>
   </data>
+  <data name="DetectMaverics" xml:space="preserve">
+    <value>Objects difficult to modularize</value>
+  </data>
 </root>

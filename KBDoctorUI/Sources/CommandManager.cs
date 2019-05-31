@@ -168,8 +168,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.MarkPublicObjects, new ExecHandler(ExecMarkPublicObjects), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListModules, new ExecHandler(ExecListModules), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListModulesStatistics, new ExecHandler(ExecListModulesStatistics), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListModularizationQuality, new ExecHandler(ExecListModularizationQuality), new QueryHandler(QueryKBDoctor));
-
+           
             AddCommand(CommandKeys.MoveTransactions, new ExecHandler(ExecMoveTransactions), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ModuleDependencies, new ExecHandler(ExecModuleDependencies), new QueryHandler(QueryKBDoctor));
 
@@ -181,7 +180,11 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ListAPIObjects, new ExecHandler(ExecListAPIObjects), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.RecomendedModule, new ExecHandler(ExecRecomendedModule), new QueryHandler(QueryKBDoctor));
+            //Modularization
+            AddCommand(CommandKeys.ListModularizationQuality, new ExecHandler(ExecListModularizationQuality), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ApplyExternalModularization, new ExecHandler(ExecApplyExternalModularization), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.DetectMavericks, new ExecHandler(ExecDetectMavericks), new QueryHandler(QueryKBDoctor));
+
 
             AddCommand(CommandKeys.SplitMainObject, new ExecHandler(ExecSplitMainObject), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.UDPCallables, new ExecHandler(ExecUDPCallables), new QueryHandler(QueryKBDoctor));
@@ -276,6 +279,16 @@ namespace Concepto.Packages.KBDoctor
             output.SelectOutput("KBDoctor");
             // Atributo sin tabla. Abrir objetos que referencien a att sin tablas y que permita corregirlo.
             Thread t = new Thread(new ThreadStart(CleanKBHelper.RemoveAttributeWithoutTable));
+            t.Start();
+            return true;
+        }
+
+        public bool ExecDetectMavericks(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            // Atributo sin tabla. Abrir objetos que referencien a att sin tablas y que permita corregirlo.
+            Thread t = new Thread(new ThreadStart(ModulesHelper.DetectMavericks));
             t.Start();
             return true;
         }

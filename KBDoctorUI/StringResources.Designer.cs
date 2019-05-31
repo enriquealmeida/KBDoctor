@@ -358,6 +358,15 @@ namespace Concepto.Packages.KBDoctor {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Objects difficult to modularize.
+        /// </summary>
+        internal static string DetectMaverics {
+            get {
+                return ResourceManager.GetString("DetectMaverics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Edit  code to replace.
         /// </summary>
         internal static string EditLegacyCodeToReplace {

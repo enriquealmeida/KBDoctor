@@ -21,7 +21,11 @@
     <CommandDefinition id="ListDomain" />
     <CommandDefinition id="AttUpdated" />
     <CommandDefinition id="GenerateSQLScripts" />
+    <!-- Modularization -->
     <CommandDefinition id="GenerateGraph" />
+    <CommandDefinition id="ApplyExternalModularization" />
+    <CommandDefinition id="ListModularizationQuality" />
+    <CommandDefinition id="DetectMavericks" />
     <!-- Tablas -->
     <CommandDefinition id="ListTables" />
     <CommandDefinition id="TablesWithNoDescription" />
@@ -31,7 +35,6 @@
     <CommandDefinition id="GenerateSimpleTransactionFromNotGeneratedTransactions" />
     <CommandDefinition id="TableUpdate" />
     <CommandDefinition id="TableInsertNew" />
-
     <CommandDefinition id="GenerateTrnFromTables2" />
     <CommandDefinition id="ListTablesInModules" />
     <CommandDefinition id="ListObjectsWithTableInOtherModule" />    
@@ -71,14 +74,14 @@
     <CommandDefinition id="ListAPIObjects" />
     <CommandDefinition id="RecomendedModule" />
     <CommandDefinition id="ListDynamicCombo" />
-    <CommandDefinition id="ApplyExternalModularization" />
+   
     <CommandDefinition id="SplitMainObject" />
     <CommandDefinition id="MainTableUsed" />
     <CommandDefinition id="CreateDeployUnits" />
     <CommandDefinition id="MarkPublicObjects" />
     <CommandDefinition id="ListModules" />
     <CommandDefinition id="ListModulesStatistics" />
-    <CommandDefinition id="ListModularizationQuality" />
+
     <CommandDefinition id="MoveTransactions" />
     <CommandDefinition id="ModuleDependencies" />
     <CommandDefinition id="CalculateCheckSum" />
@@ -142,24 +145,7 @@
     <CommandDefinition id="AboutKBDoctor" image="Red_Cross"   imageType="ico" />
     <CommandDefinition id="HelpKBDoctor"  />
   </Commands>
-  <!--  se comenta  
-  <Groups>
-    <Group refid='CommitGroup' package='319fb05a-2f9a-47c5-b133-acc33f0b95d7'>
-      <Group id='KBDoctor'></Group>
-      <Command refid="ListObj" />
-    </Group>
-  </Groups>
 
-  	<Groups>
-		<Group refid='KBObjectGrp' package='98121D96-A7D8-468b-9310-B1F468F812AE'>
-			<Popup id='ObjectsContext' name='ObjectContext' context='selection' dynamic='true' autoManageVisibility='true' insertBefore=''>
-				<Command refid='BuildModuleContext' initVisible='true'/>
-        <Command refid='BuildObjectAndReferences' initVisible='true'/>
-
-        </Popup>
-		</Group>
-	</Groups>
-   -->
   <Groups>
     <Group  refid='CommitGroup' package='319fb05a-2f9a-47c5-b133-acc33f0b95d7' >
       <Group id='KBDoctor'  >
@@ -296,6 +282,7 @@
               <Command refid="GenerateGraph"/>
               <Command refid="ApplyExternalModularization" />
               <Command refid="ListModularizationQuality" />
+              <Command refid="DetectMavericks" />
             </Popup>
           </Group>
 
@@ -317,11 +304,9 @@
             <Popup name ="Labs">
               <Command refid="AddINParmRule"/>
               <Command refid="ProcedureSDT"/>
-             
               <Command refid="ProcedureGetSet"/>
               <Command refid="CreateDeployUnits" />
               <Command refid="GenerateSimpleTransactionFromNotGeneratedTransactions" />
-
               <Command refid="RenameVariables"/>
               <Command refid="ObjectsWithVarsNotUsed"/>
               <Command refid="GenerateTrnFromTables2" />
@@ -334,15 +319,12 @@
               <Command refid="ListProcedureCallWebpanelTransaction" />
               <Command refid="ObjectsLegacyCode" />
               <Command refid="MarkPublicObjects" />
-
-
               <Command refid="ObjectsNotReacheable"/>
               <Command refid="CleanKBAsMuchAsPossible"/>
               <Command refid="ListTableAttributesUsingDomain"/>
               <Command refid="ObjectsWithConstants" />
               <Command refid="ThemeClassesNotUsed"/>
               <Command refid="AssignTypeComparer"/>
-
               <Command refid="ParameterTypeComparer" />
               <Command refid="EmptyConditionalBlocks" />
               <Command refid="ForEachsWithoutWhenNone" />

@@ -12,7 +12,7 @@ using Artech.Architecture.Common.Packages;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Concepto")]
 [assembly: AssemblyProduct("KBDoctor")]
-[assembly: AssemblyCopyright("Copyright 2007-2018")]
+[assembly: AssemblyCopyright("Copyright 2007-2019")]
 [assembly: AssemblyTrademark("Concepto")]
 [assembly: AssemblyCulture("")]
 
@@ -38,8 +38,8 @@ using Artech.Architecture.Common.Packages;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("10.18.*")]
-[assembly: AssemblyFileVersion("10.18.0")]
+[assembly: AssemblyVersion("10.19.*")]
+[assembly: AssemblyFileVersion("10.19.0")]
 
 //[assembly: PackageAttribute(typeof(Artech.Packages.TeamDevClient.Package), IsCore = false, IsUIPackage = false)]
 
