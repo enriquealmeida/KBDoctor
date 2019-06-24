@@ -310,6 +310,8 @@ El módulo tiene objetos públicos no referenciados por externos?
             double TurboMQ = 0;
             foreach (string mdl in intraModule.Keys)
             {
+                if (mdl == "SD" || mdl == "Notifications" || mdl == "Media" || mdl == "Social" || mdl == "Synchronization" || mdl == "Store")
+                    break;
 
                     //KBDoctorOutput.Message( "Calculating " + mdl + " CF");
                 double cf = 0.00;
