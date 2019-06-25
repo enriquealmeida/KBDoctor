@@ -29,7 +29,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Description", "Control Name", "Col Visible" });
+                writer.AddTableHeader(new string[] { "Object", "Description", "Control Name", "Col Visible", "Suggest" });
 
 
                 //All useful objects are added to a collection
@@ -48,12 +48,23 @@ namespace Concepto.Packages.KBDoctor
                             {
                                 string controlName = current.Properties.GetPropertyValueString("ControlName");
                                 string controltype = current.Properties.GetPropertyValueString("ControlType");
+
                                 bool hidden = current.Properties.GetPropertyValue<bool>("ColVisible");
                                 //  string att = current.Properties.GetPropertyValueString("Attribute");
                                 if (controltype == "Dynamic Combo Box")
                                 {
                                     KBDoctorOutput.Message( ">>>>Procesing.." + obj.Name + "-" + current.Type);
-                                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, controlName, hidden.ToString() });
+                                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, controlName, hidden.ToString(), "N/A" });
+                                }
+                                string suggest = current.Properties.GetPropertyValueString("EditAutocomplete");
+                                object suggest_obj = current.Properties.GetPropertyValue("EditAutocomplete");
+                                string read_only = current.Properties.GetPropertyValueString("ColReadOnly");
+                                if (controltype == "Edit" && suggest != "No" && read_only == "True")
+                                {
+                                    current.Properties.SilentSetPropertyValue("EditAutocomplete", 0);
+                                    webForm.Save();
+                                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, controlName, hidden.ToString(), suggest });
+
                                 }
                             }
                         }
