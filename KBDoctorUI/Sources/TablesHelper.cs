@@ -663,6 +663,37 @@ namespace Concepto.Packages.KBDoctor
             return Artech.Genexus.Common.Services.GenexusBLServices.Tables.GetBestAssociatedTransaction(m, t.Key).Module;
         }
 
+        public static void GenerateDPFromOneTable(Table t)
+        {
+            IOutputService output = CommonServices.Output;
+            KBModel designmodel = t.KB.DesignModel;
+            Procedure dp = Procedure.Create(designmodel);
+            dp.Name = "KBDoctor_table_" + t.Name;
+            dp.Description = "DataProvider " +  t.Description;
+            dp.SetPropertyValue(Properties.TRN.GenerateObject, false);
+            dp.SetPropertyValue(Properties.TRN.MasterPage, WebPanelReference.NoneRef);
+            dp.Module = TableModule(designmodel,t);
+            dp.ProcedurePart.Source = "//comienzo a recorrer la tabla";
+            dp.ProcedurePart.Source += "for each " + Environment.NewLine;
+            
+
+            foreach (TableAttribute attr in t.TableStructure.Attributes)
+            {
+                dp.ProcedurePart.Source += "   '" + attr.Name + "' = " + attr.Name + Environment.NewLine; 
+
+            };
+
+            dp.ProcedurePart.Source += "endfor" + Environment.NewLine;
+            dp.ProcedurePart.Source += "//Cierro archivo";
+
+            KBDoctorOutput.Message("Create procedure " + dp.Name + " from table " + t.Name);
+            try
+            {
+                dp.Save();
+            }
+            catch (Exception e) { output.AddErrorLine("ERROR: Can't Save procedure " + dp.Name + " " + e.Message); }
+        }
+
         public static void GenerateTrnFromTable(IKBService kbserv, Table t, Module m)
         {
             IOutputService output = CommonServices.Output;
@@ -689,7 +720,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             Procedure p = Procedure.Create(kbserv.CurrentModel);
             string source = "";
-            p.Name = "KBDoctor_Initialize_" + t.Name;
+            p.Name = "KBDoctor_Initialize2_" + t.Name;
             p.Description = t.Description;
             p.SetPropertyValue(Properties.PRC.GenerateObject, true);
             p.Module = m;
@@ -707,34 +738,32 @@ namespace Concepto.Packages.KBDoctor
             ret.Type = eDBType.NUMERIC;
             ret.Length = 2;
             p.Variables.Add(ret);
-            
+
             string outputfilename = kbserv.CurrentKB.UserDirectory + @"\" + t.Name + ".kbd";
 
             source = "&ret = DFWOpen('" + outputfilename + "','','')" + Environment.NewLine;
-            source += String.Format("&ret= DFWPTxt('//Initialize {0} ')", t.Name)  + Environment.NewLine;
+            source += String.Format("&ret= DFWPTxt('//Initialize {0} ')", t.Name) + Environment.NewLine;
             source += String.Format("&ret= DFWNext()") + Environment.NewLine;
             source += "&comilla='\"'" + Environment.NewLine;
             source += "for each " + Environment.NewLine;
-            source += "&ret = DFWPTxt('    new ')" + Environment.NewLine;
+            source += "&ret = DFWPTxt( '"  + t.Name + " {' )" + Environment.NewLine;
             source += String.Format("   &ret= DFWNext()") + Environment.NewLine;
             foreach (TableAttribute attr in t.TableStructure.Attributes)
             {
-                string comillaini = "";
-                string comillafin = "";
-                if (attr.Attribute.Type == eDBType.CHARACTER || attr.Attribute.Type == eDBType.VARCHAR || attr.Attribute.Type == eDBType.LONGVARCHAR)
+                DevuelveComillas(attr, out string comillaini, out string comillafin);
+                string valor = "";
+                if (attr.Attribute.Type == eDBType.DATE)
                 {
-                    comillaini = " + &comilla + ";
-                    comillafin = " + &comilla ";
+                    valor = "Format('#%1/%2/%3#'," + attr.Name + ".Year() " + "," + attr.Name + ".Month() " + "," + attr.Name + ".Day())";
                 }
                 else
                 {
-                    comillaini = " + ";
-                    comillafin = "";
+                    valor = attr.Name + ".ToFormattedString()";
                 }
-                source += String.Format("   &ret = DFWPTxt('        {0} =' {1}{0}.ToFormattedString(){2})  ",attr.Name,comillaini,comillafin) + Environment.NewLine;
+                source += String.Format("   &ret = DFWPTxt('        {0} =' {1}{2}{3})  ", attr.Name, comillaini, valor , comillafin) + Environment.NewLine;
                 source += String.Format("   &ret = DFWNext()") + Environment.NewLine;
             }
-            source += "&Ret = DFWPTxt('    endnew ')" + Environment.NewLine + Environment.NewLine;
+            source += "&Ret = DFWPTxt('    } ')" + Environment.NewLine + Environment.NewLine;
             source += String.Format("&ret= DFWNext()") + Environment.NewLine;
 
             source += "endfor " + Environment.NewLine;
@@ -745,6 +774,7 @@ namespace Concepto.Packages.KBDoctor
             p.SetPropertyValue("CALL_PROTOCOL", "CLINE");
 
             p.ProcedurePart.Source = source;
+            output.AddText(source);
 
 
             try
@@ -754,10 +784,29 @@ namespace Concepto.Packages.KBDoctor
             catch (Exception e) { output.AddErrorLine("ERROR: Can't Save. " + p.Name + Environment.NewLine + e.Message); }
             
         }
-    
-  
 
-        public static void GenerateSQLScripts()
+        private static void DevuelveComillas(TableAttribute attr, out string comillaini, out string comillafin)
+        {
+            comillaini = "";
+            comillafin = "";
+            if (attr.Attribute.Type == eDBType.CHARACTER || attr.Attribute.Type == eDBType.VARCHAR || attr.Attribute.Type == eDBType.LONGVARCHAR)
+            {
+                comillaini = " + &comilla + ";
+                comillafin = " + &comilla ";
+            }
+            else
+            {
+                comillaini = " + ";
+                comillafin = "";
+            }
+        }
+
+        public static void GenerateDPfromTable()
+        {
+        }
+
+
+            public static void GenerateSQLScripts()
         {
             //Genera scripts que ayudan al manejo de nulos en la KB. 
             //  UpdateNullValues.sql - Update en la base para sacar los valores nulos
