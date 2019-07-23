@@ -310,7 +310,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 */
 
         }
-
+        //
         private static bool CheckKeyInINI(IniData parsedData, string SectionName, string KeyName, string KeyValue, string Comment, string INIfilename)
         {
             string key = SectionName + parsedData.SectionKeySeparator + KeyName;
@@ -328,7 +328,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return value.ToLower() == KeyValue;
 
         }
-
+        //
         public static void InitializeIniFile(KnowledgeBase KB)
         {
             string filename = KB.UserDirectory + @"\KBDoctor.ini";
@@ -372,7 +372,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 parser.WriteFile(filename, data);
             }
         }
-
+        //
         private static void AddKeyToIni(IniData data, string SectionName, string TestKey, string TestValue, string Comment)
         {
             KeyData key = new KeyData(TestKey);
@@ -380,22 +380,22 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             key.Comments.Add(Comment);
             data[SectionName].AddKey(key);
         }
-
+        //
         public static List<KBObject> ObjectsUpdateAttribute(List<KBObject> updaters, Artech.Genexus.Common.Objects.Attribute att, IOutputService output)
         {
             return Objects.ObjectsUpdateAttribute(updaters, att, output);
         }
-
+        //
         public static List<KBObject> ObjectsUpdatingTable(Table Table, IOutputService output)
         {
             return Objects.ObjectsUpdatingTable(Table);
         }
-
+        //
         public static bool ThemeClassesNotUsed(KnowledgeBase KB, IOutputService output, ThemeClass themeclass)
         {
             return Objects.ThemeClassesNotUsed(KB, output, themeclass);
         }
-
+        //
         public static bool AssignTypesComprarer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
             int cant_aux;
@@ -407,7 +407,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             return true;
         }
-
+        //
         public static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
             int cant_aux;
@@ -418,7 +418,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 cant += cant_aux;
             }
         }
-
+        //
         public static void ObjectsWithRuleOld(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
             cant = 0;
@@ -429,7 +429,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 cant += cant_aux;
             }
         }
-
+        //
         public static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs, out int cant)
         {
             int cant_aux;
@@ -440,7 +440,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 cant += cant_aux;
             }
         }
-
+        //
         public static bool ReivewCommits(KnowledgeBase KB, List<IKBVersionRevision> revisions_list, out Dictionary<string, List<string[]>> review_by_user)
         {
             Comparison<IKBVersionRevision> comparison = new Comparison<IKBVersionRevision>(Utility.CompareRevisionList);
@@ -451,7 +451,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             
             return success && successfile;
         }
-
+        //
         private static bool CreateCmdMailReview(KnowledgeBase KB, List<string> cmdlines)
         {
             try
@@ -472,7 +472,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             return true;
         }
-
+        //
         private static bool CreateReviewFiles(KnowledgeBase KB, Dictionary<string, List<string[]>> review_by_user, bool success, out List<string> cmdlines)
         {
             cmdlines = new List<string>();
@@ -537,7 +537,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             return success;
         }
-
+        //
         public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
             int cant_aux;
@@ -548,7 +548,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 cant += cant_aux;
             }
         }
-
+        //
         public static void ForEachsWithoutWhenNone(KnowledgeBase KB, List<KBObject> objs)
         {
             foreach (KBObject obj in objs)
@@ -556,7 +556,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Objects.ForEachsWithoutWhenNone(KB.DesignModel, obj);
             }
         }
-
+        //
         public static void NewsWithoutWhenDuplicate(KnowledgeBase KB, List<KBObject> objs)
         {
             foreach (KBObject obj in objs)
@@ -564,7 +564,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Objects.NewsWithoutWhenDuplicate(KB.DesignModel, obj);
             }
         }
-
+        //
         public static void ProceduresCalledAsFunction(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
             int cant_aux;
@@ -575,7 +575,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 cant += cant_aux; 
             }
         }
-
+        //
         public static void DocumentsInWebPanels(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
             int cant_aux;
@@ -584,6 +584,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 Objects.DocumentsInWebPanels(KB, obj, ref recommendations, out cant);
             }
+        }
+        //
+        public static void GenerateRESTCalls(KnowledgeBase KB, List<KBObject> objs)
+        {
+            foreach (KBObject obj in objs)
+            {
+                Objects.GenerateRESTCalls(KB, obj);
+            }
+            
         }
 
 

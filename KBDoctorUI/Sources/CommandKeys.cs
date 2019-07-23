@@ -151,7 +151,8 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey forEachsWithoutWhenNone = new CommandKey(Package.guid, "ForEachsWithoutWhenNone");
         private static CommandKey constantsInCode = new CommandKey(Package.guid, "ConstantsInCode");
         private static CommandKey reviewCommits = new CommandKey(Package.guid, "ReviewCommits");
-        
+        private static CommandKey generateRESTCalls = new CommandKey(Package.guid, "GenerateRESTCalls");
+
 
 
         public static CommandKey ObjNotReacheable { get { return objNotReacheable; } }
@@ -202,6 +203,7 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey ForEachsWithoutWhenNone { get { return forEachsWithoutWhenNone; } }
         public static CommandKey ConstantsInCode { get { return constantsInCode; } }
         public static CommandKey ReviewCommits { get { return reviewCommits; } }
+        public static CommandKey GenerateRESTCalls { get { return generateRESTCalls; } }
 
         // Acciones sobre objetos
         private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");

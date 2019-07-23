@@ -2705,6 +2705,384 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+        internal static bool HasOutputRule(KBObject obj)
+        {
+            if(obj is Procedure)
+            {
+                RulesPart rp = obj.Parts.Get<RulesPart>();
+                VariablesPart vp = obj.Parts.Get<VariablesPart>(); 
+                if(rp != null)
+                {
+                    return hasOutputInRules(rp, vp);
+                }
+            }
+            return false;
+        }
+
+        private static List<AbstractNode> getOutputsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+        {
+            List<AbstractNode> calls = new List<AbstractNode>();
+            if (root != null)
+            {
+                if (root is RuleNode)
+                {
+
+                    if (root.Node is IParserObjectBase)
+                    {
+                        IParserObjectBase pob = root.Node;
+
+                        if (pob.Data is Artech.Architecture.Language.Parser.Data.Rule)
+                        {
+                            Artech.Architecture.Language.Parser.Data.Rule ruledata = (Artech.Architecture.Language.Parser.Data.Rule)pob.Data;
+                            if (((Artech.Architecture.Language.Parser.Data.RuleName)ruledata.Name).Text.ToLower() == "output_file")
+                            {
+                                calls.Add(root);
+                            }
+                        }
+                    }
+                }
+                
+                foreach (AbstractNode node in root.Children)
+                {
+                    if (node.Node != null)
+                    {
+                        if(node is RuleNode)
+                        {
+
+                            if (node.Node is IParserObjectBase)
+                            {
+                                IParserObjectBase pob = node.Node;
+                                
+                                if(pob.Data is Artech.Architecture.Language.Parser.Data.Rule)
+                                {
+                                    Artech.Architecture.Language.Parser.Data.Rule ruledata = (Artech.Architecture.Language.Parser.Data.Rule)pob.Data;
+                                    if (((Artech.Architecture.Language.Parser.Data.RuleName)ruledata.Name).Text.ToLower() == "output_file")
+                                    {
+                                        calls.Add(node);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return calls;
+            }
+            return null;
+        }
+
+        internal static bool hasOutputInRules(RulesPart rp, VariablesPart vp)
+        {
+
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+            ParserInfo parserInfo;
+            parserInfo = new ParserInfo(rp);
+            var info = new Artech.Architecture.Language.Parser.ParserInfo(rp);
+
+            if (parser.Validate(info, rp.Source))
+            {
+                AbstractNode paramRootNode = ASTNodeFactory.Create(parser.Structure, rp, vp, info);
+                List<AbstractNode> outputs = getOutputsInSource(paramRootNode);
+                if (outputs.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        internal static void GenerateRESTCalls(KnowledgeBase KB, KBObject obj)
+        {
+            if (obj.GetPropertyValue("CALL_PROTOCOL").ToString() == "HTTP")
+            {
+                if (!HasOutputRule(obj))
+                {
+                    string qualifiedName = obj.QualifiedName.ModuleName + (obj.QualifiedName.ModuleName == "" ? "a" : ".a") + obj.QualifiedName.ObjectName;
+                    string strsignature = "";
+                    string strsignaturenames = "";
+                    bool first = true;
+                    ICallableObject callableObject = obj as ICallableObject;
+                    if (callableObject != null)
+                    {
+
+                        foreach (Signature signature in callableObject.GetSignatures())
+                        {
+                            foreach (Parameter parm in signature.Parameters)
+                            {
+
+                                if (!first)
+                                {
+                                    strsignature += ", ";
+                                    strsignaturenames += ", ";
+                                }
+                                else
+                                {
+                                    first = false;
+                                }
+
+                                string typeparm = "";
+                                string varnames = "";
+                                if (parm.IsAttribute)
+                                {
+                                    Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)parm.Object;
+                                    if (att != null)
+                                    {
+                                        typeparm = Utility.FormattedTypeAttribute(att);
+                                        varnames = att.Name + "{" + Utility.FormattedTypeAttribute(att) + "}";
+                                    }
+                                }
+                                else
+                                {
+                                    Variable var = (Variable)parm.Object;
+                                    if (var != null)
+                                    {
+                                        typeparm = Utility.FormattedTypeVariable(var);
+                                        varnames += var.Name + "{" + Utility.FormattedTypeVariable(var) + "}";
+                                    }
+
+                                }
+                                strsignaturenames += varnames;
+                                switch (parm.Accessor.ToString())
+                                {
+                                    case "PARM_OUT":
+                                        strsignature += "out: " + typeparm;
+                                        break;
+                                    case "PARM_INOUT":
+                                        strsignature += "inout: " + typeparm;
+                                        break;
+                                    case "PARM_IN":
+                                        strsignature += "in: " + typeparm;
+                                        break;
+                                }
+                                
+                            }
+                        }
+
+                    }
+                    KBDoctorOutput.Message("# Objeto:" + obj.QualifiedName.ObjectName + " Parameters: " + strsignaturenames);
+                    KBDoctorOutput.Message("%protocol%%subdomain%%url%%virtualdir%" + qualifiedName + ".aspx?" + GetDataFromSignature(strsignature));
+                    KBDoctorOutput.Message(Environment.NewLine);
+                }
+                
+            }
+        }
+        
+        internal static string GetDataFromSignature(string signature)
+        {
+            bool first = true;
+            string datacall = "";
+            string[] splits = signature.Split(',');
+            foreach(string split in splits)
+            {
+                if(!first)
+                {
+                    datacall += ",";
+                }
+                else
+                {
+                    first = false;
+                }
+                string parameter = "";
+                if (split.Contains("in: "))
+                {
+                    parameter = split.Replace("in: ","").Trim();
+                }
+                if (split.Contains("inout: "))
+                {
+                    parameter = split.Replace("inout: ", "").Trim();
+                }
+                datacall+= parameter;
+            }
+            return datacall;
+        }
+
+        internal static string GetExamplesFromType(string type)
+        {
+            string[] splits = type.Split('(');
+            string typename = splits[0];
+            if(splits.Length == 2)
+            {
+                string typelength = splits[1].Replace(")", "");
+                if(typelength.Contains("."))
+                {
+                    splits = typelength.Split('.');
+                    int int_len = Int32.Parse(splits[0]);
+                    int decimal_len = Int32.Parse(splits[1]);
+                    return GetDataFromStringType(typename, int_len, decimal_len);
+                }
+                else
+                {
+                    int int_len = Int32.Parse(typelength);
+                    return GetDataFromStringType(typename, int_len);
+                }
+            }
+            else
+            {
+                return GetDataFromStringType(typename);
+            }
+            
+        }
+
+        internal static string GetDataFromStringType(string typename)
+        {
+            switch (typename.ToLower())
+            {
+                case "boolean":
+                    return GetRandomBoolean().ToString();
+                    break;
+                default:
+                    return "";
+            }
+        }
+        internal static string GetDataFromStringType(string typename, int int_len)
+        {
+            switch (typename.ToLower())
+            {
+                case "character":
+                    return GetRandomString(int_len);
+                    break;
+                case "varchar":
+                    return GetRandomString(int_len);
+                    break;
+                case "numeric":
+                    return GetRandomNumber(int_len).ToString();
+                default:
+                    return "";
+            }
+        }
+
+        internal static string GetDataFromStringType(string typename, int int_len, int decimal_len)
+        {
+            switch (typename.ToLower())
+            {
+                case "boolean":
+                    return GetRandomBoolean().ToString();
+                    break;
+                case "character":
+                    return GetRandomString(int_len);
+                    break;
+                case "varchar":
+                    return GetRandomString(int_len);
+                    break;
+                case "numeric":
+                    if(decimal_len == 0)
+                    {
+                        return GetRandomNumber(int_len).ToString();
+                    }
+                    else
+                    {
+                        return GetRandomNumber(int_len, decimal_len).ToString();
+                    }
+                default:
+                    return "";
+            }
+        }
+
+        internal static string GetRandomString(int max_length)
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            int length = random.Next(max_length);
+            var stringChars = new char[length];
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            string finalString = new String(stringChars);
+            return finalString;
+        }
+
+        internal static int GetRandomNumber(int max_length)
+        {
+            var chars = "0123456789";
+            var random = new Random();
+            int length = random.Next(max_length);
+            var numberChars = new char[length];
+
+            for (int i = 0; i < numberChars.Length; i++)
+            {
+                numberChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            string aux = new String(numberChars);
+            int finalInt;
+            if (Int32.TryParse(aux, out finalInt))
+            {
+                return finalInt;
+            }
+            else
+            {
+                return 0;
+            }
+            
+        }
+
+        internal static int GetRandomNumber(int max_length, int decimal_max_length)
+        {
+            var chars = "0123456789";
+            var random = new Random();
+            int length = random.Next(max_length);
+            int dec_lenght = random.Next(decimal_max_length);
+            var numberChars = new char[length];
+            var numberDecChars = new char[dec_lenght];
+
+            for (int i = 0; i < numberChars.Length; i++)
+            {
+                numberChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            for (int i = 0; i < numberDecChars.Length; i++)
+            {
+                numberDecChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            string aux = new String(numberChars);
+            string aux2 = new String(numberDecChars);
+            aux += "," + aux2;
+            int finalInt = Int32.Parse(aux);
+            return finalInt;
+        }
+
+        public static void ListSDT(KBObject obj)
+        {
+            if(obj is SDT)
+            {
+                SDT sdt = (SDT)obj;
+                ListStructure(sdt.SDTStructure.Root);
+            }
+        }
+
+        private static void ListStructure(SDTLevel level)
+        {
+            KBDoctorOutput.Message(level.Name);
+            if (level.IsCollection)
+                KBDoctorOutput.Message(", collection: " + level.CollectionItemName);
+            KBDoctorOutput.Message(Environment.NewLine);
+
+            foreach (var childItem in level.GetItems<SDTItem>())
+                ListItem(childItem);
+            foreach (var childLevel in level.GetItems<SDTLevel>())
+                ListStructure(childLevel);
+        }
+
+        private static void ListItem(SDTItem item)
+        {
+            string dataType = item.Type.ToString().Substring(0, 1) + "(" + item.Length.ToString() + (item.Decimals > 0 ? "." + item.Decimals.ToString() : "") + ")" + (item.Signed ? "-" : "");
+            KBDoctorOutput.Message(item.Name + dataType + item.Description + (item.IsCollection ? ", collection " + item.CollectionItemName : ""));
+        }
+
+        internal static bool GetRandomBoolean()
+        {
+            bool[] chars = new bool[] { true, false };
+            var random = new Random();
+            bool selected = chars[random.Next(chars.Length)];
+            return selected;
+        }
 #if EVO3
     public class Tuple<T1, T2>
     {
@@ -2744,5 +3122,5 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 #endif
-    }
+        }
 }

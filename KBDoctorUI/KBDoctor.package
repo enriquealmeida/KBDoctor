@@ -118,6 +118,7 @@
     <CommandDefinition id="ForEachsWithoutWhenNone" />
     <CommandDefinition id="ConstantsInCode" />
     <CommandDefinition id="ReviewCommits" />
+    <CommandDefinition id="GenerateRESTCalls" />
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
     <CommandDefinition id="CountGeneratedByPattern" />
@@ -333,6 +334,7 @@
               <Command refid="NewsWithoutWhenDuplicate" />
               <Command refid="ConstantsInCode" />
               <Command refid="ReviewCommits" />
+              <Command refid="GenerateRESTCalls" />
 
                 <Popup name ="Themes" >
                   <Group>

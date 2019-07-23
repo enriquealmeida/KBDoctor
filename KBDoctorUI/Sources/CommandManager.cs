@@ -86,6 +86,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ForEachsWithoutWhenNone, new ExecHandler(ExecForEachsWithoutWhenNone), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ConstantsInCode, new ExecHandler(ExecConstantsInCode), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ReviewCommits, new ExecHandler(ExecReviewCommits), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.GenerateRESTCalls, new ExecHandler(ExecGenerateRESTCalls), new QueryHandler(QueryKBDoctor));
 
             //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
@@ -918,6 +919,25 @@ namespace Concepto.Packages.KBDoctor
             Thread thread = new Thread(() => ReviewObject(cmdData));
             thread.Start();
             return true;
+        }
+
+        public bool ExecGenerateRESTCalls(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            string title = "KBDoctor - Generate REST Calls";
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.MultipleSelection = true;
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            Thread thread = new Thread(() => GenerateRESTCalls(objs));
+            thread.Start();
+            return true;
+        }
+
+        private static void GenerateRESTCalls(List<KBObject> objs)
+        {
+            API.GenerateRESTCalls(UIServices.KB.CurrentKB, objs);
         }
 
         private static void ReviewObject(CommandData cmdData)

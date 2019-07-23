@@ -4196,9 +4196,47 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 }
                 KBDoctorOutput.Message( "");
                 KBDoctorOutput.Message( "===== SOAP ========");
+                bool hassdt;
                 foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "SOAP"))
                 {
-                    KBDoctorOutput.Message( obj.Name);
+                    hassdt = false;
+                    ICallableObject callableObject = obj as ICallableObject;
+                    if (callableObject != null)
+                    {
+                        foreach (Signature signature in callableObject.GetSignatures())
+                        {
+                            foreach (Parameter parm in signature.Parameters)
+                            {
+
+                                if (parm.IsAttribute)
+                                {
+                                    Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)parm.Object;
+                                    if (att != null)
+                                        if (Utility.FormattedTypeAttribute(att).Contains("GX_SDT")){
+                                            hassdt = true;
+                                        }
+                                }
+                                else
+                                {
+                                    Variable var = (Variable)parm.Object;
+                                    if (var != null)
+                                        if (Utility.FormattedTypeVariable(var).Contains("GX_SDT"))
+                                        {
+                                            hassdt = true;
+                                        }
+                                }
+                            }
+                        }
+                    }
+                    if (hassdt)
+                    {
+                        KBDoctorOutput.Message(obj.Name + " (SDT in Parms)");
+                    }
+                    else
+                    {
+                        KBDoctorOutput.Message(obj.Name);
+                    }
+                    
                 }
                 KBDoctorOutput.Message( "");
                 KBDoctorOutput.Message( "===== HTTP ========");
