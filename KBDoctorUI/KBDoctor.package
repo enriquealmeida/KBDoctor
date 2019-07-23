@@ -21,6 +21,7 @@
     <CommandDefinition id="ListDomain" />
     <CommandDefinition id="AttUpdated" />
     <CommandDefinition id="GenerateSQLScripts" />
+   
     <!-- Modularization -->
     <CommandDefinition id="GenerateGraph" />
     <CommandDefinition id="ApplyExternalModularization" />
@@ -38,6 +39,7 @@
     <CommandDefinition id="GenerateTrnFromTables2" />
     <CommandDefinition id="ListTablesInModules" />
     <CommandDefinition id="ListObjectsWithTableInOtherModule" />    
+    <CommandDefinition id="GenerateDPfromTable" />
     <!-- Indices -->
     <CommandDefinition id="IndexWithNotRefAtt" />
     <CommandDefinition id="RemoveIndexAttribute"/>
@@ -335,6 +337,7 @@
               <Command refid="ConstantsInCode" />
               <Command refid="ReviewCommits" />
               <Command refid="GenerateRESTCalls" />
+              <Command refid="GenerateDPfromTable"/>
 
                 <Popup name ="Themes" >
                   <Group>
@@ -344,7 +347,7 @@
                   </Group>
                 </Popup>
                <Command refid="GenerateSQLScripts"/>
-
+               
 
             </Popup>
           </Group>

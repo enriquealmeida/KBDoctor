@@ -337,6 +337,9 @@
   <data name="GenerateSQLScripts" xml:space="preserve">
     <value>Generate scripts to check data</value>
   </data>
+  <data name="GenerateDPfromTable" xml:space="preserve">
+    <value>Generate DP from Table</value>
+  </data>
   <data name="GenerateGraph" xml:space="preserve">
     <value>Generate KB Graphs</value>
   </data>

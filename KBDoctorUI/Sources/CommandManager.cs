@@ -120,6 +120,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.MainTableUsed, new ExecHandler(ExecMainTableUsed), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.RemovableTransactions, new ExecHandler(ExecRemovableTransactions), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.GenerateSQLScripts, new ExecHandler(ExecGenerateSQLScripts), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.GenerateDPfromTable, new ExecHandler(ExecGenerateDPfromTable), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.GenerateGraph, new ExecHandler(ExecGenerateGraph), new QueryHandler(QueryKBDoctor));
 
             // Acciones sobre objetos
@@ -1344,6 +1345,14 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
             TablesHelper.GenerateSQLScripts();
+            return true;
+        }
+
+        public bool ExecGenerateDPfromTable(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            TablesHelper.GenerateTrnFromTables2();
             return true;
         }
         public bool ExecGenerateGraph(CommandData cmdData)

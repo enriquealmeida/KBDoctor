@@ -8,10 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Concepto.Packages.KBDoctor {
+namespace Concepto.Packages.KBDoctor
+{
     using System;
-    
-    
+
+
     /// <summary>
     ///   Clase de recurso fuertemente tipado, para buscar cadenas traducidas, etc.
     /// </summary>
@@ -22,435 +23,543 @@ namespace Concepto.Packages.KBDoctor {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class StringResources {
-        
+    internal class StringResources
+    {
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal StringResources() {
+        internal StringResources()
+        {
         }
-        
+
         /// <summary>
         ///   Devuelve la instancia de ResourceManager almacenada en caché utilizada por esta clase.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+        internal static global::System.Resources.ResourceManager ResourceManager
+        {
+            get
+            {
+                if (object.ReferenceEquals(resourceMan, null))
+                {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Concepto.Packages.KBDoctor.StringResources", typeof(StringResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Reemplaza la propiedad CurrentUICulture del subproceso actual para todas las
         ///   búsquedas de recursos mediante esta clase de recurso fuertemente tipado.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
-            get {
+        internal static global::System.Globalization.CultureInfo Culture
+        {
+            get
+            {
                 return resourceCulture;
             }
-            set {
+            set
+            {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a About KBDoctor.
         /// </summary>
-        internal static string AboutKBDoctor {
-            get {
+        internal static string AboutKBDoctor
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutKBDoctor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Add IN: to parametrs without IN:/OUT:/INOUT:.
         /// </summary>
-        internal static string AddINParmRule {
-            get {
+        internal static string AddINParmRule
+        {
+            get
+            {
                 return ResourceManager.GetString("AddINParmRule", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Apply External Modularization.
         /// </summary>
-        internal static string ApplyExternalModularization {
-            get {
+        internal static string ApplyExternalModularization
+        {
+            get
+            {
                 return ResourceManager.GetString("ApplyExternalModularization", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Assign Type Comparer.
         /// </summary>
-        internal static string AssignTypeComparer {
-            get {
+        internal static string AssignTypeComparer
+        {
+            get
+            {
                 return ResourceManager.GetString("AssignTypeComparer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Char that should be VarChar.
         /// </summary>
-        internal static string AttCharToVarchar {
-            get {
+        internal static string AttCharToVarchar
+        {
+            get
+            {
                 return ResourceManager.GetString("AttCharToVarchar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Description attribute without unique index.
         /// </summary>
-        internal static string AttDescWithoutUniqueIndex {
-            get {
+        internal static string AttDescWithoutUniqueIndex
+        {
+            get
+            {
                 return ResourceManager.GetString("AttDescWithoutUniqueIndex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a List attributes Formula.
         /// </summary>
-        internal static string AttFormula {
-            get {
+        internal static string AttFormula
+        {
+            get
+            {
                 return ResourceManager.GetString("AttFormula", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Attributes only in transactions.
         /// </summary>
-        internal static string AttInOneTrnOnly {
-            get {
+        internal static string AttInOneTrnOnly
+        {
+            get
+            {
                 return ResourceManager.GetString("AttInOneTrnOnly", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Attributes Key and Varchar.
         /// </summary>
-        internal static string AttKeyVarchar {
-            get {
+        internal static string AttKeyVarchar
+        {
+            get
+            {
                 return ResourceManager.GetString("AttKeyVarchar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Not referenced by any reachable object.
         /// </summary>
-        internal static string AttNotReferenced {
-            get {
+        internal static string AttNotReferenced
+        {
+            get
+            {
                 return ResourceManager.GetString("AttNotReferenced", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Where is updated this attribute? .
         /// </summary>
-        internal static string AttUpdated {
-            get {
+        internal static string AttUpdated
+        {
+            get
+            {
                 return ResourceManager.GetString("AttUpdated", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a VarChar that shoud be Char.
         /// </summary>
-        internal static string AttVarcharToChar {
-            get {
+        internal static string AttVarcharToChar
+        {
+            get
+            {
                 return ResourceManager.GetString("AttVarcharToChar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a With no description.
         /// </summary>
-        internal static string AttWithNoDescription {
-            get {
+        internal static string AttWithNoDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("AttWithNoDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Without domain.
         /// </summary>
-        internal static string AttWithNoDomain {
-            get {
+        internal static string AttWithNoDomain
+        {
+            get
+            {
                 return ResourceManager.GetString("AttWithNoDomain", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Remove attribute with no table.
         /// </summary>
-        internal static string AttWithoutBaseTable {
-            get {
+        internal static string AttWithoutBaseTable
+        {
+            get
+            {
                 return ResourceManager.GetString("AttWithoutBaseTable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Without column title.
         /// </summary>
-        internal static string AttWithoutColumnTitle {
-            get {
+        internal static string AttWithoutColumnTitle
+        {
+            get
+            {
                 return ResourceManager.GetString("AttWithoutColumnTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a With incomplete description or title.
         /// </summary>
-        internal static string AttWithoutDescription {
-            get {
+        internal static string AttWithoutDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("AttWithoutDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Without title.
         /// </summary>
-        internal static string AttWithoutTitle {
-            get {
+        internal static string AttWithoutTitle
+        {
+            get
+            {
                 return ResourceManager.GetString("AttWithoutTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Build Module Objects and References.
         /// </summary>
-        internal static string BuildModule {
-            get {
+        internal static string BuildModule
+        {
+            get
+            {
                 return ResourceManager.GetString("BuildModule", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Build Object and References.
         /// </summary>
-        internal static string BuildObjectAndReferences {
-            get {
+        internal static string BuildObjectAndReferences
+        {
+            get
+            {
                 return ResourceManager.GetString("BuildObjectAndReferences", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a List objects with property.
         /// </summary>
-        internal static string BuildObjectWithProperty {
-            get {
+        internal static string BuildObjectWithProperty
+        {
+            get
+            {
                 return ResourceManager.GetString("BuildObjectWithProperty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Generate objects in text files.
         /// </summary>
-        internal static string CalculateCheckSum {
-            get {
+        internal static string CalculateCheckSum
+        {
+            get
+            {
                 return ResourceManager.GetString("CalculateCheckSum", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Change code to improve readability.
         /// </summary>
-        internal static string ChangeLegacyCode {
-            get {
+        internal static string ChangeLegacyCode
+        {
+            get
+            {
                 return ResourceManager.GetString("ChangeLegacyCode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Class not in Theme and Class not used.
         /// </summary>
-        internal static string ClassNotInTheme {
-            get {
+        internal static string ClassNotInTheme
+        {
+            get
+            {
                 return ResourceManager.GetString("ClassNotInTheme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Classes Used.
         /// </summary>
-        internal static string ClassUsed {
-            get {
+        internal static string ClassUsed
+        {
+            get
+            {
                 return ResourceManager.GetString("ClassUsed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Clean my KB as much as possible.
         /// </summary>
-        internal static string CleanKBAsMuchAsPossible {
-            get {
+        internal static string CleanKBAsMuchAsPossible
+        {
+            get
+            {
                 return ResourceManager.GetString("CleanKBAsMuchAsPossible", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Initialize and clean objects.
         /// </summary>
-        internal static string CleanObjects {
-            get {
+        internal static string CleanObjects
+        {
+            get
+            {
                 return ResourceManager.GetString("CleanObjects", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Clean variables not used.
         /// </summary>
-        internal static string CleanVarsNotUsed {
-            get {
+        internal static string CleanVarsNotUsed
+        {
+            get
+            {
                 return ResourceManager.GetString("CleanVarsNotUsed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Compare Navigations (two last snapshots).
         /// </summary>
-        internal static string CompareLastNVGDirectory {
-            get {
+        internal static string CompareLastNVGDirectory
+        {
+            get
+            {
                 return ResourceManager.GetString("CompareLastNVGDirectory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Compare Objects in text format (two last snapshots).
         /// </summary>
-        internal static string CompareLastOBJDirectory {
-            get {
+        internal static string CompareLastOBJDirectory
+        {
+            get
+            {
                 return ResourceManager.GetString("CompareLastOBJDirectory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Constants in code.
         /// </summary>
-        internal static string ConstantsInCode {
-            get {
+        internal static string ConstantsInCode
+        {
+            get
+            {
                 return ResourceManager.GetString("ConstantsInCode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a List objects not generated by patterns.
         /// </summary>
-        internal static string CountGeneratedByPattern {
-            get {
+        internal static string CountGeneratedByPattern
+        {
+            get
+            {
                 return ResourceManager.GetString("CountGeneratedByPattern", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Count table access.
         /// </summary>
-        internal static string CountTableAccess {
-            get {
+        internal static string CountTableAccess
+        {
+            get
+            {
                 return ResourceManager.GetString("CountTableAccess", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Objects difficult to modularize.
         /// </summary>
-        internal static string DetectMaverics {
-            get {
+        internal static string DetectMaverics
+        {
+            get
+            {
                 return ResourceManager.GetString("DetectMaverics", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Edit  code to replace.
         /// </summary>
-        internal static string EditLegacyCodeToReplace {
-            get {
+        internal static string EditLegacyCodeToReplace
+        {
+            get
+            {
                 return ResourceManager.GetString("EditLegacyCodeToReplace", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Edit review objects ini file.
         /// </summary>
-        internal static string EditReviewObjects {
-            get {
+        internal static string EditReviewObjects
+        {
+            get
+            {
                 return ResourceManager.GetString("EditReviewObjects", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Empty Conditional Blocks.
         /// </summary>
-        internal static string EmptyConditionalBlocks {
-            get {
+        internal static string EmptyConditionalBlocks
+        {
+            get
+            {
                 return ResourceManager.GetString("EmptyConditionalBlocks", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Fix variables not based in Domain/Attributes.
         /// </summary>
-        internal static string FixVariablesNotBasedInAttributesOrDomain {
-            get {
+        internal static string FixVariablesNotBasedInAttributesOrDomain
+        {
+            get
+            {
                 return ResourceManager.GetString("FixVariablesNotBasedInAttributesOrDomain", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a For Each without When None.
         /// </summary>
-        internal static string ForEachsWithoutWhenNone {
-            get {
+        internal static string ForEachsWithoutWhenNone
+        {
+            get
+            {
                 return ResourceManager.GetString("ForEachsWithoutWhenNone", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Generate DP from Table.
+        /// </summary>
+        internal static string GenerateDPfromTable
+        {
+            get
+            {
+                return ResourceManager.GetString("GenerateDPfromTable", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Busca una cadena traducida similar a Generate KB Graphs.
         /// </summary>
-        internal static string GenerateGraph {
-            get {
+        internal static string GenerateGraph
+        {
+            get
+            {
                 return ResourceManager.GetString("GenerateGraph", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Generate Location.XML.
         /// </summary>
-        internal static string GenerateLocationXML {
-            get {
+        internal static string GenerateLocationXML
+        {
+            get
+            {
                 return ResourceManager.GetString("GenerateLocationXML", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Generate Simple Trn from Not Generate Transactions.
         /// </summary>
-        internal static string GenerateSimpleTransactionFromNotGeneratedTransactions {
-            get {
+        internal static string GenerateSimpleTransactionFromNotGeneratedTransactions
+        {
+            get
+            {
                 return ResourceManager.GetString("GenerateSimpleTransactionFromNotGeneratedTransactions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Generate scripts to check data.
         /// </summary>
-        internal static string GenerateSQLScripts {
-            get {
+        internal static string GenerateSQLScripts
+        {
+
+            get
+            {
                 return ResourceManager.GetString("GenerateSQLScripts", resourceCulture);
             }
+
         }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Generate transactions from tables.
-        /// </summary>
-        internal static string GenerateTrnFromTable {
+
+
+/// <summary>
+///   Busca una cadena traducida similar a Generate transactions from tables.
+/// </summary>
+internal static string GenerateTrnFromTable {
             get {
                 return ResourceManager.GetString("GenerateTrnFromTable", resourceCulture);
             }
