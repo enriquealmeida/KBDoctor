@@ -87,6 +87,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ConstantsInCode, new ExecHandler(ExecConstantsInCode), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ReviewCommits, new ExecHandler(ExecReviewCommits), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.GenerateRESTCalls, new ExecHandler(ExecGenerateRESTCalls), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.SDTsWithDateInWS, new ExecHandler(ExecSDTsWithDateInWS), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.GenerateSDTDataLoad, new ExecHandler(ExecGenerateSDTDataLoad), new QueryHandler(QueryKBDoctor));
 
             //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
@@ -920,6 +922,44 @@ namespace Concepto.Packages.KBDoctor
             Thread thread = new Thread(() => ReviewObject(cmdData));
             thread.Start();
             return true;
+        }
+
+        public bool ExecGenerateSDTDataLoad(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            string title = "KBDoctor - Generate SDT Data load";
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<SDT>());
+            selectObjectOption.MultipleSelection = true;
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            Thread thread = new Thread(() => GenerateSDTDataLoad(objs));
+            thread.Start();
+            return true;
+        }
+
+        private static void GenerateSDTDataLoad(List<KBObject> objs)
+        {
+            API.GenerateSDTDataLoad(UIServices.KB.CurrentKB, objs);
+        }
+
+        public bool ExecSDTsWithDateInWS(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            string title = "KBDoctor - List SDTs with Date";
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.MultipleSelection = true;
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            Thread thread = new Thread(() => SDTsWithDateInWS(objs));
+            thread.Start();
+            return true;
+        }
+
+        private static void SDTsWithDateInWS(List<KBObject> objs)
+        {
+            API.ListSDTWithDateInWS(UIServices.KB.CurrentKB, objs);
         }
 
         public bool ExecGenerateRESTCalls(CommandData cmdData)

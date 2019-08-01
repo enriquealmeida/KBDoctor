@@ -121,6 +121,8 @@
     <CommandDefinition id="ConstantsInCode" />
     <CommandDefinition id="ReviewCommits" />
     <CommandDefinition id="GenerateRESTCalls" />
+    <CommandDefinition id="SDTsWithDateInWS" />
+    <CommandDefinition id="GenerateSDTDataLoad" />
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
     <CommandDefinition id="CountGeneratedByPattern" />
@@ -337,6 +339,8 @@
               <Command refid="ConstantsInCode" />
               <Command refid="ReviewCommits" />
               <Command refid="GenerateRESTCalls" />
+              <Command refid="SDTsWithDateInWS" />
+              <Command refid="GenerateSDTDataLoad" />
               <Command refid="GenerateDPfromTable"/>
 
                 <Popup name ="Themes" >

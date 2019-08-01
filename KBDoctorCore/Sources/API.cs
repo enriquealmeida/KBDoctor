@@ -592,10 +592,23 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 Objects.GenerateRESTCalls(KB, obj);
             }
-            
         }
-
-
+        //
+        public static void ListSDTWithDateInWS(KnowledgeBase KB, List<KBObject> objs)
+        {
+            foreach (KBObject obj in objs)
+            {
+                Objects.SDTWithDateInWS(obj);
+            }
+        }
+        //
+        public static void GenerateSDTDataLoad(KnowledgeBase KB, List<KBObject> objs)
+        {
+            foreach (KBObject obj in objs)
+            {
+                Objects.ListSDT(obj);
+            }
+        }
 
 
 #if EVO3

@@ -154,8 +154,9 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey constantsInCode = new CommandKey(Package.guid, "ConstantsInCode");
         private static CommandKey reviewCommits = new CommandKey(Package.guid, "ReviewCommits");
         private static CommandKey generateRESTCalls = new CommandKey(Package.guid, "GenerateRESTCalls");
-
-
+        private static CommandKey sDTsWithDateInWS = new CommandKey(Package.guid, "SDTsWithDateInWS");
+        private static CommandKey generateSDTDataLoad = new CommandKey(Package.guid, "GenerateSDTDataLoad");
+        
 
         public static CommandKey ObjNotReacheable { get { return objNotReacheable; } }
         public static CommandKey ObjectsWithoutInOut { get { return objectsWithoutInOut; } }
@@ -208,6 +209,9 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey ConstantsInCode { get { return constantsInCode; } }
         public static CommandKey ReviewCommits { get { return reviewCommits; } }
         public static CommandKey GenerateRESTCalls { get { return generateRESTCalls; } }
+        public static CommandKey SDTsWithDateInWS { get { return sDTsWithDateInWS; } }
+        public static CommandKey GenerateSDTDataLoad { get { return generateSDTDataLoad; } }
+        
 
         // Acciones sobre objetos
         private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");

@@ -28,6 +28,7 @@ using Artech.Architecture.Common.Descriptors;
 using Artech.Genexus.Common.Types;
 //using Artech.Common.Language.Parser;
 using Artech.Architecture.Language.Parser.Objects;
+using System.Xml;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -2899,14 +2900,247 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return datacall;
         }
 
+        public static void SDTWithDateInWS(KBObject obj)
+        {
+            
+            if (obj.GetPropertyValue("CALL_PROTOCOL").ToString().ToUpper() == "SOAP")
+            {
+                string sdtout = "";
+                bool founddate = false;
+                ICallableObject callableObject = obj as ICallableObject;
+                foreach (Signature signature in callableObject.GetSignatures())
+                {
+                    foreach (Parameter parm in signature.Parameters)
+                    {
+
+                        if (parm.IsAttribute)
+                        {
+                            Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)parm.Object;
+                            if (att != null)
+                                if (Utility.FormattedTypeAttribute(att).Contains("GX_SDT"))
+                                {
+                                    att.ToString();
+                                }
+                        }
+                        else
+                        {
+                            Variable var = (Variable)parm.Object;
+                            if (var != null)
+                                if (Utility.FormattedTypeVariable(var).Contains("GX_SDT"))
+                                {
+                                    AttCustomType attcustype = (AttCustomType)var.GetPropertyValue("ATTCUSTOMTYPE");
+
+                                    KBObject sdt_obj = GetSDTFromAttCustomType(obj.Model, attcustype);
+
+                                    if(sdt_obj is SDT)
+                                    {
+                                        SDT sdt = (SDT)sdt_obj;
+                                        founddate = CheckSDTHasDate(sdt.SDTStructure.Root, sdt.Name, ref sdtout) || founddate;
+
+                                    }
+                                }
+                        }
+                    }
+                    if(founddate)
+                    {
+                        KBDoctorOutput.Message("Object: " + obj.Name);
+                        KBDoctorOutput.Warning(sdtout);
+                    }
+                }
+            }
+            /*if (obj is SDT)
+            {
+                SDT sdt = (SDT)obj;
+                CheckSDTHasDate(sdt.SDTStructure.Root, sdt.Name);
+;            }*/
+        }
+
+        private static KBObject GetSDTFromAttCustomType(KBModel model, AttCustomType attcustype)
+        {
+            XmlDocument xdoc = new XmlDocument();
+            xdoc.LoadXml(attcustype.Guid);
+
+            XmlNodeList xmlnlType = xdoc.GetElementsByTagName("Type");
+            XmlNode nodetype = xmlnlType.Item(0);
+
+            XmlNodeList xmlnlID = xdoc.GetElementsByTagName("Id");
+            XmlNode nodeid = xmlnlID.Item(0);
+            Guid guid = new Guid(nodetype.InnerText);
+            int id = 0;
+            if (!Int32.TryParse(nodeid.InnerText, out id))
+            {
+                KBDoctorOutput.Error("Error recovering SDT type.");
+            }
+
+            EntityKey entityKey = new EntityKey(guid, id);
+            KBObject sdt = model.Objects.Get(entityKey);
+            return sdt;
+        }
+
+        private static bool CheckSDTHasDate(SDTLevel level, string levelname, ref string strout)
+        {
+            bool ret = false;
+            foreach (var childItem in level.GetItems<SDTItem>())
+            {
+                if(IsSDTItemDate(childItem))
+                {
+                    strout += levelname + "." + childItem.Name + " is date" + Environment.NewLine ;
+                    ret = true;
+                }
+            }
+            foreach(var childLevel in level.GetItems<SDTLevel>())
+            {
+                ret = ret || CheckSDTHasDate(childLevel, levelname + "." + childLevel.Name, ref strout);
+            }
+            return ret;
+        }
+
+        private static bool IsSDTItemDate(SDTItem item)
+        {
+            if(item.Type.ToString().ToLower().Contains("date"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+
+        public static void ListSDT(KBObject obj)
+        {
+            if(obj is SDT)
+            {
+                SDT sdt = (SDT)obj;
+                KBDoctorOutput.Message("//Data generated for SDT:" + sdt.Name);
+                ListStructure(obj.Model, sdt.SDTStructure.Root, "");
+            }
+        }
+
+        private static void ListStructure(KBModel model, SDTLevel level, string prev_levelname)
+        {
+
+            //KBDoctorOutput.Message(", collection: " + );
+            //KBDoctorOutput.Message(Environment.NewLine);
+            bool cont = true;
+            int i = 0;
+            var random = new Random();
+            int max = random.Next(1) + 2;
+            string levelname = prev_levelname + level.Name;
+            string namevariable;
+            namevariable = GetSDTLevelName(level, prev_levelname);
+            
+            if (level.IsCollection)
+            {
+                KBDoctorOutput.Message("&" + levelname + " = new ()" + "//Type: " + level.FullName + "(Collection)");
+                KBDoctorOutput.Message("&" + namevariable + " = new ()" + "//Type: " + level.FullName + "(Item)");
+            }
+            else
+            {
+                KBDoctorOutput.Message("&" + levelname + " = new ()" + "//Type: " + (prev_levelname != "" ? prev_levelname + "." : "") + level.Name);
+            }
+            while (cont)
+            {
+                foreach (var childItem in level.GetItems<SDTItem>())
+                {
+                    string str_datatype = GetItemDataType(childItem);
+                    if (!str_datatype.Contains("BITMAP"))
+                    {
+                        if (str_datatype.Contains("GX_SDT"))
+                        {
+                            if (childItem.IsCollection)
+                            {
+                                KBDoctorOutput.Message("//TO-DO: Run this proc on the SDT associated with " + childItem.FullName + " and add that variable to the following line:");
+                                KBDoctorOutput.Message("//&" + namevariable + "." + childItem.Name + ".add({Name_Variable:" + childItem.FullName + "})");
+                            }
+                            else
+                            {
+                                KBDoctorOutput.Message("//TO-DO: Run this proc on the SDT associated with " + childItem.FullName + " and assign that variable to the following line:");
+                                KBDoctorOutput.Message("//&" + namevariable + "." + childItem.Name + " = " + GetExamplesFromType(str_datatype));
+                            }
+                        }
+                        else
+                        {
+                            KBDoctorOutput.Message("&" + namevariable + "." + childItem.Name + " = " + GetExamplesFromType(str_datatype));
+                        }
+                    }
+                }
+
+                if (level.IsCollection)
+                {
+                    KBDoctorOutput.Message("&" + levelname + ".Add(" + "&" + namevariable + ".Clone())");
+                }
+                else
+                {
+                    cont = false;
+                }
+                i++;
+                if (i >= max)
+                {
+                    cont = false;
+                }
+            }
+            //ListItem(childItem);
+            foreach (var childLevel in level.GetItems<SDTLevel>())
+            {
+                ListStructure(model, childLevel, levelname);
+                KBDoctorOutput.Message("&" + levelname + "." + childLevel.Name + " = " + "&" + levelname + childLevel.Name);
+            }
+
+        }
+
+        private static string GetSDTLevelName(SDTLevel level, string prev_levelname)
+        {
+            string namevariable;
+            if (level.IsCollection)
+            {
+                if (level.CollectionItemName.Contains(level.Name))
+                {
+                    if (level.CollectionItemName == level.Name)
+                    {
+                        namevariable = prev_levelname + level.CollectionItemName + "Item";
+                    }
+                    else
+                    {
+                        namevariable = prev_levelname + level.Name + level.CollectionItemName;
+                    }
+                }
+                else
+                {
+                    namevariable = prev_levelname + level.Name + level.CollectionItemName;
+                }
+            }
+            else
+            {
+                namevariable = prev_levelname + level.Name;
+            }
+
+            return namevariable;
+        }
+
+        private static string GetItemDataType(SDTItem item)
+        {
+            string dataType = item.Type.ToString() + "(" + item.Length.ToString() + (item.Decimals > 0 ? "." + item.Decimals.ToString() : "") + ")";
+            return dataType;
+        }
+
+        internal static bool GetRandomBoolean()
+        {
+            bool[] chars = new bool[] { true, false };
+            var random = new Random();
+            bool selected = chars[random.Next(chars.Length)];
+            return selected;
+        }
+
         internal static string GetExamplesFromType(string type)
         {
             string[] splits = type.Split('(');
             string typename = splits[0];
-            if(splits.Length == 2)
+            if (splits.Length == 2)
             {
                 string typelength = splits[1].Replace(")", "");
-                if(typelength.Contains("."))
+                if (typelength.Contains("."))
                 {
                     splits = typelength.Split('.');
                     int int_len = Int32.Parse(splits[0]);
@@ -2923,7 +3157,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 return GetDataFromStringType(typename);
             }
-            
+
         }
 
         internal static string GetDataFromStringType(string typename)
@@ -2932,7 +3166,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 case "boolean":
                     return GetRandomBoolean().ToString();
-                    break;
                 default:
                     return "";
             }
@@ -2949,6 +3182,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     break;
                 case "numeric":
                     return GetRandomNumber(int_len).ToString();
+                case "boolean":
+                    return GetRandomBoolean().ToString();
                 default:
                     return "";
             }
@@ -2968,24 +3203,190 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     return GetRandomString(int_len);
                     break;
                 case "numeric":
-                    if(decimal_len == 0)
+                    if (decimal_len == 0)
                     {
                         return GetRandomNumber(int_len).ToString();
                     }
                     else
                     {
-                        return GetRandomNumber(int_len, decimal_len).ToString();
+                        return GetRandomNumber(int_len, decimal_len);
                     }
+                case "date":
+                    return GetRandomDate();
+                case "datetime":
+                    return GetRandomDateTime();
                 default:
                     return "";
             }
+        }
+
+        internal static string GetRandomDateTime()
+        {
+            //Genero un aleatorio de los años 20XX
+            string year = GetRandomYear();
+
+            //Genero un aleatorio de los meses
+            string month = GetRandomMonth();
+
+            //genero un aleatorio de días
+            string day = GetRandomDay();
+
+            string hour = GetRandomHour();
+
+            string minute = GetRandomMinute();
+
+            var chars = "ap";
+            var random = new Random();
+            int length = 1;
+            var numberChars = new char[length];
+
+            for (int i = 0; i < numberChars.Length; i++)
+            {
+                numberChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            string ampm = new String(numberChars);
+
+
+            return "#" + year + "-" + month + "-" + day + " " + hour + ":" + minute + ampm + "#";
+        }
+
+        internal static string GetRandomDate()
+        {
+            //Genero un aleatorio de los años 20XX
+            string year = GetRandomYear();
+
+            //Genero un aleatorio de los meses
+            string month = GetRandomMonth();
+
+            //genero un aleatorio de días
+            string day = GetRandomDay();
+
+            return "#" + year + "-" + month + "-" + day + "#";
+        }
+
+        private static string GetRandomHour()
+        {
+            var chars = "0123456789";
+            var random = new Random();
+            int length = 1;
+            var numberChars = new char[length];
+
+            for (int i = 0; i < numberChars.Length; i++)
+            {
+                numberChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            string hour = new String(numberChars);
+
+            if (hour == "0" || hour == "1" || hour == "2")
+            {
+                int dec_month = random.Next(1);
+                hour = dec_month.ToString() + hour;
+            }
+
+            return hour;
+        }
+
+        private static string GetRandomMinute()
+        {
+            var chars = "0123456789";
+            var random = new Random();
+            int length = 1;
+            var numberChars = new char[length];
+
+            for (int i = 0; i < numberChars.Length; i++)
+            {
+                numberChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            string minute = new String(numberChars);
+
+            int dec_minute = random.Next(5);
+
+            minute = dec_minute.ToString() + minute;
+
+            return minute;
+        }
+
+        private static string GetRandomDay()
+        {
+            var chars = "123456789";
+            var random = new Random();
+            int length = 1;
+            var numberChars = new char[length];
+
+            for (int i = 0; i < numberChars.Length; i++)
+            {
+                numberChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            string day = new String(numberChars);
+
+            int dec_day = -1;
+
+            if (day == "9")
+            {
+                dec_day = random.Next(1);
+            }
+            else
+            {
+                dec_day = random.Next(2);
+            }
+
+            day = dec_day.ToString() + day;
+
+            return day;
+        }
+
+        private static string GetRandomMonth()
+        {
+            var chars = "123456789";
+            var random = new Random();
+            int length = 1;
+            var numberChars = new char[length];
+
+            for (int i = 0; i < numberChars.Length; i++)
+            {
+                numberChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            string month = new String(numberChars);
+
+            if (month == "0" || month == "1" || month == "2")
+            {
+                int dec_month = random.Next(1);
+                month = dec_month.ToString() + month;
+            }
+
+            return month;
+        }
+
+        private static string GetRandomYear()
+        {
+            var chars = "0123456789";
+            var random = new Random();
+            int length = 2;
+            var numberChars = new char[length];
+
+            for (int i = 0; i < numberChars.Length; i++)
+            {
+                numberChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            string year = new String(numberChars);
+
+            year = "20" + year;
+
+            return year;
         }
 
         internal static string GetRandomString(int max_length)
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var random = new Random();
-            int length = random.Next(max_length);
+            
+            int length = random.Next(Math.Min(max_length, 512) - 1) + 1;
             var stringChars = new char[length];
 
             for (int i = 0; i < stringChars.Length; i++)
@@ -2994,14 +3395,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
 
             string finalString = new String(stringChars);
-            return finalString;
+            return '"' + finalString + '"';
         }
 
         internal static int GetRandomNumber(int max_length)
         {
             var chars = "0123456789";
             var random = new Random();
-            int length = random.Next(max_length);
+            int length = random.Next(max_length - 1) + 1;
             var numberChars = new char[length];
 
             for (int i = 0; i < numberChars.Length; i++)
@@ -3019,70 +3420,56 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 return 0;
             }
-            
+
         }
 
-        internal static int GetRandomNumber(int max_length, int decimal_max_length)
+        internal static string GetRandomNumber(int max_length, int decimal_max_length)
         {
             var chars = "0123456789";
             var random = new Random();
-            int length = random.Next(max_length);
-            int dec_lenght = random.Next(decimal_max_length);
-            var numberChars = new char[length];
-            var numberDecChars = new char[dec_lenght];
-
-            for (int i = 0; i < numberChars.Length; i++)
+            int length = 0;
+            if (decimal_max_length > 0)
             {
-                numberChars[i] = chars[random.Next(chars.Length)];
+                if (max_length - decimal_max_length - 1 > 0)
+                    length = random.Next(max_length - decimal_max_length - 1) + 1;
+                else
+                    length = 0;
+            }
+            else
+            {
+                length = random.Next(max_length - 1) + 1;
             }
 
+            int dec_lenght = random.Next(decimal_max_length - 1) + 1;
+            string aux = "";
+            if (length != 0)
+            {
+                var numberChars = new char[length];
+                for (int i = 0; i < numberChars.Length; i++)
+                {
+                    numberChars[i] = chars[random.Next(chars.Length)];
+                }
+                aux = new String(numberChars);
+            }
+            else
+            {
+                aux = "0";
+            }
+            
+            var numberDecChars = new char[dec_lenght];
             for (int i = 0; i < numberDecChars.Length; i++)
             {
                 numberDecChars[i] = chars[random.Next(chars.Length)];
-            }
-
-            string aux = new String(numberChars);
+            }            
             string aux2 = new String(numberDecChars);
-            aux += "," + aux2;
-            int finalInt = Int32.Parse(aux);
+            if (dec_lenght > 0)
+            {
+                aux += "." + aux2;
+            }
+            string finalInt = aux;
             return finalInt;
         }
 
-        public static void ListSDT(KBObject obj)
-        {
-            if(obj is SDT)
-            {
-                SDT sdt = (SDT)obj;
-                ListStructure(sdt.SDTStructure.Root);
-            }
-        }
-
-        private static void ListStructure(SDTLevel level)
-        {
-            KBDoctorOutput.Message(level.Name);
-            if (level.IsCollection)
-                KBDoctorOutput.Message(", collection: " + level.CollectionItemName);
-            KBDoctorOutput.Message(Environment.NewLine);
-
-            foreach (var childItem in level.GetItems<SDTItem>())
-                ListItem(childItem);
-            foreach (var childLevel in level.GetItems<SDTLevel>())
-                ListStructure(childLevel);
-        }
-
-        private static void ListItem(SDTItem item)
-        {
-            string dataType = item.Type.ToString().Substring(0, 1) + "(" + item.Length.ToString() + (item.Decimals > 0 ? "." + item.Decimals.ToString() : "") + ")" + (item.Signed ? "-" : "");
-            KBDoctorOutput.Message(item.Name + dataType + item.Description + (item.IsCollection ? ", collection " + item.CollectionItemName : ""));
-        }
-
-        internal static bool GetRandomBoolean()
-        {
-            bool[] chars = new bool[] { true, false };
-            var random = new Random();
-            bool selected = chars[random.Next(chars.Length)];
-            return selected;
-        }
 #if EVO3
     public class Tuple<T1, T2>
     {
@@ -3122,5 +3509,5 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 #endif
-        }
+    }
 }
