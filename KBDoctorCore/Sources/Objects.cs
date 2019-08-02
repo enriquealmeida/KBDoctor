@@ -3018,7 +3018,52 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static void ListStructure(KBModel model, SDTLevel level, string prev_levelname)
+        public static void ChangeSDTSerialization(KBObject obj)
+        {
+            if (obj is SDT)
+            {
+                SDT sdt = (SDT)obj;
+                KBDoctorOutput.Message("//OBJ: " + sdt.Name);
+                ChangeSDTSerializationStructure(obj.Model, sdt.SDTStructure.Root, "");
+                obj.Save();
+            }
+        }
+
+        private static void ChangeSDTSerializationStructure(KBModel model, SDTLevel level, string prev_levelname)
+        {
+            if (level.IsCollection)
+            {
+                string XmlSerializationProperty = level.GetPropertyValue("idXmlInclude").ToString();
+                if (XmlSerializationProperty.ToLower() != "idXmlIncludeNotNull")
+                {
+                    level.SetPropertyValue("idXmlInclude", "idXmlIncludeNotNull");
+                    KBDoctorOutput.Message("Objeto: " + level.FullName);
+                    KBDoctorOutput.Message("Tiene valor: " + XmlSerializationProperty);
+                    KBDoctorOutput.Message("------------");
+                }
+            }
+            foreach (var childItem in level.GetItems<SDTItem>())
+            {   
+                if(childItem.IsCollection)
+                {
+                    string XmlSerializationProperty = childItem.GetPropertyValue("idXmlInclude").ToString();
+                    if (XmlSerializationProperty.ToLower() != "idXmlIncludeNotNull")
+                    {
+                        childItem.SetPropertyValue("idXmlInclude", "idXmlIncludeNotNull");
+                        KBDoctorOutput.Message("Objeto: " + childItem.FullName);
+                        KBDoctorOutput.Message("Tiene valor: " + XmlSerializationProperty);
+                        KBDoctorOutput.Message("------------");
+                    }
+                }
+            }
+            foreach (var childLevel in level.GetItems<SDTLevel>())
+            {
+                ChangeSDTSerializationStructure(model, childLevel, "");
+            }
+        }
+
+
+                private static void ListStructure(KBModel model, SDTLevel level, string prev_levelname)
         {
 
             //KBDoctorOutput.Message(", collection: " + );
@@ -3052,6 +3097,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             if (childItem.IsCollection)
                             {
                                 KBDoctorOutput.Message("//TO-DO: Run this proc on the SDT associated with " + childItem.FullName + " and add that variable to the following line:");
+
                                 KBDoctorOutput.Message("//&" + namevariable + "." + childItem.Name + ".add({Name_Variable:" + childItem.FullName + "})");
                             }
                             else

@@ -606,7 +606,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             foreach (KBObject obj in objs)
             {
-                Objects.ListSDT(obj);
+                //CHANGED FOR TEST
+                //Objects.ListSDT(obj);
+                Objects.ChangeSDTSerialization(obj);
             }
         }
 
