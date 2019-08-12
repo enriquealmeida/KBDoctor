@@ -1456,7 +1456,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                         modu = (Module)obj;
             }
 
-            if (modu.Name == "")
+            if (modu.Name == null )
         
             {
                 Random rnd = new Random();
