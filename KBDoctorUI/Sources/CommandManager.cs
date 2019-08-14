@@ -36,7 +36,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.AttVarcharToChar, new ExecHandler(ExecAttVarcharToChar), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AttKeyVarchar, new ExecHandler(ExecAttKeyVarchar), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AttDescWithoutUniqueIndex, new ExecHandler(ExecAttDescWithoutUniqueIndex), new QueryHandler(QueryKBDoctor));
-        //    AddCommand(CommandKeys.AttNotReferenced, new ExecHandler(ExecAttNotReferenced), new QueryHandler(QueryKBDoctor));
+            //    AddCommand(CommandKeys.AttNotReferenced, new ExecHandler(ExecAttNotReferenced), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AttWithoutBaseTable, new ExecHandler(ExecAttWithoutBaseTable), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AttInOneTrnOnly, new ExecHandler(ExecAttInOneTrnOnly), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AttFormula, new ExecHandler(ExecAttFormula), new QueryHandler(QueryKBDoctor));
@@ -104,7 +104,7 @@ namespace Concepto.Packages.KBDoctor
 
             AddCommand(CommandKeys.ChangeCommitOnExit, new ExecHandler(ExecChangeCommitOnExit), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.TreeCommit, new ExecHandler(ExecTreeCommit), new QueryHandler(QueryKBDoctor));
-            
+
             AddCommand(CommandKeys.ObjectsLegacyCode, new ExecHandler(ExecObjectsLegacyCode), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ChangeLegacyCode, new ExecHandler(ExecChangeLegacyCode), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.EditLegacyCodeToReplace, new ExecHandler(ExecEditLegacyCodeToReplace), new QueryHandler(QueryKBDoctor));
@@ -114,7 +114,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.CountTableAccess, new ExecHandler(ExecCountTableAccess), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ObjectsWithConstants, new ExecHandler(ExecObjectsWithConstants), new QueryHandler(QueryKBDoctor));
-           
+
             AddCommand(CommandKeys.FixVariablesNotBasedInAttributesOrDomain, new ExecHandler(ExecFixVariablesNotBasedInAttributesOrDomain), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.KBInterfaces, new ExecHandler(ExecKBInterfaces), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWINWEB, new ExecHandler(ExecObjectsWINWEB), new QueryHandler(QueryKBDoctor));
@@ -147,6 +147,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.OpenFolderObjComparerNavigation, new ExecHandler(ExecOpenFolderObjComparerNavigation), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CompareLastNVGDirectory, new ExecHandler(ExecCompareLastNVGDirectory), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CompareLastOBJDirectory, new ExecHandler(ExecCompareLastOBJDirectory), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.AttributeAsOutput, new ExecHandler(ExecAttributeAsOutput), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ListLastReports, new ExecHandler(ExecListLastReports), new QueryHandler(QueryKBDoctor));
 
@@ -173,7 +174,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.MarkPublicObjects, new ExecHandler(ExecMarkPublicObjects), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListModules, new ExecHandler(ExecListModules), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListModulesStatistics, new ExecHandler(ExecListModulesStatistics), new QueryHandler(QueryKBDoctor));
-           
+
             AddCommand(CommandKeys.MoveTransactions, new ExecHandler(ExecMoveTransactions), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ModuleDependencies, new ExecHandler(ExecModuleDependencies), new QueryHandler(QueryKBDoctor));
 
@@ -196,7 +197,7 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
-       
+
         #region Atributos
 
         public bool ExecAttWithoutDescription(CommandData cmdData)
@@ -271,12 +272,12 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
-      /*  public bool ExecAttNotReferenced(CommandData cmdData)
-        {
-            // Seria listar los atributos que no son referenciado por ningun programa alcanzable. Abrir los programas que lo referencian y poder borrarlos
-            MessageBox.Show("Attributes not referenced by any reachable object not implemented yet");
-            return true;
-        }*/
+        /*  public bool ExecAttNotReferenced(CommandData cmdData)
+          {
+              // Seria listar los atributos que no son referenciado por ningun programa alcanzable. Abrir los programas que lo referencian y poder borrarlos
+              MessageBox.Show("Attributes not referenced by any reachable object not implemented yet");
+              return true;
+          }*/
 
         public bool ExecAttWithoutBaseTable(CommandData cmdData)
         {
@@ -426,7 +427,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
             Thread t = new Thread(new ThreadStart(TablesHelper.GenterateSimpleTransactionFromNotGeneratedTransaction));
-             t.Start();
+            t.Start();
             return true;
         }
 
@@ -599,7 +600,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ParametersTypeComparer()
         {
-            
+
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
@@ -614,7 +615,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs, out int cant)
         {
-            cant = 0;  
+            cant = 0;
             KBDoctorOutput.StartSection("KBDoctor - Parameters Type Comparer");
             string recommendations = "";
             API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs, ref recommendations, out cant);
@@ -695,9 +696,9 @@ namespace Concepto.Packages.KBDoctor
                 Dictionary<string, List<string[]>> review_by_user;
                 success = API.ReivewCommits(UIServices.KB.CurrentKB, revisions_list, out review_by_user);
 
-                
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 success = false;
                 error_message = e.Message;
@@ -713,6 +714,7 @@ namespace Concepto.Packages.KBDoctor
             ForEachsWithoutWhenNone();
             return true;
         }
+
 
 
         private static void EmptyConditionalBlock()
@@ -867,7 +869,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             KBModel kbModel = kbserv.CurrentModel;
 
-            
+
 
             string title = "KBDoctor - Review Objects";
             try
@@ -875,7 +877,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Problems" , "Technical debt (min)" });
+                writer.AddTableHeader(new string[] { "Object", "Problems", "Technical debt (min)" });
 
                 List<KBObject> selectedObjects = new List<KBObject>();
 
@@ -922,6 +924,26 @@ namespace Concepto.Packages.KBDoctor
             Thread thread = new Thread(() => ReviewObject(cmdData));
             thread.Start();
             return true;
+        }
+
+        public bool ExecAttributeAsOutput(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            string title = "KBDoctor - Get Objects With Attribute/Domain as Output";
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Attribute>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Domain>());
+            selectObjectOption.MultipleSelection = true;
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            Thread thread = new Thread(() => AttributeAsOutput(objs));
+            thread.Start();
+            return true;
+        }
+
+        private static void AttributeAsOutput(List<KBObject> objs)
+        {
+            API.AttributeAsOutput(UIServices.KB.CurrentKB, objs);
         }
 
         public bool ExecGenerateSDTDataLoad(CommandData cmdData)

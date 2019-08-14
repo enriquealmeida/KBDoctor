@@ -612,6 +612,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+        public static void AttributeAsOutput(KnowledgeBase KB, List<KBObject> objs)
+        {
+            KBDoctorOutput.StartSection("KBDoctor - Get Objects With Attribute/Domain as Output");
+            foreach (KBObject obj in objs)
+            {
+                Objects.AttributeAsOutput(KB, obj);
+            }
+            KBDoctorOutput.EndSection("KBDoctor - Get Objects With Attribute/Domain as Output");
+        }
+
 
 #if EVO3
         public class Tuple<T1, T2>

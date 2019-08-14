@@ -29,6 +29,7 @@ using Artech.Genexus.Common.Types;
 //using Artech.Common.Language.Parser;
 using Artech.Architecture.Language.Parser.Objects;
 using System.Xml;
+using Attribute = Artech.Genexus.Common.Objects.Attribute;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -3514,6 +3515,82 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             string finalInt = aux;
             return finalInt;
+        }
+
+        internal static void AttributeAsOutput(KnowledgeBase KB, KBObject obj)
+        {
+            foreach (EntityReference reference in obj.GetReferencesTo())
+            {
+                KBObject objRef = KBObject.Get(KB.DesignModel, reference.From);
+                if(objRef is Procedure)
+                {
+                    Procedure proc = (Procedure)objRef;
+                    ICallableObject callableObject = proc as ICallableObject;
+                    if (callableObject != null)
+                    {
+                        foreach (Signature signature in callableObject.GetSignatures())
+                        {
+                            foreach (Parameter parm in signature.Parameters)
+                            {
+                                string accessor = parm.Accessor.ToString();
+                                if (accessor == "PARM_OUT" || accessor == "PARM_INOUT")
+                                { 
+                                    if(obj is Attribute)
+                                    {
+                                        if (parm.IsAttribute)
+                                        {
+                                            Attribute att_obj = (Attribute)parm.Object;
+                                            if (att_obj.QualifiedName.ToString() == obj.QualifiedName.ToString())
+                                            {
+                                                KBDoctorOutput.Message(proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Variable var_obj = (Variable)parm.Object;
+                                            if(var_obj.AttributeBasedOn != null)
+                                            { 
+                                                if(var_obj.AttributeBasedOn.QualifiedName.ToString() == ((Attribute)obj).QualifiedName.ToString())
+                                                {
+                                                    KBDoctorOutput.Message(proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if(obj is Domain)
+                                    { 
+                                        if(parm.IsAttribute)
+                                        {
+                                            Attribute att_obj = (Attribute)parm.Object;
+                                            if(att_obj.DomainBasedOn != null)
+                                            {
+                                                if (att_obj.DomainBasedOn.QualifiedName.ToString() == ((Domain)obj).QualifiedName.ToString())
+                                                {
+                                                    KBDoctorOutput.Message(proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Variable var_obj = (Variable)parm.Object;
+                                            if (var_obj.DomainBasedOn != null) { 
+                                                if (var_obj.DomainBasedOn.QualifiedName.ToString() == ((Domain)obj).QualifiedName.ToString())
+                                                {
+                                                    KBDoctorOutput.Message(proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 #if EVO3

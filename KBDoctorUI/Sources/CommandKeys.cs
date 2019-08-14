@@ -143,6 +143,8 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey removableTransactions = new CommandKey(Package.guid, "RemovableTransactions");
         private static CommandKey generateSQLScripts  = new CommandKey(Package.guid, "GenerateSQLScripts");
         private static CommandKey generateDPfromTable  = new CommandKey(Package.guid, "GenerateDPfromTable");
+        private static CommandKey attributeAsOutput = new CommandKey(Package.guid, "AttributeAsOutput");
+        
 
         private static CommandKey generateGraph = new CommandKey(Package.guid, "GenerateGraph");
         private static CommandKey themeClassesNotUsed = new CommandKey(Package.guid, "ThemeClassesNotUsed");
@@ -198,7 +200,8 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey RemovableTransactions { get { return removableTransactions; } }
         public static CommandKey GenerateSQLScripts { get { return generateSQLScripts; } }
         public static CommandKey GenerateDPfromTable { get { return generateDPfromTable; } }
-
+        public static CommandKey AttributeAsOutput { get { return attributeAsOutput; } }
+        
         public static CommandKey GenerateGraph { get { return generateGraph; } }
         public static CommandKey ThemeClassesNotUsed { get { return themeClassesNotUsed; } }
         public static CommandKey ParameterTypeComparer { get { return parameterTypeComparer; } }

@@ -95,6 +95,7 @@
     <CommandDefinition id="ReviewObjects" image="Red_Cross" imageType="ico" />
     <CommandDefinition id="ReviewModuleOrFolder" context="selection" image="Red_Cross" imageType="ico" />
     <CommandDefinition id="EditReviewObjects" /> 
+    <CommandDefinition id="AttributeAsOutput" /> 
     <!-- Acciones sobre atributos -->
     <CommandDefinition id="AssignDomainToAttribute" />
     <CommandDefinition id="AssignDeionToAttribute" />
@@ -342,6 +343,7 @@
               <Command refid="SDTsWithDateInWS" />
               <Command refid="GenerateSDTDataLoad" />
               <Command refid="GenerateDPfromTable"/>
+              <Command refid="AttributeAsOutput"/>
 
                 <Popup name ="Themes" >
                   <Group>

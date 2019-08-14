@@ -445,4 +445,7 @@
   <data name="DetectMaverics" xml:space="preserve">
     <value>Objects difficult to modularize</value>
   </data>
+  <data name="AttributeAsOutput" xml:space="preserve">
+    <value>Objects With Attribute/Domain as Output</value>
+  </data>
 </root>
