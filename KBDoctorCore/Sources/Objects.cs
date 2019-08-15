@@ -3596,7 +3596,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         private static void ShowOutputAttributeMessages(KBObject obj, Procedure proc)
         {
             string parm_rule = Utility.ExtractRuleParm(proc);
-            KBDoctorOutput.Message(proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+            KBDoctorOutput.Message("Procedure " + proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+            KBDoctorOutput.Message("Description: " + proc.Description);
             OutputError oe = new OutputError(parm_rule, MessageLevel.Information, new SourcePosition(proc.Parts.Get<RulesPart>(), 1, 0));
             KBDoctorOutput.OutputError(oe);
             KBDoctorOutput.Message("");
