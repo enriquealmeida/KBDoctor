@@ -3542,7 +3542,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                             Attribute att_obj = (Attribute)parm.Object;
                                             if (att_obj.QualifiedName.ToString() == obj.QualifiedName.ToString())
                                             {
-                                                KBDoctorOutput.Message(proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+                                                ShowOutputAttributeMessages(obj, proc);
                                                 break;
                                             }
                                         }
@@ -3553,7 +3553,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                             { 
                                                 if(var_obj.AttributeBasedOn.QualifiedName.ToString() == ((Attribute)obj).QualifiedName.ToString())
                                                 {
-                                                    KBDoctorOutput.Message(proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+                                                    ShowOutputAttributeMessages(obj, proc);
                                                     break;
                                                 }
                                             }
@@ -3568,7 +3568,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                             {
                                                 if (att_obj.DomainBasedOn.QualifiedName.ToString() == ((Domain)obj).QualifiedName.ToString())
                                                 {
-                                                    KBDoctorOutput.Message(proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+                                                    ShowOutputAttributeMessages(obj, proc);
                                                     break;
                                                 }
                                             }
@@ -3579,7 +3579,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                             if (var_obj.DomainBasedOn != null) { 
                                                 if (var_obj.DomainBasedOn.QualifiedName.ToString() == ((Domain)obj).QualifiedName.ToString())
                                                 {
-                                                    KBDoctorOutput.Message(proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+                                                    ShowOutputAttributeMessages(obj, proc);
                                                     break;
                                                 }
                                             }
@@ -3591,6 +3591,15 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                 }
             }
+        }
+
+        private static void ShowOutputAttributeMessages(KBObject obj, Procedure proc)
+        {
+            string parm_rule = Utility.ExtractRuleParm(proc);
+            KBDoctorOutput.Message(proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
+            OutputError oe = new OutputError(parm_rule, MessageLevel.Information, new SourcePosition(proc.Parts.Get<RulesPart>(), 1, 0));
+            KBDoctorOutput.OutputError(oe);
+            KBDoctorOutput.Message("");
         }
 
 #if EVO3
