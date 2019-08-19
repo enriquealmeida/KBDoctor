@@ -936,14 +936,29 @@ namespace Concepto.Packages.KBDoctor
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Domain>());
             selectObjectOption.MultipleSelection = true;
             List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
-            Thread thread = new Thread(() => AttributeAsOutput(objs));
+            Thread thread = new Thread(() => AttributeAsOutput(objs, title));
             thread.Start();
             return true;
         }
 
-        private static void AttributeAsOutput(List<KBObject> objs)
+        private static void AttributeAsOutput(List<KBObject> objs, string title)
         {
-            API.AttributeAsOutput(UIServices.KB.CurrentKB, objs);
+            string outputFile = Functions.CreateOutputFile(UIServices.KB, title);
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Description", "Parm Rule" });
+            List<string[]> output_list;
+            API.AttributeAsOutput(UIServices.KB.CurrentKB, objs, out output_list);
+
+            foreach (string[] line in output_list)
+            {
+                writer.AddTableData(line);
+            }
+            writer.AddFooter();
+            writer.Close();
+
+            //KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
         }
 
         public bool ExecGenerateSDTDataLoad(CommandData cmdData)
@@ -1028,6 +1043,7 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddTableData(new string[] { "Technical debt (min) Total:", "", cantSum.ToString() });
                 writer.AddFooter();
                 writer.Close();
+
                 bool success = true;
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);

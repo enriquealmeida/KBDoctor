@@ -3517,8 +3517,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return finalInt;
         }
 
-        internal static void AttributeAsOutput(KnowledgeBase KB, KBObject obj)
+        internal static void AttributeAsOutput(KnowledgeBase KB, KBObject obj, out List<string[]> output_list)
         {
+            output_list = new List<string[]>();
             foreach (EntityReference reference in obj.GetReferencesTo())
             {
                 KBObject objRef = KBObject.Get(KB.DesignModel, reference.From);
@@ -3542,7 +3543,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                             Attribute att_obj = (Attribute)parm.Object;
                                             if (att_obj.QualifiedName.ToString() == obj.QualifiedName.ToString())
                                             {
-                                                ShowOutputAttributeMessages(obj, proc);
+                                                ShowOutputAttributeMessages(obj, proc, ref output_list);
                                                 break;
                                             }
                                         }
@@ -3553,7 +3554,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                             { 
                                                 if(var_obj.AttributeBasedOn.QualifiedName.ToString() == ((Attribute)obj).QualifiedName.ToString())
                                                 {
-                                                    ShowOutputAttributeMessages(obj, proc);
+                                                    ShowOutputAttributeMessages(obj, proc, ref output_list);
                                                     break;
                                                 }
                                             }
@@ -3568,7 +3569,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                             {
                                                 if (att_obj.DomainBasedOn.QualifiedName.ToString() == ((Domain)obj).QualifiedName.ToString())
                                                 {
-                                                    ShowOutputAttributeMessages(obj, proc);
+                                                    ShowOutputAttributeMessages(obj, proc, ref output_list);
                                                     break;
                                                 }
                                             }
@@ -3579,7 +3580,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                             if (var_obj.DomainBasedOn != null) { 
                                                 if (var_obj.DomainBasedOn.QualifiedName.ToString() == ((Domain)obj).QualifiedName.ToString())
                                                 {
-                                                    ShowOutputAttributeMessages(obj, proc);
+                                                    ShowOutputAttributeMessages(obj, proc, ref output_list);
                                                     break;
                                                 }
                                             }
@@ -3593,14 +3594,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        private static void ShowOutputAttributeMessages(KBObject obj, Procedure proc)
+        private static void ShowOutputAttributeMessages(KBObject obj, Procedure proc, ref List<string[]> output_list)
         {
+            
             string parm_rule = Utility.ExtractRuleParm(proc);
-            KBDoctorOutput.Message("Procedure " + proc.QualifiedName.ToString() + " has output " + obj.QualifiedName.ToString());
-            KBDoctorOutput.Message("Description: " + proc.Description);
+            KBDoctorOutput.Message("PROCEDURE:     " + proc.Name.ToString());
+            KBDoctorOutput.Message("DESCRIPTION:   " + proc.Description);
             OutputError oe = new OutputError(parm_rule, MessageLevel.Information, new SourcePosition(proc.Parts.Get<RulesPart>(), 1, 0));
             KBDoctorOutput.OutputError(oe);
-            KBDoctorOutput.Message("");
+            KBDoctorOutput.Message(" ----------------------------------------------- ");
+            string[] line = new string[] { Utility.linkObject(proc), proc.Description, parm_rule };
+            output_list.Add(line);
         }
 
 #if EVO3

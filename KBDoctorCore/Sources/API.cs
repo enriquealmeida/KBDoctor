@@ -612,12 +612,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        public static void AttributeAsOutput(KnowledgeBase KB, List<KBObject> objs)
+        public static void AttributeAsOutput(KnowledgeBase KB, List<KBObject> objs, out List<string[]> output_list)
         {
             KBDoctorOutput.StartSection("KBDoctor - Get Objects With Attribute/Domain as Output");
+            output_list = new List<string[]>();
             foreach (KBObject obj in objs)
             {
-                Objects.AttributeAsOutput(KB, obj);
+                Objects.AttributeAsOutput(KB, obj, out output_list);
             }
             KBDoctorOutput.EndSection("KBDoctor - Get Objects With Attribute/Domain as Output");
         }
