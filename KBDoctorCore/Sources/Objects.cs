@@ -30,6 +30,7 @@ using Artech.Genexus.Common.Types;
 using Artech.Architecture.Language.Parser.Objects;
 using System.Xml;
 using Attribute = Artech.Genexus.Common.Objects.Attribute;
+using System.IO;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -3605,6 +3606,94 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             KBDoctorOutput.Message(" ----------------------------------------------- ");
             string[] line = new string[] { Utility.linkObject(proc), proc.Description, parm_rule };
             output_list.Add(line);
+        }
+
+        internal static void CheckBldObjects(KnowledgeBase KB, Dictionary<string, KBObject> hash_mains)
+        {
+            string KBLocation = KB.Location;
+            string targetPath = KB.DesignModel.Environment.TargetModel.TargetPath;
+            string blddirectorypath = KBLocation + @"\" + targetPath + @"\web";
+            string[] bldspaths = Directory.GetFiles(blddirectorypath, "bld*.cs", SearchOption.TopDirectoryOnly);
+            foreach(string bldpath in bldspaths)
+            {
+                BldObjectInKB(KB, bldpath, hash_mains);
+            }
+        }
+
+        private static void BldObjectInKB(KnowledgeBase KB, string bldpath, Dictionary<string, KBObject> hash_mains)
+        {
+            string filename = Path.GetFileName(bldpath);
+            string parsedname = filename.Substring(3);
+            parsedname = parsedname.Substring(0, parsedname.Length - 3);
+
+            string module = "";
+            string name = "";
+            string name_alt = "";
+
+            if (parsedname.Contains("-"))
+            {
+                string[] splits = parsedname.Split('-');
+               
+                bool first = true;
+                foreach(string split in splits)
+                {
+                    if(first)
+                    {
+                        name = split;
+                        first = false;
+                    }
+                    else
+                    {
+                        module += name + ".";
+                        name = split;
+                    }
+                }
+            }
+            else
+            {
+                 name = parsedname;
+            }
+            if (name.StartsWith("a"))
+            {
+                name_alt = name.Substring(1);
+            }
+            if(module.EndsWith("."))
+            {
+                module = module.Substring(0, module.Length - 1);
+            }
+
+            QualifiedName qname = new QualifiedName(module, name);
+            KBObject obj = Utility.GetObjectByQName(KB.DesignModel, qname, hash_mains);
+
+            qname = new QualifiedName(module, name_alt);
+            KBObject obj_alt = Utility.GetObjectByQName(KB.DesignModel, qname, hash_mains);
+
+            if (obj == null)
+            {
+                if (obj_alt == null)
+                {
+                    if(module != "")
+                    {
+                        KBDoctorOutput.Warning("Object " + module + "." + name + " doesn't exists");
+                    }
+                    else
+                    {
+                        KBDoctorOutput.Warning("Object " + name + " doesn't exists");
+                    }
+                    
+                }
+            }
+        }
+
+        internal static Dictionary<string, KBObject> GetHashMainObjectsQNames(KBModel model)
+        {
+            Dictionary<string, KBObject> hash_ret = new Dictionary<string, KBObject>();
+            KBCategory mainCategory = Utility.MainCategory(model);
+            foreach (KBObject obj in mainCategory.AllMembers)
+            {
+                hash_ret.Add(obj.QualifiedName.ToString().ToLower(), obj);             
+            }
+            return hash_ret;
         }
 
 #if EVO3

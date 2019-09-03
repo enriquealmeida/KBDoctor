@@ -124,6 +124,7 @@
     <CommandDefinition id="GenerateRESTCalls" />
     <CommandDefinition id="SDTsWithDateInWS" />
     <CommandDefinition id="GenerateSDTDataLoad" />
+    <CommandDefinition id="CheckBldObjects"/>
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
     <CommandDefinition id="CountGeneratedByPattern" />
@@ -344,8 +345,9 @@
               <Command refid="GenerateSDTDataLoad" />
               <Command refid="GenerateDPfromTable"/>
               <Command refid="AttributeAsOutput"/>
+              <Command refid="CheckBldObjects"/>
 
-                <Popup name ="Themes" >
+              <Popup name ="Themes" >
                   <Group>
                     <Command refid="ClassNotInTheme" />
                     <Command refid="ClassUsed" />

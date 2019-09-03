@@ -10,4 +10,5 @@
   <UsingTask TaskName="KBDoctorCmd.ObjectsWithoutInOutCmd" AssemblyFile="KBDoctorCmd.dll"/>
   <UsingTask TaskName="KBDoctorCmd.ReviewObjectsCmd" AssemblyFile="KBDoctorCmd.dll"/>
   <UsingTask TaskName="KBDoctorCmd.ReviewCommitCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.CheckBldObjectsCmd" AssemblyFile="KBDoctorCmd.dll"/>
 </Project>

@@ -88,5 +88,11 @@
     <ReviewCommitCmd  DateFrom="$(DateFrom)" DateTo="$(DateTo)" ServerUser="$(ServerUser)" ServerPassword="$(ServerPassword)"/> 
     <CloseKnowledgeBase />
   </Target>
+  
+   <Target  Name="CheckBldObjects">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <CheckBldObjectsCmd/>
+    <CloseKnowledgeBase />
+  </Target>
 </Project>
 

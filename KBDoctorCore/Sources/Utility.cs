@@ -690,10 +690,34 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             foreach (KBObject obj in model.Objects.GetByPropertyValue("Name", name))
             {
-                if(obj.Module.Name != null)
+                if (obj.Module.Name != null)
+                {
                     if (obj.Module.Name.ToLower() == module.ToLower())
                         return obj;
+                }
             }
+            return null;
+        }
+
+        public static KBObject GetObjectByQName(KBModel model, QualifiedName qname, Dictionary<string, KBObject> hash_mains)
+        {
+            foreach (KBObject obj in model.Objects.GetByPropertyValue("Name", qname.ObjectName))
+            {
+                if(obj.Name.ToLower() == qname.ObjectName.ToLower())
+                {
+                    if (obj.Module.Name != null)
+                    {
+                        if (obj.QualifiedName.ModuleName.ToLower() == qname.ModuleName.ToLower())
+                            return obj;
+                    }
+                }
+            }
+
+            if (hash_mains.ContainsKey(qname.ToString().ToLower()))
+            {
+                return hash_mains[qname.ToString().ToLower()];
+            }
+
             return null;
         }
 
