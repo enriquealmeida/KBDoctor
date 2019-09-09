@@ -426,16 +426,17 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain", "Subtype", "Title", "Column Title", "Contextual", "IsFormula" });
+                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain", "ControlType", "Subtype", "Title", "Column Title", "Contextual", "IsFormula" });
 
                 foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
                 {
                     string Picture = Utility.FormattedTypeAttribute(a);
                     string domlink = a.DomainBasedOn == null ? " " : Functions.linkObject(a.DomainBasedOn);
                     string superTypeName = a.SuperTypeKey == null ? " " : a.SuperType.Name;
+                    string controlType = a.GetPropertyValueString("ControlType");
                     KBDoctorOutput.Message( "Procesing " + a.Name);
                     string isFormula = a.Formula == null ? "" : "*";
-                    writer.AddTableData(new string[] { Functions.linkObject(a), a.Description, Picture, domlink, superTypeName, a.Title, a.ColumnTitle, a.ContextualTitleProperty, isFormula });
+                    writer.AddTableData(new string[] { Functions.linkObject(a), a.Description, Picture, domlink, controlType, superTypeName, a.Title, a.ColumnTitle, a.ContextualTitleProperty, isFormula });
                 }
 
                 writer.AddFooter();
@@ -515,7 +516,6 @@ namespace Concepto.Packages.KBDoctor
                 string tabla = "";
                 string atributo = "";
                 string add = "";
-
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -1041,8 +1041,71 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
-    }
+   
 
+    public static void ListAtttributes2()
+    {
+        IKBService kbserv = UIServices.KB;
+        Dictionary<string, string> myDict = new Dictionary<string, string>();
+
+        string title = "KBDoctor - Attributes without domain";
+        try
+        {
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            output.StartSection("KBDoctor", title);
+
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Suggested Domains" });
+            int cantAtt = 0;
+            foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
+            {
+                string Picture = Utility.FormattedTypeAttribute(a);
+                bool isSubtype = Functions.AttIsSubtype(a);
+                if ((a.DomainBasedOn == null) && !isSubtype && a.Type != eDBType.BINARY && a.Type != eDBType.Boolean && a.Length < 100)
+                {
+                    // search for domains with the same data type
+                    KBDoctorOutput.Message("Procesing " + a.Name);
+                    string suggestedDomains = "";
+                    string value = "";
+
+                    //busco el 
+                    if (myDict.TryGetValue(Picture, out value))
+                    {
+                        suggestedDomains = value;
+                    }
+                    else
+                    {
+                       // suggestedDomains = SuggestedDomains(kbserv, a);
+                        myDict.Add(Picture, suggestedDomains);
+                    }
+                    cantAtt += 1;
+                    string attNameLink = Functions.linkObject(a); // "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + a.Guid.ToString() + "\">" + a.Name + "</a>";
+                    writer.AddTableData(new string[] { attNameLink, a.Description, Picture, suggestedDomains });
+                }
+            }
+
+            writer.AddFooter();
+            writer.Close();
+
+            KBDoctorOutput.Warning(cantAtt.ToString() + " attributes without domain");
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            bool success = true;
+            KBDoctor.KBDoctorOutput.EndSection(title, success);
+        }
+        catch (Exception e)
+        {
+            bool success = false;
+            KBDoctor.KBDoctorOutput.Error(e.Message);
+            KBDoctor.KBDoctorOutput.Error(e.InnerException.ToString());
+            KBDoctor.KBDoctorOutput.EndSection(title, success);
+        }
+    }
+    }
 
 
 }

@@ -254,8 +254,8 @@ namespace Concepto.Packages.KBDoctor
             //Cargo todas las transacciones y sus tablas generadas
             foreach (Table tbl in Table.GetAll(model))
             {
-                    int weight = ReferenceWeight(tbl.BestAssociatedTransaction, tbl);
-                    AgregoArista(aristas, NombreNodoMinimized(tbl.BestAssociatedTransaction), NombreNodoMinimized(tbl), weight);
+                 //   int weight = ReferenceWeight(tbl.BestAssociatedTransaction, tbl);
+                 //   AgregoArista(aristas, NombreNodoMinimized(tbl.BestAssociatedTransaction), NombreNodoMinimized(tbl), weight);
             }
           
 
@@ -850,7 +850,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     if (obj is Table t)
                     {
-                        objName = NombreNodo(t.BestAssociatedTransaction);
+                     //   objName = NombreNodo(t.BestAssociatedTransaction);
                     }
                 }
                     
