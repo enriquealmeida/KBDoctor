@@ -623,7 +623,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             KBDoctorOutput.EndSection("KBDoctor - Get Objects With Attribute/Domain as Output");
         }
 
-
+        public static void CheckBldObjects(KnowledgeBase KB)
+        {
+            KBDoctorOutput.StartSection("KBDoctor - Check bld objects in KB");
+            Dictionary<string, KBObject> hash_mains = Objects.GetHashMainObjectsQNames(KB.DesignModel);
+            Objects.CheckBldObjects(KB, hash_mains);
+            KBDoctorOutput.EndSection("KBDoctor - Check bld objects in KB");
+        }
 #if EVO3
         public class Tuple<T1, T2>
         {

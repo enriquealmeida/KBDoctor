@@ -85,6 +85,7 @@
     <Compile Include="RemoveAttributesWithoutTableCmd.cs" />
     <Compile Include="RemoveObjectsNotReferencedCmd.cs" />
     <Compile Include="CompareWSDLCmd.cs" />
+    <Compile Include="CheckBldObjectsCmd.cs" />
     <Compile Include="UpdateSourceObjectsWSDLCmd.cs" />
     <Compile Include="SaveObjectsWSDLCmd.cs" />
   </ItemGroup>

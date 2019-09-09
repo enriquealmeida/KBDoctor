@@ -25,7 +25,7 @@ namespace Concepto.Packages.KBDoctor
     {
         public static void GenerateGraph()
         {
-         
+
 
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Generate Graph ";
@@ -72,7 +72,7 @@ namespace Concepto.Packages.KBDoctor
             Check = "KB Table Graph";
             Name = Functions.CleanFileName(Check);
             FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
-            GenerateKBTableGraph(Name, FileName); 
+            GenerateKBTableGraph(Name, FileName);
             writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
             */
             /*
@@ -123,7 +123,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (KBObject obj in model.Objects.GetAll())
             {
-                string objName = obj.Name; 
+                string objName = obj.Name;
                 string nombrenodo = NombreNodoMinimized(obj);
                 string mdlObjName = ModulesHelper.ObjectModuleName(obj);
 
@@ -148,9 +148,9 @@ namespace Concepto.Packages.KBDoctor
             {
                 string modulename = mdl;
                 string nodos = "";
-             
+
                 string vacioOcoma = " ";
-                
+
                 foreach (string objname in dic[mdl])
                 {
                     nodos += vacioOcoma + objname;
@@ -209,7 +209,7 @@ namespace Concepto.Packages.KBDoctor
             nodesFiles.Close();
 
             StreamWriter scriptFile = new StreamWriter(fileName);
-      
+
             foreach (string arista in aristas.Keys)
             {
                 scriptFile.WriteLine(arista + " " + aristas[arista]);
@@ -254,10 +254,10 @@ namespace Concepto.Packages.KBDoctor
             //Cargo todas las transacciones y sus tablas generadas
             foreach (Table tbl in Table.GetAll(model))
             {
-                 //   int weight = ReferenceWeight(tbl.BestAssociatedTransaction, tbl);
-                 //   AgregoArista(aristas, NombreNodoMinimized(tbl.BestAssociatedTransaction), NombreNodoMinimized(tbl), weight);
+                    //int weight = ReferenceWeight(tbl.BestAssociatedTransaction, tbl);
+                    //AgregoArista(aristas, NombreNodoMinimized(tbl.BestAssociatedTransaction), NombreNodoMinimized(tbl), weight);
             }
-          
+
 
             StreamWriter scriptFile = new StreamWriter(fileName);
 
@@ -282,7 +282,7 @@ namespace Concepto.Packages.KBDoctor
 
         public static bool IncludedInGraph(KBObject objRef)
         {
-            return (Functions.isRunable(objRef) && ObjectsHelper.isGenerated(objRef)) || 
+            return (Functions.isRunable(objRef) && ObjectsHelper.isGenerated(objRef)) ||
                 (objRef is Table) || (objRef is SDT) || (objRef is ExternalObject) || (objRef is Transaction);
         }
 
@@ -310,7 +310,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     weight = 13;
                 }
-               
+
 
             return weight;
         }
@@ -329,15 +329,15 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (KBObject obj in listObjNode)
                 {
-                   
-                if (!visited.Contains(obj)) 
+
+                if (!visited.Contains(obj))
                     {
                         i += 1;
                         visited.Add(obj);
                         IOutputService output = CommonServices.Output;
                         KBDoctorOutput.Message("");
                         output.AddWarningLine("START Componente conexo " + i.ToString());
-                        
+
                         ComponenteConexo(obj, visited);
 
                         output.AddWarningLine("FIN Componente conexo " + i.ToString());
@@ -359,7 +359,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ComponenteConexo(KBObject obj, KBObjectCollection visited)
         {
-           
+
             foreach (EntityReference r in obj.GetReferencesTo())
             {
                 KBObject objRef = KBObject.Get(obj.Model, r.From);
@@ -384,7 +384,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     visited.Add(objRef);
                     ComponenteConexo(objRef, visited);
-                    
+
                 }
             }
         }
@@ -448,7 +448,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             StringCollection aristas = new StringCollection();
             KBDoctorOutput.Message("Generating " + name);
-           
+
             scriptFile.WriteLine("      </edges>");
             scriptFile.WriteLine("  </graph>");
             scriptFile.WriteLine("</gexf>");
@@ -478,7 +478,7 @@ namespace Concepto.Packages.KBDoctor
             StringCollection nodos = new StringCollection();
             foreach (KBObject obj in model.Objects.GetAll())
             {
-                
+
                 if ((Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj) ) || (obj is Table ))
                 {
 
@@ -637,11 +637,11 @@ namespace Concepto.Packages.KBDoctor
                         IdToKey.Add(objId, obj.Key);
                     }
                     catch (Exception e)
-                    {// output.AddWarningLine("Can't add : " + objName + " Exception: " + e.Message + " " + e.InnerException);                   
+                    {// output.AddWarningLine("Can't add : " + objName + " Exception: " + e.Message + " " + e.InnerException);
                     };
                 }
             }
- 
+
 
             foreach (KBObject obj in model.Objects.GetAll())
             {
@@ -663,11 +663,11 @@ namespace Concepto.Packages.KBDoctor
                         IdToModule.Add(objId, modulename);
                         IdToKey.Add(objId, obj.Key);
                     }
-                    catch (Exception e) { //output.AddWarningLine("Can't add : " + objName); 
+                    catch (Exception e) { //output.AddWarningLine("Can't add : " + objName);
                     };
                     */
 
-                    //Tomo las referencias que no sean tablas. 
+                    //Tomo las referencias que no sean tablas.
                     foreach (EntityReference r in obj.GetReferencesTo())
                     {
                         KBObject objRef = KBObject.Get(obj.Model, r.From);
@@ -679,13 +679,13 @@ namespace Concepto.Packages.KBDoctor
                             {
                                 int weight = ReferenceWeight(obj,objRef);
                                 String edge = objRefName + " " + objName;
-                               
+
                                 if (!aristas.Contains(edge))
                                 {
                                     aristas.Add(edge);
                                     GraboArista(g, NameToId, objRefName,objName, weight);
                                 }
-                                  
+
                             }
                         }
                     }
@@ -694,10 +694,10 @@ namespace Concepto.Packages.KBDoctor
 
                 }
 
-                
+
             };
 
-           
+
             foreach (int node in g.Nodes)
             {
                 string moduleName = IdToModule[node];
@@ -740,11 +740,11 @@ namespace Concepto.Packages.KBDoctor
                     else
                         modu.Add(pareja, 1);
                 }
-                
+
 
                 var sortedDict = from entry in modu orderby entry.Value descending select entry;
 
-                //Cantidad de modulo nuevo y modulo viejo. 
+                //Cantidad de modulo nuevo y modulo viejo.
                 foreach (KeyValuePair<string, int> entry in sortedDict)
                 {
                     //   KBDoctorOutput.Message(entry.Key + " " + entry.Value.ToString());
@@ -788,10 +788,10 @@ namespace Concepto.Packages.KBDoctor
                 }
                 counter++;
                 modu.Clear();
-                
+
 
             }
-           
+
         }
 
         private static Double TurboMQ(Graph g, Dictionary<int,int> partition)
@@ -819,7 +819,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static string NombreNodo(KBObject obj)
         {
-            string objName = ""; 
+            string objName = "";
             if (obj != null)
             {
                 objName = obj.Name + ":" + obj.TypeDescriptor.Name;
@@ -850,10 +850,10 @@ namespace Concepto.Packages.KBDoctor
                 {
                     if (obj is Table t)
                     {
-                     //   objName = NombreNodo(t.BestAssociatedTransaction);
+                        //objName = NombreNodo(t.BestAssociatedTransaction);
                     }
                 }
-                    
+
             }
             return objName;
         }
@@ -925,6 +925,6 @@ namespace Concepto.Packages.KBDoctor
     }
 
 
-   
+
 
 }

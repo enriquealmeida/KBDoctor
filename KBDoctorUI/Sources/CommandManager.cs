@@ -186,6 +186,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ListAPIObjects, new ExecHandler(ExecListAPIObjects), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.RecomendedModule, new ExecHandler(ExecRecomendedModule), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.CheckBldObjects, new ExecHandler(ExecCheckBldObjects), new QueryHandler(QueryKBDoctor));
+            
             //Modularization
             AddCommand(CommandKeys.ListModularizationQuality, new ExecHandler(ExecListModularizationQuality), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ApplyExternalModularization, new ExecHandler(ExecApplyExternalModularization), new QueryHandler(QueryKBDoctor));
@@ -915,6 +917,19 @@ namespace Concepto.Packages.KBDoctor
             bool success = true;
             KBDoctorOutput.EndSection(title, success);
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
+        }
+
+        public bool ExecCheckBldObjects(CommandData cmdData)
+        {
+            Thread thread = new Thread(() => CheckBldObject());
+            thread.Start();
+
+            return true;
+        }
+
+        private static void CheckBldObject()
+        {
+            API.CheckBldObjects(UIServices.KB.CurrentKB);
         }
 
         public bool ExecReviewObject(CommandData cmdData)

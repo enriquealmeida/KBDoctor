@@ -222,7 +222,8 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey assignDomainToVariable = new CommandKey(Package.guid, "AssignDomainToVariable");
         private static CommandKey assignAttributeToVariable = new CommandKey(Package.guid, "AssignAttributeToVariable");
         private static CommandKey renameAttributesAndTables =  new CommandKey(Package.guid, "RenameAttributesAndTables");
-
+        
+        
 
         public static CommandKey RemoveObject { get { return removeObject; } }
         public static CommandKey OpenObject { get { return openObject; } }
@@ -245,6 +246,9 @@ namespace Concepto.Packages.KBDoctor
 
         private static CommandKey assignTypeComparer = new CommandKey(Package.guid, "AssignTypeComparer");
         public static CommandKey AssignTypeComparer { get { return assignTypeComparer; } }
+
+        private static CommandKey checkBldObjects = new CommandKey(Package.guid, "CheckBldObjects");
+        public static CommandKey CheckBldObjects { get { return checkBldObjects; } }
         //Surgery
         private static CommandKey procedureSDT = new CommandKey(Package.guid, "ProcedureSDT");
         public static CommandKey ProcedureSDT { get { return procedureSDT; } }
