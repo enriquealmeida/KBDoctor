@@ -977,7 +977,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     {
                         HasAttribute = true;
                     }
-
                 }
             }
             return false;
@@ -1029,6 +1028,391 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 return true;
         }
 
+        internal static void VariablesNotBasedOnAttributes(KBModel designModel, KBObject obj, out List<string[]> lineswriter, out int cant_aux)
+        {
+            lineswriter = new List<string[]>();
+            cant_aux = 0;
+            VariablesPart vp = obj.Parts.Get<VariablesPart>();
+            foreach(Variable v in vp.Variables)
+            {
+                if (!v.IsStandard) { 
+                    foreach (KBObject aux in designModel.Objects.GetByPropertyValue("Name", v.Name))
+                    {
+                        if(aux is Attribute)
+                        {
+                            if(v.AttributeBasedOn == null)
+                            {
+                                Attribute att = (Attribute)aux;
+                                string att_domain = (att.DomainBasedOn == null) ? "(No Domain)" : att.DomainBasedOn.Name;
+                                string var_domain = (v.DomainBasedOn == null) ? "(No Domain)" : v.DomainBasedOn.Name;
+                                string var_formtype = Utility.FormattedTypeVariable(v);
+                                string att_formtype = Utility.FormattedTypeAttribute(att);
+                                if (v.DomainBasedOn != null && att.DomainBasedOn != null)
+                                {
+                                    if(v.DomainBasedOn.QualifiedName.ToString().ToLower() != att.DomainBasedOn.QualifiedName.ToString().ToLower())
+                                    {
+                                        if(var_formtype != att_formtype)
+                                        {
+                                            string[] line = new string[] { Utility.linkObject(obj), v.Name, var_formtype, att_formtype, var_domain, att_domain };
+                                            lineswriter.Add(line);
+                                            string msgOutput = "Variable Name: " + v.Name + " Domains(var/att): " + var_domain + "/" + att_domain + " Types(var / att): " + var_formtype + "/" + att_formtype;
+                                            OutputError error = new OutputError(msgOutput, MessageLevel.Warning, new SourcePosition(vp, 1, 1));
+                                            KBDoctorOutput.OutputError(error);
+                                            cant_aux += 1;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (var_formtype != att_formtype)
+                                    {
+                                        string[] line = new string[] { Utility.linkObject(obj), v.Name, var_formtype, att_formtype, var_domain, att_domain };
+                                        lineswriter.Add(line);
+                                        string msgOutput = "Variable Name: " + v.Name + " Domains(var/att): " + var_domain + "/" + att_domain + " Types(var / att): " + var_formtype + "/" + att_formtype;
+                                        OutputError error = new OutputError(msgOutput, MessageLevel.Warning, new SourcePosition(vp, 1, 1));
+                                        KBDoctorOutput.OutputError(error);
+                                        cant_aux += 1;
+                                    }
+                                }
+                            }                                
+                        }
+                    }
+                }
+            }
+        }
+
+        internal static void CheckVariableUsages(KBModel model, KBObject obj, ref string recommendations, out int cant)
+        {
+            cant = 0;
+            int cant_aux;
+            if (!isGeneratedbyPattern(obj))
+            {
+                HashSet<string> readonly_var, writeonly_var;
+                VariablesPart vp = obj.Parts.Get<VariablesPart>();
+                LoadVariablesInObject(vp, out readonly_var, out writeonly_var);
+                if (obj is Procedure)
+                {
+                    ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
+                    RulesPart rules = obj.Parts.Get<RulesPart>();
+                    if (procpart != null)
+                    {
+                        ProcessAssignsInSource(model, procpart, vp, ref recommendations, out cant_aux, ref readonly_var, ref writeonly_var);
+                        cant += cant_aux;
+                    }
+                    if (rules != null)
+                    {
+                        ProcessAssignsInSource(model, rules, vp, ref recommendations, out cant_aux, ref readonly_var, ref writeonly_var);
+                        cant += cant_aux;
+                    }
+                }
+                else if (obj is WebPanel || obj is Transaction)
+                {
+                    EventsPart eventspart = obj.Parts.Get<EventsPart>();
+                    RulesPart rules = obj.Parts.Get<RulesPart>();
+                    if (eventspart != null)
+                    {
+                        ProcessAssignsInSource(model, eventspart, vp, ref recommendations, out cant_aux, ref readonly_var, ref writeonly_var);
+                        cant += cant_aux;
+                    }
+                    if (rules != null)
+                    {
+                        ProcessAssignsInSource(model, rules, vp, ref recommendations, out cant_aux, ref readonly_var, ref writeonly_var);
+                        cant += cant_aux;
+                    }
+                }
+                ShowVariableUsageResults(readonly_var, writeonly_var);
+            }
+        }
+
+        private static void ProcessAssignsInSource(KBModel model, SourcePart source, VariablesPart vp, ref string recommendations, out int cant, ref HashSet<string> readonly_var, ref HashSet<string> writeonly_var)
+        {
+            int cant_aux;
+            cant = 0;
+            var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
+            ParserInfo parserInfo;
+            parserInfo = new ParserInfo(source);
+            var info = new Artech.Architecture.Language.Parser.ParserInfo(source);
+
+
+            if (parser.Validate(info, source.Source))
+            {
+                AbstractNode paramRootNode = ASTNodeFactory.Create(parser.Structure, source, vp, info);
+                List<AbstractNode> assigns = getVariablesUsages(paramRootNode);
+                foreach (AbstractNode assign in assigns)
+                {
+                    if (assign is AssignmentNode)
+                    {
+                        CheckAssignVariableUsages(assign, ref readonly_var, ref writeonly_var);
+
+
+                    }
+                    if (assign is ObjectMethodNode)
+                    {
+                        ObjectMethodNode omn = (ObjectMethodNode)assign;
+
+                        switch (omn.MethodName.ToLower())
+                        {
+                            case "tostring":
+                                RemoveReadOnlyVar(ref writeonly_var, omn);
+                                break;
+                            case "fromstring":
+                                RemoveWriteOnlyVar(ref readonly_var, omn);
+                                break;
+                            case "setempty":
+                                RemoveWriteOnlyVar(ref readonly_var, omn);
+                                break;
+                            case "integer":
+                                RemoveReadOnlyVar(ref writeonly_var, omn);
+                                break;
+                            case "isempty":
+                                RemoveReadOnlyVar(ref writeonly_var, omn);
+                                break;
+                            case "round":
+                                RemoveReadOnlyVar(ref writeonly_var, omn);
+                                break;
+                            case "roundtoeven":
+                                RemoveReadOnlyVar(ref writeonly_var, omn);
+                                break;
+                            case "toformattedstring":
+                                RemoveReadOnlyVar(ref writeonly_var, omn);
+                                break;
+                            case "truncate":
+                                RemoveReadOnlyVar(ref writeonly_var, omn);
+                                break;
+                        }
+                    }
+                }
+
+            }
+        }
+
+        private static void ShowVariableUsageResults(HashSet<string> readonly_var, HashSet<string> writeonly_var)
+        {
+            List<string> aux_list = new List<string>();
+            aux_list.AddRange(readonly_var);
+
+            foreach (string varname in aux_list)
+            {
+                if (writeonly_var.Contains(varname) && readonly_var.Contains(varname))
+                {
+                    writeonly_var.Remove(varname);
+                    readonly_var.Remove(varname);
+                    KBDoctorOutput.Message("NotUsed> " + varname);
+                }
+            }
+            foreach (string varname in readonly_var)
+            {
+                KBDoctorOutput.Message("Readonly> " + varname);
+            }
+            foreach (string varname in writeonly_var)
+            {
+                KBDoctorOutput.Message("Write> " + varname);
+            }
+        }
+
+        private static void LoadVariablesInObject(VariablesPart vp, out HashSet<string> readonly_var, out HashSet<string> writeonly_var)
+        {
+            readonly_var = new HashSet<string>();
+            writeonly_var = new HashSet<string>();
+            foreach (Variable v in vp.Variables)
+            {
+                if (!v.IsStandard)
+                {
+                    readonly_var.Add(v.Name.ToLower());
+                    writeonly_var.Add(v.Name.ToLower());
+                }
+            }
+        }
+
+        private static void CheckAssignVariableUsages(AbstractNode assign, ref HashSet<string> readonly_var, ref HashSet<string> writeonly_var)
+        {
+            AssignmentNode an = (AssignmentNode)assign;
+            if (an.Left is VariableNameNode)
+            {
+                VariableNameNode vnn = (VariableNameNode)an.Left;
+                RemoveWriteOnlyVar(ref readonly_var, vnn);
+            }
+            if (((AssignmentNode)assign).Right is ObjectMethodNode)
+            {
+                ObjectMethodNode omn = (ObjectMethodNode) ((AssignmentNode)assign).Right;
+                switch (omn.MethodName)
+                {
+                    case "tostring":
+                        RemoveReadOnlyVar(ref writeonly_var, omn);
+                        break;
+                    case "fromstring":
+                        RemoveWriteOnlyVar(ref readonly_var, omn);
+                        break;
+                    case "setempty":
+                        RemoveWriteOnlyVar(ref readonly_var, omn);
+                        break;
+                    case "integer":
+                        RemoveReadOnlyVar(ref writeonly_var, omn);
+                        break;
+                    case "isempty":
+                        RemoveReadOnlyVar(ref writeonly_var, omn);
+                        break;
+                    case "round":
+                        RemoveReadOnlyVar(ref writeonly_var, omn);
+                        break;
+                    case "roundtoeven":
+                        RemoveReadOnlyVar(ref writeonly_var, omn);
+                        break;
+                    case "toformattedstring":
+                        RemoveReadOnlyVar(ref writeonly_var, omn);
+                        break;
+                    case "truncate":
+                        RemoveReadOnlyVar(ref writeonly_var, omn);
+                        break;
+
+                }
+                if (omn.Children.First() is VariableNameNode)
+                {
+                    VariableNameNode vnn = (VariableNameNode)omn.Children.First();
+
+                    RemoveReadOnlyVar(ref writeonly_var, vnn);
+
+
+                    /*
+                    if(readonly_var.Contains(varname))
+                    {
+                        readonly_var.Remove(varname);
+                    }
+                    if (writeonly_var.Contains(varname))
+                    {
+                        writeonly_var.Remove(varname);
+                    }*/
+                }
+            }
+        }
+
+        private static void RemoveWriteOnlyVar(ref HashSet<string> writeonly_var, ObjectMethodNode omn)
+        {
+            if (omn.Children.First() is VariableNameNode)
+            {
+                VariableNameNode vnn = (VariableNameNode)omn.Children.First();
+                if (writeonly_var.Contains(vnn.VarName))
+                {
+                    writeonly_var.Remove(vnn.VarName);
+                }
+            }
+        }
+
+        private static void RemoveWriteOnlyVar(ref HashSet<string> writeonly_var, VariableNameNode vnn)
+        {
+            if (writeonly_var.Contains(vnn.VarName.ToLower()))
+                writeonly_var.Remove(vnn.VarName.ToLower());         
+        }
+
+        private static void RemoveReadOnlyVar(ref HashSet<string> readonly_var, ObjectMethodNode omn)
+        {
+            if (omn.Children.First() is VariableNameNode)
+            {
+                VariableNameNode vnn = (VariableNameNode)omn.Children.First();
+                if (readonly_var.Contains(vnn.VarName.ToLower()))
+                {
+                    readonly_var.Remove(vnn.VarName.ToLower());
+                }
+            }
+        }
+
+        private static void RemoveReadOnlyVar(ref HashSet<string> readonly_var, VariableNameNode vnn)
+        {
+            if (readonly_var.Contains(vnn.VarName))
+            {
+                readonly_var.Remove(vnn.VarName);
+            }
+        }
+
+        private static List<AbstractNode> getVariablesUsages(Artech.Genexus.Common.AST.AbstractNode root)
+        {
+
+            if (root != null)
+            {
+                List<AbstractNode> assigns = new List<AbstractNode>();
+                foreach (AbstractNode node in root.Children)
+                {
+                    if (node.Node != null)
+                    {
+                        if (node.Node.Token == 107)
+                        {
+                            if (node is AssignmentNode)
+                            { 
+                                assigns.Add(node);
+                                assigns.AddRange(getVariablesUsages(node));
+                            }
+                        }
+                        else if (node.Node.Token == 104)
+                        {
+                            if (node is AssignmentNode)
+                            { 
+                                assigns.Add(node);
+                                assigns.AddRange(getVariablesUsages(node));
+                            }
+                            if (node is FunctionNode)
+                            { 
+                                assigns.Add(node);
+                                assigns.AddRange(getVariablesUsages(node));
+                            }
+                        }
+                        else if (node.Node.Token == 158)
+                        {
+                            if (node is AssignmentNode)
+                            { 
+                                assigns.Add(node);
+                                assigns.AddRange(getVariablesUsages(node));
+                            }
+                            if (node is FunctionNode)
+                            { 
+                                assigns.Add(node);
+                                assigns.AddRange(getVariablesUsages(node));
+                            }
+                        }
+                        else if (node is ObjectMethodNode)
+                        {
+                            ObjectMethodNode omn = (ObjectMethodNode)node;
+                            switch (omn.MethodName.ToLower())
+                            {
+                                case "tostring":
+                                    assigns.Add(node);
+                                    break;
+                                case "fromstring":
+                                    assigns.Add(node);
+                                    break;
+                                case "setempty":
+                                    assigns.Add(node);
+                                    break;
+                                case "integer":
+                                    assigns.Add(node);
+                                    break;
+                                case "isempty":
+                                    assigns.Add(node);
+                                    break;
+                                case "round":
+                                    assigns.Add(node);
+                                    break;
+                                case "roundtoeven":
+                                    assigns.Add(node);
+                                    break;
+                                case "toformattedstring":
+                                    assigns.Add(node);
+                                    break;
+                                case "truncate":
+                                    assigns.Add(node);
+                                    break;
+                            }
+                        }
+                        else
+                        { 
+                            assigns.AddRange(getVariablesUsages(node));
+                        }
+                    }
+                }
+                return assigns;
+            }
+            return null;
+        }
+        
         internal static void ParameterTypeComparer(KBModel model, KBObject obj, ref string recommendations, out int cant)
         {
             cant = 0;
@@ -1627,7 +2011,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     { 
                         ProcessConstantsInSource(model, procpart, vp, out cant_aux);
                         cant += cant_aux;
-
                     }
                 }
                 else

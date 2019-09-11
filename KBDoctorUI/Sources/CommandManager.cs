@@ -89,6 +89,8 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.GenerateRESTCalls, new ExecHandler(ExecGenerateRESTCalls), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.SDTsWithDateInWS, new ExecHandler(ExecSDTsWithDateInWS), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.GenerateSDTDataLoad, new ExecHandler(ExecGenerateSDTDataLoad), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.VariablesNotBasedOnAttributes, new ExecHandler(ExecVariablesNotBasedOnAttributes), new QueryHandler(QueryKBDoctor));
+            
 
             //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
@@ -187,7 +189,8 @@ namespace Concepto.Packages.KBDoctor
 
             AddCommand(CommandKeys.RecomendedModule, new ExecHandler(ExecRecomendedModule), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CheckBldObjects, new ExecHandler(ExecCheckBldObjects), new QueryHandler(QueryKBDoctor));
-            
+            AddCommand(CommandKeys.CheckVariableUsages, new ExecHandler(ExeCheckVariableUsages), new QueryHandler(QueryKBDoctor)); 
+
             //Modularization
             AddCommand(CommandKeys.ListModularizationQuality, new ExecHandler(ExecListModularizationQuality), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ApplyExternalModularization, new ExecHandler(ExecApplyExternalModularization), new QueryHandler(QueryKBDoctor));
@@ -1028,7 +1031,83 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
-        private static void GenerateRESTCalls(List<KBObject> objs)
+        public bool ExeCheckVariableUsages(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            string title = "KBDoctor - Generate REST Calls";
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            selectObjectOption.MultipleSelection = true;
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            CheckVariableUsages(objs);
+            return true;
+        }
+
+        public void CheckVariableUsages(List<KBObject> objs)
+         {
+
+             IOutputService output = CommonServices.Output;
+             output.SelectOutput("KBDoctor");
+             string recommendations = "";
+             int cant;
+             Thread thread = new Thread(() => KBDoctorCore.Sources.API.CheckVariableUsages(UIServices.KB.CurrentKB, objs, ref recommendations, out cant));
+             thread.Start();
+
+         }
+
+        public bool ExecVariablesNotBasedOnAttributes(CommandData cmddata)
+        {
+
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            string title = "KBDoctor - Generate REST Calls";
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            selectObjectOption.MultipleSelection = true;
+            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            CheckVariablesNotBasedOnAttributes(objs);
+            return true;
+        }
+
+        public void CheckVariablesNotBasedOnAttributes(List<KBObject> objs)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            List<string[]> lines;
+            int cant;
+            Thread thread = new Thread(() => VariablesNotBasedOnAttributes(objs));
+            thread.Start();
+
+        }
+
+        private void VariablesNotBasedOnAttributes(List<KBObject> objs)
+        {
+            List<string[]> lines;
+            int cant;
+            string title = "KBDoctor - Variables not based on attributes with the same name";
+            string outputFile = Functions.CreateOutputFile(UIServices.KB, title);
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Object", "Var/Att Name", "Variable Type", "Attribute Type", "Variable Domain", "Attribute Domain" });
+            API.VariablesNotBasedOnAttributes(UIServices.KB.CurrentKB, objs, out lines, out cant);
+            foreach(string[] line in lines)
+            {
+                writer.AddTableData(line);
+            }
+            writer.AddFooter();
+            writer.Close();
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+        }
+
+ 
+
+
+            private static void GenerateRESTCalls(List<KBObject> objs)
         {
             API.GenerateRESTCalls(UIServices.KB.CurrentKB, objs);
         }

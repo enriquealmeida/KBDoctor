@@ -267,7 +267,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     Objects.AttributeHasDomain(Objects.GetAttributesFromTrn((Transaction)obj), output, ref recommendations, out cant);
                     obj_tech_debt += cant * valor;
                 }
-
+               
                 if (recommendations != "")
                 {
                     Tuple<KBObject, string, double> recommend_tuple = new Tuple<KBObject, string, double>(obj, recommendations, obj_tech_debt);
@@ -606,12 +606,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             foreach (KBObject obj in objs)
             {
-                //CHANGED FOR TEST
-                //Objects.ListSDT(obj);
-                Objects.ChangeSDTSerialization(obj);
+                Objects.ListSDT(obj);
             }
         }
-
+        //
         public static void AttributeAsOutput(KnowledgeBase KB, List<KBObject> objs, out List<string[]> output_list)
         {
             KBDoctorOutput.StartSection("KBDoctor - Get Objects With Attribute/Domain as Output");
@@ -622,7 +620,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             KBDoctorOutput.EndSection("KBDoctor - Get Objects With Attribute/Domain as Output");
         }
-
+        //
         public static void CheckBldObjects(KnowledgeBase KB)
         {
             KBDoctorOutput.StartSection("KBDoctor - Check bld objects in KB");
@@ -630,6 +628,38 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             Objects.CheckBldObjects(KB, hash_mains);
             KBDoctorOutput.EndSection("KBDoctor - Check bld objects in KB");
         }
+        //
+        public static void CheckVariableUsages(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
+        {
+            int cant_aux;
+            cant = 0;
+            KBDoctorOutput.StartSection("KBDoctor - Check variable usages");
+            foreach(KBObject obj in objs)
+            {
+                KBDoctorOutput.Message("Checking object: " + obj.QualifiedName);
+                Objects.CheckVariableUsages(KB.DesignModel, obj, ref recommendations, out cant_aux);
+                cant += cant_aux;
+            }
+            KBDoctorOutput.EndSection("KBDoctor - Check variable usages");
+        }
+        public static void VariablesNotBasedOnAttributes(KnowledgeBase KB, List<KBObject> objs, out List<string[]> lineswriter, out int cant)
+        {
+            lineswriter = new List<string[]>();
+            int cant_aux;
+            cant = 0;
+            KBDoctorOutput.StartSection("KBDoctor - Check variables not based on attributes with the same name");
+            foreach (KBObject obj in objs)
+            {
+                List<string[]> lines_aux = new List<string[]>();
+                Objects.VariablesNotBasedOnAttributes(KB.DesignModel, obj, out lines_aux, out cant_aux);
+                lineswriter.AddRange(lines_aux);
+                cant += cant_aux;
+            }
+            KBDoctorOutput.EndSection("KBDoctor - Check variables not based on attributes with the same name");
+        }
+        //
+
+        //public static void 
 #if EVO3
         public class Tuple<T1, T2>
         {

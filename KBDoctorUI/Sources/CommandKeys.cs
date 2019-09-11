@@ -249,6 +249,13 @@ namespace Concepto.Packages.KBDoctor
 
         private static CommandKey checkBldObjects = new CommandKey(Package.guid, "CheckBldObjects");
         public static CommandKey CheckBldObjects { get { return checkBldObjects; } }
+
+        private static CommandKey checkVariableUsages = new CommandKey(Package.guid, "CheckVariableUsages");
+        public static CommandKey CheckVariableUsages { get { return checkVariableUsages; } }
+
+        private static CommandKey variablesNotBasedOnAttributes = new CommandKey(Package.guid, "VariablesNotBasedOnAttributes");
+        public static CommandKey VariablesNotBasedOnAttributes { get { return variablesNotBasedOnAttributes; } }
+
         //Surgery
         private static CommandKey procedureSDT = new CommandKey(Package.guid, "ProcedureSDT");
         public static CommandKey ProcedureSDT { get { return procedureSDT; } }

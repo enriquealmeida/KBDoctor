@@ -76,6 +76,7 @@
     <CommandDefinition id="ListAPIObjects" />
     <CommandDefinition id="RecomendedModule" />
     <CommandDefinition id="ListDynamicCombo" />
+    <CommandDefinition id="VariablesNotBasedOnAttributes"/>
    
     <CommandDefinition id="SplitMainObject" />
     <CommandDefinition id="MainTableUsed" />
@@ -125,6 +126,7 @@
     <CommandDefinition id="SDTsWithDateInWS" />
     <CommandDefinition id="GenerateSDTDataLoad" />
     <CommandDefinition id="CheckBldObjects"/>
+    <CommandDefinition id="CheckVariableUsages"/>
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
     <CommandDefinition id="CountGeneratedByPattern" />
@@ -346,6 +348,8 @@
               <Command refid="GenerateDPfromTable"/>
               <Command refid="AttributeAsOutput"/>
               <Command refid="CheckBldObjects"/>
+              <Command refid="CheckVariableUsages"/>
+              <Command refid="VariablesNotBasedOnAttributes"/>
 
               <Popup name ="Themes" >
                   <Group>
