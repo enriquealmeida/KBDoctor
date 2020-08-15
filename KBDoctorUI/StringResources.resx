@@ -171,6 +171,9 @@
   <data name="ObjectsWithCommitOnExit" xml:space="preserve">
     <value>With parm() and Commit on exit=Yes</value>
   </data>
+  <data name="ListCommitOnExit" xml:space="preserve">
+    <value>List Commit On Exit</value>
+  </data>
   <data name="ObjectsWithoutInOut" xml:space="preserve">
     <value>With parm() without in:/out:/inout:</value>
   </data>

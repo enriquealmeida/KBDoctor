@@ -118,6 +118,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey buildObjectWithProperty = new CommandKey(Package.guid, "BuildObjectWithProperty");
         private static CommandKey objectsNotCalled = new CommandKey(Package.guid, "ObjectsNotCalled");
         private static CommandKey objectsWithCommitOnExit = new CommandKey(Package.guid, "ObjectsWithCommitOnExit");
+        private static CommandKey listCommitOnExit = new CommandKey(Package.guid, "ListCommitOnExit");
         private static CommandKey objectsWithVarsNotUsed = new CommandKey(Package.guid, "ObjectsWithVarsNotUsed");
         private static CommandKey listDynamicCombo = new CommandKey(Package.guid, "ListDynamicCombo");
 
@@ -174,6 +175,7 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey BuildObjectWithProperty { get { return buildObjectWithProperty; } }
         public static CommandKey ObjectsNotCalled { get { return objectsNotCalled; } }
         public static CommandKey ObjectsWithCommitOnExit { get { return objectsWithCommitOnExit; } }
+        public static CommandKey ListCommitOnExit { get { return listCommitOnExit; } }
         public static CommandKey ObjectsWithVarsNotUsed { get { return objectsWithVarsNotUsed; } }
 
         public static CommandKey CleanVarsNotUsed { get { return cleanVarsNotUsed; } }

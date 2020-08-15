@@ -187,7 +187,7 @@ namespace Concepto.Packages.KBDoctor
             // Object with parm() rule without in: out: or inout:
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            string title = "KBDoctor - Domain to change";
+            string title = "KBDoctor - Attributes using domain";
 
             output.StartSection("KBDoctor",title);
             try
@@ -200,8 +200,10 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddTableHeader(new string[] { "Domain", "Table", "Description", "Attribute", "Descripcion", "Module" });
                 int cantObjChanged = 0;
 
-                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                selectObjectOption.MultipleSelection = true;
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions
+                {
+                    MultipleSelection = true
+                };
                 selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Domain>());
 
                 //Pido dominios
@@ -221,33 +223,21 @@ namespace Concepto.Packages.KBDoctor
 
                                 if ((tbl != null) && (tbl is Table))
                                 {
-                                    writer.AddTableData(new string[] { Functions.linkObject(dom), Functions.linkObject(tbl), tbl.Description, Functions.linkObject(att), att.Description, ModulesHelper.ObjectModuleName(tbl) });
+                                    Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute)att;
+                                    Formula formula = a.Formula;
+                                    if (formula == null)
+                                    {
+                                        writer.AddTableData(new string[] { Functions.linkObject(dom), Functions.linkObject(tbl), tbl.Description, Functions.linkObject(att), att.Description, ModulesHelper.ObjectModuleName(tbl) });
+
+                                        KBDoctorOutput.Message("select '" + tbl.Name + " " + att.Name + "' from dual;");
+
+                                        string tblKey = TablesHelper.KeyList((Table)tbl, 31);
+                                        KBDoctorOutput.Message("select " + tblKey + "," + att.Name + " from " + tbl.Name + " where " + att.Name + " = '&value' ;");
+
+                                    }
                                 }
                             }
                         }
-
-
-                    }
-
-
-
-                }
-
-                //Agrego Atributos sin dominios
-                foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
-                {
-                    if (a.DomainBasedOn == null)
-                    {
-                        foreach (EntityReference reference2 in a.GetReferencesTo())
-                        {
-                            KBObject tbl = KBObject.Get(a.Model, reference2.From);
-
-                            if ((tbl != null) && (tbl is Table))
-                            {
-                                writer.AddTableData(new string[] { Utility.FormattedTypeAttribute(a), Functions.linkObject(tbl), tbl.Description, Functions.linkObject(a), a.Description, ModulesHelper.ObjectModuleName(tbl) });
-                            }
-                        }
-
                     }
                 }
 
@@ -532,8 +522,10 @@ namespace Concepto.Packages.KBDoctor
             IKBService kB = UIServices.KB;
             if (kB != null && kB.CurrentModel != null)
             {
-                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                selectObjectOption.MultipleSelection = true;
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions
+                {
+                    MultipleSelection = true
+                };
                 KBModel kbModel = UIServices.KB.CurrentModel;
 
                 Artech.Genexus.Common.Objects.Procedure proc = new Artech.Genexus.Common.Objects.Procedure(kbModel);
@@ -705,8 +697,10 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
 
-                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                selectObjectOption.MultipleSelection = false;
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions
+                {
+                    MultipleSelection = false
+                };
                 KBModel kbModel = UIServices.KB.CurrentModel;
                 KBObjectCollection objRefCollection = new KBObjectCollection();
 

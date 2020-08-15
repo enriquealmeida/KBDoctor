@@ -20,6 +20,7 @@ using Concepto.Packages.KBDoctorCore.Sources;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using Artech.Genexus.Common.CustomTypes;
+using Artech.Genexus.Common.Objects.Themes;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -184,39 +185,38 @@ namespace Concepto.Packages.KBDoctor
         {
 
             StringCollection UsedClasses = new StringCollection();
+            KBModel model = UIServices.KB.CurrentModel;
 
-            foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+            foreach (ThemeClass themeClass in ThemeClass.GetAll(model))
             {
-                //ShowSomeMessages("Processing " + obj.Name);
-                if (((obj is Transaction) || (obj is WebPanel)) && (obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject)))
-                {
-                    WebFormPart webForm = obj.Parts.Get<WebFormPart>();
-                    foreach (IWebTag tag in WebFormHelper.EnumerateWebTag(webForm))
+                KBDoctorOutput.Message("Class:" + themeClass.Name);
+                int cant = 0; 
+                foreach (EntityReference entityRef in themeClass.GetReferencesTo()) {
+                   // KBDoctorOutput.Message("ObjRef: From:" + entityRef.From.Type.ToString() + " To: " + entityRef.To.Type.ToString());
+                    KBObject objRefTo = KBObject.Get(model, entityRef.To);
+                    KBObject objRefFrom = KBObject.Get(model, entityRef.From);
+
+                    
+                    if (objRefFrom != null && !(objRefFrom is Theme) && !(objRefFrom is ThemeClass))
                     {
-                        if (tag.Properties != null)
-                        {
-                            PropertyDescriptor prop = tag.Properties.GetPropertyDescriptorByDisplayName("Class");
-                            if (prop != null)
-                            {
-                                var val = prop.GetValue(tag);
-                                string miclstr = val.ToString();
-                                if (!UsedClasses.Contains(miclstr))
-                                {
-                                    KBDoctorOutput.Message("Class : " + miclstr + " in " + obj.Name + " Tag: " + tag.Type.ToString() );
-                                    UsedClasses.Add(miclstr);
-                                }
-                            }
-                        }
+                        KBDoctorOutput.Message("ObjRefFrom: :" + objRefFrom.Name + " Type : " + objRefFrom.TypeName);
+                        cant++;
                     }
+                    
                 }
+                KBDoctorOutput.Message("Class Name: :" + themeClass.Name + " Referencias: " + cant.ToString());
             }
+
+
             return UsedClasses;
+
+            
+
+           
+            
         }
 
-        private static void ShowSomeMessages(string message)
-        {
-         //   KBDoctorOutput.Message(message);
-        }
+
         /*
         public static void LoadUsedClasses(ollection UsedClasses)
         {
@@ -275,31 +275,40 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
 
-            string title = "KBDoctor - Classes Used";
+            string title = "KBDoctor - Used Classes";
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-               // IOutputService output = CommonServices.Output;
-                KBDoctorOutput.StartSection( title);
+                KBModel model = UIServices.KB.CurrentModel;
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Class", "Error" });
+                writer.AddTableHeader(new string[] { "Class", "#References", "External" });
 
-                StringCollection UsedClasses =  LoadUsedClasses();
-                StringCollection ThemeClasses = new StringCollection();
-                //Reviso todos los objeto para ver las class usadas en cada control
-
-                foreach (string sd in UsedClasses)
+                foreach (ThemeClass themeClass in ThemeClass.GetAll(model))
                 {
+                   // KBDoctorOutput.Message("Class:" + themeClass.Name);
+                    int cant = 0;
+                    foreach (EntityReference entityRef in themeClass.GetReferencesTo())
+                    {
+                        // KBDoctorOutput.Message("ObjRef: From:" + entityRef.From.Type.ToString() + " To: " + entityRef.To.Type.ToString());
+                        KBObject objRefTo = KBObject.Get(model, entityRef.To);
+                        KBObject objRefFrom = KBObject.Get(model, entityRef.From);
 
-                    writer.AddTableData(new string[] { sd, "" });
-                    KBDoctorOutput.Message( "Application Class used " + sd);
 
+                        if (objRefFrom != null && !(objRefFrom is Theme) && !(objRefFrom is ThemeClass))
+                        {
+                  //          KBDoctorOutput.Message("ObjRefFrom: :" + objRefFrom.Name + " Type : " + objRefFrom.TypeName);
+                            cant++;
+                        }
+
+                    }
+                    writer.AddTableData(new string[] { themeClass.Name, cant.ToString() , themeClass.ExternalClass.ToString()});
+                    
+                    KBDoctorOutput.Message("Class Name: :" + themeClass.Name + " Referencias: " + cant.ToString());
                 }
 
-                writer.AddTableData(new string[] { "-----------------", "--------------", "---" });
+
 
                 writer.AddFooter();
                 writer.Close();

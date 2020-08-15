@@ -28,16 +28,16 @@ ctt.exe source:KBDoctorUI\KBDoctorUI.csproj.user transform:KBDoctorUI\Transforma
 GOTO END_CASE
 
 :CASE_GX16
-SET GX_PROGRAM_DIR=C:\Program Files (x86)\GeneXus\GeneXus16
-SET GX_SDK_DIR=C:\Program Files (x86)\GeneXus\GeneXus16PlatformSDK
+SET GX_PROGRAM_DIR=D:\GeneXus\GeneXus16u10
+SET GX_SDK_DIR=D:\GeneXus\GeneXus16SDK
 SET NETFRAMEWORK_DIR="C:\Windows\Microsoft.NET\Framework64\v4.0.30319"
 SET TargetFrameworkVersion=v4.7.1
 ctt.exe source:KBDoctorUI\KBDoctorUI.csproj.user transform:KBDoctorUI\TransformacionGX16.xml destination:KBDoctorUI\KBDoctorUI.csproj.user i
 GOTO END_CASE
 
 :CASE_GXBETA
-SET GX_PROGRAM_DIR=D:\GeneXus\GeneXus16U5
-SET GX_SDK_DIR=D:\GeneXus\GeneXus16U5SDK
+SET GX_PROGRAM_DIR=D:\GeneXus\GeneXus17
+SET GX_SDK_DIR=D:\GeneXus\GeneXus17SDK
 SET NETFRAMEWORK_DIR="C:\Windows\Microsoft.NET\Framework64\v4.0.30319"
 SET TargetFrameworkVersion=v4.7.2
 ctt.exe source:KBDoctorUI\KBDoctorUI.csproj.user transform:KBDoctorUI\TransformacionGXBeta.xml destination:KBDoctorUI\KBDoctorUI.csproj.user i

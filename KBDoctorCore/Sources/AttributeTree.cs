@@ -32,7 +32,7 @@ namespace Concepto.Packages.KBDoctor
         private Dictionary<EntityKey, bool> m_ParsedObjects;
         private HashSet<Artech.Genexus.Common.Objects.Attribute> m_AnalyzedAttributes;
         private HashSet<Artech.Genexus.Common.Objects.Attribute> m_AttributesToAnalyze;
-        private KBModel m_Model;
+        private readonly KBModel m_Model;
         private string WorkName;
 
         public AttributeTree(KBModel Model) : this(Model, new List<Artech.Genexus.Common.Objects.Attribute>()) { }
@@ -176,8 +176,7 @@ namespace Concepto.Packages.KBDoctor
             if (!m_Dependency.AnalyzeCallers)
                 return;
 
-            bool ReferencesAnalyzed;
-            m_ParsedObjects.TryGetValue(m_Dependency.KBObject.Key, out ReferencesAnalyzed);
+            m_ParsedObjects.TryGetValue(m_Dependency.KBObject.Key, out bool ReferencesAnalyzed);
             if (ReferencesAnalyzed)
                 return;
             m_ParsedObjects[m_Dependency.KBObject.Key] = true;
@@ -434,8 +433,10 @@ namespace Concepto.Packages.KBDoctor
                 return;
             }
 
-            List<Dependency.Identifier> NewVisited = new List<Dependency.Identifier>(Visited);
-            NewVisited.Add(Member.Id);
+            List<Dependency.Identifier> NewVisited = new List<Dependency.Identifier>(Visited)
+            {
+                Member.Id
+            };
 
             bool IsStack = Visited.FirstThat(x => x.Type == Dependency.Types.ProgramParameter) != null;
             foreach (KeyValuePair<Dependency, HashSet<Artech.Common.Location.IPosition>> dMember in Member.DependsOn)
@@ -865,9 +866,8 @@ namespace Concepto.Packages.KBDoctor
             if (AbstractNode == null)
                 return;
 
-            if (AbstractNode is AssignmentNode)
+            if (AbstractNode is AssignmentNode assgn)
             {
-                AssignmentNode assgn = (AssignmentNode)AbstractNode;
                 if (assgn.Left.Node == null)
                 {
                     AbstractNode SecondChild = assgn.Right.Children.Skip(1).First();
@@ -880,9 +880,8 @@ namespace Concepto.Packages.KBDoctor
                 AssignmentStatement((AssignmentNode)AbstractNode, model, dependencies);
                 return;
             }
-            else if (AbstractNode is RuleNode)
+            else if (AbstractNode is RuleNode RuleNode)
             {
-                RuleNode RuleNode = (RuleNode)AbstractNode;
                 if (RuleNode.RuleName == "parm")
                 {
                     int parmNo = 0;
@@ -941,7 +940,7 @@ namespace Concepto.Packages.KBDoctor
             }
             else if (AbstractNode is ObjectMethodNode)
             {
-                ObjectMethodNode ObjectMethodNode = (ObjectMethodNode)AbstractNode;
+                var ObjectMethodNode = (ObjectMethodNode)AbstractNode;
                 if (ObjectMethodNode.Node.Code == ExpressionType.Function && ObjectMethodNode.Function.FunctionName == "call")
                 {
                     CallStatement(ObjectMethodNode, model, dependencies);
@@ -960,8 +959,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void AssignmentStatement(AbstractNode LeftNode, AbstractNode RightNode, KBModel model, CallTree dependencies)
         {
-            Dependency.Types LeftType;
-            StructureTypeReference LeftStructureTypeReference = GetStructureTypeReference(LeftNode, model, out LeftType);
+            StructureTypeReference LeftStructureTypeReference = GetStructureTypeReference(LeftNode, model, out Dependency.Types LeftType);
 
             foreach (KeyValuePair<Dependency.Types, string> left in GetLeftNode(LeftNode))
             {
@@ -1063,8 +1061,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static StructureTypeReference GetStructureTypeReference(AbstractNode node, KBModel model)
         {
-            Dependency.Types type;
-            return GetStructureTypeReference(node, model, out type);
+            return GetStructureTypeReference(node, model, out Dependency.Types type);
         }
 
         public static StructureTypeReference GetStructureTypeReference(AbstractNode node, KBModel model, out Dependency.Types type)
@@ -1094,9 +1091,8 @@ namespace Concepto.Packages.KBDoctor
                     if (item.Name == ChildText)
                         if (item is SDTLevel)
                             return new StructureTypeReference(((SDTLevel)item).ItemEntity.Type, ((SDTLevel)item).ItemEntity.Id);
-                        else if (item is TransactionLevel)
+                        else if (item is TransactionLevel TrnLvl)
                         {
-                            TransactionLevel TrnLvl = (TransactionLevel)item;
                             return new StructureTypeReference(TrnLvl.Transaction.Key.Type, TrnLvl.Transaction.Key.Id, StructureInfoProvider.GetLevelPrimaryKey(TrnLvl));
                         }
                         else if (item is SDTItem)
@@ -1222,8 +1218,7 @@ namespace Concepto.Packages.KBDoctor
                     ExternalObject xobj = (ExternalObject)kbobject;
                     foreach (object item in xobj.EXOStructure.Items)
                     {
-                        Artech.Common.Helpers.Structure.IStructureItem x = item as Artech.Common.Helpers.Structure.IStructureItem;
-                        if (x != null)
+                        if (item is Artech.Common.Helpers.Structure.IStructureItem x)
                             yield return x;
                     }
                 }
@@ -1329,7 +1324,7 @@ namespace Concepto.Packages.KBDoctor
 
         public class CallTree
         {
-            private KBModel m_Model;
+            private readonly KBModel m_Model;
             public readonly AttributeTree m_AttributeTree;
 
             public CallTree(KBModel model, AttributeTree AttributeTree)
@@ -1367,10 +1362,7 @@ namespace Concepto.Packages.KBDoctor
 
             public Dependency Get(Dependency.Identifier Id)
             {
-                Dependency Item;
-                if (m_Items.TryGetValue(Id, out Item))
-                    return Item;
-                return null;
+                return m_Items.TryGetValue(Id, out Dependency Item) ? Item : null;
             }
         }
 
@@ -1568,8 +1560,10 @@ namespace Concepto.Packages.KBDoctor
                             KBObject kbo = KBObject.Get(m_Model, ObjPos.Object);
                             if (kbo != null)
                             {
-                                XMLReference op = new XMLReference(kbo);
-                                op.PartGUID = ObjPos.Part;
+                                XMLReference op = new XMLReference(kbo)
+                                {
+                                    PartGUID = ObjPos.Part
+                                };
                                 if (ObjPos is SourcePosition)
                                 {
                                     SourcePosition spos = (SourcePosition)ObjPos;
@@ -1588,8 +1582,10 @@ namespace Concepto.Packages.KBDoctor
                             KBObject kbo = KBObject.Get(m_Model, ObjPos.ObjectKey);
                             if (kbo != null)
                             {
-                                XMLReference op = new XMLReference(kbo);
-                                op.Property = ObjPos.PropertyName;
+                                XMLReference op = new XMLReference(kbo)
+                                {
+                                    Property = ObjPos.PropertyName
+                                };
 
                                 arr[i] = op;
                                 i++;
@@ -1602,7 +1598,7 @@ namespace Concepto.Packages.KBDoctor
                 set {; }
             }
 
-            private KBModel m_Model;
+            private readonly KBModel m_Model;
             private XMLDependsOnItem()
             {
             }
@@ -1679,7 +1675,9 @@ namespace Concepto.Packages.KBDoctor
                 {
                 }
 
+#pragma warning disable IDE1006 // Estilos de nombres
                 private KBModel m_Model { get { return m_KBObject.Model; } }
+#pragma warning restore IDE1006 // Estilos de nombres
                 private KBObject m_KBObject;
                 public XMLReference(KBObject kbobject)
                 {
@@ -1958,7 +1956,9 @@ namespace Concepto.Packages.KBDoctor
                 }
             }
 
+#pragma warning disable IDE1006 // Estilos de nombres
             private KBModel m_Model { get { return Id.KBObject.Model; } }
+#pragma warning restore IDE1006 // Estilos de nombres
 
             public Dependency(Artech.Genexus.Common.Objects.Attribute attribute, AttributeTree AttributeTree) : this(attribute.Name, Types.Attribute, attribute, AttributeTree)
             {
@@ -2063,7 +2063,7 @@ namespace Concepto.Packages.KBDoctor
                 public Types? Type { get; private set; }
                 public KBObject KBObject { get; private set; }
                 private string lcName;
-                private bool IsUdpReference = false;
+                private readonly bool IsUdpReference = false;
                 public bool AnalyzeCallers
                 {
                     get

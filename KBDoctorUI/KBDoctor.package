@@ -58,6 +58,7 @@
     <CommandDefinition id="BuildObjectAndReferencesContext" />
     <CommandDefinition id="BuildObjectWithProperty" />
     <CommandDefinition id="ObjectsWithCommitOnExit" />
+    <CommandDefinition id="ListCommitOnExit" />
     <CommandDefinition id="RemovableTransactions" />
     <CommandDefinition id="ObjectsComplex" />
     <CommandDefinition id="ObjectsLegacyCode" />
@@ -220,7 +221,6 @@
             <Command refid="ObjectsUpdateAttribute"/>
             <Group>
               <Command refid="ReviewObjects" />
-
             </Group>
 
             <Group >
@@ -325,6 +325,7 @@
               <Command refid="MainTableUsed"  />
               <Command refid="ObjectsReferenced"/>
               <Command refid="ObjectsWithCommitOnExit"/>
+              <Command refid="ListCommitOnExit"/>
               <Command refid="ObjectsWINWEB" />
               <Command refid="ListProcedureCallWebpanelTransaction" />
               <Command refid="ObjectsLegacyCode" />
@@ -333,7 +334,7 @@
               <Command refid="CleanKBAsMuchAsPossible"/>
               <Command refid="ListTableAttributesUsingDomain"/>
               <Command refid="ObjectsWithConstants" />
-              <Command refid="ThemeClassesNotUsed"/>
+             
               <Command refid="AssignTypeComparer"/>
               <Command refid="ParameterTypeComparer" />
               <Command refid="ObjectsWithRuleOld" />
@@ -356,6 +357,7 @@
                     <Command refid="ClassNotInTheme" />
                     <Command refid="ClassUsed" />
                     <Command refid="ListClassUsed" />
+                    <Command refid="ThemeClassesNotUsed"/>
                   </Group>
                 </Popup>
                <Command refid="GenerateSQLScripts"/>
@@ -368,32 +370,17 @@
           <!--
           <Group id="LABS2" >
               <Popup>
-           
-
-            
-
-
-        
-
                 <Command refid="GenerateSQLScripts"/>
-
                 <Command refid="GenerateLocationXML" />
                 <Command refid="CleanObjects" />
-
-
                 <Command refid="ObjectsComplex" />
                 <Group>
-
                   <Command refid="ObjectsMainCalled"/>
                   <Command refid="ChangeLegacyCode" />
                   <Command refid="EditLegacyCodeToReplace" />
                   <Command refid="UDPCallables"/>
                 </Group>
-           
-
-        
-              </Popup>
-
+             </Popup>
           </Group>
           -->
       </Popup>

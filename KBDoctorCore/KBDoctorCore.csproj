@@ -44,6 +44,9 @@
     <Reference Include="Artech.Architecture.Common">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Artech.Architecture.Interfaces">
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="Artech.Architecture.Language">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Language.dll</HintPath>

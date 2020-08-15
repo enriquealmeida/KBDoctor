@@ -125,7 +125,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string recommendations = "";
                 List<KBObject> objlist = new List<KBObject>();
                 objlist.Add(obj);
-                if (Utility.isRunable(obj) && !Utility.IsGeneratedByPattern(obj))
+                if (Utility.isRunable(obj) && !Utility.IsGeneratedByPattern(obj) && !obj.UserName.Contains("GeneXus"))
                 {
                     //Check objects with parameteres without inout
                     if (CheckKeyInINI(parsedData, SectionName, "ParamINOUT", "true", "Check if all parameters have IN: OUT: INOUT: keywords", filename))
@@ -344,9 +344,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 data.Sections.AddSection(SectionName);
 
                 AddKeyToIni(data, SectionName, "CleanUnusedVariables", "true", "Remove unused variables from objects");
-                AddKeyToIni(data, SectionName, "FixVariables", "false", "Fix variables definition, assinging Attribute or Domain");
+                AddKeyToIni(data, SectionName, "FixVariables", "true", "Fix variables definition, assinging Attribute or Domain");
                 AddKeyToIni(data, SectionName, "ParamINOUT", "true", "Check if all parameters have IN: OUT: INOUT: keywords");
-                AddKeyToIni(data, SectionName, "CheckCommitOnExit", "true", "Check if property Commit on exit = YES");
+                AddKeyToIni(data, SectionName, "CheckCommitOnExit", "false", "Check if property Commit on exit = YES");
                 AddKeyToIni(data, SectionName, "CheckModule", "true", "Use of modules is required");
                 AddKeyToIni(data, SectionName, "CodeCommented", "true", "Code commented is marked as error");
 
@@ -358,14 +358,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 AddKeyToIni(data, SectionName, "ParameterTypes", "true", "Check if assignments have the correct Type or Domain");
                 AddKeyToIni(data, SectionName, "EmptyConditionalBlocks", "true", "Check if there is any IF/Else block without code in it");
                 AddKeyToIni(data, SectionName, "ConstantsInCode", "true", "Check if there are hardcoded constants");
-                AddKeyToIni(data, SectionName, "ForEachsWithoutWhenNone", "true", "Check if there is any 'ForEach' block without a 'When None' clause");
-                AddKeyToIni(data, SectionName, "NewsWithoutWhenDuplicate", "true", "Check if there is any 'New' block without 'When Duplicate' clause");
-                AddKeyToIni(data, SectionName, "ProceduresCalledAsFuction", "true", "Check if the procedures are called as functions");
+                AddKeyToIni(data, SectionName, "ForEachsWithoutWhenNone", "false", "Check if there is any 'ForEach' block without a 'When None' clause");
+                AddKeyToIni(data, SectionName, "NewsWithoutWhenDuplicate", "false", "Check if there is any 'New' block without 'When Duplicate' clause");
+                AddKeyToIni(data, SectionName, "ProceduresCalledAsFuction", "false", "Check if the procedures are called as functions");
                 AddKeyToIni(data, SectionName, "DocumentsInWebPanels", "true", "Check if there are File management variables (and some others) in WebPanels");
 
-                AddKeyToIni(data, SectionName, "MaxNestLevel", "7", "Maximun nesting level allowed in source");
+                AddKeyToIni(data, SectionName, "MaxNestLevel", "9", "Maximun nesting level allowed in source");
                 AddKeyToIni(data, SectionName, "MaxComplexity", "30", "Maximun Complexity level allowed in sources");
-                AddKeyToIni(data, SectionName, "MaxBlockSize", "300", "Maximun block of code");
+                AddKeyToIni(data, SectionName, "MaxBlockSize", "600", "Maximun block of code");
                 AddKeyToIni(data, SectionName, "MaxParameterCount", "6", "Maximun Number of parameters allowed in parm rule");
 
                 //Save the file

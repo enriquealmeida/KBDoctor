@@ -1379,7 +1379,7 @@ namespace Concepto.Packages.KBDoctor
             return name;
         }
 
-        private static string KeyList(Table t, int ATTNAME_LEN)
+        public static string KeyList(Table t, int ATTNAME_LEN)
         {
             string tblKey = "";
             string coma = "";

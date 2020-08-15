@@ -362,9 +362,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             //Divido el conjunto de objetos en clases determinadas por la cantidad de parametros (tomando en cuenta si son IN/OUT/INOUT). 
             foreach (KBObject obj in objects)
             {
-                ICallableObject callableObject = obj as ICallableObject;
 
-                if (callableObject != null)
+                if (obj is ICallableObject callableObject)
                 {
                     foreach (Signature signature in callableObject.GetSignatures())
                     {
@@ -477,13 +476,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             List<KBObject> objectsWithProblems = new List<KBObject>();
             foreach (KBObject obj in objs)
             {
-                ICallableObject callableObject = obj as ICallableObject;
 
-                if (callableObject != null)
+                if (obj is ICallableObject callableObject)
                 {
                     numObj += 1;
                     if ((numObj % 100) == 0)
-                        KBDoctorOutput.Message( "Processing " + obj.Name);
+                        KBDoctorOutput.Message("Processing " + obj.Name);
                     foreach (Signature signature in callableObject.GetSignatures())
                     {
                         Boolean someInOut = false;
@@ -512,8 +510,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 {
                                     objWithProblems += 1;
                                     objectsWithProblems.Add(obj);
-                                     recommend = "Parameter without IN/OUT/INOUT ";
-                                     err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(obj.Parts.Get<RulesPart>()));
+                                    recommend = "Parameter without IN/OUT/INOUT ";
+                                    err = new OutputError(recommend, MessageLevel.Error, new KBObjectPosition(obj.Parts.Get<RulesPart>()));
                                     recommendations += recommend + "<br>";
                                     output.Add("KBDoctor", err);
                                 }
@@ -526,7 +524,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return objectsWithProblems;
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static bool isGeneratedbyPattern(KBObject obj)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             if (!(obj == null))
             { return obj.GetPropertyValue<bool>(KBObjectProperties.IsGeneratedObject); }
@@ -535,7 +535,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static bool isGenerated(KBObject obj)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             if (obj is DataSelector)  //Los Dataselector no tienen la propiedad de generarlos o no , por lo que siempre devuelven falso y sin son referenciados se generan. 
                 return true;
@@ -557,8 +559,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         private static int ParametersCountObject(KBObject obj)
         {
             int countparm = 0;
-            ICallableObject callableObject = obj as ICallableObject;
-            if (callableObject != null)
+            if (obj is ICallableObject callableObject)
             {
                 foreach (Signature signature in callableObject.GetSignatures())
                 {
@@ -656,7 +657,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         internal static void isInModule(List<KBObject> objs, IOutputService output, ref string recommendations, out int cant)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             cant = 0;
             foreach (KBObject obj in objs)
@@ -1089,7 +1092,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 HashSet<string> readonly_var, writeonly_var;
                 VariablesPart vp = obj.Parts.Get<VariablesPart>();
-                LoadVariablesInObject(vp, out readonly_var, out writeonly_var);
+                LoadVariablesInObject(vp, readonly_var: out readonly_var, writeonly_var: out writeonly_var);
                 if (obj is Procedure)
                 {
                     ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
@@ -1324,7 +1327,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static List<AbstractNode> getVariablesUsages(Artech.Genexus.Common.AST.AbstractNode root)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
 
             if (root != null)
@@ -1753,9 +1758,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static Tuple<Domain, string, int> GetTypeDomainSDTNode(KBModel model, ObjectPropertyNode op)
         {
-            AttributeTree.Dependency.Types type;
             string ChildText = op.Children.Skip(1).First().Text;
-            StructureTypeReference parentRef = AttributeTree.GetStructureTypeReference(op.Children.First(), model, out type);
+            StructureTypeReference parentRef = AttributeTree.GetStructureTypeReference(op.Children.First(), model, out AttributeTree.Dependency.Types type);
             foreach (Artech.Common.Helpers.Structure.IStructureItem item in AttributeTree.GetStructureSubStructures(parentRef, model))
             {
                 if (item.Name == ChildText)
@@ -1783,7 +1787,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static List<AbstractNode> getOldsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             if (root != null)
             {
@@ -1817,7 +1823,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static List<AbstractNode> getCallsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             if (root != null)
             {
@@ -1969,7 +1977,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static List<AbstractNode> getForeachsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             if (root != null)
             {
@@ -2089,7 +2099,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static List<AbstractNode> getConstantsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             if (root != null)
             {
@@ -2188,7 +2200,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static List<AbstractNode> getNewsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             if (root != null)
             {
@@ -2216,7 +2230,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static List<AbstractNode> getIfElseInSource(Artech.Genexus.Common.AST.AbstractNode root)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
            if (root != null)
             {
@@ -2380,9 +2396,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         private static void CompareAssignTypesSDT(KBModel model, SourcePart procpart, VariablesPart vp, string objname, AssignmentNode assign, ObjectPropertyNode op, ref string recommendations, out int cant)
         {
             cant = 0;
-            AttributeTree.Dependency.Types type;
             string ChildText = op.Children.Skip(1).First().Text;
-            StructureTypeReference parentRef = AttributeTree.GetStructureTypeReference(op.Children.First(), model, out type);
+            StructureTypeReference parentRef = AttributeTree.GetStructureTypeReference(op.Children.First(), model, out AttributeTree.Dependency.Types type);
             foreach (Artech.Common.Helpers.Structure.IStructureItem item in AttributeTree.GetStructureSubStructures(parentRef, model))
             {
                 if (item.Name == ChildText)
@@ -2843,7 +2858,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static string getLengthFromFormattedType(string formatType)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             if(formatType.Contains('(') && formatType.Contains(')'))
             {
@@ -2858,7 +2875,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             
         }
 
-        private static List<AbstractNode> getAssignmentsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+#pragma warning disable IDE1006 // Estilos de nombres
+        private static List<AbstractNode> getAssignmentsInSource(AbstractNode root)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             if(root != null) { 
                 List<AbstractNode> assignments = new List<AbstractNode>();
@@ -2976,8 +2995,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     List<KBObject> objs = new List<KBObject>();
                                     objs.Add(obj);
                                     List<string[]> lines = new List<string[]>();
-                                    double technical_debt;
-                                    API.PreProcessPendingObjects(KB, output, objs, out lines, out technical_debt);
+                                    API.PreProcessPendingObjects(KB, output, objs, out lines, out double technical_debt);
                                     if (lines.Count > 0)
                                     {
                                         if (!reviews_by_user.ContainsKey(revision.UserName))
@@ -3105,7 +3123,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return false;
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         private static List<AbstractNode> getOutputsInSource(Artech.Genexus.Common.AST.AbstractNode root)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             List<AbstractNode> calls = new List<AbstractNode>();
             if (root != null)
@@ -3156,7 +3176,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         internal static bool hasOutputInRules(RulesPart rp, VariablesPart vp)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
 
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
@@ -3190,8 +3212,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     string strsignature = "";
                     string strsignaturenames = "";
                     bool first = true;
-                    ICallableObject callableObject = obj as ICallableObject;
-                    if (callableObject != null)
+                    if (obj is ICallableObject callableObject)
                     {
 
                         foreach (Signature signature in callableObject.GetSignatures())
@@ -3243,7 +3264,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                         strsignature += "in: " + typeparm;
                                         break;
                                 }
-                                
+
                             }
                         }
 
@@ -3351,8 +3372,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             XmlNodeList xmlnlID = xdoc.GetElementsByTagName("Id");
             XmlNode nodeid = xmlnlID.Item(0);
             Guid guid = new Guid(nodetype.InnerText);
-            int id = 0;
-            if (!Int32.TryParse(nodeid.InnerText, out id))
+            if (!Int32.TryParse(nodeid.InnerText, out int id))
             {
                 KBDoctorOutput.Error("Error recovering SDT type.");
             }
@@ -3395,9 +3415,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static void ListSDT(KBObject obj)
         {
-            if(obj is SDT)
+            if (obj is SDT sdt)
             {
-                SDT sdt = (SDT)obj;
                 KBDoctorOutput.Message("//Data generated for SDT:" + sdt.Name);
                 ListStructure(obj.Model, sdt.SDTStructure.Root, "");
             }
@@ -3405,9 +3424,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static void ChangeSDTSerialization(KBObject obj)
         {
-            if (obj is SDT)
+            if (obj is SDT sdt)
             {
-                SDT sdt = (SDT)obj;
                 KBDoctorOutput.Message("//OBJ: " + sdt.Name);
                 ChangeSDTSerializationStructure(obj.Model, sdt.SDTStructure.Root, "");
                 obj.Save();
@@ -3842,8 +3860,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
 
             string aux = new String(numberChars);
-            int finalInt;
-            if (Int32.TryParse(aux, out finalInt))
+            if (Int32.TryParse(aux, out int finalInt))
             {
                 return finalInt;
             }
@@ -3910,8 +3927,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if(objRef is Procedure)
                 {
                     Procedure proc = (Procedure)objRef;
-                    ICallableObject callableObject = proc as ICallableObject;
-                    if (callableObject != null)
+                    if (proc is ICallableObject callableObject)
                     {
                         foreach (Signature signature in callableObject.GetSignatures())
                         {
@@ -3919,8 +3935,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             {
                                 string accessor = parm.Accessor.ToString();
                                 if (accessor == "PARM_OUT" || accessor == "PARM_INOUT")
-                                { 
-                                    if(obj is Attribute)
+                                {
+                                    if (obj is Attribute)
                                     {
                                         if (parm.IsAttribute)
                                         {
@@ -3934,9 +3950,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                         else
                                         {
                                             Variable var_obj = (Variable)parm.Object;
-                                            if(var_obj.AttributeBasedOn != null)
-                                            { 
-                                                if(var_obj.AttributeBasedOn.QualifiedName.ToString() == ((Attribute)obj).QualifiedName.ToString())
+                                            if (var_obj.AttributeBasedOn != null)
+                                            {
+                                                if (var_obj.AttributeBasedOn.QualifiedName.ToString() == ((Attribute)obj).QualifiedName.ToString())
                                                 {
                                                     ShowOutputAttributeMessages(obj, proc, ref output_list);
                                                     break;
@@ -3944,12 +3960,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                             }
                                         }
                                     }
-                                    if(obj is Domain)
-                                    { 
-                                        if(parm.IsAttribute)
+                                    if (obj is Domain)
+                                    {
+                                        if (parm.IsAttribute)
                                         {
                                             Attribute att_obj = (Attribute)parm.Object;
-                                            if(att_obj.DomainBasedOn != null)
+                                            if (att_obj.DomainBasedOn != null)
                                             {
                                                 if (att_obj.DomainBasedOn.QualifiedName.ToString() == ((Domain)obj).QualifiedName.ToString())
                                                 {
@@ -3961,7 +3977,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                         else
                                         {
                                             Variable var_obj = (Variable)parm.Object;
-                                            if (var_obj.DomainBasedOn != null) { 
+                                            if (var_obj.DomainBasedOn != null)
+                                            {
                                                 if (var_obj.DomainBasedOn.QualifiedName.ToString() == ((Domain)obj).QualifiedName.ToString())
                                                 {
                                                     ShowOutputAttributeMessages(obj, proc, ref output_list);

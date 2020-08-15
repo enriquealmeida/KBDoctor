@@ -98,6 +98,7 @@ namespace Concepto.Packages.KBDoctor
 
             AddCommand(CommandKeys.ObjectsNotCalled, new ExecHandler(ExecObjectsNotCalled), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWithCommitOnExit, new ExecHandler(ExecObjectsWithCommitOnExit), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListCommitOnExit, new ExecHandler(ExecListCommitOnExit), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWithVarsNotUsed, new ExecHandler(ExecObjectsWithVarsNotUsed), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ResetWINForm, new ExecHandler(ExecResetWINForm), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsComplex, new ExecHandler(ExecObjectsComplex), new QueryHandler(QueryKBDoctor));
@@ -1349,6 +1350,15 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsWithParmAndCommitOnExit));
+            t.Start();
+            return true;
+        }
+
+        public bool ExecListCommitOnExit(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            Thread t = new Thread(new ThreadStart(ObjectsHelper.ListCommitOnExit));
             t.Start();
             return true;
         }

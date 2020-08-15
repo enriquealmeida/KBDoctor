@@ -46,6 +46,7 @@ using Artech.Genexus.Common.Types;
 using System.Threading;
 using Artech.Genexus.Common.Parts.WebForm;
 using Artech.Common.Helpers.Structure;
+using Artech.Genexus.Common.Parts.ExternalObject;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -1713,6 +1714,78 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             }
             file.Close();
         }
+
+        internal static void ListCommitOnExit()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            bool hasParameters;
+            bool commitOnExit;
+            string title = "KBDoctor - Commit on Exit = Yes";
+            string objNameLink;
+
+            output.StartSection("KBDoctor", title);
+            try
+            {
+                System.IO.StreamWriter file = new System.IO.StreamWriter("CommitOnExit.txt");
+                string outputFile = Functions.CreateOutputFile(kbserv, title);
+
+                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title);
+                writer.AddTableHeader(new string[] { "Type", "Name", "Description", "UpdateDB?" });
+
+                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                {
+                    ICallableObject callableObject = obj as ICallableObject;
+                    if (callableObject != null && isGenerated(obj))
+                    {
+                        KBDoctorOutput.Message("Processing " + obj.TypeDescriptor.Name + " " + obj.Name);
+
+                            object aux = obj.GetPropertyValue("CommitOnExit");
+                            commitOnExit = ((aux != null) && (aux.ToString() == "Yes"));
+                        string objName = obj.Name;
+                        string updateDB = "";
+                        bool updateDBbool = CleanKBHelper.ObjectUpdateDB(obj);
+
+                        if (commitOnExit && obj.IsPropertyDefault("CommitOnExit") && isGenerated(obj))
+                            {
+                           
+                                if (updateDBbool)
+                                {
+                                /*
+                                obj.SetPropertyValue("CommitOnExit", "Yes");
+                                obj.Description = obj.Description + '.';
+                                obj.Save();*/
+                                updateDB = "YES";
+                                }
+                                    
+                                objNameLink = Functions.linkObject(obj);
+                                writer.AddTableData(new string[] { obj.TypeDescriptor.Name, objNameLink, obj.Description, updateDB });
+                            }
+                        if (obj is Procedure || obj is Transaction)
+                        {
+                            file.WriteLine(obj.TypeDescriptor.Name + ":" + obj.Name + "  CommitOnExit: " + commitOnExit.ToString() + "  UpdateDB: " + updateDBbool.ToString());
+                        }
+                    }
+                }
+
+                writer.AddFooter();
+                writer.Close();
+                file.Close();
+
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
+                bool success = true;
+                output.EndSection("KBDoctor", title, success);
+            }
+            catch
+            {
+                bool success = false;
+                KBDoctor.KBDoctorOutput.EndSection(title, success);
+            }
+
+        }
+    
 
         private static void ListStructure(SDTLevel level, int tabs, System.IO.StreamWriter file)
         {
@@ -4179,21 +4252,69 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             IOutputService output = CommonServices.Output;
 
             bool success = true;
-            string title = "KBDoctor - Build Objects with property";
+            string title = "KBDoctor - Objects with property";
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+               // string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                // Procedure proc = new 
-                Artech.Genexus.Common.Objects.WebPanel nuevo = new Artech.Genexus.Common.Objects.WebPanel(kbModel);
-                string pdName = "";
-          
+
+          /*
                 KBDoctorOutput.Message( "===== ENCRYPT URL PARAMETERS ========");
                 foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("USE_ENCRYPTION", "SITE"))
                 {
                     KBDoctorOutput.Message( obj.Name);
                 }
+                */
+                KBDoctorOutput.Message("===== External Objects = WSDL ========");
+                foreach (KBObject obj in ExternalObject.GetAll(kbModel)) //.GetByPropertyValue("USE_ENCRYPTION", "SITE"))
+                {
+                    if (obj.GetPropertyValueString("ExoType") == "WSDL")
+                    {
+                        KBDoctorOutput.Message(obj.Name);
+
+                        EXOStructurePart EOPart = obj.Parts.Get<EXOStructurePart>();
+                        foreach (ExternalObjectMethod eom in EOPart.ExternalMethods)
+                        {
+                            String eomAddress = eom.GetPropertyValueString("ExoMethodAddress");
+
+                            Uri uri = new Uri(eomAddress);
+                            // string requested = uri.Scheme + Uri.SchemeDelimiter + uri.Host + ":" + uri.Port;
+                            string LocationSecure = (uri.Scheme == "http") ? "0" : "1";
+                            string LocationProgram = uri.Segments[uri.Segments.Length - 1];
+                            string LocationBaseURL = string.Empty;
+                            string LocationID = obj.QualifiedName.ToString().Replace(".", "_");
+                            for (int i = 0; i < uri.Segments.Length - 1; i++)
+                            {
+                                LocationBaseURL += uri.Segments[i];
+                            }
+                            string LocationNameID = string.Empty;
+                            if (obj.Description == "")
+                                LocationNameID = LocationID;
+                            else
+                                LocationNameID = obj.Description;
+
+                            KBDoctorOutput.Message(" ");
+
+                            KBDoctorOutput.Message("Msg('Inserted:  " + LocationID  + "',status)");
+                            KBDoctorOutput.Message("new ");
+                            KBDoctorOutput.Message("  LocationID=  '" + LocationID +"'");
+                            KBDoctorOutput.Message("  LocationNameID='" + LocationNameID + "'");
+                            KBDoctorOutput.Message("  LocationHost=  '" + uri.Host + "'") ;
+                            KBDoctorOutput.Message("  LocationPort=  " + uri.Port);
+                            KBDoctorOutput.Message("  LocationSecure=" + LocationSecure);
+                            KBDoctorOutput.Message("  LocationBaseURL='" + LocationBaseURL + "'");
+                            KBDoctorOutput.Message("  LocationProgram='" + LocationProgram + "'");
+                            KBDoctorOutput.Message("  LocationTimeout = 3600");
+                            
+                            KBDoctorOutput.Message("      when duplicate Msg('ERROR DUPLICATE: ' + LocationID,status)");
+                            KBDoctorOutput.Message("endnew " + Environment.NewLine );
+                            break;
+                        }
+
+                    }
+                }
+                /*
                 KBDoctorOutput.Message( "");
                 KBDoctorOutput.Message( "===== SOAP ========");
                 bool hassdt;
@@ -4265,7 +4386,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 {
                     ListSdtNamespace(sdt.SDTStructure.Root, sdt.Name);
 
-                }
+                }*/
 
             }
             catch (Exception e)

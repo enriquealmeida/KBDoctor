@@ -77,6 +77,9 @@
     <Reference Include="Artech.Architecture.Common">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Artech.Architecture.Interfaces">
+      <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="Artech.Architecture.Language">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Language.dll</HintPath>
     </Reference>
@@ -148,9 +151,6 @@
     </Reference>
     <Reference Include="Artech.Udm.Layers.Data.SQL">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Udm.Layers.Data.SQL.dll</HintPath>
-    </Reference>
-    <Reference Include="Connector">
-      <HintPath>$(GX_SDK_DIR)\bin\Connector.dll</HintPath>
     </Reference>
     <Reference Include="DeklaritLibrary">
       <HintPath>$(GX_SDK_DIR)\bin\DeklaritLibrary.dll</HintPath>

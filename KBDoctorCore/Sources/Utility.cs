@@ -32,14 +32,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 {
     public static class Utility
     {
+#pragma warning disable IDE1006 // Estilos de nombres
         public static bool isMain(KBObject obj)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             object aux = obj.GetPropertyValue("isMain");
             return ((aux != null) && (aux.ToString() == "True"));
 
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         public static bool isGenerated(KBObject obj)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             object aux = obj.GetPropertyValue(Artech.Genexus.Common.Properties.TRN.GenerateObject);
             return ((aux != null) && (aux.ToString() == "True"));
@@ -264,9 +268,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         internal static bool ValidateINOUTinParm(KBObject obj)
         {
             bool err = false;
-            ICallableObject callableObject = obj as ICallableObject;
 
-            if (callableObject != null)
+            if (obj is ICallableObject callableObject)
             {
                 foreach (Signature signature in callableObject.GetSignatures())
                 {
@@ -383,7 +386,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         internal static bool isRunable(KBObject obj)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             return (obj is Transaction || obj is WorkPanel || obj is WebPanel
                 || obj is DataProvider || obj is DataSelector || obj is Procedure || obj is Menubar);
@@ -507,12 +512,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return n;
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         internal static string linkObject(KBObject obj)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             return "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + obj.Guid.ToString() + "\">" + obj.Name + "</a>";
         }
 
+#pragma warning disable IDE1006 // Estilos de nombres
         internal static string linkFile(string file)
+#pragma warning restore IDE1006 // Estilos de nombres
         {
             return "<a href=\"file:///" + file + "\"" + ">" + file + "</a" + ">";
         }
@@ -723,9 +732,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static List<Tuple<Domain, string>> GetParametersDomains(KBObject obj)
         {
-            ICallableObject callableObject = obj as ICallableObject;
 
-            if (callableObject != null)
+            if (obj is ICallableObject callableObject)
             {
                 List<Signature> signatures = (List<Signature>)callableObject.GetSignatures();
                 if (signatures.Count == 1)
@@ -766,9 +774,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static List<Tuple<string,string>> GetParametersFormatedType(KBObject obj)
         {
-            ICallableObject callableObject = obj as ICallableObject;
 
-            if (callableObject != null)
+            if (obj is ICallableObject callableObject)
             {
                 List<Signature> signatures = (List<Signature>)callableObject.GetSignatures();
                 if (signatures.Count == 1)
@@ -797,7 +804,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 Variable var = (Variable)parm.Object;
                                 if (var != null)
                                     param_type = Utility.FormattedTypeVariable(var);
-                                else if(obj is DataProvider)
+                                else if (obj is DataProvider)
                                 {
                                     param_type = "Unknown";
                                 }
@@ -808,19 +815,19 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     }
                     return types_accessors;
                 }
-                
+
             }
             return null;
         }
 
         public static string GetOutputFormatedType(KBObject obj)
         {
-            ICallableObject callableObject = obj as ICallableObject;
 
-            if (callableObject != null)
+            if (obj is ICallableObject callableObject)
             {
                 List<Signature> signatures = (List<Signature>)callableObject.GetSignatures();
-                if(signatures.Count == 1) { 
+                if (signatures.Count == 1)
+                {
                     foreach (Signature signature in signatures)
                     {
                         Parameter lastparameter = null;
@@ -828,7 +835,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             lastparameter = parm;
                         }
-                        if(lastparameter != null && lastparameter.Accessor.ToString() != "PARM_IN") {
+                        if (lastparameter != null && lastparameter.Accessor.ToString() != "PARM_IN")
+                        {
                             if (lastparameter.IsAttribute)
                             {
                                 Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)lastparameter.Object;
@@ -840,7 +848,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             else
                             {
                                 Variable var = (Variable)lastparameter.Object;
-                                if(var != null)
+                                if (var != null)
                                     return Utility.FormattedTypeVariable(var);
                                 else
                                     return "";
@@ -854,9 +862,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         
         public static Domain GetOutputDomains(KBObject obj)
         {
-            ICallableObject callableObject = obj as ICallableObject;
 
-            if (callableObject != null)
+            if (obj is ICallableObject callableObject)
             {
                 List<Signature> signatures = (List<Signature>)callableObject.GetSignatures();
                 if (signatures.Count == 1)
@@ -881,7 +888,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             else
                             {
                                 Variable var = (Variable)lastparameter.Object;
-                                if(var != null) { 
+                                if (var != null)
+                                {
                                     return var.DomainBasedOn;
                                 }
                                 else
