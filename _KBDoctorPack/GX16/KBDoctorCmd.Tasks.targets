@@ -1,0 +1,14 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="KBDoctorCmd.PrepareCompareNavigationsCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.CompareNavigationsCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.CleanAllKBObjectVariablesCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.RemoveAttributesWithoutTableCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.RemoveObjectsNotReferencedCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.SaveObjectsWSDLCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.CompareWSDLCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.UpdateSourceObjectsWSDLCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.ObjectsWithoutInOutCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.ReviewObjectsCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.ReviewCommitCmd" AssemblyFile="KBDoctorCmd.dll"/>
+  <UsingTask TaskName="KBDoctorCmd.CheckBldObjectsCmd" AssemblyFile="KBDoctorCmd.dll"/>
+</Project>

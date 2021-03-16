@@ -1,0 +1,98 @@
+﻿<Project DefaultTargets="CleanKB" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(GX_PROGRAM_DIR)\Genexus.Tasks.targets" />
+  <Import Project="$(GX_PROGRAM_DIR)\Packages\KBDoctorCmd.Tasks.targets" />
+
+  <Target  Name="PrepareAndCompare">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <PrepareCompareNavigationsCmd/>
+    <CompareNavigationsCmd />
+    <CloseKnowledgeBase />
+  </Target>
+  
+  <Target  Name="JustCompare">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <CompareNavigationsCmd />
+    <CloseKnowledgeBase />
+  </Target>
+
+  <Target  Name="CleanAllObjectsVariables">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <CleanAllKBObjectVariablesCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+
+  <Target  Name="RemoveAttributesWithoutTable">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <RemoveAttributesWithoutTableCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+
+  <Target  Name="RemoveObjectsNotReferenced">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <RemoveObjectsNotReferencedCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+
+   <Target  Name="CleanKB">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <RemoveAttributesWithoutTableCmd/>
+    <CleanAllKBObjectVariablesCmd/>
+    <RemoveObjectsNotReferencedCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+  
+  <Target  Name="UpdateSourceWSDL">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <UpdateSourceObjectsWSDLCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+
+  <Target  Name="SaveObjectsWSDL">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <SaveObjectsWSDLCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+
+  <Target  Name="CompareWSDL">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <CompareWSDLCmd/>
+    <CloseKnowledgeBase />
+  </Target>  
+  
+<Target  Name="SaveAndCompareWSDL">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <SaveObjectsWSDLCmd/>
+    <CompareWSDLCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+  
+   <Target  Name="ObjectsWOInOut">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <ObjectsWithoutInOutCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+  
+  <Target  Name="ReviewObjects">
+    <Message Text="Using GeneXus DIR = $(GX_PROGRAM_DIR)" /> 
+	<Message Text="KB DIR = $(KBPath)" /> 
+    <OpenKnowledgeBase Directory="$(KBPath)" />
+    <ReviewObjectsCmd  DateFrom="$(DateFrom)" />
+    <CloseKnowledgeBase />
+  </Target>
+
+  <Target  Name="ReviewCommits">
+    <Message Text="Using GeneXus DIR = $(GX_PROGRAM_DIR)" />
+    <Message Text="KB DIR = $(KBPath)" />
+    <OpenKnowledgeBase Directory="$(KBPath)" />
+    <ReviewCommitCmd  DateFrom="$(DateFrom)" DateTo="$(DateTo)" ServerUser="$(ServerUser)" ServerPassword="$(ServerPassword)"/> 
+    <CloseKnowledgeBase />
+  </Target>
+  
+   <Target  Name="CheckBldObjects">
+    <OpenKnowledgeBase Directory="$(KBPath)"/>
+    <CheckBldObjectsCmd/>
+    <CloseKnowledgeBase />
+  </Target>
+</Project>
+
