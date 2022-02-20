@@ -51,7 +51,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     File.Delete(path2);
                 }
-                catch (Exception e) { };
+                catch (Exception e) { Console.WriteLine(e.Message); };
 
                 Stream stream = File.Open(path2, FileMode.OpenOrCreate, FileAccess.Write);
                 TextWriter writer2 = new StreamWriter(stream);
@@ -189,7 +189,7 @@ namespace Concepto.Packages.KBDoctor
                 if (ObjName.EndsWith("_BC"))
                     ObjName = ObjName.Replace("_BC", "");
             }
-            catch (Exception e) { };
+            catch (Exception e) { Console.WriteLine(e.Message); };
             return KbStats.ObjectPartialName(ObjName);
 
         }
@@ -310,7 +310,7 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
-
+        
         public static void PrepareComparerNavigation()
         {
 
@@ -360,12 +360,13 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
+        
         public static void ProcesoDir(string directoryArg, string newDir, string generator, IOutputService output)
         {
 
             IKBService kbserv = UIServices.KB;
             string outputFile = kbserv.CurrentKB.UserDirectory + @"\KBdoctorEv2.xslt";
-            XslTransform xslTransform = new XslTransform();
+            XslCompiledTransform xslTransform = new XslCompiledTransform();
 
             xslTransform.Load(outputFile);
 
@@ -675,7 +676,7 @@ namespace Concepto.Packages.KBDoctor
                                     if (obj == null)
                                         writer.AddTableData(new string[] { "Can't find object", "", "", x });
                                     else
-                                        if (KBDoctorCore.Sources.Utility.isGenerated(obj) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT"))
+                                        if (Utility.isGenerated(obj) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT"))
                                         writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, x });
                                 }
                             }
@@ -727,7 +728,7 @@ namespace Concepto.Packages.KBDoctor
                     return true;
                 }
                  }
-            catch (Exception e) { };
+            catch (Exception e) { Console.WriteLine(e.Message); };
 
                
            

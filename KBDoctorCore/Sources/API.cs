@@ -578,7 +578,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void DocumentsInWebPanels(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
-            int cant_aux;
+
             cant = 0;
             foreach (KBObject obj in objs)
             {

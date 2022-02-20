@@ -116,7 +116,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static void CleanObject(KBObject obj, IOutputService output)
         {
-            int totalvarremoved = 0;
+
             KBDoctorOutput.Message("Cleaning object " + obj.Name);
             if (obj is Transaction)
             {
@@ -210,7 +210,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                         objNameLink = obj.Name;
                                         continuar = true;
                                     }
-                                    catch (Exception e) { };
+                                    catch  { };
 
                                 }
                                 lineswriter.Add(new string[] { obj.TypeDescriptor.Name, objNameLink, remove, isGeneratedstr, isMainstr });
@@ -222,7 +222,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     obj.SetPropertyValue(Artech.Genexus.Common.Properties.TRN.GenerateObject, false);
                                     CleanObject(obj, output);
                                 }
-                                catch (Exception e) { };
+                                catch { };
 
                             }
                         }

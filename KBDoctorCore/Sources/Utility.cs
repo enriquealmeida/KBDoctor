@@ -25,8 +25,8 @@ using Artech.Packages.Patterns.Engine;
 using Artech.Packages.Patterns;
 using Artech.Packages.Patterns.Objects;
 using Artech.Genexus.Common.Helpers;
-using static Concepto.Packages.KBDoctorCore.Sources.Objects;
-using Concepto.Packages.KBDoctor;
+//using static Concepto.Packages.KBDoctorCore.Sources.Objects;
+//using Concepto.Packages.KBDoctor;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -117,7 +117,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 Directory.CreateDirectory(dir);
             }
-            catch (Exception e) { }
+            catch (Exception e) { Console.WriteLine(e.Message); }
 
             return dir;
         }
@@ -131,7 +131,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 Directory.CreateDirectory(dir);
             }
-            catch (Exception e) { }
+            catch (Exception e) { Console.WriteLine(e.Message);  }
 
             return dir;
         }
@@ -182,7 +182,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 Directory.CreateDirectory(dir);
             }
-            catch (Exception e) { }
+            catch (Exception e) { Console.WriteLine(e.Message); }
 
             return dir;
         }
@@ -345,12 +345,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                 if (obj is WebPanel) source = obj.Parts.Get<EventsPart>().Source;
             }
-            catch (Exception e) { }
+            catch (Exception e) { Console.WriteLine(e.Message);  }
 
             return source.ToUpper();
         }
 
-        internal static KBObjectPart ObjectSourcePart(KBObject obj)
+        public static KBObjectPart ObjectSourcePart(KBObject obj)
         {
 
             try
@@ -363,7 +363,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                 if (obj is WebPanel) return obj.Parts.Get<EventsPart>();
             }
-            catch (Exception e) { }
+            catch (Exception e) { Console.WriteLine(e.Message);  }
             return null;
             
         }
@@ -381,7 +381,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                 if (obj is WebPanel) return obj.Parts.Get<RulesPart>();
             }
-            catch (Exception e) { }
+            catch (Exception e) { Console.WriteLine(e.Message);  }
             return null;
 
         }
@@ -491,7 +491,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if (d.Name == domainName)
                 {
                     return d;
-                    break;
+                   
                 }
             }
             return null;
@@ -556,14 +556,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string outputFile = KB.UserDirectory + @"\kbdoctor." + Utility.CleanFileName(title) + ".html";
             if (File.Exists(outputFile))
             {
-                bool locked = false;
+                
                 try
                 {
                     File.Delete(outputFile);
                 }
                 catch
                 {
-                    locked = true;
+                    
                 }
                 KBDoctor.KBDoctorOutput.Warning("File " + outputFile + " is locked. The start page cannot be generated");
             }
@@ -1144,10 +1144,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             KBModel targetmodel = KB.DesignModel.Environment.TargetModel;
             GxModel arg = targetmodel.GetAs<GxModel>();
             PropertiesObject propertiesObject = null;
-            GxEnvironment environment;
-            foreach (GxEnvironment current in arg.Environments)
+            GeneratorCategory environment;
+            foreach (GeneratorCategory current in arg.GeneratorCategories)
             {
-                if ( current.EnvironmentCategory.Name.ToLower().Trim() == GeneratorName.ToLower().Trim())
+                if ( current.Name.ToLower().Trim() == GeneratorName.ToLower().Trim())
                 {
                     environment = current;
                     propertiesObject = PropertiesObject.GetFrom(current);

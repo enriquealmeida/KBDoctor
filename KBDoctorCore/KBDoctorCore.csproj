@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Concepto.Packages.KBDoctorCore</RootNamespace>
     <AssemblyName>KBDoctorCore</AssemblyName>
-    <TargetFrameworkVersion>$(TargetFrameworkVersion)</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -21,9 +21,9 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;$(DefineConstants)</DefineConstants>
+    <DefineConstants>$(TargetGeneXusVersion)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>1</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -32,9 +32,9 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;$(DefineConstants)</DefineConstants>
+    <DefineConstants>$(TargetGeneXusVersion)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
@@ -45,7 +45,7 @@
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.Interfaces">
-      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Interfaces.dll</HintPath>
+      <HintPath>C:\GeneXus\GeneXus16SDK\Bin\Artech.Architecture.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.Language">
       <SpecificVersion>False</SpecificVersion>
@@ -81,6 +81,7 @@
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="GeneXus.Server.Common">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GX_PROGRAM_DIR)\GeneXus.Server.Common.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="GeneXus.Server.Contracts">
       <SpecificVersion>False</SpecificVersion>

@@ -28,7 +28,6 @@ using Artech.Packages.Patterns;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Collections.Generic;
 using System.Linq;
 using Artech.Udm.Framework;
 using Concepto.Packages.KBDoctorCore.Sources;
@@ -198,7 +197,6 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Domain", "Table", "Description", "Attribute", "Descripcion", "Module" });
-                int cantObjChanged = 0;
 
                 SelectObjectOptions selectObjectOption = new SelectObjectOptions
                 {
@@ -244,8 +242,6 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddFooter();
                 writer.Close();
 
-                bool success = true;
-
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
             catch
@@ -281,7 +277,7 @@ namespace Concepto.Packages.KBDoctor
         public static string ChangeRuleParmWithIN(KBObject obj)
         {
             string newParm="";
-            string oldRules = "";
+
             RulesPart rulesPart = obj.Parts.Get<RulesPart>();
 
             ICallableObject callableObject = obj as ICallableObject;
@@ -407,7 +403,6 @@ namespace Concepto.Packages.KBDoctor
                 foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
                     KBDoctorOutput.Message( "Procesing.... " + obj.Name + " - " + obj.Type.ToString());
-                    Boolean SaveObj = false;
 
                     if (Utility.isGenerated(obj) && !ObjectsHelper.isGeneratedbyPattern(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel))
                     {
@@ -502,12 +497,18 @@ namespace Concepto.Packages.KBDoctor
         {
             reachablesObjects.Add(obj);
 
+            if (Utility.IsMain(obj))
+                output.AddLine(obj.Name);
+            
+
             foreach (EntityReference reference in obj.GetReferences(LinkType.UsedObject))
             {
                 KBObject objRef = KBObject.Get(obj.Model, reference.To);
 
                 if ((objRef != null) && !reachablesObjects.Contains(objRef))
                 {
+                    if (obj is Procedure && (objRef is Transaction || objRef is WebPanel))
+                                 output.AddWarningLine(obj.Name + " " + objRef.Name);
                     MarkReachables(output, objRef, reachablesObjects);
                 }
 
@@ -552,13 +553,21 @@ namespace Concepto.Packages.KBDoctor
 
                 GxModel gm = UIServices.KB.WorkingEnvironment.TargetModel.GetAs<GxModel>();
 
+#if GX16
                 foreach (var gen in gm.Environments)
+#else
+                foreach (var gen in gm.Generators)
+#endif
                 {
                     int generator = gen.Generator;
 
                     KBObject copy = BLServices.KnowledgeManager.Clone(proc);
                     copy.Name = procName + "_" + generator.ToString();
+#if GX16
                     copy.SetPropertyValue(Artech.Genexus.Common.Properties.TRN.Generator, new EnvironmentCategoryReference { Definition = gen });
+#else
+                    copy.SetPropertyValue(Artech.Genexus.Common.Properties.TRN.Generator, new GeneratorCategoryReference { Definition = gen });
+#endif
                     UIServices.Objects.Save(copy);
 
                     GenexusUIServices.Build.Rebuild(copy.Key);
@@ -711,7 +720,7 @@ namespace Concepto.Packages.KBDoctor
                     {
                         title += obj.Name + "-" + obj.Description;
                         writer.AddHeader(title);
-                        writer.AddTableHeader(new string[] { "Object", "Description", "Commit on Exit", "Update DB?", "Commit in Source", "Do Commit", "Timestamp", "Last Update" });
+                        writer.AddTableHeader(new string[] { "Type", "Object", "Description", "Commit on Exit", "Update DB?", "Commit in Source", "Do Commit", "Timestamp", "Last Update" });
 
                         MarkReachables(output, obj, objRefCollection);
                     }
@@ -745,8 +754,17 @@ namespace Concepto.Packages.KBDoctor
                         else
                             doCommit = "";
 
-                        writer.AddTableData(new string[] { Functions.linkObject(objRef), objRef.Description, commitOnExit, UpdateInsertDelete, commitInSource, doCommit, objRef.Timestamp.ToString(), objRef.LastUpdate.ToString() });
+                        writer.AddTableData(new string[] { "Procedure", Functions.linkObject(objRef), objRef.Description, commitOnExit, UpdateInsertDelete, commitInSource, doCommit, objRef.Timestamp.ToString(), objRef.LastUpdate.ToString() });
 
+                    }
+                    else
+                    {
+                        string objType = objRef.TypeName.ToString();
+
+                        if (!(new[] { "Attribute", "Domain", "ExternalObject", "ThemeClass", "Image", "Table" , "SDT", "WorkWithPlus", "WorkWith" }.Contains(objType)))
+                        {
+                            output.AddErrorLine(objRef.Name + " " + objRef.TypeName.ToString());
+                        }
                     }
 
                 }

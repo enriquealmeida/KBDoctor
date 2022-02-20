@@ -405,7 +405,123 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
+        public static void ListTableWithAttributeNullableCompatible()
+        {
+            IKBService kbserv = UIServices.KB;
+            string title = "KBDoctor - Compare nullable Attributes GX vs DataBase";
 
+            StringCollection strCol = new StringCollection();
+            IOutputService output = CommonServices.Output;
+            output.StartSection("KBDoctor", title);
+
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            int posicion = 1;
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+             writer.AddTableHeader(new string[] { "Posicion", "Module", "Transaction", "Table", "Attribute", "isFK" });
+
+            foreach (Transaction trn in Transaction.GetAll(kbserv.CurrentModel))
+            {
+
+                    foreach (TransactionLevel lvl in trn.Structure.GetLevels())
+
+                    {
+                        foreach (TransactionAttribute att in lvl.Attributes)
+                        {
+                            if (att.IsNullable == TableAttribute.IsNullableValue.Compatible)
+                            {
+                            //KBDoctorOutput.Message(posicion.ToString()+ " " +  trn.Module.Name + " " + trn.Name + " " + lvl.AssociatedTable.Name + " " + att.Name + " " + att.IsForeignKey );
+
+                           // writer.AddTableData(new string[] { posicion.ToString(), trn.Module.Name, trn.Name, lvl.AssociatedTable.Name, att.Name, att.IsForeignKey.ToString() });
+                            posicion += 1;
+                          
+                            }
+                       
+                            string strNullable = "Y";  //True y Compatible lo tomo como Y. 
+                            if (att.IsNullable == TableAttribute.IsNullableValue.False)
+                                strNullable = "N";
+                            string commillas = "'";
+
+                            KBDoctorOutput.Message("SELECT table_name, column_name , NULLABLE as ORACLE ," + 
+                                commillas + strNullable + commillas + " as GX_NULL," +
+                                commillas + att.IsNullable + commillas + " as NULL_GX,"  +
+                                commillas + Utility.FormattedTypeAttribute(att.Attribute) + commillas + " as DBType" +
+                                " FROM all_tab_columns where  table_name = " + commillas + lvl.AssociatedTable.Name + commillas  +
+                                " and column_name =  " + commillas + att.Name + commillas + 
+                                " and NULLABLE <> " + commillas + strNullable + commillas + 
+                                " and OWNER = 'GENEXUS';"                    );
+
+                        }
+                    }
+
+            }
+
+            bool success = true;
+            output.EndSection("KBDoctor", title, success);
+         //   KBDoctorHelper.ShowKBDoctorResults(outputFile);
+        }
+
+        public static void ListTableWithAttributeNullableCompatible2()
+        {
+            IKBService kbserv = UIServices.KB;
+            string title = "KBDoctor - 2Tables with Attribue Nullable = Compatible";
+
+            StringCollection strCol = new StringCollection();
+            IOutputService output = CommonServices.Output;
+            output.StartSection("KBDoctor", title);
+
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            int posicion = 1;
+
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new string[] { "Posicion", "Module", "Transaction", "Table", "Attribute", "isFK" });
+            string trnNamePrior = "";
+            string trnList = "";
+
+            foreach (Transaction trn in Transaction.GetAll(kbserv.CurrentModel)) 
+            {
+                foreach (TransactionLevel lvl in trn.Structure.GetLevels()  )
+                {
+                    
+                    foreach (TransactionAttribute att in lvl.Attributes)
+                    {
+                        if (att.IsNullable == TableAttribute.IsNullableValue.Compatible)
+                        {
+                            //KBDoctorOutput.Message(posicion.ToString()+ " " +  trn.Module.Name + " " + trn.Name + " " + lvl.AssociatedTable.Name + " " + att.Name + " " + att.IsForeignKey );
+                            if (trn.Name != trnNamePrior) 
+                            { 
+                                KBDoctorOutput.Message(trn.Name );
+                                if (trnList != "") trnList += ";";
+
+                                trnList += trn.Name ;
+                                trnNamePrior = trn.Name;
+                            }
+                            
+                             writer.AddTableData(new string[] { posicion.ToString(), trn.Module.Name, trn.Name, lvl.AssociatedTable.Name, att.Name, att.IsForeignKey.ToString() });
+                            posicion += 1;
+
+                        }
+                       // string strNullable = "Y";
+                      //  if (att.IsNullable == TableAttribute.IsNullableValue.False)
+                      //      strNullable = "N";
+                      //  string commillas = "'";
+
+                        /*
+                        KBDoctorOutput.Message("SELECT table_name, column_name , NULLABLE ," + commillas + att.IsNullable + commillas +
+                            " FROM all_tab_columns where  table_name = " + commillas + lvl.AssociatedTable.Name + commillas +
+                            " and column_name =  " + commillas + att.Name + commillas +
+                            " and NULLABLE <> " + commillas + strNullable + commillas + ";"); */
+
+                    }
+                }
+            }
+            KBDoctorOutput.Message(trnList);
+            bool success = true;
+            output.EndSection("KBDoctor", title, success);
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+        }
         public static void ListTableUpdate()
         {
 
@@ -1038,7 +1154,7 @@ namespace Concepto.Packages.KBDoctor
                 string tblAtt = "";
                 string coma = "";
                 string tblName = ShortName(TBLNAME_LEN, t.Name);
-                string PreAutonumber="", PostAutonumber="", SeedAutonumber="";
+                string PreAutonumber="", PostAutonumber="";
                
                 foreach (TableAttribute a in t.TableStructure.Attributes)
                 {
@@ -1136,8 +1252,6 @@ namespace Concepto.Packages.KBDoctor
             scriptFile.WriteLine("   ");
             scriptFile.WriteLine("      */");
 
-            string description;
-            string comilla = "\'";
             foreach (Table t in Table.GetAll(model))
             {
                 string gxnullcondition = NullConditionKey(t,ATTNAME_LEN);
@@ -1153,10 +1267,9 @@ namespace Concepto.Packages.KBDoctor
 
         public static void GenerateSciptCheckFKEmptyValues(string Name, string FileName, int ATTNAME_LEN, int TBLNAME_LEN)
         {
-            string description;
+
             IKBService kbserv = UIServices.KB;
             KBModel model = kbserv.CurrentModel;
-            string comilla = "\'";
 
             IOutputService output = CommonServices.Output;
             KBDoctorOutput.Message("Generating " + Name);

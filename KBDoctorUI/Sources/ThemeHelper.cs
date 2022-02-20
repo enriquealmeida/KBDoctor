@@ -96,7 +96,7 @@ namespace Concepto.Packages.KBDoctor
                     }
                 }
             }
-            catch (Exception e) { Console.WriteLine(); };
+            catch (Exception e) { Console.WriteLine(e.Message); };
             return classEstaEnElTheme;
         }
 

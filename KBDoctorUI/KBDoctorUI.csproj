@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,12 +10,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Concepto.Packages.KBDoctor</RootNamespace>
     <AssemblyName>KBDoctor</AssemblyName>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>3.5</OldToolsVersion>
+    <OldToolsVersion>2.0</OldToolsVersion>
     <TargetFrameworkVersion>$(TargetFrameworkVersion)</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -42,9 +42,9 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>$(TargetGenexusVersion)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>1</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -57,12 +57,13 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>$(TargetGeneXusVersion)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <DefineConstants Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">EVO3</DefineConstants>
@@ -78,7 +79,7 @@
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.Interfaces">
-      <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Interfaces.dll</HintPath>
+      <HintPath>C:\GeneXus\GeneXus16SDK\Bin\Artech.Architecture.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.Language">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Language.dll</HintPath>
@@ -164,9 +165,14 @@
     <Reference Include="Artech.Packages.TeamDevClient.UI">
       <HintPath>$(GX_PROGRAM_DIR)\Packages\Artech.Packages.TeamDevClient.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Infragistics2.Shared.v11.1, Version=11.1.20111.2042, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb" />
+    <Reference Include="Infragistics2.Shared.v11.1">
+      <HintPath>C:\GeneXus\GeneXus17\Infragistics2.Shared.v11.1.dll</HintPath>
+    </Reference>
     <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1">
       <HintPath>$(GX_PROGRAM_DIR)\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
+    </Reference>
+    <Reference Include="KBDoctorCore">
+      <HintPath>..\KBDoctorCore\bin\Release\KBDoctorCore.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>
@@ -224,6 +230,12 @@
       <DependentUpon>AsignDomToVar.cs</DependentUpon>
     </Compile>
     <Compile Include="Sources\BadSmells.cs" />
+    <Compile Include="Sources\ResponsiveSmooth.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sources\ResponsiveSmooth.Designer.cs">
+      <DependentUpon>ResponsiveSmooth.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sources\Functions.cs" />
     <Compile Include="CodeGeneration\CodeGeneration.cs" />
     <Compile Include="Sources\GraphHelper.cs" />
@@ -329,6 +341,9 @@
     <EmbeddedResource Include="Sources\AsignDomToVar.resx">
       <DependentUpon>AsignDomToVar.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sources\ResponsiveSmooth.resx">
+      <DependentUpon>ResponsiveSmooth.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sources\KBDoctorToolWindow.resx">
       <DependentUpon>KBDoctorToolWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -374,10 +389,6 @@
     <ProjectReference Include="..\IniFileParser\INIFileParser.csproj">
       <Project>{5e46dcf4-c473-4171-9f9b-f3910b5ec407}</Project>
       <Name>INIFileParser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj">
-      <Project>{280a5263-3efa-4585-86dd-ea8fd5310a4f}</Project>
-      <Name>KBDoctorCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\Louvain\LouvainCommunityPL.csproj">
       <Project>{462156c1-ff14-4a0f-99b9-1f167435356d}</Project>

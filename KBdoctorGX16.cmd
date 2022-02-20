@@ -1,4 +1,6 @@
-@echo off
+@echo ON
 cd %~dp0
-call setenvKBDoctor GX16
-"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe" KBDoctor.sln
+d:
+set TargetGeneXusVersion=GX16
+call setenvKBDoctor %TargetGeneXusVersion%
+%VisualStudioDir%\devenv.exe KBDoctor.sln

@@ -118,7 +118,7 @@ namespace IniParser.Model
         /// </param>
         ///     <c>true</c> if the key was added  <c>false</c> if a key with the same name already exist 
         ///     in the collection
-        /// </returns>
+
         public bool AddKey(string keyName)
         {
             if (!_keyData.ContainsKey(keyName))

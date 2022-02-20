@@ -76,7 +76,7 @@ namespace Concepto.Packages.KBDoctor.Sources
 
         #endregion
 
-        private System.Windows.Forms.WebBrowser webBrowser1;
+        //private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.WebBrowser webBrowser2;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.NotifyIcon notifyIcon1;

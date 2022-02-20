@@ -79,11 +79,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         private static void ProcesoDir(KnowledgeBase KB, string directoryArg, string newDir, string generator, IOutputService output)
         {
             string outputFile = KB.UserDirectory + @"\KBdoctorEv2.xslt";
-            XslTransform xslTransform = new XslTransform();
+            XslCompiledTransform xslTransform = new XslCompiledTransform();
+            XsltSettings xsltSettings = new XsltSettings(true,true);
 
             KBDoctorOutput.Message("Cargando archivo xslt: " + outputFile);
-            xslTransform.Load(outputFile);
-            KBDoctorOutput.Message("Archivo xslt cargado correctamente.");
+            
+            xslTransform.Load(outputFile,xsltSettings, null );
+            KBDoctorOutput.Message("Archivo xslt cargado correctamente2.");
             string fileWildcard = @"*.xml";
             var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
             string[] xFiles = System.IO.Directory.GetFiles(directoryArg, fileWildcard, searchSubDirsArg);
@@ -147,7 +149,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             filerenamed.Delete();
                             fileToRename.MoveTo(nombre);
                         }
-                        catch(Exception e)
+                        catch
                         {
                         }
                     }
@@ -163,9 +165,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
                 {
-                    try
-                    {
-                        string xTxt = newDir + generator + Path.GetFileNameWithoutExtension(x) + ".nvg";
+                    //  try
+                    // {
+                    output.AddErrorLine(x);
+                    string xTxt = newDir + generator + Path.GetFileNameWithoutExtension(x) + ".nvg";
 
                         string xmlstring = Utility.AddXMLHeader(x);
 
@@ -174,11 +177,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                         xslTransform.Transform(newXmlFile, xTxt);
                         File.Delete(newXmlFile);
-                    }
-                    catch(Exception e)
-                    {
-                        output.AddErrorLine(e);
-                    }
+
+                  //  }
+                 //   catch(Exception e)
+                 //   {
+                 //       output.AddErrorLine(e);
+                 //   }
                     
                 }
             }
@@ -206,12 +210,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
             string[] FilesDirectory = System.IO.Directory.GetFiles(path, fileWildcard, searchSubDirsArg);
-            bool contains;
+
             foreach (string filePath in FilesDirectory)
             {
                 string dataline;
                 string nameline;
-                contains = false;
+
                 StreamReader sr = new StreamReader(filePath);
                 dataline = sr.ReadLine();
                 nameline = sr.ReadLine();
@@ -228,7 +232,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (text.Contains(replace))
                     {
                         string escreplace = replace.Replace(".", @"\.");
-                        contains = true;
                         string pattern = @"([^a-zA-Z0-9])" + '(' + escreplace + ')';
                         string replacement = "$1";
                         Regex rgx = new Regex(pattern);

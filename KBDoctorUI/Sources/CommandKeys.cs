@@ -74,6 +74,12 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey tblGenerateSimpleTransactionFromNotGeneratedTransactions = new CommandKey(Package.guid, "GenerateSimpleTransactionFromNotGeneratedTransactions");
         public static CommandKey TblGenerateSimpleTransactionFromNotGeneratedTransactions { get { return tblGenerateSimpleTransactionFromNotGeneratedTransactions; } }
 
+        private static CommandKey tblListTableWithAttributeNullableCompatible = new CommandKey(Package.guid, "ListTableWithAttributeNullableCompatible");
+        public static CommandKey TblListTableWithAttributeNullableCompatible { get { return tblListTableWithAttributeNullableCompatible; } }
+
+        private static CommandKey tblListTableWithAttributeNullableCompatible2 = new CommandKey(Package.guid, "ListTableWithAttributeNullableCompatible2");
+        public static CommandKey TblListTableWithAttributeNullableCompatible2 { get { return tblListTableWithAttributeNullableCompatible2; } }
+
         private static CommandKey tblTableUpdate      = new CommandKey(Package.guid, "TableUpdate");
         public static CommandKey TblTableUpdate { get { return tblTableUpdate; } }
 
@@ -298,6 +304,9 @@ namespace Concepto.Packages.KBDoctor
         //Stats
         private static CommandKey countGeneratedByPattern = new CommandKey(Package.guid, "CountGeneratedByPattern");
         public static CommandKey CountGeneratedByPattern { get { return countGeneratedByPattern; } }
+
+        private static CommandKey generatedByPatternWithoutDynamism = new CommandKey(Package.guid, "GeneratedByPatternWithoutDynamism");
+        public static CommandKey GeneratedByPatternWithoutDynamism { get { return generatedByPatternWithoutDynamism; } }
 
         private static CommandKey replaceNullCompatible = new CommandKey(Package.guid, "ReplaceNullCompatible");
         public static CommandKey ReplaceNullCompatible { get { return replaceNullCompatible; } }

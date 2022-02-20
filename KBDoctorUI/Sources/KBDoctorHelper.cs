@@ -46,7 +46,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 Directory.CreateDirectory(dir);
             }
-            catch (Exception e) { }
+            catch (Exception e) { Console.WriteLine(e.Message); }
 
             return dir;
         }
@@ -59,7 +59,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 Directory.CreateDirectory(dir);
             }
-            catch (Exception e) { }
+            catch (Exception e) { Console.WriteLine(e.Message); }
             return dir;
         }
     }

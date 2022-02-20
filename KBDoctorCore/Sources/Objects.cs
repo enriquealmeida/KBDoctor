@@ -31,6 +31,7 @@ using Artech.Architecture.Language.Parser.Objects;
 using System.Xml;
 using Attribute = Artech.Genexus.Common.Objects.Attribute;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -275,9 +276,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                      }
                  }
              }*/
-            return null;
+            //return null;
 
-
+            /*
             if (source != null)
             {
                 Stack stk;
@@ -297,8 +298,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     }
                 }
-
-            }
+           
+            } */
             return null;
 
         }
@@ -416,7 +417,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         private static string GetParametersString(KBObject obj)
         {
 
-            Tuple<int, string> type_access;
+            
             List<Tuple<int, string>> parameters = new List<Tuple<int, string>>();
             ICallableObject callableObject = obj as ICallableObject;
             foreach (Signature signature in callableObject.GetSignatures())
@@ -464,7 +465,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             // Object with parm() rule without in: out: or inout:
             List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output, ref recommendations);
-            bool success = true;
+
             cant = objectsWithProblems.Count;
             return objectsWithProblems;
         }
@@ -740,7 +741,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     output.Add("KBDoctor", err);
                     v.AttributeBasedOn = att;
                     return true;
-                    break;
+                   
                 }
                 else
                 {
@@ -764,7 +765,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         output.Add("KBDoctor", err);
                         v.DomainBasedOn = d;
                         return true;
-                        break;
+                        
                     }
                     else
                     {
@@ -808,9 +809,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             cant = 0;
             foreach (KBObject obj in objs)
             {
-                if (obj is Artech.Genexus.Common.Objects.Attribute)
+                if (obj is Artech.Genexus.Common.Objects.Attribute a)
                 {
-                    Artech.Genexus.Common.Objects.Attribute a = (Artech.Genexus.Common.Objects.Attribute)obj;
                     string FormatType = Utility.FormattedTypeAttribute(a);
                     bool isSubtype = Utility.AttIsSubtype(a);
 
@@ -839,9 +839,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     string itemnames = "";
                     foreach (IStructureItem structItem in sdtstruct.Root.Items)
                     {
-                        if (structItem is SDTItem)
+                        if (structItem is SDTItem sdtItem)
                         {
-                            SDTItem sdtItem = (SDTItem)structItem;
                             if (sdtItem.BasedOn == null && sdtItem.AttributeBasedOn == null && Utility.TypeHasToBeInDomain(sdtItem.Type))
                             {
                                 hasItemNotBasedOn = true;
@@ -1129,7 +1128,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static void ProcessAssignsInSource(KBModel model, SourcePart source, VariablesPart vp, ref string recommendations, out int cant, ref HashSet<string> readonly_var, ref HashSet<string> writeonly_var)
         {
-            int cant_aux;
+
             cant = 0;
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
@@ -1149,10 +1148,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
 
                     }
-                    if (assign is ObjectMethodNode)
+                    if (assign is ObjectMethodNode omn)
                     {
-                        ObjectMethodNode omn = (ObjectMethodNode)assign;
-
                         switch (omn.MethodName.ToLower())
                         {
                             case "tostring":
@@ -2968,7 +2965,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     foreach (IRevisionAction action in revision.Actions)
                     {
                         string name = "";
-                        string module = "";
+
                         if (action.Operation.ToString().ToLower() != "delete")
                         {
                             QualifiedName qn = null;
@@ -3030,7 +3027,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static void ProcessCallsAsFuctions(KBModel model, SourcePart source, VariablesPart vp, ref string recommendations, out int cant)
         {
-            int cant_aux;
+
             cant = 0;
             var parser = Artech.Genexus.Common.Services.GenexusBLServices.Language.CreateEngine() as Artech.Architecture.Language.Parser.IParserEngine2;
             ParserInfo parserInfo;
@@ -3625,10 +3622,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 case "character":
                     return GetRandomString(int_len);
-                    break;
                 case "varchar":
                     return GetRandomString(int_len);
-                    break;
                 case "numeric":
                     return GetRandomNumber(int_len).ToString();
                 case "boolean":
@@ -3644,13 +3639,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 case "boolean":
                     return GetRandomBoolean().ToString();
-                    break;
+                    
                 case "character":
                     return GetRandomString(int_len);
-                    break;
+                    
                 case "varchar":
                     return GetRandomString(int_len);
-                    break;
+                    
                 case "numeric":
                     if (decimal_len == 0)
                     {
@@ -4095,6 +4090,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             return hash_ret;
         }
+
+      
 
 #if EVO3
     public class Tuple<T1, T2>

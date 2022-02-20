@@ -892,8 +892,7 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Domain", "Description", "Data type", "Att references", "Other References" });
                 string description;
-                string titlesuggested;
-                string columnTitle;
+
                 foreach (Domain d in Domain.GetAll(kbserv.CurrentModel))
                 {
                     description = d.Description;
@@ -980,7 +979,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            string title = "KBDoctor - Replace attribute with Compatible with NO ";
+            string title = "KBDoctor - Replace attribute with Compatible with YES ";
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -1000,30 +999,41 @@ namespace Concepto.Packages.KBDoctor
                 foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
                     bool saveObj = false;
+                    string aName = "";
                     Transaction trn = (Transaction)obj;
                     if (trn != null)
                     {
                         foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                         {
-                            bool isLevelRemovable = true;
 
                             Table TBL = LVL.AssociatedTable;
+                           
 
                             foreach (TransactionAttribute a in LVL.Structure.GetAttributes())
                             {
-                                KBDoctorOutput.Message( a.Name);
+                               // KBDoctorOutput.Message( a.Name);
                                 writer.AddTableData(new string[] { Functions.linkObject(trn), trn.Description, Functions.linkObject(a), a.Attribute.Description, a.IsForeignKey.ToString(), a.IsNullable.ToString() });
-                                if (!a.IsForeignKey && !a.IsKey && (a.IsNullable == TableAttribute.IsNullableValue.Compatible || a.IsNullable == TableAttribute.IsNullableValue.True))
+                                if (/*!a.IsForeignKey && */!a.IsKey && !a.IsRedundant && a.IsNullable == TableAttribute.IsNullableValue.Compatible ) //|| a.IsNullable == TableAttribute.IsNullableValue.True))
                                 {
-                                    a.IsNullable = TableAttribute.IsNullableValue.False;
+                                    a.IsNullable = TableAttribute.IsNullableValue.True;
                                     saveObj = true;
+                                    aName = a.Name;
+                                    KBDoctorOutput.Message(a.Name);
                                 }
                             }
                         }
                         if (saveObj)
                         {
                             KBDoctorOutput.Message( "Saving ." + trn.Name);
-                            trn.Save();
+                            try
+                            {
+                                trn.Save();
+                            }
+                            catch (Exception e)
+                            {
+                                KBDoctorOutput.Error(trn.Name + " " + aName + " " + e.Message);
+                            }
+                            
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0" xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
   <PropertyGroup>
-	    <StartProgram xdt:Transform="Replace">c:\GeneXus\GeneXus16u10\GeneXus.exe</StartProgram>
+	    <StartProgram xdt:Transform="Replace">D:\GeneXus\GeneXus17\genexus.exe</StartProgram>
   </PropertyGroup>
  </Project>

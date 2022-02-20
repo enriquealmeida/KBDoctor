@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
 using System.Linq;
-using System.Windows.Forms;
 using Artech.Architecture.UI.Framework.Helper;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Common.Framework.Commands;
@@ -15,11 +12,11 @@ using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.Common.Framework.Selection;
 using Artech.Architecture.UI.Framework.Controls;
-using Concepto.Packages.KBDoctorCore;
 using Infragistics.Win.UltraWinGrid;
-using static Artech.Architecture.Common.Objects.KnowledgeBase;
 using Artech.Genexus.Common.Objects;
 using Artech.Architecture.Common.Descriptors;
+//using Concepto.Packages.KBDoctorCore.Sources;
+using API = Concepto.Packages.KBDoctorCore.Sources.API;
 using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor
@@ -56,6 +53,9 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ListTables, new ExecHandler(ExecListTables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.TblTableTransaction, new ExecHandler(ExecTblTableTransaction), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.TblGenerateSimpleTransactionFromNotGeneratedTransactions, new ExecHandler(ExecTblGenerateSimpleTransactionFromNotGeneratedTransactions), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.TblListTableWithAttributeNullableCompatible, new ExecHandler(ExecTblListTableWithAttributeNullableCompatible), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.TblListTableWithAttributeNullableCompatible2, new ExecHandler(ExecTblListTableWithAttributeNullableCompatible2), new QueryHandler(QueryKBDoctor));
+
             AddCommand(CommandKeys.TblTableUpdate, new ExecHandler(ExecTblTableUpdate), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.TblTableInsertNew, new ExecHandler(ExecTblTableInsertNew), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.GenerateTrnFromTables, new ExecHandler(ExecGenerateTrnFromTables), new QueryHandler(QueryKBDoctor));
@@ -170,6 +170,7 @@ namespace Concepto.Packages.KBDoctor
             //Labs
             AddCommand(CommandKeys.RenameAttributesAndTables, new ExecHandler(ExecRenameAttributesAndTables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CountGeneratedByPattern, new ExecHandler(ExecCountGeneratedByPattern), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.GeneratedByPatternWithoutDynamism, new ExecHandler(ExecGeneratedByPatternWithoutDynamism), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ReplaceNullCompatible, new ExecHandler(ExecReplaceNullCompatible), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListObj, new ExecHandler(ExecListObj), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CreateDeployUnits, new ExecHandler(ExecCreateDeployUnits), new QueryHandler(QueryKBDoctor));
@@ -437,6 +438,24 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecTblListTableWithAttributeNullableCompatible(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            Thread t = new Thread(new ThreadStart(TablesHelper.ListTableWithAttributeNullableCompatible));
+            t.Start();
+            return true;
+        }
+
+        public bool ExecTblListTableWithAttributeNullableCompatible2(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            Thread t = new Thread(new ThreadStart(TablesHelper.ListTableWithAttributeNullableCompatible2));
+            t.Start();
+            return true;
+        }
+
         /// <summary>
         /// Lista la relacion entre tablas y objetos y muestra en cuales se update/delete/insert/select
         /// </summary>
@@ -591,16 +610,17 @@ namespace Concepto.Packages.KBDoctor
 
             List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
             int cant = 0;
-            Thread thread = new Thread(() => ObjectsWithRuleOld(UIServices.KB.CurrentKB, objs, out cant));
+            string recommendations = "";
+            Thread thread = new Thread(() => ObjectsWithRuleOld(UIServices.KB.CurrentKB, objs, ref recommendations ,out cant));
             thread.Start();
         }
 
-        private static void ObjectsWithRuleOld(KnowledgeBase KB, List<KBObject> objs, out int cant)
+        private static void ObjectsWithRuleOld(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
             cant = 0;
             KBDoctorOutput.StartSection("KBDoctor - Objects With Rule Old");
-            string recommendations = "";
-            API.ObjectsWithRuleOld(UIServices.KB.CurrentKB, objs, ref recommendations, out cant);
+           // string recommendations = "";
+            ObjectsWithRuleOld(UIServices.KB.CurrentKB, objs, ref recommendations, out cant);
             KBDoctorOutput.EndSection("KBDoctor - Objects With Rule Old");
         }
 
@@ -624,7 +644,7 @@ namespace Concepto.Packages.KBDoctor
             cant = 0;
             KBDoctorOutput.StartSection("KBDoctor - Parameters Type Comparer");
             string recommendations = "";
-            API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs, ref recommendations, out cant);
+            ParametersTypeComparer(UIServices.KB.CurrentKB, objs,  out cant);
             KBDoctorOutput.EndSection("KBDoctor - Parameters Type Comparer");
         }
 
@@ -984,7 +1004,6 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            string title = "KBDoctor - Generate SDT Data load";
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<SDT>());
             selectObjectOption.MultipleSelection = true;
@@ -1003,7 +1022,6 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            string title = "KBDoctor - List SDTs with Date";
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             selectObjectOption.MultipleSelection = true;
@@ -1022,7 +1040,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            string title = "KBDoctor - Generate REST Calls";
+
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             selectObjectOption.MultipleSelection = true;
@@ -1036,7 +1054,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            string title = "KBDoctor - Generate REST Calls";
+
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
@@ -1064,7 +1082,7 @@ namespace Concepto.Packages.KBDoctor
 
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            string title = "KBDoctor - Generate REST Calls";
+
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
@@ -1079,8 +1097,8 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            List<string[]> lines;
-            int cant;
+
+  
             Thread thread = new Thread(() => VariablesNotBasedOnAttributes(objs));
             thread.Start();
 
@@ -1636,7 +1654,7 @@ namespace Concepto.Packages.KBDoctor
 
             List<KBObject> selectedObjects = new List<KBObject>();
 
-            KBDoctorCore.Sources.API.CleanKBObjects(kbModel, UIServices.SelectObjectDialog.SelectObjects(selectObjectOption), output);
+            API.CleanKBObjects(kbModel, UIServices.SelectObjectDialog.SelectObjects(selectObjectOption), output);
             return true;
         }
 
@@ -1729,6 +1747,13 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
             KbStats.CountGeneratedByPattern();
+            return true;
+        }
+        public bool ExecGeneratedByPatternWithoutDynamism(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            KbStats.GeneratedByPatternWithoutDynamism();
             return true;
         }
 

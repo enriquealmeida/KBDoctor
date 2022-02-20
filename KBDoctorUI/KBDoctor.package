@@ -34,6 +34,8 @@
     <CommandDefinition id="TablesWidth" />
     <CommandDefinition id="TableTransaction" />
     <CommandDefinition id="GenerateSimpleTransactionFromNotGeneratedTransactions" />
+    <CommandDefinition id="ListTableWithAttributeNullableCompatible" />
+     <CommandDefinition id="ListTableWithAttributeNullableCompatible2" />
     <CommandDefinition id="TableUpdate" />
     <CommandDefinition id="TableInsertNew" />
     <CommandDefinition id="GenerateTrnFromTables2" />
@@ -126,11 +128,11 @@
     <CommandDefinition id="GenerateRESTCalls" />
     <CommandDefinition id="SDTsWithDateInWS" />
     <CommandDefinition id="GenerateSDTDataLoad" />
-    <CommandDefinition id="CheckBldObjects"/>
     <CommandDefinition id="CheckVariableUsages"/>
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
     <CommandDefinition id="CountGeneratedByPattern" />
+    <CommandDefinition id="GeneratedByPatternWithoutDynamism" />
     <CommandDefinition id="ReplaceNullCompatible" />
     <CommandDefinition id="ListObj" />
     <CommandDefinition id="PrepareComparerNavigation" />
@@ -209,6 +211,8 @@
             <Command refid="TableUpdate" />
             <Command refid="IndexWithNotRefAtt"/>
             <Command refid ="TablesWidth"/>
+            <Command refid="ListTableWithAttributeNullableCompatible" />
+
           </Popup>
 
           <Popup name ="Objects">
@@ -273,7 +277,14 @@
           </Group>
           <Group id="Common errors" >
             <Popup name ="Common errors">
-                          <Command refid="ListDynamicCombo"/>
+                <Command refid="ListDynamicCombo"/>
+                <Command refid="GeneratedByPatternWithoutDynamism"  />
+                <Command refid="ListTableWithAttributeNullableCompatible2" />
+                <Command refid="ListTableWithAttributeNullableCompatible" />
+                <Command refid="AttWithNoDomain"/>
+                <Command refid="AttWithoutDescription"/>
+                <Command refid="VariablesNotBasedOnAttributes"/>
+                <Command refid="ObjectsWithoutInOut"/>
             </Popup>
           </Group>
 
@@ -317,6 +328,7 @@
               <Command refid="ProcedureGetSet"/>
               <Command refid="CreateDeployUnits" />
               <Command refid="GenerateSimpleTransactionFromNotGeneratedTransactions" />
+
               <Command refid="RenameVariables"/>
               <Command refid="ObjectsWithVarsNotUsed"/>
               <Command refid="GenerateTrnFromTables2" />
@@ -348,9 +360,8 @@
               <Command refid="GenerateSDTDataLoad" />
               <Command refid="GenerateDPfromTable"/>
               <Command refid="AttributeAsOutput"/>
-              <Command refid="CheckBldObjects"/>
               <Command refid="CheckVariableUsages"/>
-              <Command refid="VariablesNotBasedOnAttributes"/>
+
 
               <Popup name ="Themes" >
                   <Group>
@@ -365,6 +376,7 @@
 
             </Popup>
           </Group>
+          
           
 
           <!--

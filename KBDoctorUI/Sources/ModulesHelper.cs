@@ -1,5 +1,4 @@
-﻿using Artech.Architecture.BL.Framework.Services;
-using Artech.Architecture.Common;
+﻿using Artech.Architecture.Common;
 using Artech.Architecture.Common.Collections;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Architecture.Common.Objects;
@@ -7,23 +6,17 @@ using Artech.Architecture.Common.Services;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Services;
-using Artech.Genexus.Common.Wiki;
-using Artech.Architecture.Common.Descriptors;
 using Artech.Udm.Framework.References;
 using System;
-using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Artech.Genexus.Common.Helpers;
-using Artech.Architecture.UI.Framework.Controls;
-using Artech.Common.Framework.Commands;
 using Artech.Udm.Framework;
 using Artech.Genexus.Common;
 using Artech.Genexus.Common.Parts;
 using Concepto.Packages.KBDoctorCore.Sources;
-using System.IO;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -244,8 +237,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             bool success = true;
-            int objInRoot = 0;
-            int objSinRoot = 0;
+
             string title = "KBDoctor - List Modularization Quality (More is better)";
             output.StartSection("KBDoctor", title);
 
@@ -430,7 +422,6 @@ El módulo tiene objetos públicos no referenciados por externos?
 */
 
             int cantobj = 0;
-            int cantobjmain = 0;
             int cantobjPub = 0;
             int cantInRef = 0;
             int cantOutRef = 0;
@@ -500,8 +491,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             bool success = true;
-            int objInRoot = 0;
-            int objSinRoot = 0;
+
             string title = "KBDoctor - Move Transaction";
             output.StartSection("KBDoctor",title);
             try
@@ -946,13 +936,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                             string objNameLink = Functions.linkObject(t);
 
                             KBDoctorOutput.Message( "Processing... " + t.Name);
-
-                            int countAttr = 0;
-                            int countKeyAttr = 0;
-                            int widthKey = 0;
-                            int width = 0;
-                            int widthVariable = 0;
-                            int widthFixed = 0;
+                           
 
                             ObjectVisibility objVisibility = TableVisibility(t);
                             KBObject trnBest = GenexusBLServices.Tables.GetBestAssociatedTransaction(model, t.Key);
@@ -1094,8 +1078,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             KBModel kbModel = UIServices.KB.CurrentModel;
             IOutputService output = CommonServices.Output;
             bool success = true;
-            int objInRoot = 0;
-            int objSinRoot = 0;
+
             string title = "KBDoctor - Module references";
             output.StartSection("KBDoctor",title);
             try
@@ -1191,8 +1174,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             KBModel kbModel = UIServices.KB.CurrentModel;
             IOutputService output = CommonServices.Output;
             bool success = true;
-            int objInRoot = 0;
-            int objSinRoot = 0;
+
             string title = "KBDoctor - Objects to divide";
             output.StartSection("KBDoctor",title);
             try
@@ -1323,10 +1305,8 @@ El módulo tiene objetos públicos no referenciados por externos?
                 IOutputService output = CommonServices.Output;
                 output.StartSection("KBDoctor", title);
 
-                string sw = "";
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                int numObj = 0;
 
                 writer.AddTableHeader(new string[] { "Type", "Object", "Module", "List of modules" });
 
@@ -1397,7 +1377,6 @@ El módulo tiene objetos públicos no referenciados por externos?
                             string[] parts = objAndType.Split(':');
                             string objname = parts[0].Trim();
 
-                            Guid typeguid;
                             string objtype = parts[1].Trim();
 
                             if (objtype != "Table")
@@ -1439,7 +1418,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 {
                     mdl.Delete();
                 }
-                catch { Exception e; }
+                catch {  }
             }
             KBDoctorOutput.EndSection("Modularization");
         }

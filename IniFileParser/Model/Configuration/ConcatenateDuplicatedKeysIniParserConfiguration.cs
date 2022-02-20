@@ -23,7 +23,7 @@ namespace IniParser.Model.Configuration
         ///     Gets or sets the string used to concatenate duplicated keys.
         /// </summary>
         ///     Defaults to ';'.
-        /// </value>
+        
         public string ConcatenateSeparator { get; set; }
     }
 

@@ -637,7 +637,8 @@ namespace Concepto.Packages.KBDoctor
                         IdToKey.Add(objId, obj.Key);
                     }
                     catch (Exception e)
-                    {// output.AddWarningLine("Can't add : " + objName + " Exception: " + e.Message + " " + e.InnerException);
+                    {
+                        Console.WriteLine(e.Message);
                     };
                 }
             }
@@ -732,7 +733,7 @@ namespace Concepto.Packages.KBDoctor
                 foreach (var objid in kvp.Value)
                 {
                     var objname = IdToName[objid];
-                    int cantidad = 0;
+
                     // KBDoctorOutput.Message("Module :" + counter.ToString() + " " + objname);
                     string pareja = IdToModule[objid] + " " + counter.ToString() ;
                     if (modu.ContainsKey(pareja))
@@ -812,7 +813,7 @@ namespace Concepto.Packages.KBDoctor
 
                 g.AddEdge(id1, id2, weight);
             }
-            catch (Exception e) {  };
+            catch (Exception e) { Console.WriteLine(e.Message); };
         }
 
 

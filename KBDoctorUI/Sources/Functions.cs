@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System;
 using Artech.Architecture.Common.Objects;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Parts;
@@ -186,6 +182,7 @@ namespace Concepto.Packages.KBDoctor
             } 
             catch (Exception e) {
                 source = "";
+                Console.WriteLine(e.Message);
             }
 
             return source.ToUpper();
@@ -207,6 +204,7 @@ namespace Concepto.Packages.KBDoctor
             catch (Exception e)
             {
                 rules = "";
+                Console.WriteLine(e.Message);
             }
 
             return rules.ToUpper();
@@ -282,7 +280,6 @@ namespace Concepto.Packages.KBDoctor
                 if (d.Name == domainName)
                     {
                     return d;
-                    break;
                     }  
              }
             return null;

@@ -7,12 +7,8 @@ using System.Text;
 
 using Artech.Architecture.Common.Descriptors;
 using Artech.Architecture.Common.Helpers;
-using Artech.Architecture.Common.Objects;
-using Artech.Architecture.Common.Packages;
 using Artech.Architecture.Common.Services;
 using Artech.Udm.Framework;
-using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Xml;
 using Artech.Common.Helpers;
@@ -92,9 +88,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     yield return kBObject;
                 }
             }
-            IEnumerator<XmlNode> enumerator = null;
-            yield break;
-            yield break;
+ 
         }
 
         public static void HandleError(ResolveResult result)
@@ -122,7 +116,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             yield return current;
                         }
                     }
-                    IEnumerator<KBObject> enumerator = null;
+                    yield break;
                 }
                 else
                 {
@@ -168,7 +162,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             array = null;
             yield break;
-            yield break;
+
         }
     }
 }

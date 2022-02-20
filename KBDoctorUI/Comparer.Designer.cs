@@ -19,7 +19,7 @@ namespace Concepto.Packages.KBDoctor {
     // a través de una herramienta como ResGen o Visual Studio.
     // Para agregar o quitar un miembro, edite el archivo .ResX y, a continuación, vuelva a ejecutar ResGen
     // con la opción /str o recompile su proyecto de VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Comparer {
@@ -92,40 +92,40 @@ namespace Concepto.Packages.KBDoctor {
         
         /// <summary>
         ///   Busca una cadena traducida similar a #Contain text to be replaced (Replace is case insensitive)
-        ///#FindText, ReplaceToText
+        ///#FindText| ReplaceToText
         ///#
-        ///.and. , and 
-        ///.like., like 
-        ///.not., not 
-        ///.or., or 
-        ///AND,and
-        ///OR ,or 
-        ///NOT,not
-        ///LIKE,like
-        ///IF ,if 
-        ///.udp(,(
-        ///.call(,(
-        ///SUB,Sub
-        ///ENDSUB,EndSub
-        ///DO CASE,do case
-        ///ENDCASE,endcase
-        ///EVENT,Event
-        ///ENDEVENT,EndEvent
-        ///FOR EACH,for each
-        ///ORDER,order
-        ///DEFINED BY,defined by
-        ///WHERE,where
-        ///WHEN,when
-        ///ENDFOR,endfor
-        ///ENDIF,endif
-        ///ELSE,else
-        ///NEW,new
-        ///DUPLICATE,duplicate
-        ///ENDNEW,endnew
-        ///COMMIT,commit
-        ///ROLLBACK,rollback
-        ///MSG,msg
-        ///LOAD,loa [resto de la cadena truncado]&quot;;.
+        ///.and. | and 
+        ///.like.| like 
+        ///.not.| not 
+        ///.or.| or 
+        ///AND|and
+        ///OR |or 
+        ///NOT|not
+        ///LIKE|like
+        ///IF |if 
+        ///.udp(|(
+        ///.call(|(
+        ///SUB|Sub
+        ///ENDSUB|EndSub
+        ///DO CASE|do case
+        ///ENDCASE|endcase
+        ///EVENT|Event
+        ///ENDEVENT|EndEvent
+        ///FOR EACH|for each
+        ///ORDER|order
+        ///DEFINED BY|defined by
+        ///WHERE|where
+        ///WHEN|when
+        ///ENDFOR|endfor
+        ///ENDIF|endif
+        ///ELSE|else
+        ///NEW|new
+        ///DUPLICATE|duplicate
+        ///ENDNEW|endnew
+        ///COMMIT|commit
+        ///ROLLBACK|rollback
+        ///MSG|msg
+        ///LOAD|loa [resto de la cadena truncado]&quot;;.
         /// </summary>
         public static string Replace {
             get {

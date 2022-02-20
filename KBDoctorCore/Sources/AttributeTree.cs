@@ -49,7 +49,7 @@ namespace Concepto.Packages.KBDoctor
         {
             m_AttributesToAnalyze = new HashSet<Artech.Genexus.Common.Objects.Attribute>();
             m_AnalyzedAttributes = new HashSet<Artech.Genexus.Common.Objects.Attribute>();
-           // m_MyDependencies = new Dependencies(Artech.Genexus.Common.Version.Model, this);
+            //m_MyDependencies = new Dependencies(Artech.Genexus.Common.Version.Model, this);
             m_ParsedObjects = new Dictionary<EntityKey, bool>();
             WorkName = "";
         }
@@ -189,7 +189,7 @@ namespace Concepto.Packages.KBDoctor
               //      goto end;
             }
 
-            end:
+            
            // K2BStatusBar.Clear();
             return;
         }
