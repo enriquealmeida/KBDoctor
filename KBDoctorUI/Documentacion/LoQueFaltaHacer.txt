@@ -1,0 +1,109 @@
+* Haer un reporte que vea los call que deberian ser udp. Debe ver los objetos que tienen todos parametros IN y el ultimo OUT y revisar que no se llamen con call, sino con UDP.
+
+Reportes que faltan hacer
+* Dada un BC listar los atributos que falten en el nivel de la trn de la tabla que mantiene. 
+* Listar tablas poniendo Cache_level,cuantos programas lo actualizan, cuantos programas insertan, cuantos progamas la leen, cuantos programas borran. 
+* Mejorar la pantalla de search and replace. 
+* Mejorar generacion de objetos a texto para agregar propiedades
+* En reporte de objetos no alcanzables, que sea opcional el marcar los objetos como no generables. 
+* Objetos con variables que no estan basados en att o dominios. 
+En todas las opciones chquequear que se haga:
+    Agregarle un mensaje en el output al recorrer.
+    Pasar el foco a la startpage
+
+	Atributos Clave Autonumber que son FK en otra tabla. 
+	Unificar atributos.
+
+
+
+Lista de CUASI-ERRORES
+* Arreglar InOut: en Prompts generados con WorkWithPlus  (YA ESA)
+* Tablas que nadie les hace Insert (YA ESTA)
+* Tablas que muchos objetos le hacen Update (YA ESTA)
+* Tablas que muchos objetos borran.  (YA ESTA)
+* Objetos no alcanzables. (YA ESTA)
+* Atributos que no estan en tablas. (YA ESTA) 
+* Dominios que nadie usa  (YA ESTA)
+* Objetos muy grandes (con mucho codigo, con mucha regla). (YA ESTA)
+* Objetos muy complejos (cuya spc es muy grande) (YA ESTA)
+
+Search & Replace, poder cambiar propiedades. 
+
+Nuevos Reportes
+* Att Identity que son FK en alguna tabla (es mejor evitarlo). 
+* Objetos llamados desde mas de un environment (YA ESTA)
+* Codigo Repetido  (ya esta)
+* Calculo de numero ciclomatico por objeto  (ya esta)
+* Navegaciones parecidas (ya esta)
+* Arbol de llamadas profundo.  () 
+* Atributos que solo esten referenciados por un objeto TRN (son att que no se usan en la aplicacion).  (YA ESTA)
+
+* Ayuda con los mensajes SPC en la KB. 
+Poner warnings como errors. (poner tres niveles, Hard, medium, soft. (ya eta)
+ Parameters spc0023, 24,25
+Indices
+Deprecated
+Native code.
+spc0158 
+Variables no definidas
+
+Repasar  todos los mensajes del spc y clasificarlos. (YA ESTA)
+
+Armar una lista con los que tienen errores. (YA ESTA)
+
+* Listar todos los objetos que pueden verse afectados en un cambio de un objeto. 
+Por ejemplo, al cambiar un DOM, cambian los ATT, cambian las tablas y los objetos que las usan. 
+Al cambiar un ATT, cambia las tablas y los objetos que las usan 
+Al cambiar una TBL, afecta a las objetos que las usan y a quienes llaman estos objetos
+Al cambiar un objeto, pueden afectar a los objetos que lo usan. 
+
+* Listado de objetos candidatos a refactoring. (ya esta)
+   Muy largos
+   Muy complejos
+   Demasiados parametros
+   etc
+
+* Listado de objetos similares
+   Que tengan la misma navegacion  (no esta pero hay algo parecido)
+   Que tengan los mismos parametros 
+  
+* Listado de Navegaciones parecidas (ya esta)
+   Procesar las nevegaciones de los objetos y salvar los bloques de navegacion y compararlas. 
+   Identificar aquellas agrupaciones de tablas candidatas a un dataselector. 
+
+* Crear el objeto "Lista de Objetos" o TAG
+   Que no cambie la revision del objeto al agregarlo a la lista
+   Que permita lo mismo que una categoria (exportar, build, seleccionar en el Ctrl-J, etc). 
+
+* Cuando este hecha la Lista de Objetos, 
+Hacer programas que cuando termina la especificacion del objeto, cree la lista 
+    objetos con Warning (por mensaje de error)
+    Objetos con Errores
+    Objetos que no compilan (cuando falla la compilacion)
+
+Reporte de objetos que tienen variables basadas en atributos que no estan en ninguna tabla. (ya se borran)
+
+Agregar un reporte de los atributos que solo son referenciados en variables. (se pueden eliminar de la trn, que no sea autonumber). 
+
+
+Opcion "Clean my KB as much as possible" (ya esta, aun no funciona bien)
+
+Search & Replace en toda la KB. (ya esta)
+
+Agregar un HELP. (ya esta)
+
+
+    
+En las consultas que tienen el nombre del objeto, agregarle un link para abrir el objeto. 
+En las que tenga un atributo, ponerle el comando para abrir las propiedades del atributo.    
+
+** Mejorar la estetica de los reportes HTML. Usar Css, renglones alternados para las tablas. (ya esta)
+
+** About.
+Poner un link a la documentacion en el wiki
+Poder ver los cambios.txt de esta lista.
+   
+Refactoring de la funcion SaveIfNotOpen.
+Donde tenga que salvar objetos, usar esta funcion que devuelva un booleano.
+
+En el Theme Esta TD.Class y en el objeto Class, tomarlo como valido. (YA ESTA)

@@ -1,0 +1,8 @@
+Para agregar una nueva opción de menú:
+ - En el archivo GeneXusPackage.package, agregar el CommandDefinition correspondiente en la sección Commands, y agregar el Command dentro del Popup que corresponda.
+ - En el archivo StringResources.resx, agregar una entrada para el nuevo comando.
+ - En el archivo CommandKeys.cs, agregar el campo privado y la propiedad para el nuevo comando
+ - En el archivo CommandManager.cs, varias cosas
+    * Agregar el AddCommand correspondiente en el constructor, cambiando el comando y el método Exec<nombre_comando>
+    * Crear el método Exec<nombre_comando> que tenga el código para ejecutar el comando
+    
