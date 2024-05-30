@@ -37,7 +37,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Table", "Attribute", "Description", "Data type", "Title", "Column Title" });
+                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Title", "Column Title" });
                 string description;
                 string titlesuggested;
                 string columnTitle;
@@ -55,6 +55,7 @@ namespace Concepto.Packages.KBDoctor
                         if (a.Title == a.Description)
                         {
                             titlesuggested = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignTitleToAttribute&attName=" + a.Name + "\">" + a.Title + "</a>";
+                            writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
 
                         }
 
@@ -62,16 +63,17 @@ namespace Concepto.Packages.KBDoctor
                         {
                             description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToAttribute&attName=" + a.Name + "\">" + a.Description + "</a>";
                             Table t = TablesHelper.TableOfAttribute(a);
-                            writer.AddTableData(new string[] { Functions.linkObject(t), attNameLink, description, Picture, titlesuggested, columnTitle });
+                            writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
 
                         }
 
                         if (a.ColumnTitle == a.Description)
                         {
                             columnTitle = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignColumnTitleToAttribute&attName=" + a.Name + "\">" + a.ColumnTitle + "</a>";
+                            writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
                         }
 
-                        //                    writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
+                       
                     }
 
                 }

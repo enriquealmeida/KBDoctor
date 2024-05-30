@@ -8,17 +8,11 @@ using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Parts;
 using Concepto.Packages.KBDoctorCore.Sources;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using static Artech.Genexus.Common.Properties.TRN;
+using Artech.Genexus.Common.Parts;
 
 namespace Concepto.Packages.KBDoctor.Sources
 {
@@ -262,15 +256,24 @@ namespace Concepto.Packages.KBDoctor.Sources
             KBModel kbModel = UIServices.KB.CurrentModel;
             IOutputService output = CommonServices.Output;
 
+
+            QualifiedName qn = new QualifiedName("DECLARACIONES.Dua.HCIMDPol");
+            WebPanel webp = WebPanel.Get(kbModel, qn);
+            WebPanelReference luciamasterRef = (WebPanelReference)webp.GetPropertyValue(Properties.TRN.MasterPage);
+
+
+
+            output.AddLine("ObjectName,UX,MasterPageName,Responsive,Theme,AbstracEditor,PatternOrManual,NeedFix");
+
+
             //WebPanelReference masterRef = (WebPanelReference)kbModel.GetPropertyValue("idMASTER_PAGE");
             //ThemeWebReference themeReference = (ThemeWebReference)kbModel.GetPropertyValue(Properties.MODEL.DefaultTheme);
             string modelWebUX = kbModel.GetPropertyValueString(Properties.MODEL.WebUserExperience);
 
             //    output.AddWarningLine(masterRef.GetName(kbModel));
             int objTotal = 0;
-            int objSmooth = 0;
-            int objMaster = 0;
-            int objResponsive = 0;
+            int objToFix = 0;
+ 
 
             foreach (KBObject obj in Transaction.GetAll(kbModel))
             {
@@ -282,39 +285,65 @@ namespace Concepto.Packages.KBDoctor.Sources
                 CuentoSmoothResponsive(obj);
             }
 
-
-            output.AddLine("#Objects,#ObjSmooth,#ObjMaster,#ObjResponsive");
-            output.AddLine(objTotal.ToString() + "," + objSmooth.ToString() + "," + objMaster.ToString() + "," + objResponsive.ToString() );
+            output.AddLine("   ");
+            output.AddLine("#Objects:" + objTotal.ToString()  + "  #Objects to Fix: " + objToFix.ToString() );
+  
 
             void CuentoSmoothResponsive(KBObject obj)
             {
                 if (ObjectsHelper.isGenerated(obj))
                 {
 
-
                     objTotal += 1;
 
                     string webUX = obj.GetPropertyValueString(Properties.TRN.WebUserExperience).ToUpper();
                     WebPanelReference objmasterRef = (WebPanelReference)obj.GetPropertyValue(Properties.TRN.MasterPage);
 
-                    if (ObjectsHelper.isGenerated(obj) && webUX == "SMOOTH")
-                    {
-                        output.AddLine(obj.Name + " " + objmasterRef.GetName(kbModel));
-                        objSmooth += 1;
-                    }
-
-
-                    if (objmasterRef.GetName(kbModel)== "LuciaMasterPage_v4" )
-                    {
-                        objMaster += 1;
-                    }
-
                     string webDF = obj.GetPropertyValueString(Properties.TRN.WebFormDefaults);
-                    if (webDF != "Previous versions compatible")
-                    {
-                        objResponsive += 1;
-                    }
 
+                    string themeObj = obj.GetPropertyValueString(Properties.TRN.Theme);
+
+                    WebFormPart webFormPart = null;
+
+                    if (obj is WebPanel)
+
+                    {
+                        WebPanel obj1 = (WebPanel)obj;
+                        webFormPart= obj1.WebForm;
+                    }
+                    else
+                    {
+                        Transaction obj1 = (Transaction)obj;
+                        webFormPart = obj1.WebForm;
+                    }
+                    bool abstracEditor = WebPanelFormRootIsAbstract(webFormPart);
+
+                    string genPatt = "Manual";
+                    if (ObjectsHelper.isGeneratedbyPattern(obj))
+                        genPatt = "Pattern";
+
+                    bool hayQueArreglar = false;
+                    if (webUX != "SMOOTH")
+                        hayQueArreglar = true;
+                    if (objmasterRef.GetName(kbModel) != "GIAMasterPage_v1")
+                        hayQueArreglar = true;
+                    if (webDF == "Previous versions compatible")
+                        hayQueArreglar = true;
+                    if (themeObj != "GIATheme_v1")
+                        hayQueArreglar = true;
+                    if (!abstracEditor)
+                        hayQueArreglar = true;
+                    if (hayQueArreglar)
+                        objToFix += 1;
+
+                    output.AddLine(obj.Name + "," + webUX +  ","  + objmasterRef.GetName(kbModel) + "," + webDF  + "," + themeObj + "," + abstracEditor.ToString() + "," +  genPatt + "," + hayQueArreglar.ToString());
+
+                    if (objmasterRef.GetName(kbModel) == "GIAMasterPage_v1" && !abstracEditor && genPatt=="Manual")
+                    {
+                        output.AddLine(">>> Cambio " + obj.Name);
+                        obj.SetPropertyValue(Properties.TRN.MasterPage, luciamasterRef);
+                        obj.Save();
+                    }
                 }
             }
         }
@@ -374,6 +403,20 @@ namespace Concepto.Packages.KBDoctor.Sources
 
         }
 
+        public static bool WebPanelFormRootIsAbstract(WebFormPart part)
+        {
+            if (part.EditableContent != null)
+            {
+                XmlDocument xmlDocumentWebForm = new XmlDocument();
+                xmlDocumentWebForm.LoadXml(part.EditableContent);
+                return xmlDocumentWebForm.SelectSingleNode($"//Form[@id='{xmlDocumentWebForm.DocumentElement?.Attributes["rootId"]?.Value}']")?.Attributes["type"]?.Value == "layout";
+            }
+            else
+            {
+                // part has no editable content, check defaults from model
+                return part.Model.GetPropertyValue<Artech.Genexus.Common.Properties.MODEL.DefaultWebFormEditor_Enum>(Artech.Genexus.Common.Properties.MODEL.DefaultWebFormEditor) == Artech.Genexus.Common.Properties.MODEL.DefaultWebFormEditor_Enum.AbstractLayout;
+            }
+        }
 
     }
 }

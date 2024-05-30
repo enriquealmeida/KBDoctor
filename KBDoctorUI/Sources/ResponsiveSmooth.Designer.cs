@@ -58,7 +58,7 @@ namespace Concepto.Packages.KBDoctor.Sources
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(386, 109);
+            this.button3.Location = new System.Drawing.Point(386, 140);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(246, 23);
             this.button3.TabIndex = 3;
@@ -68,7 +68,7 @@ namespace Concepto.Packages.KBDoctor.Sources
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(89, 169);
+            this.button4.Location = new System.Drawing.Point(89, 236);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(246, 23);
             this.button4.TabIndex = 4;
@@ -90,7 +90,7 @@ namespace Concepto.Packages.KBDoctor.Sources
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(736, 314);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);

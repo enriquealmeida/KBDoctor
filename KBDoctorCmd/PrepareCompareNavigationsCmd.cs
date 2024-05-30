@@ -30,7 +30,8 @@ namespace KBDoctorCmd
                 else
                 {
                     output.AddLine("KBDoctor",string.Format(KB.Name, KB.Location));
-                    API.PrepareCompareNavigations(KB, output);
+                   // API.PrepareCompareNavigations(KB, output);
+                    API.PrepareNavigations(KB, output);
                 }
                 
             }

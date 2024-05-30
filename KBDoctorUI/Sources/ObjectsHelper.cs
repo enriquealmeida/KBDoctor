@@ -49,6 +49,15 @@ using Artech.Common.Helpers.Structure;
 using Artech.Genexus.Common.Parts.ExternalObject;
 using API = Concepto.Packages.KBDoctorCore.Sources.API;
 using Concepto.Packages.KBDoctor.Sources;
+using static Artech.Genexus.Common.Properties;
+using System.Xml;
+
+using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using Formatting = Newtonsoft.Json.Formatting;
+using System.Runtime.Remoting;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -83,7 +92,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     ICallableObject callableObject = obj as ICallableObject;
                     if ((callableObject != null) | (obj is Artech.Genexus.Common.Objects.Attribute)
-                        | obj is Artech.Genexus.Common.Objects.Table | obj is Domain | obj is ExternalObject | obj is SDT) //Saco Image
+                        | obj is Artech.Genexus.Common.Objects.Table | obj is Domain | obj is ExternalObject | obj is Artech.Genexus.Common.Objects.SDT) //Saco Image
                     {
                         unreachablesObjects.Add(obj);
                     }
@@ -423,7 +432,7 @@ namespace Concepto.Packages.KBDoctor
                     {
                         ICallableObject callableObject = obj as ICallableObject;
                         if ((callableObject != null) | (obj is Artech.Genexus.Common.Objects.Attribute)
-                            | obj is Artech.Genexus.Common.Objects.Table | obj is Domain | obj is ExternalObject | obj is Image | obj is SDT)
+                            | obj is Table | obj is Domain | obj is ExternalObject | obj is Image | obj is Artech.Genexus.Common.Objects.SDT)
                         {
                             callers = 0;
                             foreach (EntityReference reference in obj.GetReferencesTo(LinkType.UsedObject))
@@ -575,7 +584,7 @@ namespace Concepto.Packages.KBDoctor
             lstTrns = "";
             attExclusive = new KBObjectCollection();
 
-            foreach (TransactionLevel LVL in trn.Structure.GetLevels())
+            foreach (Artech.Genexus.Common.Parts.TransactionLevel LVL in trn.Structure.GetLevels())
             {
                 bool isLevelRemovable = true;
 
@@ -1122,7 +1131,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             {
                 if (isGenerated(trn))
                 {
-                    foreach (TransactionLevel LVL in trn.Structure.GetLevels())
+                    foreach (Artech.Genexus.Common.Parts.TransactionLevel LVL in trn.Structure.GetLevels())
                     {
                         if (LVL.AssociatedTable == tBL)
                         {
@@ -1147,7 +1156,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 if (trn != trnToExclude)
                 {
                     lstTrn += trn.QualifiedName + " ";
-                    foreach (TransactionLevel LVL in trn.Structure.GetLevels())
+                    foreach (Artech.Genexus.Common.Parts.TransactionLevel LVL in trn.Structure.GetLevels())
                     {
                         if (LVL.AssociatedTable == tBL)
                         {
@@ -1489,15 +1498,16 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             int iObj = 0;
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
-                if (!(obj is Domain | obj is Theme | obj is DataView | obj is Index | obj is KBCategory | obj is DataProvider | obj is Menubar | obj is DataView | obj is Diagram | obj is Folder | obj is Image |
-                    obj is ExternalObject | obj is ThemeClass | obj is ThemeColor | obj is DataViewIndex))
+                if (!(obj is Domain | obj is Artech.Genexus.Common.Objects.Theme | obj is DataView | obj is Index | obj is KBCategory | obj is DataProvider | obj is Menubar | obj is DataView | obj is Diagram | obj is Folder | obj is Image |
+                    obj is ExternalObject | obj is ThemeClass | obj is ThemeColor | obj is DataViewIndex | obj is Artech.Architecture.Common.Objects.Module  | obj is Artech.Genexus.Common.Objects.DesignSystem | obj is Artech.Genexus.Common.Objects.Group))
                 {
                     iObj += 1;
                     if ((iObj % 200) == 0)
                     {
                         KBDoctorOutput.Message( obj.GetFullName());
                     }
-                    WriteObjectToTextFile(obj, newDir);
+                    //  WriteObjectToTextFile(obj, newDir);
+                    WriteObjectToJsonFile(obj, newDir); 
                 }
             }
 
@@ -1575,144 +1585,324 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
         private static void WriteObjectToTextFile(KBObject obj, string newDir)
         {
+            string name = Regex.Replace(obj.GetFullName(), "[':/\\\\ ]", "_");
+            string FileName = newDir + name + ".json";
 
-            string name = obj.GetFullName();
-            name = name.Replace("'", "");
-            name = name.Replace(":", "_");
-            name = name.Replace("/", "_");
-            name = name.Replace("\\", "_");
-            name = name.Replace(" ", "_");
+            try
+            {
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(FileName))
+                {
+                    file.WriteLine($"Object: {obj.Name} \nType: {obj.TypeName} \nDescription : {obj.Description} \nModule: {obj.Module.Name} \n");
 
-            string FileName = newDir + name + ".txt";
+                    RulesPart rp = obj.Parts.Get<RulesPart>();
+                    if (rp != null)
+                    {
+                        file.WriteLine("=== RULES ===");
+                        file.WriteLine(rp.Source);
+                    }
 
-            System.IO.StreamWriter file = new System.IO.StreamWriter(FileName);
+                    switch (obj.TypeDescriptor.Name)
+                    {
+                        case "Attribute":
+                            HandleAttribute(obj, file);
+                            break;
+                        case "Procedure":
+                            HandleProcedure(obj, file);
+                            break;
+                        case "Transaction":
+                            HandleTransaction(obj, file);
+                            break;
+                        case "WorkPanel":
+                            HandleWorkPanel((WorkPanel)obj, file);
+                            break;
+                        case "WebPanel":
+                            HandleWebPanel((WebPanel)obj, file);
+                            break;
+                        case "WebComponent":
+                            HandleWebComponent((WebPanel)obj, file);
+                            break;
+                        case "Table":
+                            HandleTable((Table)obj, file);
+                            break;
+                        case "SDT":
+                            HandleSDT((Artech.Genexus.Common.Objects.SDT)obj, file);
+                            break;
+                        default:
+                            break;
+                    }
+                    HandleReferences(obj, file);
+                }
+            }
 
-            /* 
+            catch (IOException e)
+            {
+                Console.WriteLine("Error al escribir en el archivo: " + e.Message);
+            }
+           
+        }
+
+        private static void HandleReferences(KBObject objRef, StreamWriter file)
+        {
+            file.WriteLine("==== Referencias ==========");
+            foreach (EntityReference r in objRef.GetReferencesTo())
+            {
+                KBObject obj = KBObject.Get(objRef.Model, r.From);
+
+                if ((obj != null) && (Functions.isRunable(obj)) && (obj != objRef))
+                {
+                    file.WriteLine(obj.Name + " hace referencia a " + objRef.Name + " en una relacion de tipo  " + r.ReferenceType.ToString() + " " + r.LinkType.ToString() + " " + r.LinkTypeInfo.ToString());
+                    file.WriteLine(objRef.Name + " es referenciado por " + objRef.Name + " en una relacion de tipo  " + r.ReferenceType.ToString() + " " + r.LinkType.ToString() + " " + r.LinkTypeInfo.ToString() );
+
+                }
+            }
+        }
+
+
+        private static void HandleAttribute(KBObject obj, StreamWriter file)
+        {
+            Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)obj;
+
+            file.WriteLine("DataType: " + Utility.FormattedTypeAttribute(att));
+            file.WriteLine(att.Formula?.ToString() ?? "");
+        }
+
+        private static void HandleProcedure(KBObject obj, StreamWriter file)
+        {
+            ProcedurePart pp = obj.Parts.Get<ProcedurePart>();
+            if (pp != null)
+            {
+                file.WriteLine("=== PROCEDURE SOURCE ===");
+                file.WriteLine(pp.Source);
+            }
+        }
+
+        private static void HandleTransaction(KBObject obj, StreamWriter file)
+        {
+            StructurePart sp = obj.Parts.Get<StructurePart>();
+            if (sp != null)
+            {
+                file.WriteLine("=== STRUCTURE ===");
+                file.WriteLine(sp.ToString());
+            }
+
+            HandleEventsPart(obj.Parts.Get<EventsPart>(), file);
+        }
+
+        private static void HandleWorkPanel(WorkPanel obj, StreamWriter file)
+        {
+            HandleEventsPart(obj.Parts.Get<EventsPart>(), file);
+        }
+
+        private static void HandleWebPanel(WebPanel obj, StreamWriter file)
+        {
+            HandleEventsPart(obj.Parts.Get<EventsPart>(), file);
+        }
+
+        private static void HandleWebComponent(WebPanel obj, StreamWriter file)
+        {
+            HandleEventsPart(obj.Parts.Get<EventsPart>(), file);
+        }
+
+        private static void HandleTable(Table obj, StreamWriter file)
+        {
+            file.WriteLine("=== TABLE STRUCTURE ===");
+            foreach (TableAttribute attr in obj.TableStructure.Attributes)
+            {
+                StringBuilder line = new StringBuilder();
+                line.Append(attr.IsKey ? "*" : " ");
+                line.Append(attr.Name).Append("  ").Append(attr.GetPropertiesObject().GetPropertyValueString("DataTypeString"));
+                line.Append("-").Append(attr.GetPropertiesObject().GetPropertyValueString("Formula"));
+                line.Append(" DataType:  " + Utility.FormattedTypeAttribute(attr));
+
+                if (attr.IsExternalRedundant)
+                    line.Append(" External_Redundant");
+
+                line.Append(" Null=").Append(attr.IsNullable);
+                if (attr.IsRedundant)
+                    line.Append(" Redundant");
+
+                file.WriteLine(line.ToString());
+            }
+        }
+
+        private static void HandleSDT(Artech.Genexus.Common.Objects.SDT obj, StreamWriter file)
+        {
+            if (obj != null)
+            {
+                file.WriteLine("===SDT STRUCTURE ===");
+                ListStructure(obj.SDTStructure.Root, 0, file);
+            }
+        }
+
+        private static void HandleEventsPart(EventsPart ep, StreamWriter file)
+        {
+            if (ep != null)
+            {
+                file.WriteLine("=== EVENTS SOURCE ===");
+                file.WriteLine(ep.Source);
+            }
+        }
+
+
+
+
+private static void WriteObjectToJsonFile(KBObject obj, string newDir)
+    {
+        string name = Regex.Replace(obj.GetFullName(), "[':/\\\\ ]", "_");
+        string FileName = newDir + name + ".json";  
+
+        try
+        {
+            using (StreamWriter file = new StreamWriter(FileName))
+            using (JsonTextWriter writer = new JsonTextWriter(file))
+            {
+                writer.Formatting = Formatting.Indented; // Para una mejor legibilidad del archivo JSON
+
+                // Crear un objeto anónimo con toda la información necesaria
+                var objData = new
+                {
+                    ObjectName = obj.Name,
+                    Type = obj.TypeName,
+                    Description = obj.Description,
+                    Module = obj.Module.Name,
+                    Rules = GetRulesPart(obj),
+                    References = GetReferences(obj),
+                    SpecificData = GetSpecificData(obj),
+                    Parts = GetParts(obj)
+                };
+
+                // Serializar y escribir en el archivo
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(writer, objData);
+            }
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine("Error al escribir en el archivo: " + e.Message);
+        }
+    }
+
+        private static object GetParts(KBObject obj)
+        {
+            foreach (var parte in obj.Parts)
+            {
+                // Aquí puedes acceder a las propiedades de cada parte
+                return  parte.Name;
+                
+            }
+            return null;
+        }
+
+        private static object GetReferences(KBObject obj)
+        {
+
+            foreach (EntityReference r in obj.GetReferencesTo())
+            {
+                KBObject objRef = KBObject.Get(obj.Model, r.To);
+
+                if ((obj != null) && (Functions.isRunable(obj)) && (obj != objRef))
+                {
+                    return new
+                    {
+                        Title = "Referencia a",
+                        ObjetoReferenciado = objRef.Name,
+                        TipoObjetoReferenciado = objRef.TypeDescriptor,
+                        TipoReferencia = r.ReferenceType.ToString(),
+                        TipoLink = r.LinkTypeInfo.ToString(),
+                        TipoLinkInfo = r.LinkTypeInfo.ToString()
+                    };
+                    // file.WriteLine(obj.Name + " hace referencia a " + objRef.Name + " en una relacion de tipo  " + r.ReferenceType.ToString() + " " + r.LinkType.ToString() + " " + r.LinkTypeInfo.ToString());
+                    // file.WriteLine(objRef.Name + " es referenciado por " + objRef.Name + " en una relacion de tipo  " + r.ReferenceType.ToString() + " " + r.LinkType.ToString() + " " + r.LinkTypeInfo.ToString());
+                }
+
+            }
+            return null;
+        }
+        private static object GetSpecificData(KBObject obj)
+        {
+            switch (obj.TypeDescriptor.Name)
+        {
+                /*
+            case "Attribute":
+                return GetAttributeData((Artech.Genexus.Common.Objects.Attribute)obj);
+            case "Procedure":
+                return GetProcedureData(obj);
+            case "Transaction":
+                return GetTransactionData(obj);
+            case "WorkPanel":
+                return GetWorkPanelData((WorkPanel)obj);
+            case "WebPanel":
+                return GetWebPanelData((WebPanel)obj);
+            case "WebComponent":
+                return GetWebComponentData((WebPanel)obj); */
+            case "Table":
+                return GetTableData((Table)obj);
+            case "SDT":
+                return GetSDTData((Artech.Genexus.Common.Objects.SDT)obj); 
+                    
+            default:
+                return null;
+        }
+    }
+
+        private static object GetSDTData(Artech.Genexus.Common.Objects.SDT obj)
+        {
+            if (obj != null)
+            {
+                return new
+                {
+                    Title = "Structure",
+                    Source = "" //ListStructure(obj.SDTStructure.Root, 0, file)
+                };
+            }
+            return null;
+        }
+
+        private static object GetTableData(Table obj)
+        {
+            StringBuilder line = new StringBuilder();
+            //file.WriteLine("=== TABLE STRUCTURE ===");
+            foreach (TableAttribute attr in obj.TableStructure.Attributes)
+            {
+                
+                line.Append(attr.IsKey ? "*" : " ");
+                line.Append(attr.Name).Append("  ").Append(attr.GetPropertiesObject().GetPropertyValueString("DataTypeString"));
+                line.Append("-").Append(attr.GetPropertiesObject().GetPropertyValueString("Formula"));
+                line.Append(" DataType:  " + Utility.FormattedTypeAttribute(attr));
+
+                if (attr.IsExternalRedundant)
+                    line.Append(" External_Redundant");
+
+                line.Append(" Null=").Append(attr.IsNullable);
+                if (attr.IsRedundant)
+                    line.Append(" Redundant");
+
+            }
+            return new { line };
+        }
+
+        // Asumo que ya tienes funciones como GetAttributeData, GetProcedureData, etc., que
+        // devuelven datos específicos formateados para ser parte del objeto JSON.
+        // Similar a los métodos HandleAttribute, HandleProcedure, etc., pero retornando
+        // objetos o estructuras en lugar de escribir directamente a un archivo.
+
+        // Nota: Deberás implementar métodos como GetRulesPart, GetReferences, y otros para cada tipo de objeto,
+        // que deberán devolver la información correspondiente en formato adecuado para ser serializada a JSON.
+        private static object GetRulesPart(KBObject obj)
+        {
             RulesPart rp = obj.Parts.Get<RulesPart>();
             if (rp != null)
             {
-                file.WriteLine("=== RULES ===");
-                file.WriteLine(rp.Source);
+                return new
+                {
+                    Title = "RULES",
+                    Source = rp.Source
+                };
             }
-            */
 
-            switch (obj.TypeDescriptor.Name)
-            {
-
-                case "Attribute":
-
-                    Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)obj;
-
-                    file.WriteLine(Utility.FormattedTypeAttribute(att));
-                    if (att.Formula == null)
-                        file.WriteLine("");
-                    else
-                        file.WriteLine(att.Formula.ToString());
-                    break;
-
-                case "Procedure":
-                    ProcedurePart pp = obj.Parts.Get<ProcedurePart>();
-                    if (pp != null)
-                    {
-                        file.WriteLine("=== PROCEDURE SOURCE ===");
-                        file.WriteLine(pp.Source);
-                    }
-                    break;
-                case "Transaction":
-                    StructurePart sp = obj.Parts.Get<StructurePart>();
-                    if (sp != null)
-                    {
-                        file.WriteLine("=== STRUCTURE ===");
-                        file.WriteLine(sp.ToString());
-                    }
-
-                    EventsPart ep = obj.Parts.Get<EventsPart>();
-                    if (ep != null)
-                    {
-                        file.WriteLine("=== EVENTS SOURCE ===");
-                        file.WriteLine(ep.Source);
-                    }
-
-                    break;
-
-                case "WorkPanel":
-                    WorkPanel wkp = (WorkPanel)obj;
-
-                    ep = obj.Parts.Get<EventsPart>();
-                    if (ep != null)
-                    {
-                        file.WriteLine("=== EVENTS SOURCE ===");
-                        file.WriteLine(ep.Source);
-                    }
-                    break;
-
-                case "WebPanel":
-
-                    WebPanel wbp = (WebPanel)obj;
-                    ep = obj.Parts.Get<EventsPart>();
-                    if (ep != null)
-                    {
-                        file.WriteLine("=== EVENTS SOURCE ===");
-                        file.WriteLine(ep.Source);
-                    }
-                    break;
-
-
-                case "WebComponent":
-
-                    wbp = (WebPanel)obj;
-                    ep = obj.Parts.Get<EventsPart>();
-                    if (ep != null)
-                    {
-                        file.WriteLine("=== EVENTS SOURCE ===");
-                        file.WriteLine(ep.Source);
-                    }
-                    break;
-
-                case "Table":
-                    Table tbl = (Table)obj;
-
-                    foreach (TableAttribute attr in tbl.TableStructure.Attributes)
-                    {
-                        String line = "";
-                        if (attr.IsKey)
-                        {
-                            line = "*";
-                        }
-                        else
-                        {
-                            line = " ";
-                        }
-
-                        line += attr.Name + "  " + attr.GetPropertiesObject().GetPropertyValueString("DataTypeString") + "-" + attr.GetPropertiesObject().GetPropertyValueString("Formula");
-
-                        if (attr.IsExternalRedundant)
-                            line += " External_Redundant";
-
-                        line += " Null=" + attr.IsNullable;
-                        if (attr.IsRedundant)
-                            line += " Redundant";
-
-                        file.WriteLine(line);
-                    }
-                    break;
-
-
-                case "SDT":
-                    SDT sdtToList = (SDT)obj;
-                    if (sdtToList != null)
-                    {
-                        file.WriteLine("=== STRUCTURE ===");
-                        ListStructure(sdtToList.SDTStructure.Root, 0, file);
-                    }
-                    break;
-
-                default:
-                    break;
-
-            }
-            file.Close();
+            return null;
         }
+
 
         internal static void ListCommitOnExit()
         {
@@ -2204,7 +2394,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     continue;
                 if (obj is Domain)
                     continue;
-                if (obj is SDT)
+                if (obj is Artech.Genexus.Common.Objects.SDT)
                     continue;
                 if (obj is GeneratorCategory)
                     continue;
@@ -4421,6 +4611,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
 
+            */
             void ListaObjectProperties( KBObject obj)
             {
                 if (isGenerated(obj) )
@@ -4431,13 +4622,15 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     KBDoctorOutput.Message(obj.Name + "," + obj.GetPropertyValueString("WebUX") + "," + obj.GetPropertyValueString("MasterPage") + "," + obj.GetPropertyValueString("Theme")
                         + "," + obj.GetPropertyValueString("WebFormDefaults") + ","+ isGeneratedbyPattern(obj) + "," + webForm.IsDefault);
 
+                    KBModel kbModel = obj.Model;
 
-
-                    Theme theme = Theme.Get(kbModel, "LuciaTheme_v4");
+                    Artech.Genexus.Common.Objects.Theme theme = Artech.Genexus.Common.Objects.Theme.Get(kbModel, "LuciaTheme_v4");
                     obj.SetPropertyValue(Properties.WBP.Theme, new ThemeWebReference(theme));
 
                     QualifiedName qname = new QualifiedName("", "LuciaMasterPage_v4");
                     WebPanel masterPage = WebPanel.Get(kbModel, qname);
+
+                    /*
 
                     obj.SetPropertyValue(Properties.WBP.MasterPage, new WebPanelReference(masterPage) );
 
@@ -4445,14 +4638,14 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     obj.SetPropertyValue(Properties.TRN.WebUserExperience, Properties.TRN.WebUserExperience_Values.Smooth);
                     obj.SetPropertyValue(Properties.TRN.WebFormDefaults, Properties.TRN.WebFormDefaults_Enum.ResponsiveWebDesign);
                     obj.Save();
-
+                    */
 
                     
                    
 
                 }
 
-            }*/
+            }
         }
 
 private static void ListSdtNamespace(SDTLevel level, string sdtName)
@@ -4514,7 +4707,7 @@ public static void ListAPIObjects()
                         if (obj is WorkPanel && isMain)
                             tieneInterfaz = true;
 
-                        if (obj is ExternalObject || obj is SDT)
+                        if (obj is ExternalObject || obj is Artech.Genexus.Common.Objects.SDT)
                             tieneInterfaz = true;
 
 

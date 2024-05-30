@@ -283,7 +283,7 @@
   <data name="OpenFolderComparerNavigation" xml:space="preserve">
     <value>Open navigation folder</value>
   </data>
-  <data name="PrepareComparerNavigation" xml:space="preserve">
+  <data name="PrepareCompareNavigation" xml:space="preserve">
     <value>Create a snapshot of navigations</value>
   </data>
   <data name="ListLastReports" xml:space="preserve">

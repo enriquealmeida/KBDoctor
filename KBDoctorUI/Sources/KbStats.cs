@@ -297,16 +297,16 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddHeader(title);
                 int numObj = 0;
 
-                DateTime limite = new DateTime(2017, 06, 30);
-                KBDoctorOutput.Message( "Fecha Limite : " + limite.ToString());
+                //DateTime limite = new DateTime(2017, 06, 30);
+               // KBDoctorOutput.Message( "Fecha Limite : " + limite.ToString());
 
 
-                writer.AddTableHeader(new string[] { "Type", "Object", "Description", "Module", "Public", "Last Update", "Is Main", "TimeStamp", "Is Generated", "Protocol", "AppLocation" });
+                writer.AddTableHeader(new string[] { "Type", "Object", "Description", "Module", "Public", "Last Update", "Is Main", "TimeStamp", "Is Generated", "Protocol", "QN" });
 
                 foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
                     if (obj != null)
-                        if (Functions.isRunable(obj) && KBDoctorCore.Sources.Utility.isGenerated(obj) && (obj.LastUpdate >= limite || obj.Timestamp >= limite))
+                        if (Functions.isRunable(obj) && KBDoctorCore.Sources.Utility.isGenerated(obj))
                         {
                             string desc = obj.Description.Replace(",", " ");
                             desc = desc.Replace(">", "");
@@ -320,13 +320,15 @@ namespace Concepto.Packages.KBDoctor
                             string isGenerated = KBDoctorCore.Sources.Utility.isGenerated(obj) ? "Yes" : "";
 
 
-                            string appLocation = obj.UserName.ToString();
+                            string qn = obj.QualifiedNameString;
                             writer.AddTableData(new string[] { obj.TypeDescriptor.Name +" ", Functions.linkObject(obj), desc,
-                            obj.Module.Name, obj.IsPublic.ToString(),obj.LastUpdate.ToString(),isMain, obj.Timestamp.ToString(), isGenerated, objProtocol, appLocation});
+                            obj.Module.Name, obj.IsPublic.ToString(),obj.LastUpdate.ToString(),isMain, obj.Timestamp.ToString(), isGenerated, objProtocol, qn});
 
-                            numObj += 1;
-                            if ((numObj % 200) == 0)
-                                KBDoctorOutput.Message( obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
+                            // numObj += 1;
+                            char comillas = '"';
+                            if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is DataProvider)
+                                KBDoctorOutput.Message(String.Format("INSERT INTO[dbo].[ObjetosConSeguridad] ([ObjetoQualifierName] ,[ObjetoName] ,[ObjetoTocado])  VALUES({2}{0}{2} ,{2}{1}{2},0);", qn, obj.Name, comillas));
+
                         }
                 }
                 writer.AddFooter();

@@ -589,7 +589,7 @@ namespace Concepto.Packages.KBDoctor
         /// <summary>
         /// Search and replace text in objects
         /// </summary>
-        public static void SearchAndReplace() //SearchAndReplace()
+        public static void SearchAndReplace2() //SearchAndReplace()
         {
             IKBService kB = UIServices.KB;
             IOutputService output = CommonServices.Output;
@@ -626,6 +626,8 @@ namespace Concepto.Packages.KBDoctor
                         selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
                         selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
                         selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
+                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataSelector>());
+                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataProvider>());
 
                         foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                         {
@@ -642,6 +644,8 @@ namespace Concepto.Packages.KBDoctor
                                 obj.Serialize(writer);
 
                             string objxml = buffer.ToString();
+
+
                             string newobjxml = objxml.Replace(txtfind, txtreplace, StringComparison.InvariantCultureIgnoreCase);
 
                             using (StringReader strReader = new StringReader(newobjxml))
@@ -688,7 +692,132 @@ namespace Concepto.Packages.KBDoctor
                 str = str.Remove(foundAt, old.Length).Insert(foundAt, @aux);
             return str.Replace(@aux, @new);
         }
-        
+
+
+        public static void SearchAndReplace() //SearchAndReplace()
+        {
+            IKBService kB = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+
+            string mensaje = "";
+            string title = "Search and replace string with !";
+            output.StartSection("KBDoctor", title);
+            if (kB != null && kB.CurrentModel != null)
+            {
+
+                PromptDescription pd;
+                DialogResult dr;
+                mensaje = "Find";
+
+                pd = new PromptDescription(mensaje);
+                dr = pd.ShowDialog();
+                if (dr == DialogResult.OK)
+                {
+                    string txtfind = pd.Description;
+                    mensaje = "Replace with";
+                    pd = new PromptDescription(mensaje);
+                    dr = pd.ShowDialog();
+                    if (dr == DialogResult.OK)
+                    {
+                        string txtreplace = pd.Description;
+                        SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                        selectObjectOption.MultipleSelection = true;
+                        KBModel kbModel = UIServices.KB.CurrentModel;
+
+                        int objcambiados = 0;
+                        int objtotales = 0;
+                        //SELECCIONO OBJETOS A BUSCAR
+                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
+                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataSelector>());
+                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataProvider>());
+
+                        foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                        {
+                            objtotales += 1;
+                            Application.DoEvents();
+                            if ((objtotales % 100) == 0)
+                            {
+
+                                KBDoctorOutput.Message("Searching in " + objtotales + " objects ");
+                            }
+
+                            StringBuilder buffer = new StringBuilder();
+                            using (TextWriter writer = new StringWriter(buffer))
+                                obj.Serialize(writer);
+
+                            string objxml = buffer.ToString();
+
+                            string newobjxml = ProcessEachLine(objxml);
+
+                            if (objxml != newobjxml)
+                            {
+                                using (StringReader strReader = new StringReader(newobjxml))
+                                using (XmlTextReader reader = new XmlTextReader(strReader))
+                                    BLServices.KnowledgeManager.ImportInObject(reader, obj);
+                                try
+                                {
+                                    obj.Save();
+                                    KBDoctorOutput.Message("Changed >> '" + txtfind + "' to '" + txtreplace + "' in object " + obj.Name);
+                                    objcambiados += 1;
+                                }
+                                catch (Exception e)
+                                {
+                                    if (e.InnerException == null)
+                                        output.AddErrorLine(e.Message);
+                                    else
+                                        output.AddErrorLine(e.Message + " - " + e.InnerException);
+                                };
+                            }
+
+                        }
+                        title = "Changed objects " + objcambiados.ToString();
+                        output.EndSection("KBDoctor", title, true);
+                    }
+                }
+            }
+
+        }
+
+        public static string ProcessEachLine(string input)
+        {
+            StringBuilder modifiedInput = new StringBuilder();
+            string[] lines = input.Split(new[] { "\n" }, StringSplitOptions.None);
+
+            foreach (var line in lines)
+            {
+                modifiedInput.AppendLine(ReplaceShortStringsInWhereClause(line));
+            }
+
+            return modifiedInput.ToString().TrimEnd();
+        }
+
+        public static string ReplaceShortStringsInWhereClause(string query)
+        {
+            var words = query.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            bool isWhereClause = false;
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (words[i].ToLower() == "where")
+                {
+                    isWhereClause = true;
+                }
+                else if (isWhereClause && (words[i].StartsWith("\"") || words[i].StartsWith("'")))
+                {
+                    string value = words[i].Trim('\"', '\'');
+                    if (value.Length < 10)
+                    {
+                        words[i] = $"!\"{value}\"";
+                    }
+                    isWhereClause = false; // Reset flag after processing a where clause
+                }
+            }
+
+            return String.Join(" ", words);
+        }
+
 
         public static void ObjectsReferenced()
         {

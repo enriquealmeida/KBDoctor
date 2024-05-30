@@ -32,7 +32,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 {
     static class Navigation
     {
-        internal static void PrepareComparerNavigation(KnowledgeBase KB, IOutputService output)
+        internal static void PrepareNavigation(KnowledgeBase KB, IOutputService output)
         {
             string title = "KBDoctor - Prepare Comparer Navigation Files";
             output.StartSection("KBDoctor",title);

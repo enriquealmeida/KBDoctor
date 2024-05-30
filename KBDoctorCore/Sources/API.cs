@@ -31,9 +31,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
 
         //
-        public static void PrepareCompareNavigations(KnowledgeBase KB, IOutputService output)
+        public static void PrepareNavigations(KnowledgeBase KB, IOutputService output)
         {
-            Navigation.PrepareComparerNavigation(KB, output);
+            Navigation.PrepareNavigation(KB, output);
         }
         //
         public static bool CompareNavigations(KnowledgeBase KB, IOutputService output)

@@ -74,11 +74,14 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey tblGenerateSimpleTransactionFromNotGeneratedTransactions = new CommandKey(Package.guid, "GenerateSimpleTransactionFromNotGeneratedTransactions");
         public static CommandKey TblGenerateSimpleTransactionFromNotGeneratedTransactions { get { return tblGenerateSimpleTransactionFromNotGeneratedTransactions; } }
 
+        private static CommandKey tblScriptToCompareNULLABLE_GXvsDB = new CommandKey(Package.guid, "ScriptToCompareNULLABLE_GXvsDB");
+        public static CommandKey TblScriptToCompareNULLABLE_GXvsDB { get { return tblScriptToCompareNULLABLE_GXvsDB; } }
+
+        private static CommandKey tblScriptToCompareNULLABLE_GXvsDB2 = new CommandKey(Package.guid, "ScriptToCompareNULLABLE_GXvsDB2");
+        public static CommandKey TblScriptToCompareNULLABLE_GXvsDB2 { get { return tblScriptToCompareNULLABLE_GXvsDB2; } }
+
         private static CommandKey tblListTableWithAttributeNullableCompatible = new CommandKey(Package.guid, "ListTableWithAttributeNullableCompatible");
         public static CommandKey TblListTableWithAttributeNullableCompatible { get { return tblListTableWithAttributeNullableCompatible; } }
-
-        private static CommandKey tblListTableWithAttributeNullableCompatible2 = new CommandKey(Package.guid, "ListTableWithAttributeNullableCompatible2");
-        public static CommandKey TblListTableWithAttributeNullableCompatible2 { get { return tblListTableWithAttributeNullableCompatible2; } }
 
         private static CommandKey tblTableUpdate      = new CommandKey(Package.guid, "TableUpdate");
         public static CommandKey TblTableUpdate { get { return tblTableUpdate; } }
@@ -128,6 +131,8 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey objectsWithVarsNotUsed = new CommandKey(Package.guid, "ObjectsWithVarsNotUsed");
         private static CommandKey listDynamicCombo = new CommandKey(Package.guid, "ListDynamicCombo");
 
+        private static CommandKey listProperties = new CommandKey(Package.guid, "ListProperties");
+
         private static CommandKey cleanVarsNotUsed = new CommandKey(Package.guid, "CleanVarsNotUsed");
         private static CommandKey objectsComplex = new CommandKey(Package.guid, "ObjectsComplex");
         private static CommandKey objectsLegacyCode = new CommandKey(Package.guid, "ObjectsLegacyCode");
@@ -173,6 +178,7 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey ObjectsReferenced { get { return objectsReferenced; } }
         public static CommandKey ObjectsWithVarNotBasedOnAtt { get { return objectsWithVarNotBasedOnAtt; } }
         public static CommandKey ListDynamicCombo { get { return listDynamicCombo; } }
+        public static CommandKey ListProperties { get { return listProperties; } }
         public static CommandKey RenameVariables { get { return renameVariables; } }
         public static CommandKey BuildModule { get { return buildModule; } }
 
@@ -363,8 +369,8 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey splitMainObject = new CommandKey(Package.guid, "SplitMainObject");
         public static CommandKey SplitMainObject { get { return splitMainObject; } }
 
-        private static CommandKey prepareComparerNavigation = new CommandKey(Package.guid, "PrepareComparerNavigation");
-        public static CommandKey PrepareComparerNavigation { get { return prepareComparerNavigation; } }
+        private static CommandKey prepareComparerNavigations = new CommandKey(Package.guid, "PrepareComparerNavigations");
+        public static CommandKey PrepareComparerNavigations { get { return prepareComparerNavigations; } }
 
         private static CommandKey kbInterfaces = new CommandKey(Package.guid, "KBInterfaces");
         public static CommandKey  KBInterfaces   { get { return kbInterfaces; } }

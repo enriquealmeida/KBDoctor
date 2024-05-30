@@ -16,7 +16,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkVersion>$(TargetFrameworkVersion)</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
@@ -43,7 +43,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>$(TargetGenexusVersion)</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
+    <ErrorReport>none</ErrorReport>
     <WarningLevel>2</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -71,6 +71,30 @@
   <PropertyGroup>
     <ApplicationIcon>Resources\Icons\Red-Cross.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>GX16</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WarningLevel>2</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>GX16</DefineConstants>
+    <Optimize>true</Optimize>
+    <WarningLevel>2</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Artech.Architecture.BL.Framework">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.BL.Framework.dll</HintPath>
@@ -79,7 +103,7 @@
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Common.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.Interfaces">
-      <HintPath>C:\GeneXus\GeneXus16SDK\Bin\Artech.Architecture.Interfaces.dll</HintPath>
+      <HintPath>$(GX_SDK_DIR)\Bin\Artech.Architecture.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Artech.Architecture.Language">
       <HintPath>$(GX_SDK_DIR)\bin\Artech.Architecture.Language.dll</HintPath>
@@ -166,13 +190,14 @@
       <HintPath>$(GX_PROGRAM_DIR)\Packages\Artech.Packages.TeamDevClient.UI.dll</HintPath>
     </Reference>
     <Reference Include="Infragistics2.Shared.v11.1">
-      <HintPath>C:\GeneXus\GeneXus17\Infragistics2.Shared.v11.1.dll</HintPath>
+      <HintPath>$(GX_PROGRAM_DIR)\Infragistics2.Shared.v11.1.dll</HintPath>
     </Reference>
     <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1">
       <HintPath>$(GX_PROGRAM_DIR)\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
     </Reference>
-    <Reference Include="KBDoctorCore">
-      <HintPath>..\KBDoctorCore\bin\Release\KBDoctorCore.dll</HintPath>
+    <Reference Include="KBDoctorCore, Version=10.20.8804.31264, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\KBDoctorCore\bin\Debug\KBDoctorCore.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>
@@ -193,6 +218,9 @@
       <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.ObjectBuilder.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -289,9 +317,9 @@
     <Content Include="Documentacion\Cambios.txt" />
     <Content Include="Documentacion\HowTo.txt" />
     <Content Include="Documentacion\LoQueFaltaHacer.txt" />
-    <None Include="Resources\RedCross.ico" />
-    <None Include="Resources\IconRedCross.bmp" />
     <Content Include="Resources\Icons\file-find.ico" />
+    <None Include="app.config" />
+    <None Include="Resources\specXEv3_V15.xsl" />
     <None Include="packages.config" />
     <None Include="Resources\Replace.txt" />
     <None Include="Resources\MeneesDiffUtils.dll" />
@@ -386,10 +414,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IniFileParser\INIFileParser.csproj">
-      <Project>{5e46dcf4-c473-4171-9f9b-f3910b5ec407}</Project>
-      <Name>INIFileParser</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Louvain\LouvainCommunityPL.csproj">
       <Project>{462156c1-ff14-4a0f-99b9-1f167435356d}</Project>
       <Name>LouvainCommunityPL</Name>
@@ -404,11 +428,11 @@
     <Message Text="Version = $(Major).$(Minor).$(Build).$(Revision)" Importance="high" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy kbdoctor*.*  "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
-xcopy KBDoctorCore.dll "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
-xcopy louvain*.dll  "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
-xcopy IniFileParser*.dll  "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
-"%25GX_PROGRAM_DIR%25\genexus.exe" /install
+    <PostBuildEvent>xcopy kbdoctor*.*  "%25GX_PROGRAM_DIR%25\Packages\" /q /Y 
+xcopy KBDoctorCore.* "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
+rem xcopy louvain*.dll  "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
+rem xcopy IniFileParser*.dll  "%25GX_PROGRAM_DIR%25\Packages\" /q /Y
+rem "%25GX_PROGRAM_DIR%25\genexus.exe" /install
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

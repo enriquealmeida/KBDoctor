@@ -53,8 +53,10 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ListTables, new ExecHandler(ExecListTables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.TblTableTransaction, new ExecHandler(ExecTblTableTransaction), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.TblGenerateSimpleTransactionFromNotGeneratedTransactions, new ExecHandler(ExecTblGenerateSimpleTransactionFromNotGeneratedTransactions), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.TblScriptToCompareNULLABLE_GXvsDB, new ExecHandler(ExecTblScriptToCompareNULLABLE_GXvsDB), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.TblScriptToCompareNULLABLE_GXvsDB2, new ExecHandler(ExecTblScriptToCompareNULLABLE_GXvsDB2), new QueryHandler(QueryKBDoctor));
+
             AddCommand(CommandKeys.TblListTableWithAttributeNullableCompatible, new ExecHandler(ExecTblListTableWithAttributeNullableCompatible), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.TblListTableWithAttributeNullableCompatible2, new ExecHandler(ExecTblListTableWithAttributeNullableCompatible2), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.TblTableUpdate, new ExecHandler(ExecTblTableUpdate), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.TblTableInsertNew, new ExecHandler(ExecTblTableInsertNew), new QueryHandler(QueryKBDoctor));
@@ -75,6 +77,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ObjectsReferenced, new ExecHandler(ExecObjectsReferenced), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWithVarNotBasedOnAtt, new ExecHandler(ExecObjectsWithVarNotBasedOnAtt), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListDynamicCombo, new ExecHandler(ExecListDynamicCombo), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListProperties, new ExecHandler(ExecListProperties), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.RenameVariables, new ExecHandler(ExecRenameVariables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildModule, new ExecHandler(ExecBuildModule), new QueryHandler(QueryKBDoctor));
@@ -145,7 +148,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ClassNotInTheme, new ExecHandler(ExecClassNotInTheme), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ClassUsed, new ExecHandler(ExecClassUsed), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListClassUsed, new ExecHandler(ExecClassUsed), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.PrepareComparerNavigation, new ExecHandler(ExecPrepareComparerNavigation), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.PrepareComparerNavigations, new ExecHandler(ExecPrepareComparerNavigations), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.OpenFolderComparerNavigation, new ExecHandler(ExecOpenFolderComparerNavigation), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.OpenFolderObjComparerNavigation, new ExecHandler(ExecOpenFolderObjComparerNavigation), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CompareLastNVGDirectory, new ExecHandler(ExecCompareLastNVGDirectory), new QueryHandler(QueryKBDoctor));
@@ -438,20 +441,29 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecTblScriptToCompareNULLABLE_GXvsDB(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            Thread t = new Thread(new ThreadStart(TablesHelper.ScriptToCompareNULLABLE_GXvsDB));
+            t.Start();
+            return true;
+        }
+
+        public bool ExecTblScriptToCompareNULLABLE_GXvsDB2(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            Thread t = new Thread(new ThreadStart(TablesHelper.ScriptToCompareNULLABLE_GXvsDB2));
+            t.Start();
+            return true;
+        }
+
         public bool ExecTblListTableWithAttributeNullableCompatible(CommandData cmdData)
         {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
             Thread t = new Thread(new ThreadStart(TablesHelper.ListTableWithAttributeNullableCompatible));
-            t.Start();
-            return true;
-        }
-
-        public bool ExecTblListTableWithAttributeNullableCompatible2(CommandData cmdData)
-        {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
-            Thread t = new Thread(new ThreadStart(TablesHelper.ListTableWithAttributeNullableCompatible2));
             t.Start();
             return true;
         }
@@ -1300,6 +1312,16 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecListProperties(CommandData cmdData)
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            // Cambiar las variables para que se basen en atributos o dominios.
+            Thread t = new Thread(new ThreadStart(BadSmells.ListNamespace));
+            t.Start();
+            return true;
+        }
+
         public bool ExecBuildModule(CommandData cmdData)
         {
            IOutputService output = CommonServices.Output;
@@ -1686,11 +1708,11 @@ namespace Concepto.Packages.KBDoctor
         }
 
 
-        public bool ExecPrepareComparerNavigation(CommandData cmdData)
+        public bool ExecPrepareComparerNavigations(CommandData cmdData)
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            KBDoctorCore.Sources.API.PrepareCompareNavigations(kbserv.CurrentKB, output);
+            NavigationHelper.PrepareComparerNavigations(kbserv.CurrentKB,output);
             return true;
         }
 

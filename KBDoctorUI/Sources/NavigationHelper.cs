@@ -311,12 +311,9 @@ namespace Concepto.Packages.KBDoctor
         }
 
         
-        public static void PrepareComparerNavigation()
+        public static void PrepareComparerNavigations(KnowledgeBase KB, IOutputService output)
         {
-
-
             string title = "KBDoctor - Prepare Comparer Navigation Files";
-            IOutputService output = CommonServices.Output;
             output.StartSection("KBDoctor",title);
 
             Stopwatch stopWatch = new Stopwatch();
@@ -350,13 +347,14 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorOutput.Message(title + " elepsed time: " + elapsedTime);
             output.EndSection("KBDoctor", title, true);
+            
         }
 
         private static void WriteXSLTtoDir()
         {
             IKBService kbserv = UIServices.KB;
             string outputFile = kbserv.CurrentKB.UserDirectory + @"\KBdoctorEv2.xslt";
-            File.WriteAllText(outputFile, StringResources.specXEv2);
+            File.WriteAllText(outputFile, StringResources.specXEv3_V15);
 
         }
 
@@ -368,7 +366,9 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = kbserv.CurrentKB.UserDirectory + @"\KBdoctorEv2.xslt";
             XslCompiledTransform xslTransform = new XslCompiledTransform();
 
-            xslTransform.Load(outputFile);
+            XsltSettings settings = new XsltSettings(true, true);
+
+            xslTransform.Load(outputFile,settings, new XmlUrlResolver() );
 
             string fileWildcard = @"*.xml";
             var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
@@ -388,7 +388,15 @@ namespace Concepto.Packages.KBDoctor
                     string newXmlFile = x.Replace(".xml", ".xxx");
                     File.WriteAllText(newXmlFile, xmlstring);
 
-                    xslTransform.Transform(newXmlFile, xTxt);
+                    try
+                    { 
+                        xslTransform.Transform(newXmlFile, xTxt);
+                    }
+                    catch(Exception e)
+                    {
+                        KBDoctorOutput.Error(x + ' ' + e.Message);
+                    }
+                    
                     //  xslt.Transform(newXmlFile, xTxt);
 
                     File.Delete(newXmlFile);

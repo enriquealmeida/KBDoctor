@@ -20,16 +20,21 @@ using System.Text;
 using System.Windows.Forms;
 using System.Globalization;
 using Concepto.Packages.KBDoctorCore.Sources;
+using Artech.Udm.Framework;
+//using Artech.Udm.Framework;
 
 namespace Concepto.Packages.KBDoctor
 {
     static class TablesHelper
 
     {
+  
+
         public static void ListTables()
         {
             IKBService kbserv = UIServices.KB;
             KBModel model = UIServices.KB.CurrentModel;
+
             string title = "KBDoctor - Tables";
             try
             {
@@ -405,7 +410,8 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
-        public static void ListTableWithAttributeNullableCompatible()
+   
+        public static void ScriptToCompareNULLABLE_GXvsDB()
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Compare nullable Attributes GX vs DataBase";
@@ -414,58 +420,251 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.StartSection("KBDoctor", title);
 
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
-            int posicion = 1;
+            KBDoctorOutput.Message("set feedback off");
+            KBDoctorOutput.Message("set heading off");
 
-            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-            writer.AddHeader(title);
-             writer.AddTableHeader(new string[] { "Posicion", "Module", "Transaction", "Table", "Attribute", "isFK" });
-
-            foreach (Transaction trn in Transaction.GetAll(kbserv.CurrentModel))
+            foreach (Table tbl in Table.GetAll(kbserv.CurrentModel)) // in Transaction.GetAll(kbserv.CurrentModel))
             {
 
-                    foreach (TransactionLevel lvl in trn.Structure.GetLevels())
+                foreach (TableAttribute att in tbl.TableStructure.Attributes)
+                {
 
+                    string strNullable = "Y";  //True y Compatible lo tomo como Y. 
+                    if (att.IsNullable == TableAttribute.IsNullableValue.False)
+                        strNullable = "N";
+                    string commillas = "'";
+
+                    KBDoctorOutput.Message("SELECT table_name, column_name , NULLABLE as ORACLE ," +
+                    commillas + strNullable + commillas + " as GX_NULL," +
+                    commillas + att.IsNullable + commillas + " as NULL_GX," +
+                    commillas + Utility.FormattedTypeAttribute(att.Attribute) + commillas + " as DBType" +
+                    " FROM all_tab_columns where  table_name = " + commillas + tbl.Name + commillas +
+                    " and column_name =  " + commillas + att.Name + commillas +
+                    " and NULLABLE <> " + commillas + strNullable + commillas +
+                    " and OWNER = 'GENEXUS';");
+
+                }
+                    
+            }
+
+            bool success = true;
+            output.EndSection("KBDoctor", title, success);
+
+        }
+
+        public static void ScriptToCompareNULLABLE_GXvsDB2()
+        {
+            IKBService kbserv = UIServices.KB;
+            string title = "KBDoctor - Script compare DataType GX vs DataBase";
+
+            StringCollection strCol = new StringCollection();
+            IOutputService output = CommonServices.Output;
+            output.StartSection("KBDoctor", title);
+
+            string strDataType = "";
+            string strDataLength = "";
+            string strDataPrecision = "";
+            string commillas = "'";
+            string strTolerance = "0";
+            string strNullable = "";
+            string strNullable_YN = "";
+            string strDBType = "";
+
+
+            KBDoctorOutput.Message("set feedback off");
+            KBDoctorOutput.Message("set heading off");
+
+            KBDoctorOutput.Message("drop table GX_TABLES;");
+            KBDoctorOutput.Message("CREATE TABLE GX_TABLES(TABLE_NAME VARCHAR2(80 BYTE), COLUMN_NAME VARCHAR2(80 BYTE), COLUMN_TYPE VARCHAR2(80 BYTE),COLUMN_LENGTH NUMBER(8, 0),COLUMN_PRECISION NUMERIC(8, 0),COLUMN_SIGNED CHAR(5),COLUMN_NULLABLE CHAR(1) , COLUMN_STR_NULLABLE CHAR(8));   ");
+
+
+            //solo tomo las tablas del DS default
+          //  DataStoreCategory ds = new DataStoreCategory(kbserv.CurrentModel, "Default");
+
+            foreach (Table tbl in  Table.GetAll(kbserv.CurrentModel))
+            {
+                //Solo proceso tablas sin DV
+                if (HasDataViewAsociated(tbl))
+                {
+                    KBDoctorOutput.Message("-- Table has DV " + tbl.Name);
+                }
+                else
+                {
+                    foreach (TableAttribute att in tbl.TableStructure.Attributes)
                     {
-                        foreach (TransactionAttribute att in lvl.Attributes)
+                        if ((att.IsFormula && !att.IsRedundant) || (att.IsInferred && !att.IsRedundant))
                         {
-                            if (att.IsNullable == TableAttribute.IsNullableValue.Compatible)
+                            KBDoctorOutput.Message("-- ATT NOT IN TABLE " + tbl.Name + " " + att.Name);
+                        }
+                        else
+                        {
+
+
+
+                            strDataType = att.Attribute.Type.ToString();           //TIPO EN ORACLE
+                            strDataLength = att.Attribute.Length.ToString();       //LARGO PARA NUMERICOS/ CHAR/VARCHAR/LONGVARCHAR
+                            strDataPrecision = att.Attribute.Decimals.ToString();  //POSICIONES DECIMALES
+                            strTolerance = "0";
+
+                            if (att.IsNullable == TableAttribute.IsNullableValue.False || att.IsRedundant)
                             {
-                            //KBDoctorOutput.Message(posicion.ToString()+ " " +  trn.Module.Name + " " + trn.Name + " " + lvl.AssociatedTable.Name + " " + att.Name + " " + att.IsForeignKey );
-
-                           // writer.AddTableData(new string[] { posicion.ToString(), trn.Module.Name, trn.Name, lvl.AssociatedTable.Name, att.Name, att.IsForeignKey.ToString() });
-                            posicion += 1;
-                          
+                                strNullable = "NOT NULL";
+                                strNullable_YN = "N";
                             }
-                       
-                            string strNullable = "Y";  //True y Compatible lo tomo como Y. 
-                            if (att.IsNullable == TableAttribute.IsNullableValue.False)
-                                strNullable = "N";
-                            string commillas = "'";
+                            else
+                            {
+                                strNullable = "NULL";
+                                strNullable_YN = "Y";
+                            }
 
-                            KBDoctorOutput.Message("SELECT table_name, column_name , NULLABLE as ORACLE ," + 
-                                commillas + strNullable + commillas + " as GX_NULL," +
-                                commillas + att.IsNullable + commillas + " as NULL_GX,"  +
-                                commillas + Utility.FormattedTypeAttribute(att.Attribute) + commillas + " as DBType" +
-                                " FROM all_tab_columns where  table_name = " + commillas + lvl.AssociatedTable.Name + commillas  +
-                                " and column_name =  " + commillas + att.Name + commillas + 
-                                " and NULLABLE <> " + commillas + strNullable + commillas + 
-                                " and OWNER = 'GENEXUS';"                    );
 
+                            switch (att.Attribute.Type)
+                            {
+                                case eDBType.VARCHAR:
+                                    strDataType = "VARCHAR2";
+                                    strDBType = String.Format("{0}({1})", strDataType, strDataLength);
+                                    break;
+                                case eDBType.CHARACTER:
+                                    strDataType = "CHAR";
+                                    strDBType = String.Format("{0}({1})", strDataType, strDataLength);
+                                    break;
+                                case eDBType.NUMERIC:
+                                    strDataType = "NUMBER";
+                                    strDBType = String.Format("{0}({1} , {2} )", strDataType, strDataLength, strDataPrecision);
+                                    strTolerance = "1";               //PERMITO QUE TENGA UN MAS O MENOS EN LOS NUMERICOS
+                                    break;
+                                case eDBType.DATE:
+                                    strDataType = "DATE";
+                                    strDBType = String.Format("{0}", strDataType);
+                                    //       strDataLength = "7";
+                                    break;
+                                case eDBType.DATETIME:
+                                    strDataType = "DATE";
+                                    strDBType = String.Format("{0}", strDataType);
+                                    //     strDataLength = "7";
+                                    break;
+                                case eDBType.Boolean:
+                                    strDataType = "NUMBER";
+                                    strDBType = String.Format("{0}(1)", strDataType);
+                                    strDataLength = "1";
+                                    break;
+                                case eDBType.LONGVARCHAR:
+                                    strDataType = "CLOB";
+                                    break;
+                                case eDBType.GUID:
+                                    strDataType = "CHAR";
+                                    strDBType = String.Format("{0}(36)", strDataType);
+                                    // strDataLength = "36";
+                                    break;
+                                case eDBType.BINARY:
+                                    strDataType = "BLOB";
+                                    strDBType = String.Format("{0}", strDataType);
+                                    //  strDataLength = "0"; //NO CONSIDERO EL LARGO
+                                    break;
+                                case eDBType.BITMAP:
+                                    strDataType = "BLOB";
+                                    strDBType = String.Format("{0}", strDataType);
+                                    //  strDataLength = "0"; //NO CONSIDERO EL LARGO
+                                    break;
+                                default:
+                                    strDBType = String.Format("{0}", strDataType);
+                                    break;
+                            }
+                            //armado de la sentencia INSERT
+                            string strSentence = "INSERT INTO GX_TABLES (TABLE_NAME,COLUMN_NAME,COLUMN_TYPE,COLUMN_LENGTH,COLUMN_PRECISION,COLUMN_SIGNED,COLUMN_NULLABLE,COLUMN_STR_NULLABLE)";
+                            strSentence += String.Format(" VALUES('{0}','{1}','{2}',{3},{4},'{5}','{6}','{7}');", tbl.Name, att.Name, strDataType, strDataLength, strDataPrecision, att.Attribute.Signed.ToString(), strNullable_YN, strNullable);
+                            /*
+                            //Armad de la sentencia
+                            string strSentence = String.Format("select 'ALTER TABLE {0} MODIFY {1} {2} {3};  ", tbl.Name, att.Name, strDBType, strNullable); 
+
+                                strSentence += "-- DB -> ', data_type|| ' ' || data_length|| ' ' || data_scale || ' ' ||nullable || '' || ";
+                                strSentence += String.Format("  ' GX -> {0} {1} {2} {3} {4}' ", Utility.FormattedTypeAttribute(att.Attribute), strDataType, strDataLength, strDataPrecision, strNullable_YN);
+
+                            strSentence += "FROM all_tab_columns";
+
+                            strSentence += String.Format(" where UPPER(table_name)='{0}' and UPPER(column_name)='{1}' and owner='{2}' ", tbl.Name.ToUpper(), att.Name.ToUpper(), "GENEXUS");
+
+                            //CONTROL DE TIPO DE DATOS
+                            strSentence += String.Format(" and NOT (data_type='{0}' ", strDataType);
+
+                            //CONTROL DE LARGO DE DATOS
+                            if (strDataLength != "0")  //Es 0 si no necesito controlar el largo 
+                                strSentence += String.Format(" and ABS(DATA_PRECISION-{0})<={1} ", strDataLength, strTolerance);
+
+                            //CONTROL DE POSICIONES DECIMALES
+                            if (att.Attribute.Type == eDBType.NUMERIC)
+                                strSentence += String.Format(" and DATA_SCALE={0}",strDataPrecision);
+
+                            //CONTROL DE NULLABLE
+                            strSentence += String.Format(" and NULLABLE='{0}'", strNullable_YN);
+
+                            strSentence += ");";
+
+                            /*
+                            string strSentence = "SELECT table_name,column_name,DATA_TYPE,DATA_PRECISION,DATA_SCALE," +
+                                 commillas + Utility.FormattedTypeAttribute(att.Attribute) + commillas + " as DBType," +
+                                 commillas + strDataLength + commillas + 
+                                 " FROM all_tab_columns where  table_name=" + commillas + tbl.Name.ToUpper() + commillas +
+                                 " and column_name=" + commillas + att.Name.ToUpper() + commillas;
+
+                            strSentence += " and ( DATA_TYPE <>" + commillas + strDataType + commillas;
+
+                            if (strDataLength !="0")  //Es 0 si no necesito controlar el largo 
+                                strSentence += " OR ABS(DATA_PRECISION-" + strDataLength + ")>1" ;
+
+                            if (att.Attribute.Type == eDBType.NUMERIC)
+                                strSentence +=  " OR DATA_SCALE <>" + strDataPrecision;
+
+                             strSentence += " ) and OWNER='GENEXUS';";
+                            */
+                            // string strSentence = tbl.Name; 
+                            KBDoctorOutput.Message(strSentence);
                         }
                     }
+                }
+               
+
+              
 
             }
 
             bool success = true;
             output.EndSection("KBDoctor", title, success);
-         //   KBDoctorHelper.ShowKBDoctorResults(outputFile);
+
         }
 
-        public static void ListTableWithAttributeNullableCompatible2()
+  
+
+        static bool HasDataViewAsociated(Table tbl)
+        {
+
+            DataView dv = GetDataView( tbl);
+            if (dv is null)
+                //  return ds.IsDefault;
+                return false;
+            else
+                return true;
+            ///   return Artech.Genexus.Common.Properties.XFL.GetDatastore(dv).Identifier == ds.Id; 
+        }
+
+
+        static DataView GetDataView(Table tbl)
+        {
+            EntityKey tblKey = tbl.Key;
+            foreach (var r in tbl.Model.GetReferencesTo(tblKey, LinkType.UsedObject, new[] { ObjClass.DataView }))
+            {
+                var dv = DataView.Get(tbl.Model, r.From.Id);
+                if (dv.AssociatedTableKey == tblKey)
+                    return dv;
+            }
+            return null;
+        }
+
+
+            public static void ListTableWithAttributeNullableCompatible()
         {
             IKBService kbserv = UIServices.KB;
-            string title = "KBDoctor - 2Tables with Attribue Nullable = Compatible";
+            string title = "KBDoctor - Tables with Attribue Nullable = Compatible";
 
             StringCollection strCol = new StringCollection();
             IOutputService output = CommonServices.Output;

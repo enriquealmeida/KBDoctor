@@ -190,7 +190,6 @@ namespace IniParser.Model
         ///     key name.
         /// </summary>
         /// <param name="key">
-        ///     The section and key name to retrieve, separated by <see cref="IniParserConfiguration.SectionKeySeparator"/>.
         /// 
         ///     If key contains no separator, it is treated as a key in the <see cref="Global"/> section.
         /// 
@@ -243,8 +242,7 @@ namespace IniParser.Model
         ///     Retrieves a key using a single input string combining section and key name.
         /// </summary>
         /// <param name="key">
-        ///     The section and key name to retrieve, separated by <see cref="IniParserConfiguration.SectionKeySeparator"/>.
-        /// 
+            /// 
         ///     If key contains no separator, it is treated as a key in the <see cref="Global"/> section.
         /// 
         ///     Key may contain no more than one separator character.

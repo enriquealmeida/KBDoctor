@@ -35,7 +35,8 @@
     <CommandDefinition id="TableTransaction" />
     <CommandDefinition id="GenerateSimpleTransactionFromNotGeneratedTransactions" />
     <CommandDefinition id="ListTableWithAttributeNullableCompatible" />
-     <CommandDefinition id="ListTableWithAttributeNullableCompatible2" />
+    <CommandDefinition id="ScriptToCompareNULLABLE_GXvsDB" />
+    <CommandDefinition id="ScriptToCompareNULLABLE_GXvsDB2" />
     <CommandDefinition id="TableUpdate" />
     <CommandDefinition id="TableInsertNew" />
     <CommandDefinition id="GenerateTrnFromTables2" />
@@ -79,6 +80,7 @@
     <CommandDefinition id="ListAPIObjects" />
     <CommandDefinition id="RecomendedModule" />
     <CommandDefinition id="ListDynamicCombo" />
+    <CommandDefinition id="ListProperties" />
     <CommandDefinition id="VariablesNotBasedOnAttributes"/>
    
     <CommandDefinition id="SplitMainObject" />
@@ -135,7 +137,7 @@
     <CommandDefinition id="GeneratedByPatternWithoutDynamism" />
     <CommandDefinition id="ReplaceNullCompatible" />
     <CommandDefinition id="ListObj" />
-    <CommandDefinition id="PrepareComparerNavigation" />
+    <CommandDefinition id="PrepareComparerNavigations" />
     <CommandDefinition id="CompareLastNVGDirectory" />
     <CommandDefinition id="OpenFolderComparerNavigation" />
 	
@@ -240,7 +242,7 @@
             <Command refid="ListObjWarningsErrors" />
             <Command refid="ListObjSimilarNavigation" />
             <Group >
-              <Command refid="PrepareComparerNavigation"  />
+              <Command refid="PrepareComparerNavigations"  />
               <Command refid="CompareLastNVGDirectory" />
               <Command refid="OpenFolderComparerNavigation"  />
             </Group>
@@ -277,9 +279,10 @@
           </Group>
           <Group id="Common errors" >
             <Popup name ="Common errors">
-                <Command refid="ListDynamicCombo"/>
+                <Command refid="ListProperties"/>
                 <Command refid="GeneratedByPatternWithoutDynamism"  />
-                <Command refid="ListTableWithAttributeNullableCompatible2" />
+                <Command refid="ScriptToCompareNULLABLE_GXvsDB" />
+                <Command refid="ScriptToCompareNULLABLE_GXvsDB2" />
                 <Command refid="ListTableWithAttributeNullableCompatible" />
                 <Command refid="AttWithNoDomain"/>
                 <Command refid="AttWithoutDescription"/>
@@ -313,22 +316,25 @@
             </Group>
             <Popup name="Utilities" >
                 <Command refid="SearchAndReplace"/>
+                <Command refid="SearchAndReplaceString"/>
                 <Command refid="GenerateLocationXML" />
                 <Command refid="RenameAttributesAndTables"  />
+                <Command refid="ListProperties" />
             </Popup>
             <Command refid="HelpKBDoctor" />
             <Command refid="ListLastReports"  />
             <Command refid="AboutKBDoctor"  />
+            <Command refid="ListDynamicCombo"/>
           </Popup>
-
+   <!--
           <Group id="LABS" >
             <Popup name ="Labs">
+             
               <Command refid="AddINParmRule"/>
               <Command refid="ProcedureSDT"/>
               <Command refid="ProcedureGetSet"/>
               <Command refid="CreateDeployUnits" />
               <Command refid="GenerateSimpleTransactionFromNotGeneratedTransactions" />
-
               <Command refid="RenameVariables"/>
               <Command refid="ObjectsWithVarsNotUsed"/>
               <Command refid="GenerateTrnFromTables2" />
@@ -379,7 +385,7 @@
           
           
 
-          <!--
+          
           <Group id="LABS2" >
               <Popup>
                 <Command refid="GenerateSQLScripts"/>
@@ -395,6 +401,7 @@
              </Popup>
           </Group>
           -->
+          
       </Popup>
     </Popup>
     </Menu>
