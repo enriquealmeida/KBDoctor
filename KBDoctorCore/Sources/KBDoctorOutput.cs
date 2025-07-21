@@ -23,7 +23,7 @@ namespace Concepto.Packages.KBDoctor
         public static void InternalError(string v, Exception e)
         {
             IOutputService output = NewKBDoctorOutput();
-            output.AddErrorLine("Internal error: + v " + e.Message  );
+            output.AddErrorLine("Internal error: " + v + " " + e.Message);
             output.AddErrorLine(e.StackTrace);
         }
 
