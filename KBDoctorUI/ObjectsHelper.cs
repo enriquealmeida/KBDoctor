@@ -41,7 +41,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection(title);
             // UIServices.ToolWindows.ShowToolWindow(new Guid("59CE53BC-F419-402b-AC09-AC275ED21AB9"));
 
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -197,7 +197,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Object main called by others";
 
             output.StartSection(title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -215,7 +215,7 @@ namespace Concepto.Packages.KBDoctor
                 }
                 //if (callers > 0)
                 // {
-                string ruleParm = Functions.ExtractRuleParm(obj);
+                string ruleParm = Utility.ExtractRuleParm(obj);
                 string enc = obj.GetPropertyValueString("USE_ENCRYPTION");
                 writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), obj.Description, ruleParm, callers.ToString(), obj.GetPropertyValueString("CALL_PROTOCOL"), isGeneratedbyPattern(obj).ToString(), enc });
                 /*
@@ -251,7 +251,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Object with parameters without IN:/OUT:/INOUT:";
 
             output.StartSection(title);
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             int numObj = 0;
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -281,7 +281,7 @@ namespace Concepto.Packages.KBDoctor
                         }
                         if (someInOut)
                         {
-                            string ruleParm = Functions.ExtractRuleParm(obj);
+                            string ruleParm = Utility.ExtractRuleParm(obj);
                             if (ruleParm != "")
                             {
                                 int countparms = ruleParm.Split(new char[] { ',' }).Length;
@@ -351,7 +351,7 @@ namespace Concepto.Packages.KBDoctor
 
             output.StartSection(title);
 
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -404,7 +404,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Not referenced objects";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             output.StartSection(title);
@@ -494,7 +494,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
 
             string title = "KBDoctor - Removable Transactions";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             output.StartSection(title);
@@ -718,7 +718,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
 
             string title = "KBDoctor - Tables used by mains";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             output.StartSection(title);
@@ -842,7 +842,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             SpecificationListHelper helper = new SpecificationListHelper(kbserv.CurrentModel.Environment.TargetModel);
             string title = "KBDoctor - CreateDeployUnits";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             output.StartSection(title);
@@ -1241,7 +1241,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Complex Objects";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             output.StartSection(title);
@@ -1288,7 +1288,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string[] legacyCode = new string[] { "Object", "Description", "Type", " call", " udp", " create", ".false", ".true", "new", "defined", "delete", ".and.", ".or.", ".not.", ".like." };
             string titulo = "KBDoctor - Objects - Legacy Code";
-            string outputFile = Functions.CreateOutputFile(kbserv, titulo);
+            string outputFile = Utility.CreateOutputFile(kbserv, titulo);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
@@ -1308,7 +1308,7 @@ namespace Concepto.Packages.KBDoctor
                         output.AddLine(obj.Name);
 
                         string source = ObjectSource(obj);
-                        source = Functions.RemoveEmptyLines(source);
+                        source = Utility.RemoveEmptyLines(source);
                         string sourceWOComments = Functions.ExtractComments(source);
                         bool hasLegacyCode = false;
                         string[] data = new string[legacyCode.Length];
@@ -1548,7 +1548,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Refactoring candidates";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             output.StartSection(title);
@@ -1570,11 +1570,11 @@ namespace Concepto.Packages.KBDoctor
                     {
                         output.AddLine(obj.Name);
 
-                        string source = Functions.ObjectSourceUpper(obj);
-                        source = Functions.RemoveEmptyLines(source);
+                        string source = Utility.ObjectSourceUpper(obj);
+                        source = Utility.RemoveEmptyLines(source);
 
                         string sourceWOComments = Functions.ExtractComments(source);
-                        sourceWOComments = Functions.RemoveEmptyLines(sourceWOComments);
+                        sourceWOComments = Utility.RemoveEmptyLines(sourceWOComments);
 
                         int linesSource, linesComment;
                         float PercentComment;
@@ -1583,12 +1583,12 @@ namespace Concepto.Packages.KBDoctor
 
                         
 
-                        int MaxCodeBlock = Functions.MaxCodeBlock(sourceWOComments);
-                        int MaxNestLevel = Functions.MaxNestLevel(sourceWOComments);
-                        int ComplexityLevel = Functions.ComplexityLevel(sourceWOComments);
+                        int MaxCodeBlock = Utility.MaxCodeBlock(sourceWOComments);
+                        int MaxNestLevel = Utility.MaxNestLevel(sourceWOComments);
+                        int ComplexityLevel = Utility.ComplexityLevel(sourceWOComments);
 
 
-                        string ParmINOUT = Functions.ValidateINOUTinParm(obj) ? "Error" : "";
+                        string ParmINOUT = Utility.ValidateINOUTinParm(obj) ? "Error" : "";
                         int parametersCount = ParametersCountObject(obj);
 
                         string Candidate = "";
@@ -1652,7 +1652,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Diagnostics";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             output.StartSection(title);
@@ -1678,28 +1678,28 @@ namespace Concepto.Packages.KBDoctor
                 {
                     //output.AddLine(obj.Name);
 
-                    string source = Functions.ObjectSourceUpper(obj);
-                    source = Functions.RemoveEmptyLines(source);
+                    string source = Utility.ObjectSourceUpper(obj);
+                    source = Utility.RemoveEmptyLines(source);
 
                     string sourceWOComments = Functions.ExtractComments(source);
-                    sourceWOComments = Functions.RemoveEmptyLines(sourceWOComments);
+                    sourceWOComments = Utility.RemoveEmptyLines(sourceWOComments);
                     
                     int linesSource, linesComment;
                     float PercentComment;
 
                     CountCommentsLines(source, sourceWOComments, out linesSource, out linesComment, out PercentComment);
 
-                    int MaxCodeBlock = Functions.MaxCodeBlock(sourceWOComments);
-                    int MaxNestLevel = Functions.MaxNestLevel(sourceWOComments);
-                    int ComplexityLevel = Functions.ComplexityLevel(sourceWOComments);
-                    string ParmINOUT = Functions.ValidateINOUTinParm(obj) ? "Error" : "";
+                    int MaxCodeBlock = Utility.MaxCodeBlock(sourceWOComments);
+                    int MaxNestLevel = Utility.MaxNestLevel(sourceWOComments);
+                    int ComplexityLevel = Utility.ComplexityLevel(sourceWOComments);
+                    string ParmINOUT = Utility.ValidateINOUTinParm(obj) ? "Error" : "";
 
                     if (ParmINOUT == "Error")
                         
                         {
                             ErrorCode = "kbd0001";
                             ErrorDescription = "Missing IN:OUT:INOUT: in parm rule";
-                            Observation = Functions.ExtractRuleParm(obj);
+                            Observation = Utility.ExtractRuleParm(obj);
                             Solution = CleanKBHelper.ChangeRuleParmWithIN(obj);
                         CleanKBHelper.SaveObjectNewParm(output, obj, Observation, Solution);
                             writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, ErrorCode, ErrorDescription, Observation, Solution });
@@ -1769,7 +1769,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - UDP CALLABLE";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             string callers = "";
 
@@ -1796,7 +1796,7 @@ namespace Concepto.Packages.KBDoctor
 
                 if (callers != "")
                 {
-                    string Parms = Functions.ExtractRuleParm(obj);
+                    string Parms = Utility.ExtractRuleParm(obj);
                     writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, " " + obj.Parent.Name, " " + obj.VersionDate.ToShortDateString(), Parms, callers });
                 }
 
@@ -1847,8 +1847,8 @@ namespace Concepto.Packages.KBDoctor
 
                // output.AddLine(objRef.Name + "->" + obj.Name);
 
-                string source = Functions.ObjectSourceUpper(objRef);
-                source = Functions.RemoveEmptyLines(source);
+                string source = Utility.ObjectSourceUpper(objRef);
+                source = Utility.RemoveEmptyLines(source);
 
                 string sourceWOComments = Functions.ExtractComments(source);
                 sourceWOComments = sourceWOComments.Replace("\t", "");
@@ -1937,7 +1937,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             string source = ObjectSource(obj);
-            source = Functions.RemoveEmptyLines(source);
+            source = Utility.RemoveEmptyLines(source);
             string sourceWOComments = Functions.ExtractComments(source);
             string callSentences = "";
             string lista = "";
@@ -1969,7 +1969,7 @@ namespace Concepto.Packages.KBDoctor
                                 line.Replace(".udp(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace("call(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace("udp(", "(", StringComparison.CurrentCultureIgnoreCase);
-                                line.Replace(objRef.Name, "—", StringComparison.CurrentCultureIgnoreCase);
+                                line.Replace(objRef.Name, "√ë", StringComparison.CurrentCultureIgnoreCase);
            //                     output.AddLine("............ Line . " + line);
                                 
                                 StringCollection interfazCallerObject = ProcessingObjectCall(obj, line); 
@@ -2124,8 +2124,8 @@ namespace Concepto.Packages.KBDoctor
 
         private static void CountCommentsLines(string source, string sourceWOComments, out int linesSource, out int linesComment, out float PercentComment)
         {
-            linesSource = Functions.LineCount(source);
-            int linesWOComment = Functions.LineCount(sourceWOComments);
+            linesSource = Utility.LineCount(source);
+            int linesWOComment = Utility.LineCount(sourceWOComments);
 
             linesComment = linesSource - linesWOComment;
             PercentComment = (linesSource == 0) ? 0 : (linesComment * 100) / linesSource;
@@ -2230,7 +2230,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - List Procedure that call Webpanel or Transaction";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             output.StartSection(title);
@@ -2355,7 +2355,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Object with variables not based on attribute/domain";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             IOutputService output = CommonServices.Output;
@@ -2570,7 +2570,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Index with not referenced attributes";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             IOutputService output = CommonServices.Output;
@@ -2797,7 +2797,7 @@ namespace Concepto.Packages.KBDoctor
 
             output.StartSection(title);
 
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -2926,8 +2926,8 @@ namespace Concepto.Packages.KBDoctor
         }
         private static void SetDocumentDirty(IGxDocument doc)
         {
-            if (UIServices.Environment.InvokeRequired) // devuelve true cuando el thread que est· ejecutando no es el thread de UI
-                UIServices.Environment.BeginInvoke(() => SetDocumentDirty(doc)); // dispara un invoke asincrÛnico a SetDocumentDirty
+            if (UIServices.Environment.InvokeRequired) // devuelve true cuando el thread que est√° ejecutando no es el thread de UI
+                UIServices.Environment.BeginInvoke(() => SetDocumentDirty(doc)); // dispara un invoke asincr√≥nico a SetDocumentDirty
             else
                 doc.Dirty = true;
         }
@@ -2958,7 +2958,7 @@ namespace Concepto.Packages.KBDoctor
 
             output.StartSection(title);
 
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);

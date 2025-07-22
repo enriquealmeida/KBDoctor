@@ -18,81 +18,17 @@ namespace Concepto.Packages.KBDoctor
     {
         public static int MaxCodeBlock(string source)
         {
-            int MaxCodeBlock = 0;
-            int countLine = 0;
-            using (StringReader reader = new StringReader(source))
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    countLine += 1;
-
-                    if (line.StartsWith("SUB ") || line.StartsWith("EVENT "))
-                    {
-                        MaxCodeBlock = (MaxCodeBlock <= countLine) ? countLine : MaxCodeBlock;
-                        countLine = 1;
-                    }
-
-                }
-                MaxCodeBlock = (MaxCodeBlock <= countLine) ? countLine : MaxCodeBlock;
-            }
-
-            return MaxCodeBlock;
+            return Utility.MaxCodeBlock(source);
         }
 
         public static int ComplexityLevel(string source)
         {
-            int ComplexityLevel = 0;
-
-            using (StringReader reader = new StringReader(source))
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-
-                    line = line.TrimStart().ToUpper();
-                    if (line.StartsWith("DO WHILE") || line.StartsWith("IF") || line.StartsWith("DO CASE") || line.StartsWith("FOR"))
-                    {
-                        ComplexityLevel += 1;
-                    }
-                }
-            }
-            return ComplexityLevel;
+            return Utility.ComplexityLevel(source);
         }
 
         public static int MaxNestLevel(string source)
         {
-            int MaxNestLevel = 0;
-            int NestLevel = 0;
-            using (StringReader reader = new StringReader(source))
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-
-                    line = line.TrimStart().ToUpper();
-                    if (line.StartsWith("DO '"))
-                    {
-                        //Si es un llamado a una subrutina, no hago nada y lo salteo. 
-                    }
-                    else
-                    {
-
-                        if (line.StartsWith("FOR ") || line.StartsWith("IF ") || line.StartsWith("DO ") || line.StartsWith("NEW") || line.StartsWith("SUB"))
-                        {
-                            NestLevel += 1;
-                            MaxNestLevel = (NestLevel > MaxNestLevel) ? NestLevel : MaxNestLevel;
-                        }
-                        else
-                            if (line.StartsWith("ENDFOR") || line.StartsWith("ENDIF") || line.StartsWith("ENDDO") || line.StartsWith("ENDCASE") || line.StartsWith("ENDNEW") || line.StartsWith("ENDSUB"))
-                        {
-                            NestLevel -= 1;
-                        }
-                    }
-                }
-                return MaxNestLevel;
-            }
-
+            return Utility.MaxNestLevel(source);
         }
 
 
@@ -100,21 +36,8 @@ namespace Concepto.Packages.KBDoctor
 
         public static bool ValidateINOUTinParm(KBObject obj)
         {
-            bool err = false;
-            ICallableObject callableObject = obj as ICallableObject;
-
-            if (callableObject != null)
-            {
-                foreach (Signature signature in callableObject.GetSignatures())
-                {
-                    Boolean someInOut = false;
-                    foreach (Parameter parm in signature.Parameters)
-                    {
-                        if (parm.Accessor.ToString() == "PARM_INOUT")
-                        {
-                            someInOut = true;
-                            break;
-                        }
+            return Utility.ValidateINOUTinParm(obj);
+        }
                     }
                     if (someInOut)
                     {
@@ -143,28 +66,12 @@ namespace Concepto.Packages.KBDoctor
 
         internal static void AddLineSummary(string fileName, string texto)
         {
-            IKBService kbserv = UIServices.KB;
-
-            string outputFile = kbserv.CurrentKB.UserDirectory + @"\" + fileName;
-
-            using (FileStream fs = new FileStream(outputFile, FileMode.Append, FileAccess.Write))
-            using (StreamWriter sw = new StreamWriter(fs))
-            {
-                sw.WriteLine(DateTime.Now.ToString() + "," + texto);
-            }
+            Utility.AddLineSummary(UIServices.KB.CurrentKB, fileName, texto);
         }
 
         internal static void AddLine(string fileName, string texto)
         {
-            IKBService kbserv = UIServices.KB;
-
-            string outputFile = kbserv.CurrentKB.UserDirectory + @"\" + fileName;
-
-            using (FileStream fs = new FileStream(outputFile, FileMode.Append, FileAccess.Write))
-            using (StreamWriter sw = new StreamWriter(fs))
-            {
-                sw.WriteLine(texto);
-            }
+            Utility.AddLine(UIServices.KB.CurrentKB, fileName, texto);
         }
 
         public static string ObjectSourceUpper(KBObject obj)
@@ -212,31 +119,18 @@ namespace Concepto.Packages.KBDoctor
 
         public static bool isRunable(KBObject obj)
         {
-            return (obj is Transaction || obj is WorkPanel || obj is WebPanel
-                || obj is DataProvider || obj is DataSelector || obj is Procedure || obj is Menubar);
+            return Utility.isRunable(obj);
         }
 
         public static bool CanBeBuilt(KBObject obj)
         {
-            return (obj is Transaction || obj is WebPanel || obj is Procedure || obj is DataProvider || obj is Menubar);
+            return Utility.CanBeBuilt(obj);
         }
 
         public static string ExtractComments(string source)
         {
-
-            var blockComments = @"/\*(.*?)\*/";
-            var lineComments = @"//(.*?)\r?\n";
-            var strings = @"""((\\[^\n]|[^""\n])*)""";
-            var verbatimStrings = @"@(""[^""]*"")+";
-
-            string noComments = Regex.Replace(source, blockComments + "|" + lineComments + "|" + strings + "|" + verbatimStrings,
-             me =>
-             {
-                 if (me.Value.StartsWith("/*") || me.Value.StartsWith("//"))
-                     return me.Value.StartsWith("//") ? Environment.NewLine : "";
-                 // Keep the literal strings
-                 return me.Value;
-             },
+            return Utility.ExtractComments(source);
+        },
                     RegexOptions.Singleline);
 
             noComments = noComments.Replace("(", " (");
@@ -257,96 +151,60 @@ namespace Concepto.Packages.KBDoctor
 
         public static string CodeCommented(string source)
         {
-
-            var codeComments = @"[^\/](\/\*)([\b\s]*(msg|do|call|udp|where|if|else|endif|endfor|for|defined by|while|enddo|&[A-Za-z0-9_\-.\s]*=))(\*(?!\/)|[^*])*(\*\/)|(\/\/)[\b\s]*((msg|do|call|udp|where|if|else|endif|endfor|for|defined by|while|enddo|&[A-Za-z0-9_\-.\s]*=)([^\r\n]+)?)";
-
-            return Regex.Match(source, codeComments).Value;
-
+            return Utility.CodeCommented(source);
         }
 
         public static bool HasCodeCommented(string source)
         {
-
-            var codeComments = @"[^\/](\/\*)([\b\s]*(msg|do|call|udp|where|if|else|endif|endfor|for|defined by|while|enddo|&[A-Za-z0-9_\-.\s]*=))(\*(?!\/)|[^*])*(\*\/)|(\/\/)[\b\s]*((msg|do|call|udp|where|if|else|endif|endfor|for|defined by|while|enddo|&[A-Za-z0-9_\-.\s]*=)([^\r\n]+)?)";
-
-            return (Regex.Match(source, codeComments).Value != "");
-
+            return Utility.HasCodeCommented(source);
         }
 
         public static Domain DomainByName(string domainName)
         {
-            foreach (Domain d in Domain.GetAll(UIServices.KB.CurrentModel))
-            {
-                if (d.Name == domainName)
-                    {
-                    return d;
-                    }  
+            return Utility.DomainByName(UIServices.KB.CurrentModel, domainName);
+        }  
              }
             return null;
         }
 
         public static string RemoveEmptyLines(string lines)
         {
-            return Regex.Replace(lines, @"^(\s)*$\n|\r", "", RegexOptions.Multiline);
+            return Utility.RemoveEmptyLines(lines);
         }
 
         public static int LineCount(string s)
         {
-            int n = 0;
-            foreach (var c in s)
-            {
-                if (c == '\n') n++;
-            }
+            return Utility.LineCount(s);
+        }
             return n;
         }
 
         public static string linkObject(KBObject obj)
         {
-            if (obj != null)
-                return "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + obj.Guid.ToString() + "\">" + obj.Name + "</a>";
-            else
-                return "";
+            return Utility.linkObject(obj);
         }
 
         public static string linkFile(string file)
         {
-            return "<a href=\"file:///" + file + "\"" + ">" + file + "</a" + ">";
+            return Utility.linkFile(file);
         }
 
         public static string ExtractRuleParm(KBObject obj)
         {
-            RulesPart rulesPart = obj.Parts.Get<RulesPart>();
-            string aux = "";
-
-            if (rulesPart != null)
-            {
-                Regex myReg = new Regex("//.*", RegexOptions.None);
-                Regex paramReg = new Regex(@"parm\(.*\)", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
-                string reglas = rulesPart.Source;
-                reglas = myReg.Replace(reglas, "");
-                Match match = paramReg.Match(reglas);
-                if (match != null)
-                    aux = match.ToString();
-                else
-                    aux = "";
-            }
+            return Utility.ExtractRuleParm(obj);
+        }
             return aux;
         }
     
         public static string CleanFileName(string filename)
         {
-            return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+            return Utility.CleanFileName(filename);
         }
 
         public static string CreateOutputFile(IKBService kbserv, string title)
         {
-            string outputFile = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Functions.CleanFileName(title) + ".html";
-            if (File.Exists(outputFile))
-            {
-                try
-                {
-                    File.Delete(outputFile);
-                }
+            return Utility.CreateOutputFile(kbserv.CurrentKB, title);
+        }
                 catch
                 {
                     KBDoctor.KBDoctorOutput.Warning("File " + outputFile + " is locked. The start page cannot be generated");
@@ -359,32 +217,13 @@ namespace Concepto.Packages.KBDoctor
 
         public static bool AttIsSubtype(Artech.Genexus.Common.Objects.Attribute a)
         {
-            if (a.SuperTypeKey != null)
-                return true;
-            else
-                return false;
-
+            return Utility.AttIsSubtype(a);
         }
 
         public static void KillAttribute(Artech.Genexus.Common.Objects.Attribute a)
         {
-            IOutputService output = CommonServices.Output;
-
-            foreach (EntityReference reference in a.GetReferencesTo())
-            {
-                KBObject objRef = KBObject.Get(a.Model, reference.From);
-
-                if (objRef != null)
-                {
-                    CleanVariablesBasedInAttribute(a, output, objRef);
-                    CleanSDT(a, output, objRef);
-
-                    if (!(objRef is DataView))
-                    {
-                        try
-                        {
-                            objRef.Save();
-                        }
+            Utility.KillAttribute(a);
+        }
                         catch (Exception e)
                         {
                             output.AddErrorLine("ERROR: Can't save object: " + objRef.Name + e.Message);
@@ -434,19 +273,13 @@ namespace Concepto.Packages.KBDoctor
 
         internal static bool hasModule(KBObject obj)
         {
-            if (obj.Module.Guid == Guid.Empty )
-                return false;
-            else
-                if ((obj is Module) || (obj is Folder))
-                    return false;
-                else
-                    return true;
+            return Utility.HasModule(obj);
         }
 
 
         internal static KBCategory MainCategory(KBModel model)
         {
-           return KBCategory.Get(model, "Main Programs");
+            return Utility.MainCategory(model);
         }
 
         private static void CleanSDT(Artech.Genexus.Common.Objects.Attribute a, IOutputService output, KBObject objRef)
@@ -499,15 +332,7 @@ namespace Concepto.Packages.KBDoctor
 
         public static void SaveObject(IOutputService output, KBObject obj)
         {
-
-            try
-            {
-                obj.Save();
-            }
-            catch (Exception e)
-            {
-                output.AddErrorLine(e.Message + " - " + e.InnerException);
-            }
+            Utility.SaveObject(output, obj);
         }
 
     }

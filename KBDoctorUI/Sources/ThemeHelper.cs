@@ -33,7 +33,7 @@ namespace Concepto.Packages.KBDoctor
 
             string title = "KBDoctor - Class not in Theme";
 
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             //IOutputService output = CommonServices.Output;
@@ -167,7 +167,7 @@ namespace Concepto.Packages.KBDoctor
                                             {
                                                 string objName = obj.Name;
                                                 KBDoctorOutput.Message( " Object : " + obj.Name + " reference class " + miclstr + " which not exist in Theme");
-                                                string objNameLink = Functions.linkObject(obj);
+                                                string objNameLink = Utility.linkObject(obj);
                                                 writer.AddTableData(new string[] { objNameLink, miclstr, " does not exist in theme" });
                                             }
                                         }
@@ -278,7 +278,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Used Classes";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
                 KBModel model = UIServices.KB.CurrentModel;
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
