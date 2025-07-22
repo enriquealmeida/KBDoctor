@@ -38,7 +38,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Tables";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;
@@ -55,7 +55,7 @@ namespace Concepto.Packages.KBDoctor
                 foreach (Table t in Table.GetAll(kbserv.CurrentModel))
                 {
                     description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
-                    string objNameLink = Functions.linkObject(t);
+                    string objNameLink = Utility.linkObject(t);
 
                     KBDoctorOutput.Message( "Processing... " + t.Name);
 
@@ -126,7 +126,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Tables with incomplete description";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;
@@ -172,7 +172,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Subtypes Group with incomplete description";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;
@@ -190,7 +190,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     if (g.Name == g.Description.Replace(" ", "") || (g.Name == ""))
                     {
-                        string grpLink = Functions.linkObject(g);
+                        string grpLink = Utility.linkObject(g);
 
                         writer.AddTableData(new string[] {
                         grpLink, g.Description
@@ -252,7 +252,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Tables Width";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;
@@ -269,7 +269,7 @@ namespace Concepto.Packages.KBDoctor
                 foreach (Table t in Table.GetAll(kbserv.CurrentModel))
                 {
                     description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
-                    string objNameLink = Functions.linkObject(t);
+                    string objNameLink = Utility.linkObject(t);
 
                     KBDoctorOutput.Message( "Processing... " + t.Name);
 
@@ -327,7 +327,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Tables Transaction Relation";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 StringCollection strCol = new StringCollection();
@@ -343,14 +343,14 @@ namespace Concepto.Packages.KBDoctor
 
                 foreach (Table tbl in Table.GetAll(kbserv.CurrentModel))
                 {
-                    string tblNamelink = Functions.linkObject((KBObject)tbl);
+                    string tblNamelink = Utility.linkObject((KBObject)tbl);
 
                     string trnGen = "";
                     string trnNoGen = "";
                     foreach (Transaction trn in tbl.AssociatedTransactions)
                     {
-                        if (trn.GetPropertyValue<bool>(Properties.TRN.GenerateObject)) trnGen += Functions.linkObject(trn) + " ";
-                        else trnNoGen += Functions.linkObject(trn) + " ";
+                        if (trn.GetPropertyValue<bool>(Properties.TRN.GenerateObject)) trnGen += Utility.linkObject(trn) + " ";
+                        else trnNoGen += Utility.linkObject(trn) + " ";
                     }
 
                     writer.AddTableData(new string[] {
@@ -670,7 +670,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             output.StartSection("KBDoctor", title);
 
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
             int posicion = 1;
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -730,7 +730,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Table - Update/Delete/Insert/Read";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 StringCollection strCol = new StringCollection();
                 IOutputService output = CommonServices.Output;
@@ -750,7 +750,7 @@ namespace Concepto.Packages.KBDoctor
                 foreach (Table tbl in Table.GetAll(model))
                 {
 
-                    string tblNamelink = Functions.linkObject((KBObject)tbl);
+                    string tblNamelink = Utility.linkObject((KBObject)tbl);
 
                     string objUpdaters, objDeleters, objInserters, objReaders, str;
                     ObjectsReferenceTable(model, tbl, out objUpdaters, out objDeleters, out objInserters, out objReaders, out str);
@@ -788,25 +788,25 @@ namespace Concepto.Packages.KBDoctor
                                         where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
                                         where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo)
                                         select model.Objects.Get(r.From)).ToList();
-            updaters.ToList().ForEach(v => objUpdaters += " " + Functions.linkObject(v));
+            updaters.ToList().ForEach(v => objUpdaters += " " + Utility.linkObject(v));
 
             IList<KBObject> inserters = (from r in model.GetReferencesTo(tbl.Key, LinkType.UsedObject)
                                          where r.ReferenceType == ReferenceType.WeakExternal
                                          where ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
                                          select model.Objects.Get(r.From)).ToList();
-            inserters.ToList().ForEach(v => objInserters += " " + Functions.linkObject(v));
+            inserters.ToList().ForEach(v => objInserters += " " + Utility.linkObject(v));
 
             IList<KBObject> deleters = (from r in model.GetReferencesTo(tbl.Key, LinkType.UsedObject)
                                         where r.ReferenceType == ReferenceType.WeakExternal
                                         where ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo)
                                         select model.Objects.Get(r.From)).ToList();
-            deleters.ToList().ForEach(v => objDeleters += " " + Functions.linkObject(v));
+            deleters.ToList().ForEach(v => objDeleters += " " + Utility.linkObject(v));
 
             IList<KBObject> readers = (from r in model.GetReferencesTo(tbl.Key, LinkType.UsedObject)
                                        where r.ReferenceType == ReferenceType.WeakExternal
                                        where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
                                        select model.Objects.Get(r.From)).ToList();
-            readers.ToList().ForEach(v => objReaders += " " + Functions.linkObject(v));
+            readers.ToList().ForEach(v => objReaders += " " + Utility.linkObject(v));
 
             if (objUpdaters != "" || objDeleters != "" || objInserters != "") str = "";
             else str = " * ";
@@ -850,7 +850,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Table - New - Not instanciated attributed";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
 
@@ -873,7 +873,7 @@ namespace Concepto.Packages.KBDoctor
 
                     string objInserters = "";
                     string str = "";
-                    string tblNamelink = Functions.linkObject((KBObject)tbl);
+                    string tblNamelink = Utility.linkObject((KBObject)tbl);
 
                     KBObjectCollection attTable = new KBObjectCollection();
 
@@ -882,7 +882,7 @@ namespace Concepto.Packages.KBDoctor
                         Formula formula = att.Formula;
                         if (formula == null)
                         {
-                            if (!Functions.AttIsSubtype(att)) attTable.Add(att); //solo agrego si no es formula o subtipo. 
+                            if (!Utility.AttIsSubtype(att)) attTable.Add(att); //solo agrego si no es formula o subtipo. 
                         }
                     }
 
@@ -895,7 +895,7 @@ namespace Concepto.Packages.KBDoctor
                     {
                         if (prc is Procedure)
                         {
-                            objInserters += " " + Functions.linkObject(prc);
+                            objInserters += " " + Utility.linkObject(prc);
                             foreach (EntityReference reference in prc.GetReferences())
                             {
                                 KBObject objRef = KBObject.Get(prc.Model, reference.To);
@@ -910,7 +910,7 @@ namespace Concepto.Packages.KBDoctor
 
                     if (objInserters != "")
                     {
-                        attTable.ToList().ForEach(v => str += " " + Functions.linkObject(v));
+                        attTable.ToList().ForEach(v => str += " " + Utility.linkObject(v));
                         writer.AddTableData(new string[] {
                         tblNamelink, objInserters, str
                     });
@@ -1133,7 +1133,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Scripts to check/correct data";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBModel model = kbserv.CurrentKB.DesignModel;
                 int ATTNAME_LEN = model.GetPropertyValue<int>("ATTNAME_LEN");
@@ -1149,60 +1149,60 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddTableHeader(new string[] { "Check", "File" });
 
                 string Check = "Check DB Structure";
-                string Name = Functions.CleanFileName(Check);
+                string Name = Utility.CleanFileName(Check);
                 string FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
 
                 GenerateSciptCheckDBStructure(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
 
                 Check = "Update Null Values";
-                Name = Functions.CleanFileName(Check);
+                Name = Utility.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
                 GenerateSciptUpdateNullValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN); ;
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
 
                 Check = "Check PK Empty Values";
-                Name = Functions.CleanFileName(Check);
+                Name = Utility.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
                 GenerateSciptCheckPKEmptyValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
 
                 Check = "Check FK Empty Values";
-                Name = Functions.CleanFileName(Check);
+                Name = Utility.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
                 GenerateSciptCheckFKEmptyValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
 
                 Check = "Count Referential Integrity Problems";
-                Name = Functions.CleanFileName(Check);
+                Name = Utility.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
                 GenerateCountReferentialIntegrityProblems(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
 
                 Check = "Check Referential Integrity";
-                Name = Functions.CleanFileName(Check);
+                Name = Utility.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
                 GenerateCheckReferentialIntegrity(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
 
                 Check = "Delete Invalid Integrity Values";
-                Name = Functions.CleanFileName(Check);
+                Name = Utility.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
                 GenerateDeleteInvalidIntegrityValues(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
 
                 Check = "Copy test data from databases";
-                Name = Functions.CleanFileName(Check);
+                Name = Utility.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
                 GenerateCopyTestData(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
 
                 /*
                 Check = "Check Referential Integrity Numeric3";
-                Name = Functions.CleanFileName(Check);
+                Name = Utility.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sql";
                 GenerateCheckReferentialIntegrityN3(Name, FileName, ATTNAME_LEN, TBLNAME_LEN);
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
                 */
 
 
@@ -1288,7 +1288,7 @@ namespace Concepto.Packages.KBDoctor
             scriptFile.WriteLine("      <nodes>");
             foreach (KBObject obj in model.Objects.GetAll())
             {
-                if (Functions.isRunable(obj) || obj is Table)
+                if (Utility.isRunable(obj) || obj is Table)
                 {
                     string modulename = ModulesHelper.ObjectModuleName(obj);
 
@@ -1299,7 +1299,7 @@ namespace Concepto.Packages.KBDoctor
                     foreach (EntityReference r in obj.GetReferences())
                     {
                         KBObject objRef = KBObject.Get(obj.Model, r.To);
-                        if ((objRef != null) && (Functions.isRunable(objRef) || objRef is Table))
+                        if ((objRef != null) && (Utility.isRunable(objRef) || objRef is Table))
 
                         {
                             String edge = "          <edge id='XXXX' source='" + obj.Name + "' target='" + objRef.Name + "' />  ";

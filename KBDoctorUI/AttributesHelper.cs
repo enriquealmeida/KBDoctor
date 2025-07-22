@@ -26,7 +26,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes with incomplete description";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
@@ -83,7 +83,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             string title = "KBDoctor - Attributes Formula";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
@@ -166,7 +166,7 @@ namespace Concepto.Packages.KBDoctor
             Dictionary<string, string> myDict = new Dictionary<string, string>();
 
             string title = "KBDoctor - Attributes without domain";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
@@ -179,7 +179,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
             {
                 string Picture = Functions.ReturnPicture(a);
-                bool isSubtype = Functions.AttIsSubtype(a);
+                bool isSubtype = Utility.AttIsSubtype(a);
                 if ((a.DomainBasedOn == null) && !isSubtype)
                 {
                     // search for domains with the same data type
@@ -236,7 +236,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes Char that shoud be Varchar";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
@@ -248,7 +248,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
             {
                 string Picture = Functions.ReturnPicture(a);
-                if ((a.Type == Artech.Genexus.Common.eDBType.CHARACTER) && (a.Length > 35) && !Functions.AttIsSubtype(a))
+                if ((a.Type == Artech.Genexus.Common.eDBType.CHARACTER) && (a.Length > 35) && !Utility.AttIsSubtype(a))
                 {
                     string domLink = DomainLinkFromAttribute(a);
 
@@ -288,7 +288,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes Varchar that shoud be Char";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
@@ -301,7 +301,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
             {
                 string Picture = Functions.ReturnPicture(a);
-                if (((a.Type == Artech.Genexus.Common.eDBType.VARCHAR) || (a.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR)) && (a.Length <= 25) && !Functions.AttIsSubtype(a))
+                if (((a.Type == Artech.Genexus.Common.eDBType.VARCHAR) || (a.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR)) && (a.Length <= 25) && !Utility.AttIsSubtype(a))
                 {
                     string domLink = DomainLinkFromAttribute(a);
 
@@ -327,7 +327,7 @@ namespace Concepto.Packages.KBDoctor
            // Dictionary<string, string> myDict = new Dictionary<string, string>();
 
             string title = "KBDoctor - List Attributes";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
@@ -360,7 +360,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes Varchar that is Primary Key in some table";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
             output.StartSection(title);
@@ -380,7 +380,7 @@ namespace Concepto.Packages.KBDoctor
                     if ((attr.Attribute.Type == Artech.Genexus.Common.eDBType.VARCHAR) || (attr.Attribute.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR))
                     {
                         output.AddLine("Processing " + attr.Name);
-                        if (!Functions.AttIsSubtype(attr))
+                        if (!Utility.AttIsSubtype(attr))
                         {
                             string domLink = DomainLinkFromAttribute(attr);
                             string attNameLink = Functions.linkObject(attr); //"<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + attr.Guid.ToString() + "\">" + attr.Name + "</a>";
@@ -407,7 +407,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Descriptor attribute without unique index";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             IOutputService output = CommonServices.Output;
@@ -639,7 +639,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes in Transaction only";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
             IOutputService output = CommonServices.Output;
@@ -650,7 +650,7 @@ namespace Concepto.Packages.KBDoctor
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Attribute", "can delete", "Description", "Data type", "Tables", "Transactions" });
 
-            // grabo todos los atributos en una colección
+            // grabo todos los atributos en una colecciÃ³n
             output.AddLine("Loading attributes..");
             List<Artech.Genexus.Common.Objects.Attribute> attTodos = new List<Artech.Genexus.Common.Objects.Attribute>();
             foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
@@ -771,7 +771,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Domains";
-            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            string outputFile = Utility.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
             output.StartSection(title);

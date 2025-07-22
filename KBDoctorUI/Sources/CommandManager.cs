@@ -834,7 +834,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Review Objects";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Object", "Problems", "Technical Debt (min)" });
@@ -912,7 +912,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Review Objects";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Object", "Problems", "Technical debt (min)" });
@@ -994,7 +994,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void AttributeAsOutput(List<KBObject> objs, string title)
         {
-            string outputFile = Functions.CreateOutputFile(UIServices.KB, title);
+            string outputFile = Utility.CreateOutputFile(UIServices.KB, title);
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Object", "Description", "Parm Rule" });
@@ -1121,7 +1121,7 @@ namespace Concepto.Packages.KBDoctor
             List<string[]> lines;
             int cant;
             string title = "KBDoctor - Variables not based on attributes with the same name";
-            string outputFile = Functions.CreateOutputFile(UIServices.KB, title);
+            string outputFile = Utility.CreateOutputFile(UIServices.KB, title);
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Object", "Var/Att Name", "Variable Type", "Attribute Type", "Variable Domain", "Attribute Domain" });
@@ -1153,7 +1153,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 double cant = 0;
                 double cantSum = 0;
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
                 List<string[]> lineswriter = new List<string[]>();
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -1203,7 +1203,7 @@ namespace Concepto.Packages.KBDoctor
             try
             {
                 double cant = 0;
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Object", "Problems", "Technical Debt (min)" });
@@ -1522,7 +1522,7 @@ namespace Concepto.Packages.KBDoctor
 
             return true;
             /*
-             * Comento este procedimiento para usarlo como opción nueva. 
+             * Comento este procedimiento para usarlo como opciÃ³n nueva. 
              * ObjectsHelper.ObjectsUDPCallables();
             return true;*/
         }

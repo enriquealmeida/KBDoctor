@@ -63,7 +63,7 @@ namespace Concepto.Packages.KBDoctor
 
         private void comboBoxOriginalName_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Domain od = Functions.DomainByName(comboBoxOriginalDomain.SelectedItem.ToString());
+            Domain od = Utility.DomainByName(comboBoxOriginalDomain.SelectedItem.ToString());
 
             if (od != null)
             {

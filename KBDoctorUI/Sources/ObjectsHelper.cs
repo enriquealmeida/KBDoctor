@@ -74,7 +74,7 @@ namespace Concepto.Packages.KBDoctor
             // UIServices.ToolWindows.ShowToolWindow(new Guid("59CE53BC-F419-402b-AC09-AC275ED21AB9"));
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -155,7 +155,7 @@ namespace Concepto.Packages.KBDoctor
                             SaveObj = true;
                         }
 
-                        string objNameLink = Functions.linkObject(obj);
+                        string objNameLink = Utility.linkObject(obj);
                         string remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
                         writer.AddTableData(new string[] { objNameLink, obj.TypeDescriptor.Name, obj.Description, remove });
 
@@ -234,7 +234,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -252,9 +252,9 @@ namespace Concepto.Packages.KBDoctor
                     }
                     //if (callers > 0)
                     // {
-                    string ruleParm = Functions.ExtractRuleParm(obj);
+                    string ruleParm = Utility.ExtractRuleParm(obj);
                     string enc = obj.GetPropertyValueString("USE_ENCRYPTION");
-                    writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), obj.Description, ruleParm, callers.ToString(), obj.GetPropertyValueString("CALL_PROTOCOL"), isGeneratedbyPattern(obj).ToString(), enc });
+                    writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Utility.linkObject(obj), obj.Description, ruleParm, callers.ToString(), obj.GetPropertyValueString("CALL_PROTOCOL"), isGeneratedbyPattern(obj).ToString(), enc });
                     /*
                     if (obj is Procedure)
                     {
@@ -296,7 +296,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Object with parameters without IN:/OUT:/INOUT:";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -304,8 +304,8 @@ namespace Concepto.Packages.KBDoctor
 
                 foreach (KBObject obj in objectsWithProblems)
                 {
-                    string ruleParm = Functions.ExtractRuleParm(obj);
-                    string objNameLink = Functions.linkObject(obj);
+                    string ruleParm = Utility.ExtractRuleParm(obj);
+                    string objNameLink = Utility.linkObject(obj);
 
                     KBObjectCollection objColl = new KBObjectCollection();
 
@@ -353,7 +353,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -383,7 +383,7 @@ namespace Concepto.Packages.KBDoctor
                             if (commitOnExit)
                             {
                                 string isGeneratedstr = (isGenerated(obj) ? "Yes" : string.Empty);
-                                objNameLink = Functions.linkObject(obj);
+                                objNameLink = Utility.linkObject(obj);
                                 writer.AddTableData(new string[] { obj.TypeDescriptor.Name, objNameLink, obj.Description, isGeneratedstr });
                             }
                         }
@@ -413,7 +413,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Not referenced objects";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 output.StartSection("KBDoctor", title);
@@ -450,7 +450,7 @@ namespace Concepto.Packages.KBDoctor
                                 {
                                     remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
                                 }
-                                string objNameLink = Functions.linkObject(obj);
+                                string objNameLink = Utility.linkObject(obj);
                                 string isMainstr = (Utility.IsMain(obj) ? "Main" : string.Empty);
                                 string isGeneratedstr = (isGenerated(obj) ? "Yes" : string.Empty);
                                 if (!Utility.IsMain(obj))
@@ -508,7 +508,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Removable Transactions";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 output.StartSection("KBDoctor", title);
@@ -536,7 +536,7 @@ namespace Concepto.Packages.KBDoctor
                         {
                             KBDoctorOutput.Message( "Procesing... " + trn.Name + " REMOVABLE ");
                             remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
-                            writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, "" });
+                            writer.AddTableData(new string[] { "", Utility.linkObject(trn), remove, trn.Description, "" });
                         }
                         else
                             if (isRemovableWithWarning)
@@ -544,7 +544,7 @@ namespace Concepto.Packages.KBDoctor
                         {
                             KBDoctorOutput.Message( "Procesing... " + trn.Name + " REMOVABLE with warning ");
                             remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
-                            writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, lstTrns + " WHIT WARNING" });
+                            writer.AddTableData(new string[] { "", Utility.linkObject(trn), remove, trn.Description, lstTrns + " WHIT WARNING" });
                         }
                         else
                         {
@@ -553,10 +553,10 @@ namespace Concepto.Packages.KBDoctor
                                 string lstAtt = "";
                                 foreach (Artech.Genexus.Common.Objects.Attribute a in attExclusive)
                                 {
-                                    lstAtt = Functions.linkObject(a) + " ";
+                                    lstAtt = Utility.linkObject(a) + " ";
                                 }
 
-                                writer.AddTableData(new string[] { "", Functions.linkObject(trn), "Exclusive Attributes:" + lstAtt, trn.Description, "NOT REMOVABLE" });
+                                writer.AddTableData(new string[] { "", Utility.linkObject(trn), "Exclusive Attributes:" + lstAtt, trn.Description, "NOT REMOVABLE" });
                             }
                         }
 
@@ -624,7 +624,7 @@ namespace Concepto.Packages.KBDoctor
 
                 }
                 if (isLevelRemovable)
-                    writer.AddTableData(new string[] { tblName, Functions.linkObject(trn), LVL.Name, trn.Description, "Level Removable" });
+                    writer.AddTableData(new string[] { tblName, Utility.linkObject(trn), LVL.Name, trn.Description, "Level Removable" });
 
             }
         }
@@ -639,7 +639,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
@@ -665,7 +665,7 @@ namespace Concepto.Packages.KBDoctor
                         Procedure prc = (Procedure)objRef;
                         try
                         {
-                            if (Functions.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper()).Contains("COMMIT"))
+                            if (Utility.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper()).Contains("COMMIT"))
                                 commitInSource = "YES ";
                             else
                                 commitInSource = "";
@@ -681,7 +681,7 @@ namespace Concepto.Packages.KBDoctor
                         {
                             objRef.SetPropertyValue("CommitOnExit", "No");
                             objRef.Save();
-                            writer.AddTableData(new string[] { Functions.linkObject(objRef), objRef.TypeDescriptor.Name, objRef.Description, commitOnExit, UpdateInsertDelete, commitInSource, objRef.Timestamp.ToString(), objRef.LastUpdate.ToString() });
+                            writer.AddTableData(new string[] { Utility.linkObject(objRef), objRef.TypeDescriptor.Name, objRef.Description, commitOnExit, UpdateInsertDelete, commitInSource, objRef.Timestamp.ToString(), objRef.LastUpdate.ToString() });
                         }
                     }
 
@@ -715,7 +715,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection("KBDoctor", title);
           //  try
            // {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
@@ -754,7 +754,7 @@ namespace Concepto.Packages.KBDoctor
 
             if (yaIncluido.Contains(obj) || !(obj is Procedure))
             {
-                writer.AddTableData(new string[] { Anidacion + Functions.linkObject(obj), "", "----already included ", "", "", "", "" });
+                writer.AddTableData(new string[] { Anidacion + Utility.linkObject(obj), "", "----already included ", "", "", "", "" });
             }
             else
             {
@@ -774,7 +774,7 @@ namespace Concepto.Packages.KBDoctor
                 string source = "";
                 try
                 {
-                    source = Functions.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper());
+                    source = Utility.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper());
                 }
                 catch (Exception e)
                     { KBDoctorOutput.Error("ERROR Grabollamado:" + e.Message); };
@@ -806,10 +806,10 @@ namespace Concepto.Packages.KBDoctor
                 string coma = "";
                 foreach (KBObject objref in tableUpdInsDel)
                 {
-                    tblList += coma + Functions.linkObject(objref);
+                    tblList += coma + Utility.linkObject(objref);
                     coma = ",";
                 }
-                writer.AddTableData(new string[] { Anidacion + Functions.linkObject(obj), doCommit, obj.Description, ExecuteInNewLuw, UpdateInsertDelete, obj.Timestamp.ToShortDateString(), tblList });
+                writer.AddTableData(new string[] { Anidacion + Utility.linkObject(obj), doCommit, obj.Description, ExecuteInNewLuw, UpdateInsertDelete, obj.Timestamp.ToShortDateString(), tblList });
 
 
                 // Anidacion += "____";
@@ -913,8 +913,8 @@ namespace Concepto.Packages.KBDoctor
                   // 40
             TKN_TRUE, // TRUE
             TKN_FALSE, // FALSE
-            TKN_NONE, // NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR 
-            PRM,  // Parámetro, utilizado en DYNQ
+            TKN_NONE, // NONE, para expresiÃ³n FOR EACH ... ORDER NONE ... ENDFOR 
+            PRM,  // ParÃ¡metro, utilizado en DYNQ
             FND,  // Name Domain
             FLV,  // LEVEL token
             TKN_NEW, // NEW token
@@ -948,7 +948,7 @@ namespace Concepto.Packages.KBDoctor
             TSIGN, // Now that rules supports comments, define the TSIGN token to specified the sign of an expression (e.g. "-1")
             TEXO,
 
-            // ¡¡¡ UNTIL 99 !!!
+            // Â¡Â¡Â¡ UNTIL 99 !!!
             //  Commands codes starts at 100, See dedotcmd.h
 
             ///////////////////////////////////////////////////////////
@@ -1035,10 +1035,10 @@ namespace Concepto.Packages.KBDoctor
             // 170
             DTEFF,
             DTLNK, // Comando LINK
-            DTAPL, // Asignación del tipo +=
-            DTAMI, // Asignación del tipo -=
-            DTAMU, // Asignación del tipo *=
-            DTADI, // Asignación del tipo /=
+            DTAPL, // AsignaciÃ³n del tipo +=
+            DTAMI, // AsignaciÃ³n del tipo -=
+            DTAMU, // AsignaciÃ³n del tipo *=
+            DTADI, // AsignaciÃ³n del tipo /=
             DTFIN, // FOR <var> IN <array>
             DTEFI, // END // del token anterior
             DTFFT, // FOR <var>=<exp> TO <exp> STEP <exp>
@@ -1180,7 +1180,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string title = "KBDoctor - Tables used by mains";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 output.StartSection("KBDoctor", title);
@@ -1301,7 +1301,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             string title = "KBDoctor - CreateDeployUnits";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 output.StartSection("KBDoctor", title);
@@ -1432,7 +1432,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 nuevo.SetPropertyValue("CALL_PROTOCOL", callProtocol);
                 viejo.SetPropertyValue("ObjectVisibility", ObjectVisibility.Private);
 
-                string parm = Functions.ExtractRuleParm(viejo);
+                string parm = Utility.ExtractRuleParm(viejo);
                 string parm2 = "";
 
                 if (parm != "")
@@ -1648,7 +1648,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             {
                 KBObject obj = KBObject.Get(objRef.Model, r.From);
 
-                if ((obj != null) && (Functions.isRunable(obj)) && (obj != objRef))
+                if ((obj != null) && (Utility.isRunable(obj)) && (obj != objRef))
                 {
                     file.WriteLine(obj.Name + " hace referencia a " + objRef.Name + " en una relacion de tipo  " + r.ReferenceType.ToString() + " " + r.LinkType.ToString() + " " + r.LinkTypeInfo.ToString());
                     file.WriteLine(objRef.Name + " es referenciado por " + objRef.Name + " en una relacion de tipo  " + r.ReferenceType.ToString() + " " + r.LinkType.ToString() + " " + r.LinkTypeInfo.ToString() );
@@ -1758,7 +1758,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             {
                 writer.Formatting = Formatting.Indented; // Para una mejor legibilidad del archivo JSON
 
-                // Crear un objeto anónimo con toda la información necesaria
+                // Crear un objeto anÃ³nimo con toda la informaciÃ³n necesaria
                 var objData = new
                 {
                     ObjectName = obj.Name,
@@ -1786,7 +1786,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         {
             foreach (var parte in obj.Parts)
             {
-                // Aquí puedes acceder a las propiedades de cada parte
+                if ((obj != null) && (Utility.isRunable(obj)) && (obj != objRef))
                 return  parte.Name;
                 
             }
@@ -1882,12 +1882,12 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         }
 
         // Asumo que ya tienes funciones como GetAttributeData, GetProcedureData, etc., que
-        // devuelven datos específicos formateados para ser parte del objeto JSON.
-        // Similar a los métodos HandleAttribute, HandleProcedure, etc., pero retornando
+        // devuelven datos especÃ­ficos formateados para ser parte del objeto JSON.
+        // Similar a los mÃ©todos HandleAttribute, HandleProcedure, etc., pero retornando
         // objetos o estructuras en lugar de escribir directamente a un archivo.
 
-        // Nota: Deberás implementar métodos como GetRulesPart, GetReferences, y otros para cada tipo de objeto,
-        // que deberán devolver la información correspondiente en formato adecuado para ser serializada a JSON.
+        // Nota: DeberÃ¡s implementar mÃ©todos como GetRulesPart, GetReferences, y otros para cada tipo de objeto,
+        // que deberÃ¡n devolver la informaciÃ³n correspondiente en formato adecuado para ser serializada a JSON.
         private static object GetRulesPart(KBObject obj)
         {
             RulesPart rp = obj.Parts.Get<RulesPart>();
@@ -1917,7 +1917,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             try
             {
                 System.IO.StreamWriter file = new System.IO.StreamWriter("CommitOnExit.txt");
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -1948,7 +1948,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                                 updateDB = "YES";
                                 }
                                     
-                                objNameLink = Functions.linkObject(obj);
+                                objNameLink = Utility.linkObject(obj);
                                 writer.AddTableData(new string[] { obj.TypeDescriptor.Name, objNameLink, obj.Description, updateDB });
                             }
                         if (obj is Procedure || obj is Transaction)
@@ -2046,7 +2046,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string title = "KBDoctor - Complex Objects";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 output.StartSection("KBDoctor", title);
@@ -2072,7 +2072,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                         if ((obj.Name == objName) && (length > 200000))
                         {
-                            writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, length.ToString("N0") });
+                            writer.AddTableData(new string[] { Utility.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, length.ToString("N0") });
                             KBDoctorOutput.Message( fileName);
                         }
 
@@ -2100,7 +2100,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string titulo = "KBDoctor - Objects - Legacy Code";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, titulo);
+                string outputFile = Utility.CreateOutputFile(kbserv, titulo);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
@@ -2120,11 +2120,11 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                             KBDoctorOutput.Message( obj.Name);
 
                             string source = ObjectSource(obj);
-                            source = Functions.RemoveEmptyLines(source);
-                            string sourceWOComments = Functions.ExtractComments(source);
+                            source = Utility.RemoveEmptyLines(source);
+                            string sourceWOComments = Utility.ExtractComments(source);
                             bool hasLegacyCode = false;
                             string[] data = new string[legacyCode.Length];
-                            data[0] = Functions.linkObject(obj);
+                            data[0] = Utility.linkObject(obj);
                             data[1] = obj.Description;
                             data[2] = obj.TypeDescriptor.Name;
 
@@ -2155,7 +2155,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
                 output.EndSection(titulo, success);
-                Functions.AddLineSummary(titulo + ".txt", objWithLegacyCode.ToString());
+                Utility.AddLineSummary(titulo + ".txt", objWithLegacyCode.ToString());
             }
             catch
             {
@@ -2455,7 +2455,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string title = "KBDoctor - Count Table Access per Object";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 output.StartSection("KBDoctor", title);
@@ -2468,7 +2468,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                 foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
                 {
-                    if (Functions.isRunable(obj))
+                    if (Utility.isRunable(obj))
 
                     {
                         KBDoctorOutput.Message( obj.Name);
@@ -2511,7 +2511,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                                 tablas += " " + tbl.Name;
                             }
                         }
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.TypeDescriptor.Name, obj.Description, obj.Module.Name, updaters.ToString(), inserters.ToString(), deleters.ToString(), readers.ToString(), total.ToString(),outmoduleint.ToString(),tablas });
+                        writer.AddTableData(new string[] { Utility.linkObject(obj), obj.TypeDescriptor.Name, obj.Description, obj.Module.Name, updaters.ToString(), inserters.ToString(), deleters.ToString(), readers.ToString(), total.ToString(),outmoduleint.ToString(),tablas });
 
                     }
 
@@ -2575,7 +2575,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string title = "KBDoctor - Refactoring candidates";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title) + ".csv";
+                string outputFile = Utility.CreateOutputFile(kbserv, title) + ".csv";
 
                 output.StartSection("KBDoctor", title);
 
@@ -2621,14 +2621,14 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     {
                         fin = true;
                     }
-                    KBDoctorOutput.Message("Iteración: " + i.ToString());
-                }
+                            string source = Utility.ObjectSourceUpper(obj);
+                            source = Utility.RemoveEmptyLines(source);
 
-                KBDoctorOutput.Message("Processing commits");
-                Dictionary<string,int> dict_commits = GenerateCommitsDictionary(revisions_list, kbserv.CurrentModel);
-                IEnumerable<KBObject> kbobjs = UIServices.KB.CurrentModel.Objects.GetAll();
-                int total = kbobjs.Count();
-                int percent_cant = Convert.ToInt32(Math.Round((double)(total / 100)));
+                            string sourceWOComments = Utility.ExtractComments(source);
+                            sourceWOComments = Utility.RemoveEmptyLines(sourceWOComments);
+                            int MaxCodeBlock = Utility.MaxCodeBlock(sourceWOComments);
+                            int MaxNestLevel = Utility.MaxNestLevel(sourceWOComments);
+                            int ComplexityLevel = Utility.ComplexityLevel(sourceWOComments);
                 int nro_iter = 0;
                 foreach (KBObject obj in kbobjs)
                 {
@@ -2784,11 +2784,11 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
         private static int CountRules(KBObject obj)
         {
-            string rules = Functions.ObjectRulesUpper(obj);
-            rules = Functions.RemoveEmptyLines(rules);
+            string rules = Utility.ObjectRulesUpper(obj);
+            rules = Utility.RemoveEmptyLines(rules);
 
-            string rulesWOComments = Functions.ExtractComments(rules);
-            rulesWOComments = Functions.RemoveEmptyLines(rulesWOComments);
+            string rulesWOComments = Utility.ExtractComments(rules);
+            rulesWOComments = Utility.RemoveEmptyLines(rulesWOComments);
 
             int linesRules, linesComment;
             float PercentComment;
@@ -2885,7 +2885,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string title = "KBDoctor - Refactoring candidates";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 output.StartSection("KBDoctor", title);
 
@@ -2905,22 +2905,22 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                         {
                             KBDoctorOutput.Message( obj.Name);
 
-                            string source = Functions.ObjectSourceUpper(obj);
-                            source = Functions.RemoveEmptyLines(source);
+                            string source = Utility.ObjectSourceUpper(obj);
+                            source = Utility.RemoveEmptyLines(source);
 
-                            string sourceWOComments = Functions.ExtractComments(source);
-                            sourceWOComments = Functions.RemoveEmptyLines(sourceWOComments);
+                            string sourceWOComments = Utility.ExtractComments(source);
+                            sourceWOComments = Utility.RemoveEmptyLines(sourceWOComments);
 
                             int linesSource, linesComment;
                             float PercentComment;
 
                             CountCommentsLines(source, sourceWOComments, out linesSource, out linesComment, out PercentComment);
 
-                            int MaxCodeBlock = Functions.MaxCodeBlock(sourceWOComments);
-                            int MaxNestLevel = Functions.MaxNestLevel(sourceWOComments);
-                            int ComplexityLevel = Functions.ComplexityLevel(sourceWOComments);
+                            int MaxCodeBlock = Utility.MaxCodeBlock(sourceWOComments);
+                            int MaxNestLevel = Utility.MaxNestLevel(sourceWOComments);
+                            int ComplexityLevel = Utility.ComplexityLevel(sourceWOComments);
 
-                            string ParmINOUT = Functions.ValidateINOUTinParm(obj) ? "Error" : "";
+                            string ParmINOUT = Utility.ValidateINOUTinParm(obj) ? "Error" : "";
                             int parametersCount = ParametersCountObject(obj);
 
                             string Candidate = "";
@@ -2933,12 +2933,12 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                             string folder = obj.Parent.Name;
 
-                            string codeCommented = Functions.CodeCommented(source);
+                            string codeCommented = Utility.CodeCommented(source);
                             codeCommented = codeCommented.Replace("'", "");
                             codeCommented = codeCommented.Replace(">", "");
                             codeCommented = codeCommented.Replace("<", "");
 
-                            writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, obj.Module.Name, folder, ParmINOUT, parametersCount.ToString(), codeCommented, PercentComment.ToString("0"), linesComment.ToString(), linesSource.ToString(), MaxNestLevel.ToString(), MaxCodeBlock.ToString(), ComplexityLevel.ToString(), Candidate, ComplexityIndex.ToString() });
+                            writer.AddTableData(new string[] { Utility.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, obj.Module.Name, folder, ParmINOUT, parametersCount.ToString(), codeCommented, PercentComment.ToString("0"), linesComment.ToString(), linesSource.ToString(), MaxNestLevel.ToString(), MaxCodeBlock.ToString(), ComplexityLevel.ToString(), Candidate, ComplexityIndex.ToString() });
                             ObjectsTotal += 1;
                             ComplexityIndexTotal += ComplexityIndex;
                         }
@@ -2958,7 +2958,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
                 output.EndSection("KBDoctor", title, success);
-                Functions.AddLineSummary(title + ".txt", "Totals Objects= " + ObjectsTotal.ToString() + " Complexity Index Sum= " + ComplexityIndexTotal.ToString() + " Complexity Index Average= " + Average.ToString());
+                Utility.AddLineSummary(title + ".txt", "Totals Objects= " + ObjectsTotal.ToString() + " Complexity Index Sum= " + ComplexityIndexTotal.ToString() + " Complexity Index Average= " + Average.ToString());
             }
             catch
             {
@@ -3010,7 +3010,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string title = "KBDoctor - Variables not based in domain or attribute";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 output.StartSection("KBDoctor", title);
 
@@ -3043,7 +3043,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 {
                     if (HasVariablesNotBasedOnAttributeOrDomain(obj, out cantVar))
                     {
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, cantVar.ToString() });
+                        writer.AddTableData(new string[] { Utility.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, cantVar.ToString() });
                     }
                 }
                 writer.AddTableFooterOnly();
@@ -3096,7 +3096,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string title = "KBDoctor - UDP CALLABLE";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 string callers = "";
 
@@ -3122,8 +3122,8 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                     if (callers != "")
                     {
-                        string Parms = Functions.ExtractRuleParm(obj);
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, " " + obj.Parent.Name, " " + obj.VersionDate.ToShortDateString(), Parms, callers });
+                        string Parms = Utility.ExtractRuleParm(obj);
+                        writer.AddTableData(new string[] { Utility.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, " " + obj.Parent.Name, " " + obj.VersionDate.ToShortDateString(), Parms, callers });
                     }
 
                 }
@@ -3156,7 +3156,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     {
                         if (ReplaceCallForUdpInObject(obj, objRef.Name))
                         {
-                            callers += " " + Functions.linkObject(objRef);
+                            callers += " " + Utility.linkObject(objRef);
                         }
                     }
                 }
@@ -3178,10 +3178,10 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                 // KBDoctorOutput.Message(objRef.Name + "->" + obj.Name);
 
-                string source = Functions.ObjectSourceUpper(objRef);
-                source = Functions.RemoveEmptyLines(source);
+                string source = Utility.ObjectSourceUpper(objRef);
+                source = Utility.RemoveEmptyLines(source);
 
-                string sourceWOComments = Functions.ExtractComments(source);
+                string sourceWOComments = Utility.ExtractComments(source);
                 sourceWOComments = sourceWOComments.Replace("\t", "");
                 sourceWOComments = sourceWOComments.Replace(" ", "");
                 // sourceWOComments = sourceWOComments.Replace(".CALL", "..");
@@ -3192,7 +3192,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 {
 
                     KBDoctorOutput.Message( objRef.Name + " ---> " + obj.Name);
-                    callers += " " + Functions.linkObject(objRef);
+                    callers += " " + Utility.linkObject(objRef);
 
                     ReplaceCallForUdpInObject(objRef, obj.Name);
 
@@ -3268,8 +3268,8 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         {
             IOutputService output = CommonServices.Output;
             string source = ObjectSource(obj);
-            source = Functions.RemoveEmptyLines(source);
-            string sourceWOComments = Functions.ExtractComments(source);
+            source = Utility.RemoveEmptyLines(source);
+            string sourceWOComments = Utility.ExtractComments(source);
 
             string lista = "";
             //     KBDoctorOutput.Message("");
@@ -3300,7 +3300,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                                 line.Replace(".udp(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace("call(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace("udp(", "(", StringComparison.CurrentCultureIgnoreCase);
-                                line.Replace(objRef.Name, "Ñ", StringComparison.CurrentCultureIgnoreCase);
+                                line.Replace(objRef.Name, "Ã‘", StringComparison.CurrentCultureIgnoreCase);
                                 //                     KBDoctorOutput.Message("............ Line . " + line);
 
                                 StringCollection interfazCallerObject = ProcessingObjectCall(obj, line);
@@ -3453,8 +3453,8 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
         private static void CountCommentsLines(string source, string sourceWOComments, out int linesSource, out int linesComment, out float PercentComment)
         {
-            linesSource = Functions.LineCount(source);
-            int linesWOComment = Functions.LineCount(sourceWOComments);
+            linesSource = Utility.LineCount(source);
+            int linesWOComment = Utility.LineCount(sourceWOComments);
 
             linesComment = linesSource - linesWOComment;
             PercentComment = (linesSource == 0) ? 0 : (linesComment * 100) / linesSource;
@@ -3558,7 +3558,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string title = "KBDoctor - List Procedure that call Webpanel or Transaction";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 output.StartSection("KBDoctor", title);
@@ -3696,7 +3696,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string title = "KBDoctor - Object with variables not based on attribute/domain";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;
@@ -3735,18 +3735,18 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                                     {
 
                                         if (v.Name.ToLower() == "archivo" && v.Type == eDBType.CHARACTER && v.Length == 50)
-                                            v.DomainBasedOn = Functions.DomainByName("Archivo");
+                                            v.DomainBasedOn = Utility.DomainByName("Archivo");
 
                                         if (v.Name.ToLower() == "in" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
-                                            v.DomainBasedOn = Functions.DomainByName("XMLContenido");
+                                            v.DomainBasedOn = Utility.DomainByName("XMLContenido");
 
                                         if (v.Name.ToLower() == "out" && v.Type == eDBType.VARCHAR && v.Length >= 9999)
-                                            v.DomainBasedOn = Functions.DomainByName("XMLContenido");
+                                            v.DomainBasedOn = Utility.DomainByName("XMLContenido");
 
                                         if (v.DomainBasedOn != null)
                                         {
                                             string vname = v.Name.ToLower();
-                                            writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), v.Name, picture, attname, domname });
+                                            writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Utility.linkObject(obj), v.Name, picture, attname, domname });
                                             SaveObj = true;
                                         }
                                     }
@@ -3790,7 +3790,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     {
                         variables += v.Name + " " + v.Type.ToString().ToLower() + "(" + v.Length.ToString() + ")<br>" + Environment.NewLine;
                         string objaux = obj.Name + "," + v.Name + "," + Utility.FormattedTypeVariable(v);
-                        Functions.AddLineSummary("ObjectsVariableSinDom.Txt", objaux);
+                        Utility.AddLineSummary("ObjectsVariableSinDom.Txt", objaux);
 
                     }
                 }
@@ -3835,7 +3835,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             }
             if ((objName != "") && (domainName != "") && (type != "") && (varid != 0))
             {
-                Domain d = Functions.DomainByName(domainName);
+                Domain d = Utility.DomainByName(domainName);
                 foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetByName("Objects", null, objName))
                 {
                     Variable v = obj.Parts.Get<VariablesPart>().GetVariable(varid);
@@ -3923,7 +3923,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string title = "KBDoctor - Index with not referenced attributes";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;
@@ -4156,7 +4156,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -4289,8 +4289,8 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
         private static void SetDocumentDirty(IGxDocument doc)
         {
-            if (UIServices.Environment.InvokeRequired) // devuelve true cuando el thread que está ejecutando no es el thread de UI
-                UIServices.Environment.BeginInvoke(() => SetDocumentDirty(doc)); // dispara un invoke asincrónico a SetDocumentDirty
+            if (UIServices.Environment.InvokeRequired) // devuelve true cuando el thread que estÃ¡ ejecutando no es el thread de UI
+                UIServices.Environment.BeginInvoke(() => SetDocumentDirty(doc)); // dispara un invoke asincrÃ³nico a SetDocumentDirty
             else
                 doc.Dirty = true;
         }
@@ -4320,7 +4320,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -4344,7 +4344,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                                 }
                                 catch (Exception e) { output.AddErrorLine(e.Message); }
 
-                                writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj) });
+                                writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Utility.linkObject(obj) });
                             }
                         }
                                     );
@@ -4376,7 +4376,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Object", "Description", "Visibility", "Is Referenced by" });
@@ -4670,7 +4670,7 @@ public static void ListAPIObjects()
             string title = "KBDoctor - List API Objects ";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
                 output.StartSection("KBDoctor", title);
@@ -4711,7 +4711,7 @@ public static void ListAPIObjects()
                             tieneInterfaz = true;
 
 
-                        //  string ruleparm = Functions.ExtractRuleParm(obj);
+                        //  string ruleparm = Utility.ExtractRuleParm(obj);
                         //  ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
                         // ruleparm = ruleparm.Replace(" ", "");
                         string callprotocol = obj.GetPropertyValueString("CALL_PROTOCOL");
@@ -4722,7 +4722,7 @@ public static void ListAPIObjects()
                         {
                             // if (obj is Procedure && isMain)
 
-                            //   writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, ruleparm });
+                            //   writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Utility.linkObject(obj), obj.Module.Name, ruleparm });
                             //sw += obj.TypeDescriptor.Name + "\t" + obj.QualifiedName + "\t" + callprotocol  + "\t"  + ruleparm + "\r\n";
                             //      sw2 += callprotocol+ "\t" + obj.Name + "\t" + qualifiedName + "\r\n";
                             sw3[callprotocol + "\t" + obj.Name] = qualifiedName;
@@ -4779,7 +4779,7 @@ public static void ListAPIObjects()
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -4813,22 +4813,22 @@ public static void ListAPIObjects()
                                 if (obj is Transaction)
                                 {
 
-                                    trnstring += Functions.linkObject(obj) + " ";
+                                    trnstring += Utility.linkObject(obj) + " ";
                                 }
                                 else
                                 {
-                                    updatetablestring += Functions.linkObject(obj) + " ";
+                                    updatetablestring += Utility.linkObject(obj) + " ";
                                 }
                                 KBDoctorOutput.Message( obj.Name);
                             }
 
                             foreach (KBObject obj in updatersAtt)
                             {
-                                updateattstring += Functions.linkObject(obj) + " ";
+                                updateattstring += Utility.linkObject(obj) + " ";
                                 // KBDoctorOutput.Message(obj.Name);
                             }
 
-                            writer.AddTableData(new string[] { Functions.linkObject(t), trnstring, updatetablestring, updateattstring });
+                            writer.AddTableData(new string[] { Utility.linkObject(t), trnstring, updatetablestring, updateattstring });
                             writer.AddFooter();
                             writer.Close();
 
@@ -4865,7 +4865,7 @@ public static void ListAPIObjects()
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -4893,7 +4893,7 @@ public static void ListAPIObjects()
                         {
                             foreach (KBObject obj in objs)
                             {
-                                writer.AddTableData(new string[] { parameters, obj.Name, Functions.ExtractRuleParm(obj) });
+                                writer.AddTableData(new string[] { parameters, obj.Name, Utility.ExtractRuleParm(obj) });
                             }
                         }
                     }
@@ -4923,7 +4923,7 @@ public static void ListAPIObjects()
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -4968,7 +4968,7 @@ public static void ListAPIObjects()
                         {
                             foreach (KBObject obj in objs)
                             {
-                                writer.AddTableData(new string[] { parameters, obj.Name, Functions.ExtractRuleParm(obj) });
+                                writer.AddTableData(new string[] { parameters, obj.Name, Utility.ExtractRuleParm(obj) });
                             }
                         }
                     }
@@ -5071,8 +5071,8 @@ public static void ListAPIObjects()
             token_meaning.Add(TokensIds.FOR, " ORDER ...");
             token_meaning.Add(TokensIds.TKN_TRUE, " TRUE");
             token_meaning.Add(TokensIds.TKN_FALSE, " FALSE");
-            token_meaning.Add(TokensIds.TKN_NONE, " NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR");
-            token_meaning.Add(TokensIds.PRM, " Parámetro, utilizado en DYNQ");
+            token_meaning.Add(TokensIds.TKN_NONE, " NONE, para expresiÃ³n FOR EACH ... ORDER NONE ... ENDFOR");
+            token_meaning.Add(TokensIds.PRM, " ParÃ¡metro, utilizado en DYNQ");
             token_meaning.Add(TokensIds.FND, " Name Domain");
             token_meaning.Add(TokensIds.FLV, " LEVEL token");
             token_meaning.Add(TokensIds.TKN_NEW, " NEW token");
@@ -5174,10 +5174,10 @@ public static void ListAPIObjects()
             token_meaning.Add(TokensIds.DTFSS, "DTFSS");
             token_meaning.Add(TokensIds.DTEFF, "DTEFF");
             token_meaning.Add(TokensIds.DTLNK, " Comando LINK");
-            token_meaning.Add(TokensIds.DTAPL, " Asignación del tipo +=");
-            token_meaning.Add(TokensIds.DTAMI, " Asignación del tipo -=");
-            token_meaning.Add(TokensIds.DTAMU, " Asignación del tipo *=");
-            token_meaning.Add(TokensIds.DTADI, " Asignación del tipo /=");
+            token_meaning.Add(TokensIds.DTAPL, " AsignaciÃ³n del tipo +=");
+            token_meaning.Add(TokensIds.DTAMI, " AsignaciÃ³n del tipo -=");
+            token_meaning.Add(TokensIds.DTAMU, " AsignaciÃ³n del tipo *=");
+            token_meaning.Add(TokensIds.DTADI, " AsignaciÃ³n del tipo /=");
             token_meaning.Add(TokensIds.DTFIN, " FOR <var> IN <array>");
             token_meaning.Add(TokensIds.DTEFI, " END' del token anterior");
             token_meaning.Add(TokensIds.DTFFT, " FOR <var>=<exp> TO <exp> STEP <exp>");
@@ -5213,7 +5213,7 @@ public static void ListAPIObjects()
             output.StartSection("KBDoctor", title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);

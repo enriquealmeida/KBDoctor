@@ -187,7 +187,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return dir;
         }
 
-        internal static int MaxCodeBlock(string source)
+        public static int MaxCodeBlock(string source)
         {
             int MaxCodeBlock = 0;
             int countLine = 0;
@@ -211,7 +211,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return MaxCodeBlock;
         }
 
-        internal static int ComplexityLevel(string source)
+        public static int ComplexityLevel(string source)
         {
             int ComplexityLevel = 0;
 
@@ -231,7 +231,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return ComplexityLevel;
         }
 
-        internal static int MaxNestLevel(string source)
+        public static int MaxNestLevel(string source)
         {
             int MaxNestLevel = 0;
             int NestLevel = 0;
@@ -265,7 +265,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
       
-        internal static bool ValidateINOUTinParm(KBObject obj)
+        public static bool ValidateINOUTinParm(KBObject obj)
         {
             bool err = false;
 
@@ -307,7 +307,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return (err);
         }
 
-        internal static void AddLineSummary(KnowledgeBase KB, string fileName, string texto)
+        public static void AddLineSummary(KnowledgeBase KB, string fileName, string texto)
         {
             string outputFile = KB.UserDirectory + @"\" + fileName;
 
@@ -320,7 +320,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             
         }
 
-        internal static void AddLine(KnowledgeBase KB, string fileName, string texto)
+        public static void AddLine(KnowledgeBase KB, string fileName, string texto)
         {
             string outputFile = KB.UserDirectory + @"\" + fileName;
 
@@ -332,7 +332,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        internal static string ObjectSourceUpper(KBObject obj)
+        public static string ObjectSourceUpper(KBObject obj)
         {
             string source = "";
             try
@@ -348,6 +348,21 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             catch (Exception e) { Console.WriteLine(e.Message);  }
 
             return source.ToUpper();
+        }
+
+        public static string ObjectRulesUpper(KBObject obj)
+        {
+            string rules = "";
+            try
+            {
+                if (obj is Procedure) rules = obj.Parts.Get<RulesPart>().Source;
+                if (obj is Transaction) rules = obj.Parts.Get<RulesPart>().Source;
+                if (obj is WorkPanel) rules = obj.Parts.Get<RulesPart>().Source;
+                if (obj is WebPanel) rules = obj.Parts.Get<RulesPart>().Source;
+            }
+            catch (Exception e) { Console.WriteLine(e.Message); }
+
+            return rules.ToUpper();
         }
 
         public static KBObjectPart ObjectSourcePart(KBObject obj)
@@ -387,14 +402,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
 
 #pragma warning disable IDE1006 // Estilos de nombres
-        internal static bool isRunable(KBObject obj)
+        public static bool isRunable(KBObject obj)
 #pragma warning restore IDE1006 // Estilos de nombres
         {
             return (obj is Transaction || obj is WorkPanel || obj is WebPanel
                 || obj is DataProvider || obj is DataSelector || obj is Procedure || obj is Menubar);
         }
 
-        internal static bool CanBeBuilt(KBObject obj)
+        public static bool CanBeBuilt(KBObject obj)
         {
             return (obj is Transaction || obj is WebPanel || obj is Procedure || obj is DataProvider || obj is Menubar);
         }
@@ -466,7 +481,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return noComments;
         }
 
-        internal static string CodeCommented(string source)
+        public static string CodeCommented(string source)
         {
             string source2 = source.Replace("//\n", "####\n");
             var codeComments = @"[^\/](\/\*)([\b\s]*(msg|do|call|udp|where|if|else|endif|endfor|for|defined by|while|enddo|&[A-Za-z0-9_\-.\s]*=))(\*(?!\/)|[^*])*(\*\/)|(\/\/)[\b\s]*((msg|do|call|udp|where|if|else|endif|endfor|for|defined by|while|enddo|&[A-Za-z0-9_\-.\s]*=)([^\r\n]+)?)";
@@ -475,7 +490,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         }
 
-        internal static bool HasCodeCommented(string source)
+        public static bool HasCodeCommented(string source)
         {
 
             var codeComments = @"[^\/](\/\*)([\b\s]*(msg|do|call|udp|where|if|else|endif|endfor|for|defined by|while|enddo|&[A-Za-z0-9_\-.\s]*=))(\*(?!\/)|[^*])*(\*\/)|(\/\/)[\b\s]*((msg|do|call|udp|where|if|else|endif|endfor|for|defined by|while|enddo|&[A-Za-z0-9_\-.\s]*=)([^\r\n]+)?)";
@@ -484,7 +499,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         }
 
-        internal static Domain DomainByName(KBModel model, string domainName)
+        public static Domain DomainByName(KBModel model, string domainName)
         {
             foreach (Domain d in Domain.GetAll(model))
             {
@@ -497,12 +512,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
-        internal static string RemoveEmptyLines(string lines)
+        public static string RemoveEmptyLines(string lines)
         {
             return Regex.Replace(lines, @"^\s*$\n|\r", "", RegexOptions.Multiline);
         }
 
-        internal static int LineCount(string s)
+        public static int LineCount(string s)
         {
             int n = 0;
             foreach (var c in s)
@@ -513,20 +528,20 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
 
 #pragma warning disable IDE1006 // Estilos de nombres
-        internal static string linkObject(KBObject obj)
+        public static string linkObject(KBObject obj)
 #pragma warning restore IDE1006 // Estilos de nombres
         {
             return "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + obj.Guid.ToString() + "\">" + obj.Name + "</a>";
         }
 
 #pragma warning disable IDE1006 // Estilos de nombres
-        internal static string linkFile(string file)
+        public static string linkFile(string file)
 #pragma warning restore IDE1006 // Estilos de nombres
         {
             return "<a href=\"file:///" + file + "\"" + ">" + file + "</a" + ">";
         }
 
-        internal static string ExtractRuleParm(KBObject obj)
+        public static string ExtractRuleParm(KBObject obj)
         {
             RulesPart rulesPart = obj.Parts.Get<RulesPart>();
             string aux = "";
@@ -546,12 +561,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return aux;
         }
 
-        internal static string CleanFileName(string filename)
+        public static string CleanFileName(string filename)
         {
             return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
         }
 
-        internal static string CreateOutputFile(KnowledgeBase KB, string title)
+        public static string CreateOutputFile(KnowledgeBase KB, string title)
         {
             string outputFile = KB.UserDirectory + @"\kbdoctor." + Utility.CleanFileName(title) + ".html";
             if (File.Exists(outputFile))
@@ -571,7 +586,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return outputFile;
         }
 
-        internal static bool AttIsSubtype(Artech.Genexus.Common.Objects.Attribute a)
+        public static bool AttIsSubtype(Artech.Genexus.Common.Objects.Attribute a)
         {
             if (a.SuperTypeKey != null)
                 return true;
@@ -580,7 +595,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         }
 
-        internal static void KillAttribute(Artech.Genexus.Common.Objects.Attribute a)
+        public static void KillAttribute(Artech.Genexus.Common.Objects.Attribute a)
         {
             IOutputService output = CommonServices.Output;
 
@@ -640,9 +655,18 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
         }
 
-        internal static KBCategory MainCategory(KBModel model)
+        public static KBCategory MainCategory(KBModel model)
         {
             return KBCategory.Get(model, "Main Programs");
+        }
+
+        public static bool HasModule(KBObject obj)
+        {
+            if (obj.Module.Guid == Guid.Empty)
+                return false;
+            if (obj is Module || obj is Folder)
+                return false;
+            return true;
         }
 
         public static EntityKey KeyOfBasedOn_CompatibleConEvo3(SDTItem sdtItem)
@@ -1116,7 +1140,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return formatType;
 
         }
-        internal static void SaveObject(IOutputService output, KBObject obj)
+        public static void SaveObject(IOutputService output, KBObject obj)
         {
             try
             {

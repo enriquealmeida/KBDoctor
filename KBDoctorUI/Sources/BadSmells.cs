@@ -28,7 +28,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - List objects with dynamic combobox in grid columns";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;
@@ -67,7 +67,7 @@ namespace Concepto.Packages.KBDoctor
                                     KBDoctorOutput.Message(">>>>Procesing.." + obj.Name + "-" + current.Type);
                                     string conditions = current.Properties.GetPropertyValueString("ControlWhere");
                                    // string conditions = "";
-                                    writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, controlName, hidden.ToString(), conditions });
+                                    writer.AddTableData(new string[] { Utility.linkObject(obj), obj.Description, controlName, hidden.ToString(), conditions });
                                 }
                                 //  string suggest = current.Properties.GetPropertyValueString("EditAutocomplete");
                                 //  object suggest_obj = current.Properties.GetPropertyValue("EditAutocomplete");
@@ -76,7 +76,7 @@ namespace Concepto.Packages.KBDoctor
                                 //                              {
                                 // current.Properties.SilentSetPropertyValue("EditAutocomplete", 0);
                                 // webForm.Save();
-                                //                                 writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, controlName, hidden.ToString(), suggest });
+                                //                                 writer.AddTableData(new string[] { Utility.linkObject(obj), obj.Description, controlName, hidden.ToString(), suggest });
 
                                 //                             }
                                 // }
@@ -111,7 +111,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - List Properties";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;
@@ -226,7 +226,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - List Namespace";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;

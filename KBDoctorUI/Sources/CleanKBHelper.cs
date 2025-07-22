@@ -118,7 +118,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection("KBDoctor",title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -175,7 +175,7 @@ namespace Concepto.Packages.KBDoctor
                     }
                 }
             }
-            writer.AddTableData(new string[] { Functions.linkObject(obj), oldParm, "====" });
+            writer.AddTableData(new string[] { Utility.linkObject(obj), oldParm, "====" });
             writer.AddTableData(new string[] { "", newParm, "=====" });
             writer.AddTableData(new string[] { "======", "======", "=======" });
         }
@@ -191,7 +191,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection("KBDoctor",title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -225,7 +225,7 @@ namespace Concepto.Packages.KBDoctor
                                     Formula formula = a.Formula;
                                     if (formula == null)
                                     {
-                                        writer.AddTableData(new string[] { Functions.linkObject(dom), Functions.linkObject(tbl), tbl.Description, Functions.linkObject(att), att.Description, ModulesHelper.ObjectModuleName(tbl) });
+                                        writer.AddTableData(new string[] { Utility.linkObject(dom), Utility.linkObject(tbl), tbl.Description, Utility.linkObject(att), att.Description, ModulesHelper.ObjectModuleName(tbl) });
 
                                         KBDoctorOutput.Message("select '" + tbl.Name + " " + att.Name + "' from dual;");
 
@@ -254,7 +254,7 @@ namespace Concepto.Packages.KBDoctor
         private static void ListParmReferences(KBObject obj, string name, KBDoctorXMLWriter writer)
         {
             string source = ObjectsHelper.ObjectSource(obj);
-            source = Functions.ExtractComments(source);
+            source = Utility.ExtractComments(source);
             string linesWithParmName = "";
             using (StringReader reader = new StringReader(source))
             {
@@ -271,7 +271,7 @@ namespace Concepto.Packages.KBDoctor
                 }
                 
             }
-            writer.AddTableData(new string[] { Functions.linkObject(obj),  name, linesWithParmName });
+            writer.AddTableData(new string[] { Utility.linkObject(obj),  name, linesWithParmName });
         }
 
         public static string ChangeRuleParmWithIN(KBObject obj)
@@ -315,7 +315,7 @@ namespace Concepto.Packages.KBDoctor
                             int countsemicolon = match.ToString().Split(new char[] { ':' }).Length - 1;
                             if (countparms != countsemicolon)
                             {
-                                string objNameLink = Functions.linkObject(obj);
+                                string objNameLink = Utility.linkObject(obj);
 
                                 Regex coma = new Regex(",", RegexOptions.None);
                                 newParm = coma.Replace(match.ToString(), ", IN:");
@@ -387,7 +387,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Object with variables not based on attribute/domain";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;
@@ -397,7 +397,7 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Type", "Name", "Variable", "Attribute", "Domain" });
 
-                Domain dom = Functions.DomainByName("Fecha");
+                Domain dom = Utility.DomainByName("Fecha");
 
                 //All useful objects are added to a collection
                 foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
@@ -406,7 +406,7 @@ namespace Concepto.Packages.KBDoctor
 
                     if (Utility.isGenerated(obj) && !ObjectsHelper.isGeneratedbyPattern(obj) && (obj is Transaction || obj is WebPanel || obj is WorkPanel))
                     {
-                        Functions.AddLine("RenameVariables.txt", "##" + obj.Name);
+                        Utility.AddLine("RenameVariables.txt", "##" + obj.Name);
                         List<Variable> lstVariables = VariablesToRename(obj);
                     }
 
@@ -490,7 +490,7 @@ namespace Concepto.Packages.KBDoctor
             string varaux = v.Name + ":" + v.Type.ToString() + ":" + v.Length.ToString() + ":" + attBAux + ":" + domBAux;
             varaux = varaux + "->" + varaux; 
                    
-            Functions.AddLine("RenameVariables.txt", varaux);
+            Utility.AddLine("RenameVariables.txt", varaux);
         }
 
         private static void MarkReachables(IOutputService output, KBObject obj, KBObjectCollection reachablesObjects)
@@ -830,7 +830,7 @@ namespace Concepto.Packages.KBDoctor
             output.StartSection("KBDoctor",title);
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
@@ -873,7 +873,7 @@ namespace Concepto.Packages.KBDoctor
                         UpdateInsertDelete = ObjectUpdateDB(objRef) ? "YES" : "";
 
                         Procedure prc = (Procedure)objRef;
-                        if (Functions.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper()).Contains("COMMIT"))
+                        if (Utility.ExtractComments(prc.ProcedurePart.Source.ToString().ToUpper()).Contains("COMMIT"))
                             commitInSource = "YES";
                         else
                             commitInSource = "";
@@ -883,7 +883,7 @@ namespace Concepto.Packages.KBDoctor
                         else
                             doCommit = "";
 
-                        writer.AddTableData(new string[] { "Procedure", Functions.linkObject(objRef), objRef.Description, commitOnExit, UpdateInsertDelete, commitInSource, doCommit, objRef.Timestamp.ToString(), objRef.LastUpdate.ToString() });
+                        writer.AddTableData(new string[] { "Procedure", Utility.linkObject(objRef), objRef.Description, commitOnExit, UpdateInsertDelete, commitInSource, doCommit, objRef.Timestamp.ToString(), objRef.LastUpdate.ToString() });
 
                     }
                     else
@@ -1057,7 +1057,7 @@ namespace Concepto.Packages.KBDoctor
                 string title = "KBDoctor - Rename Objects to significant name length";
                 try
                 {
-                    string outputFile = Functions.CreateOutputFile(kbserv, title);
+                    string outputFile = Utility.CreateOutputFile(kbserv, title);
                     KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                     writer.AddHeader(title);
                     writer.AddTableHeader(new string[] { "Type", "Object", "Description" });
@@ -1094,7 +1094,7 @@ namespace Concepto.Packages.KBDoctor
                         }
                         if (SaveObj)
                         {
-                            string attNameLink = Functions.linkObject(obj);
+                            string attNameLink = Utility.linkObject(obj);
                             writer.AddTableData(new string[] { attNameLink, obj.Description, obj.TypeDescriptor.Name });
                             try
                             {
@@ -1128,7 +1128,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Remove attributes without table";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
                 output.StartSection("KBDoctor", title);
