@@ -320,6 +320,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             
         }
 
+        public static void AddLineSummary(string fileName, string texto)
+        {
+            AddLineSummary(UIServices.KB.CurrentKB, fileName, texto);
+        }
+
         public static void AddLine(KnowledgeBase KB, string fileName, string texto)
         {
             string outputFile = KB.UserDirectory + @"\" + fileName;
@@ -330,6 +335,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 sw.WriteLine(texto);
                 fs.Dispose();
             }
+        }
+
+        public static void AddLine(string fileName, string texto)
+        {
+            AddLine(UIServices.KB.CurrentKB, fileName, texto);
         }
 
         public static string ObjectSourceUpper(KBObject obj)
@@ -512,6 +522,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return null;
         }
 
+        public static Domain DomainByName(string domainName)
+        {
+            return DomainByName(UIServices.KB.CurrentModel, domainName);
+        }
+
         public static string RemoveEmptyLines(string lines)
         {
             return Regex.Replace(lines, @"^\s*$\n|\r", "", RegexOptions.Multiline);
@@ -584,6 +599,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
 
             return outputFile;
+        }
+
+        public static string CreateOutputFile(IKBService kbserv, string title)
+        {
+            return CreateOutputFile(kbserv.CurrentKB, title);
         }
 
         public static bool AttIsSubtype(Artech.Genexus.Common.Objects.Attribute a)

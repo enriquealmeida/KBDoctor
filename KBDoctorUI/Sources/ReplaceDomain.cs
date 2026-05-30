@@ -13,6 +13,7 @@ using Artech.Udm.Framework.References;
 using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.Genexus.Common;
+using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor
 {
