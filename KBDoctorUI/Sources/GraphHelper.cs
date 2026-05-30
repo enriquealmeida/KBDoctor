@@ -31,7 +31,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Generate Graph ";
             //try
            // {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 KBModel model = kbserv.CurrentKB.DesignModel;
                 int ATTNAME_LEN = model.GetPropertyValue<int>("ATTNAME_LEN");
@@ -51,50 +51,50 @@ namespace Concepto.Packages.KBDoctor
                 string FileName = "";
 
                 Check = "MDGGraph";
-                Name = Functions.CleanFileName(Check);
+                Name = Utility.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".mdg";
                 GenerateMDGGraph2(Name, FileName);
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
 
             Check = "MDGMinimized";
-            Name = Functions.CleanFileName(Check);
+            Name = Utility.CleanFileName(Check);
             FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".mdg";
             GenerateMDGMinimized(Name, FileName);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+            writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
 
             Check = "SILFile";
-                Name = Functions.CleanFileName(Check);
+                Name = Utility.CleanFileName(Check);
                 FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".sil";
                 GenerateSILFile(Name, FileName);
-                writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+                writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
             /*
 
             Check = "KB Table Graph";
-            Name = Functions.CleanFileName(Check);
+            Name = Utility.CleanFileName(Check);
             FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
             GenerateKBTableGraph(Name, FileName);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+            writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
             */
             /*
             Check = "KB Object Graph";
-            Name = Functions.CleanFileName(Check);
+            Name = Utility.CleanFileName(Check);
             FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
             GenerateKBObjectGraph(Name, FileName);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+            writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
             */
             /*
             Check = "KB Object Edges txt";
-            Name = Functions.CleanFileName(Check);
+            Name = Utility.CleanFileName(Check);
             FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".txt";
             GenerateKBObjectEdgesTxt(Name, FileName);
-            writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+            writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
             */
             /*
           Check = "KB Module Graph";
-          Name = Functions.CleanFileName(Check);
+          Name = Utility.CleanFileName(Check);
           FileName = kbserv.CurrentKB.UserDirectory + @"\kbdoctor." + Name + ".gexf";
           GenerateKBModuleGraph(Name, FileName);
-          writer.AddTableData(new string[] { Check, Functions.linkFile(FileName) });
+          writer.AddTableData(new string[] { Check, Utility.linkFile(FileName) });
           */
             writer.AddFooter();
                 writer.Close();
@@ -186,7 +186,7 @@ namespace Concepto.Packages.KBDoctor
                     {
                         KBObject obj = KBObject.Get(objRef.Model, r.From);
 
-                        if ((obj != null) && (Functions.isRunable(obj)) && (obj != objRef))
+                        if ((obj != null) && (Utility.isRunable(obj)) && (obj != objRef))
                         {
                             string objName = NombreNodo(obj);
                             if (IncludedInGraph(obj))
@@ -238,7 +238,7 @@ namespace Concepto.Packages.KBDoctor
                     {
                         KBObject obj = KBObject.Get(objRef.Model, r.From);
 
-                        if ((obj != null) && (Functions.isRunable(obj)) && (obj != objRef))
+                        if ((obj != null) && (Utility.isRunable(obj)) && (obj != objRef))
                         {
                             string objName = NombreNodoMinimized(obj);
                             if (objName != objRefName && IncludedInGraph(obj))
@@ -282,7 +282,7 @@ namespace Concepto.Packages.KBDoctor
 
         public static bool IncludedInGraph(KBObject objRef)
         {
-            return (Functions.isRunable(objRef) && ObjectsHelper.isGenerated(objRef)) ||
+            return (Utility.isRunable(objRef) && ObjectsHelper.isGenerated(objRef)) ||
                 (objRef is Table) || (objRef is SDT) || (objRef is ExternalObject) || (objRef is Transaction);
         }
 
@@ -352,7 +352,7 @@ namespace Concepto.Packages.KBDoctor
         private static bool isNode(KBObject obj)
         {
             if (obj != null)
-                return ((Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table) || (obj is ExternalObject));
+                return ((Utility.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table) || (obj is ExternalObject));
             else
                 return false;
         }
@@ -479,7 +479,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (KBObject obj in model.Objects.GetAll())
             {
 
-                if ((Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj) ) || (obj is Table ))
+                if ((Utility.isRunable(obj) && ObjectsHelper.isGenerated(obj) ) || (obj is Table ))
                 {
 
                     objName = NombreNodo(obj);
@@ -496,7 +496,7 @@ namespace Concepto.Packages.KBDoctor
                     foreach (EntityReference r in obj.GetReferencesTo())
                     {
                         KBObject objRef = KBObject.Get(obj.Model, r.From);
-                        if ((objRef != null) && (Functions.isRunable(objRef) || objRef is Table) )
+                        if ((objRef != null) && (Utility.isRunable(objRef) || objRef is Table) )
 
                         {
                             string objRefName = NombreNodo(objRef);
@@ -541,7 +541,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (KBObject obj in model.Objects.GetAll())
             {
 
-                bool includedInGraph = (Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table);
+                bool includedInGraph = (Utility.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table);
                 if (includedInGraph)
                 {
 
@@ -559,7 +559,7 @@ namespace Concepto.Packages.KBDoctor
                     foreach (EntityReference r in obj.GetReferencesTo())
                     {
                         KBObject objRef = KBObject.Get(obj.Model, r.From);
-                        if ((objRef != null) && (Functions.isRunable(objRef) || objRef is Table))
+                        if ((objRef != null) && (Utility.isRunable(objRef) || objRef is Table))
 
                         {
                             string objRefName = NombreNodo(objRef);
@@ -622,7 +622,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (KBObject obj in model.Objects.GetAll())
             {
-                if (Functions.hasModule(obj) || (obj is Module))
+                if (Utility.HasModule(obj) || (obj is Module))
                 {
                     string objName = NombreNodo(obj);
                     string modulename = ModulesHelper.ObjectModuleName(obj);
@@ -649,7 +649,7 @@ namespace Concepto.Packages.KBDoctor
 
                 string objName = "";
 
-                if (Functions.hasModule(obj) || (obj is Module)) //((Functions.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table))
+                if (Utility.HasModule(obj) || (obj is Module)) //((Utility.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table))
                 {
                     /*
                     objName = NombreNodo(obj);
@@ -672,7 +672,7 @@ namespace Concepto.Packages.KBDoctor
                     foreach (EntityReference r in obj.GetReferencesTo())
                     {
                         KBObject objRef = KBObject.Get(obj.Model, r.From);
-                        if ((objRef != null) && (Functions.isRunable(objRef)) || (objRef is Table))
+                        if ((objRef != null) && (Utility.isRunable(objRef)) || (objRef is Table))
 
                         {
                             string objRefName = NombreNodo(objRef);
@@ -895,7 +895,7 @@ namespace Concepto.Packages.KBDoctor
                         foreach (EntityReference r in obj.GetReferences())
                         {
                             KBObject objRef = KBObject.Get(obj.Model, r.To);
-                            if ((objRef != null) && (Functions.isRunable(objRef) || objRef is Table) && modulename != ModulesHelper.ObjectModuleName(objRef))
+                            if ((objRef != null) && (Utility.isRunable(objRef) || objRef is Table) && modulename != ModulesHelper.ObjectModuleName(objRef))
 
                             {
                                 String edge = "          <edge id='XXXX' source='" + modulename + "' target='" + ModulesHelper.ObjectModuleName(objRef) + "' />  ";

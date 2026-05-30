@@ -38,7 +38,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Similar Navigations";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
 
                 IOutputService output = CommonServices.Output;
@@ -294,7 +294,7 @@ namespace Concepto.Packages.KBDoctor
                                 hash = TableNames.Count(Char.IsWhiteSpace).ToString("D2") + hash;
 
                                KBDoctorOutput.Message(String.Format("{0} ,  {1} ,  {2} ,  {3} , {4}, {5}  ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
-                               // writer.AddTableData(new string[] { hash, Functions.linkObject(obj), EventName, LevelRow, LevelType, TableNames, AttNames });
+                               // writer.AddTableData(new string[] { hash, Utility.linkObject(obj), EventName, LevelRow, LevelType, TableNames, AttNames });
                                 writer2.WriteLine( LevelType +  "," + TableNames + ","  + AttNames + "," + ObjName + "," + EventName + "," + LevelRow.PadLeft(10,' '));
                                 LevelType = "";
                                 LevelRow = "";
@@ -414,7 +414,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Warnings and Errors";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
                 output.StartSection("KBDoctor", title);
@@ -496,7 +496,7 @@ namespace Concepto.Packages.KBDoctor
                 if (obj.Name == objName)
                 {
                     string spcTxt = ExtractSpcInfo(file, containsTextArg);
-                    writer.AddTableData(new string[] { containsTextArg, obj.TypeDescriptor.Name, Functions.linkObject(obj), obj.Description, obj.UserName, spcTxt });
+                    writer.AddTableData(new string[] { containsTextArg, obj.TypeDescriptor.Name, Utility.linkObject(obj), obj.Description, obj.UserName, spcTxt });
 
                 }
 
@@ -599,7 +599,7 @@ namespace Concepto.Packages.KBDoctor
                 default:
 
 
-                    return Functions.linkFile(file);
+                    return Utility.linkFile(file);
 
 
 
@@ -632,7 +632,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Where update this attribute? :";
             try
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
+                string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
                 output.StartSection("KBDoctor", title);
@@ -685,7 +685,7 @@ namespace Concepto.Packages.KBDoctor
                                         writer.AddTableData(new string[] { "Can't find object", "", "", x });
                                     else
                                         if (Utility.isGenerated(obj) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT"))
-                                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, x });
+                                        writer.AddTableData(new string[] { Utility.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, x });
                                 }
                             }
                         }
