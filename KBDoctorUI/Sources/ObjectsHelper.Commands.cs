@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -120,6 +120,12 @@ namespace Concepto.Packages.KBDoctor
                 }
             }
             KBObject obj = UIServices.KB.CurrentModel.Objects.Get(guid);
+            if (!Utility.IsUserEditableObject(obj))
+            {
+                MessageBox.Show("The selected object is read-only and cannot be removed.", "Could not remove object", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             objtype = obj.TypeDescriptor.Name;
             objName = obj.Name;
             mensaje = string.Format("Are you sure you want to delete " + objtype.Trim() + " {0}?", objName);
@@ -138,6 +144,59 @@ namespace Concepto.Packages.KBDoctor
                     MessageBox.Show(gxe.Message, "Could not remove " + objtype, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
+        }
+
+        public static void RemoveUnreferencedObjectsInUserModules()
+        {
+            List<KBObject> objectsToDelete = KbStatistics.GetUnreferencedObjectsInUserModules(UIServices.KB.CurrentModel)
+                .Where(obj => obj.CanDelete)
+                .Select(obj => obj.Object)
+                .Where(obj => Utility.IsUserEditableObject(obj) && !(obj is Transaction))
+                .ToList();
+
+            if (objectsToDelete.Count == 0)
+            {
+                MessageBox.Show("There are no deletable unreferenced objects in user modules.", "Remove unreferenced objects", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string message = string.Format("Are you sure you want to delete {0} unreferenced object(s) in user modules?", objectsToDelete.Count);
+            DialogResult dr = MessageBox.Show(message, "Remove unreferenced objects", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (dr != DialogResult.Yes)
+            {
+                return;
+            }
+
+            string title = "KBDoctor - Remove unreferenced objects in user modules";
+            int removed = 0;
+            int failed = 0;
+
+            KBDoctorOutput.StartSection(title);
+            foreach (KBObject obj in objectsToDelete)
+            {
+                try
+                {
+                    string objectName = obj.TypeDescriptor.Name + " " + obj.QualifiedName;
+                    obj.Delete();
+                    removed++;
+                    KBDoctorOutput.Message("Removed: " + objectName);
+                }
+                catch (GxException gxe)
+                {
+                    failed++;
+                    KBDoctorOutput.Error("Could not remove " + obj.Name + ": " + gxe.Message);
+                }
+                catch (Exception ex)
+                {
+                    failed++;
+                    KBDoctorOutput.Error("Could not remove " + obj.Name + ": " + ex.Message);
+                }
+            }
+
+            KBDoctorOutput.Message("Removed: " + removed + ". Failed: " + failed + ".");
+            KBDoctorOutput.EndSection(title, failed == 0);
+            MessageBox.Show("Removed: " + removed + ". Failed: " + failed + ".", "Remove unreferenced objects", MessageBoxButtons.OK, failed == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+            KbStats.ListUnreferencedObjectsInUserModules();
         }
 
         public static void OpenObject(object[] parameters)
@@ -201,7 +260,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 //All useful objects are added to a collection
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                 {
 
 
@@ -509,7 +568,7 @@ namespace Concepto.Packages.KBDoctor
             }
             else
             {
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                 {
                     ICallableObject callableObject = obj as ICallableObject;
                     if ((callableObject != null) || (obj is Artech.Genexus.Common.Objects.Attribute))
@@ -655,7 +714,7 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Type", "Name", "Clean" });
 
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                 {
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
 
@@ -881,7 +940,7 @@ namespace Concepto.Packages.KBDoctor
                 selectObjectOption.MultipleSelection = true;
                 string lista = "";
 
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
                 {
 
                     if (KBObjectHelper.IsSpecifiable(obj))
@@ -980,7 +1039,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorOutput.Message("Type, Name, Web User Exp, MasterPage, Theme, Web Form Defaults, AutoRefreh, IsGenerated ");
 
-                foreach (KBObject obj in kbModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbModel.Objects.GetAll()))
                     if (obj is WebPanel)
 
                     {
@@ -1025,7 +1084,7 @@ public static void ListAPIObjects()
                 int numObj = 0;
 
 
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                 {
                     if (obj != null && ObjectsHelper.isGenerated(obj))
 
@@ -1202,7 +1261,7 @@ public static void ListAPIObjects()
                 SelectObjectOptions selectObjectOption = new SelectObjectOptions();
                 selectObjectOption.MultipleSelection = true;
                 selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-                IEnumerable<KBObject> objects = kbserv.CurrentModel.Objects.GetAll();
+                IEnumerable<KBObject> objects = Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll());
 
                 HashSet<int> classes;
                 Hashtable[] Classes_types;
@@ -1265,6 +1324,11 @@ public static void ListAPIObjects()
                 HashSet<EntityKey> guids = new HashSet<EntityKey>();
                 foreach (Transaction transaction in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
+                    if (!Utility.IsUserEditableObject(transaction))
+                    {
+                        continue;
+                    }
+
                     foreach (EntityReference refer in transaction.GetReferences())
                     {
                         KBObject refto = KBObject.Get(kbserv.CurrentModel, refer.To);
@@ -1327,6 +1391,11 @@ public static void ListAPIObjects()
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<ThemeClass>());
             foreach (ThemeClass themeclass in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
+                if (!Utility.IsUserEditableObject(themeclass))
+                {
+                    continue;
+                }
+
                 KBDoctorCore.Sources.API.ThemeClassesNotUsed(kbserv.CurrentKB, output, themeclass);
             }
             output.AddErrorLine("KBDoctor", "No theme was selected");
@@ -1344,7 +1413,7 @@ public static void ListAPIObjects()
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-            List<KBObject> objs = (List<KBObject>) UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)).ToList();
             KBDoctorOutput.StartSection("KBDoctor - Assign Types Comparer");
             string recommendations = "";
             int cant;
@@ -1558,7 +1627,7 @@ public static void ListAPIObjects()
                 writer.AddTableHeader(new string[] { "OBJECT", "COMMAND", "TOKEN", "Id", "Row" });
 
 
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
                 {
                     Artech.Genexus.Common.Parts.ProcedurePart source = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
                     Artech.Genexus.Common.Parts.VariablesPart vp = obj.Parts.Get<VariablesPart>();
@@ -1644,6 +1713,11 @@ public static void ListAPIObjects()
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
             foreach (WebPanel webPanel in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
             {
+                if (!Utility.IsUserEditableObject(webPanel))
+                {
+                    continue;
+                }
+
                 KBDoctorCore.Sources.API.ObjThemeClassesNotUsed(kbserv.CurrentKB, output, webPanel);
             }
             output.AddErrorLine("KBDoctor", "No theme was selected");

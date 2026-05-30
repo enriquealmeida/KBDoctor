@@ -1,4 +1,4 @@
-using Artech.Architecture.Common.Objects;
+﻿using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Common.Helpers.Templates;
@@ -40,7 +40,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 //All useful objects are added to a collection
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
 
                 {
                     string objName = obj.Name;

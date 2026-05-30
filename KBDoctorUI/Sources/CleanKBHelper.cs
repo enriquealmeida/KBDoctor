@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Windows.Forms;
 using System.Xml;
@@ -50,7 +50,7 @@ namespace Concepto.Packages.KBDoctor
                 ObjectsHelper.Unreachables();
 
                 KBCategory UnreachableCategory = KBCategory.Get(kbserv.CurrentModel, "KBDoctor.UnReachable");
-                foreach (KBObject obj in UnreachableCategory.AllMembers)
+                foreach (KBObject obj in Utility.EditableObjects(UnreachableCategory.AllMembers))
                 {
                     KBDoctorCore.Sources.API.CleanKBObject(obj, output);
                 }
@@ -71,7 +71,7 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorOutput.Message("Pass number " + pasada.ToString() + ". Cleaned objects: " + borrados.ToString());
                 stay = false;
 
-                foreach (KBObject obj in Category.AllMembers)
+                foreach (KBObject obj in Utility.EditableObjects(Category.AllMembers))
                 {
                     if ((obj is Transaction) || (obj is Table) || (obj is Image) || (obj is Artech.Genexus.Common.Objects.Group) || (obj is DataView))
                     {
@@ -133,7 +133,7 @@ namespace Concepto.Packages.KBDoctor
              //   selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
                // selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
 
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
                 {
                     if (obj.Description.StartsWith("Work With"))
                     {
@@ -400,7 +400,7 @@ namespace Concepto.Packages.KBDoctor
                 Domain dom = Utility.DomainByName("Fecha");
 
                 //All useful objects are added to a collection
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                 {
                     KBDoctorOutput.Message( "Procesing.... " + obj.Name + " - " + obj.Type.ToString());
 
@@ -539,7 +539,7 @@ namespace Concepto.Packages.KBDoctor
 
                 //MUESTRO LOS SDT A REGENERAR
                 selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<SDT>());
-                foreach (KBObject kBObject in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                foreach (KBObject kBObject in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
                 {
                     SDT sdtObj = (SDT)kBObject;
                     CodeGeneration.AddSDTVariable(kbModel, proc, sdtObj);
@@ -629,7 +629,7 @@ namespace Concepto.Packages.KBDoctor
                         selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataSelector>());
                         selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataProvider>());
 
-                        foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                        foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
                         {
                             objtotales += 1;
                             Application.DoEvents();
@@ -734,7 +734,7 @@ namespace Concepto.Packages.KBDoctor
                         selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataSelector>());
                         selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataProvider>());
 
-                        foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                        foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
                         {
                             objtotales += 1;
                             Application.DoEvents();
@@ -842,7 +842,7 @@ namespace Concepto.Packages.KBDoctor
                 KBModel kbModel = UIServices.KB.CurrentModel;
                 KBObjectCollection objRefCollection = new KBObjectCollection();
 
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
 
                 {
                     if (obj != null)
@@ -1065,7 +1065,7 @@ namespace Concepto.Packages.KBDoctor
                     IOutputService output = CommonServices.Output;
                     KBDoctorOutput.StartSection(title);
 
-                    foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                    foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                     {
                         Boolean SaveObj = false;
                         if ((obj is Artech.Genexus.Common.Objects.Attribute) && (obj.Name.Length > ATTNAME_LEN))

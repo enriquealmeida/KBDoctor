@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Artech.Common.Framework.Commands;
@@ -235,6 +235,7 @@ namespace Concepto.Packages.KBDoctor
 
         // Acciones sobre objetos
         private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");
+        private static CommandKey removeUnreferencedObjectsInUserModules = new CommandKey(Package.guid, "RemoveUnreferencedObjectsInUserModules");
         private static CommandKey openObject = new CommandKey(Package.guid, "OpenObject");
         private static CommandKey assignDomainToVariable = new CommandKey(Package.guid, "AssignDomainToVariable");
         private static CommandKey assignAttributeToVariable = new CommandKey(Package.guid, "AssignAttributeToVariable");
@@ -243,6 +244,7 @@ namespace Concepto.Packages.KBDoctor
 
 
         public static CommandKey RemoveObject { get { return removeObject; } }
+        public static CommandKey RemoveUnreferencedObjectsInUserModules { get { return removeUnreferencedObjectsInUserModules; } }
         public static CommandKey OpenObject { get { return openObject; } }
         public static CommandKey AssignDomainToVariable { get { return assignDomainToVariable; } }
         public static CommandKey AssignAttributeToVariable { get { return assignAttributeToVariable; } }

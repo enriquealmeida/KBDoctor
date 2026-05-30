@@ -1,4 +1,4 @@
-using Artech.Architecture.Common;
+﻿using Artech.Architecture.Common;
 using Artech.Architecture.Common.Collections;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Architecture.Common.Objects;
@@ -746,7 +746,7 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorOutput.StartSection("Creating Transaction from tables");
 
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Table>());
-            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
             {
                 Module m = TableModule(kbserv.CurrentModel, (Table)obj);
                 GenerateTrnFromTable(kbserv, (Table)obj, m);
@@ -766,7 +766,7 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorOutput.StartSection("Creating Procedure from tables");
 
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Table>());
-            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
             {
                 Module m = TableModule(kbserv.CurrentModel, (Table)obj);
                 GenerateInitializdeProcedureFromTable(kbserv, (Table)obj, m);
@@ -1087,7 +1087,7 @@ namespace Concepto.Packages.KBDoctor
             scriptFile.WriteLine("<attributes class='node'> <attribute id='0' title = 'module' type = 'string' />  </attributes >");
 
             scriptFile.WriteLine("      <nodes>");
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
                 if (Functions.isRunable(obj) || obj is Table)
                 {

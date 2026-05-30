@@ -124,7 +124,7 @@ namespace Concepto.Packages.KBDoctor
 
             int cant = 0;
 
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
             {
                 if ((cant % 100) == 0)
                 {
@@ -223,7 +223,7 @@ namespace Concepto.Packages.KBDoctor
 
             int cant = 0;
 
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
             {
                 if ((cant % 100) == 0)
                 {

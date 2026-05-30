@@ -1,4 +1,4 @@
-using Artech.Architecture.Common.Collections;
+﻿using Artech.Architecture.Common.Collections;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Architecture.Common.Location;
 using Artech.Architecture.Common.Objects;
@@ -459,7 +459,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string title = "KBDoctor - Objects with parameters without IN:/OUT:/INOUT:";
             KBDoctorOutput.StartSection(title);
             string rec = "";
-            List<KBObject> objs = KB.DesignModel.Objects.GetAll().ToList();
+            List<KBObject> objs = Utility.EditableObjects(KB.DesignModel.Objects.GetAll()).ToList();
             List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output, ref rec);
             bool success = true;
             KBDoctorOutput.EndSection(title, success);
@@ -468,6 +468,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static List<KBObject> ParmWOInOut(List<KBObject> objs, IOutputService output, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             // Object with parm() rule without in: out: or inout:
             List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output, ref recommendations);
 
@@ -577,6 +578,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void CommitOnExit(List<KBObject> objs, IOutputService output, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             cant = 0;
             bool commitOnExit;
             foreach (KBObject obj in objs)
@@ -606,6 +608,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             diffCodeBlock = 0;
             diffcomplexityLevel = 0;
             diffParametersCount = 0;
+            if (!Utility.IsUserEditableObject(obj))
+            {
+                return;
+            }
             if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
             {
                 if (isGenerated(obj) && !isGeneratedbyPattern(obj))
@@ -667,6 +673,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         internal static void isInModule(List<KBObject> objs, IOutputService output, ref string recommendations, out int cant)
 #pragma warning restore IDE1006 // Estilos de nombres
         {
+            objs = Utility.EditableObjects(objs).ToList();
             cant = 0;
             foreach (KBObject obj in objs)
             {
@@ -683,6 +690,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void ObjectsWithVarNotBasedOnAtt(List<KBObject> objs, IOutputService output, bool fixvar, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             cant = 0;
             foreach (KBObject obj in objs)
             {
@@ -787,6 +795,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void CodeCommented(List<KBObject> objs, IOutputService output, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             cant = 0;
             foreach (KBObject obj in objs)
             {
@@ -811,6 +820,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void AttributeHasDomain(List<KBObject> objs, IOutputService output, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             cant = 0;
             foreach (KBObject obj in objs)
             {
@@ -834,6 +844,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void SDTBasedOnAttDomain(List<KBObject> objs, IOutputService output, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             cant = 0;
             foreach (KBObject obj in objs)
             {
@@ -881,6 +892,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void AttributeWithoutTable(List<KBObject> objs, IOutputService output)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             List<Artech.Genexus.Common.Objects.Attribute> attTodos = new List<Artech.Genexus.Common.Objects.Attribute>();
 
             KBModel model = null;

@@ -424,6 +424,22 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             return (obj is Transaction || obj is WebPanel || obj is Procedure || obj is DataProvider || obj is Menubar);
         }
 
+        public static bool IsUserEditableObject(KBObject obj)
+        {
+            return obj != null && !obj.IsReadOnly;
+        }
+
+        public static IEnumerable<KBObject> EditableObjects(IEnumerable<KBObject> objects)
+        {
+            foreach (KBObject obj in objects)
+            {
+                if (IsUserEditableObject(obj))
+                {
+                    yield return obj;
+                }
+            }
+        }
+
         public static string ExtractComments(string source)
         {
 
@@ -1162,6 +1178,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
         public static void SaveObject(IOutputService output, KBObject obj)
         {
+            if (!IsUserEditableObject(obj))
+            {
+                return;
+            }
+
             try
             {
                 obj.Save();

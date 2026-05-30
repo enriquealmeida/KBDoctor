@@ -45,11 +45,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void GetClassesTypesWithTheSameSignature(IEnumerable<KBObject> objects, out HashSet<int> classes, out Hashtable[] Classes_types)
         {
+            objects = Utility.EditableObjects(objects);
             Objects.GetClassesTypesWithTheSameSignature(objects, out classes, out Classes_types);
         }
         //
         public static void CleanKBObjectVariables(KBObject obj, IOutputService output)
         {
+            if (!Utility.IsUserEditableObject(obj))
+            {
+                return;
+            }
+
             string rec = "";
             CleanKB.CleanKBObjectVariables(obj, output, ref rec);
         }
@@ -57,7 +63,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         public static void CleanAllKBObjectVariables(KnowledgeBase KB, IOutputService output)
         {
             string rec = "";
-            foreach (KBObject kbo in KB.DesignModel.Objects.GetAll())
+            foreach (KBObject kbo in Utility.EditableObjects(KB.DesignModel.Objects.GetAll()))
                 CleanKB.CleanKBObjectVariables(kbo, output, ref rec);
         }
         //
@@ -68,11 +74,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void CleanKBObject(KBObject obj, IOutputService output)
         {
+            if (!Utility.IsUserEditableObject(obj))
+            {
+                return;
+            }
+
             CleanKB.CleanObject(obj, output);
         }
         //
         public static void CleanKBObjects(KnowledgeBase kb, IEnumerable<KBObject> kbojs, IOutputService output)
         {
+            kbojs = Utility.EditableObjects(kbojs);
             CleanKB.CleanObjects(kb, kbojs, output);
         }
         //
@@ -103,6 +115,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void PreProcessPendingObjects(KnowledgeBase KB, IOutputService output, List<KBObject> objs, out List<string[]> lineswriter, out double tech_debt_total)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             tech_debt_total = 0;
             const string KBDOCTOR_OUTPUTID = "KBDoctor";
             output.SelectOutput(KBDOCTOR_OUTPUTID);
@@ -403,6 +416,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static bool AssignTypesComprarer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             int cant_aux;
             cant = 0;
             foreach (KBObject obj in objs)
@@ -415,6 +429,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             int cant_aux;
             cant = 0;
             foreach (KBObject obj in objs)
@@ -426,6 +441,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void ObjectsWithRuleOld(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             cant = 0;
             int cant_aux = 0;
             foreach(KBObject obj in objs)
@@ -437,6 +453,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             int cant_aux;
             cant = 0;
             foreach (KBObject obj in objs)
@@ -545,6 +562,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void EmptyConditionalBlocks(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             int cant_aux;
             cant = 0;
             foreach (KBObject obj in objs)
@@ -556,6 +574,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void ForEachsWithoutWhenNone(KnowledgeBase KB, List<KBObject> objs)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             foreach (KBObject obj in objs)
             {
                 Objects.ForEachsWithoutWhenNone(KB.DesignModel, obj);
@@ -564,6 +583,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void NewsWithoutWhenDuplicate(KnowledgeBase KB, List<KBObject> objs)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             foreach (KBObject obj in objs)
             {
                 Objects.NewsWithoutWhenDuplicate(KB.DesignModel, obj);
@@ -572,6 +592,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void ProceduresCalledAsFunction(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             int cant_aux;
             cant = 0;
             foreach (KBObject obj in objs)
@@ -583,6 +604,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void DocumentsInWebPanels(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
 
             cant = 0;
             foreach (KBObject obj in objs)
@@ -593,6 +615,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void GenerateRESTCalls(KnowledgeBase KB, List<KBObject> objs)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             foreach (KBObject obj in objs)
             {
                 Objects.GenerateRESTCalls(KB, obj);
@@ -601,6 +624,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void ListSDTWithDateInWS(KnowledgeBase KB, List<KBObject> objs)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             foreach (KBObject obj in objs)
             {
                 Objects.SDTWithDateInWS(obj);
@@ -609,6 +633,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void GenerateSDTDataLoad(KnowledgeBase KB, List<KBObject> objs)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             foreach (KBObject obj in objs)
             {
                 Objects.ListSDT(obj);
@@ -617,6 +642,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void AttributeAsOutput(KnowledgeBase KB, List<KBObject> objs, out List<string[]> output_list)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             KBDoctorOutput.StartSection("KBDoctor - Get Objects With Attribute/Domain as Output");
             output_list = new List<string[]>();
             foreach (KBObject obj in objs)
@@ -636,6 +662,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         //
         public static void CheckVariableUsages(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             int cant_aux;
             cant = 0;
             KBDoctorOutput.StartSection("KBDoctor - Check variable usages");
@@ -649,6 +676,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
         public static void VariablesNotBasedOnAttributes(KnowledgeBase KB, List<KBObject> objs, out List<string[]> lineswriter, out int cant)
         {
+            objs = Utility.EditableObjects(objs).ToList();
             lineswriter = new List<string[]>();
             int cant_aux;
             cant = 0;

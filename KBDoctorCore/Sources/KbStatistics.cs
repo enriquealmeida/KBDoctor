@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Artech.Architecture.Common.Objects;
 using Artech.Genexus.Common;
@@ -94,7 +94,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             int totalObjects = 0;
             int objectsNotGeneratedWithPatterns = 0;
 
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
                 totalObjects++;
                 if (Utility.isGenerated(obj) && IsPatternCandidate(obj) && !Utility.IsGeneratedByPattern(obj))
@@ -119,7 +119,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static IEnumerable<GeneratedPatternPartInfo> GetGeneratedPatternPartsWithoutDynamism(KBModel model)
         {
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
                 if (IsGeneratedObjectByPattern(obj))
                 {
@@ -143,7 +143,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static IEnumerable<BasicObjectInfo> GetAllObjects(KBModel model)
         {
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
                 yield return CreateBasicObjectInfo(obj);
             }
@@ -151,9 +151,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static IEnumerable<GeneratedObjectInfo> GetGeneratedRunnableObjects(KBModel model)
         {
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
-                if (obj != null && Utility.isRunable(obj) && Utility.isGenerated(obj))
+                if (Utility.isRunable(obj) && Utility.isGenerated(obj))
                 {
                     string protocol = obj.GetPropertyValueString("CALL_PROTOCOL");
                     if (protocol == "Internal")
@@ -182,7 +182,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         public static IEnumerable<MainObjectInfo> GetMainObjects(KBModel model)
         {
             KBCategory mainCategory = Utility.MainCategory(model);
-            foreach (KBObject obj in mainCategory.AllMembers)
+            foreach (KBObject obj in Utility.EditableObjects(mainCategory.AllMembers))
             {
                 if (obj != null)
                 {
@@ -203,7 +203,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static IEnumerable<ProcedureInfo> GetProcedures(KBModel model, DateTime now)
         {
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
                 if (obj is Procedure)
                 {
@@ -232,9 +232,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static IEnumerable<UnreferencedUserModuleObjectInfo> GetUnreferencedObjectsInUserModules(KBModel model)
         {
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
-                if (obj != null && IsUserEditableObject(model, obj) && !HasReferencesTo(obj))
+                if (obj != null && IsObjectInUserModule(model, obj) && !HasReferencesTo(obj))
                 {
                     yield return new UnreferencedUserModuleObjectInfo
                     {
@@ -244,7 +244,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         ModuleName = obj.Module.QualifiedName.ToString(),
                         IsPublic = obj.IsPublic.ToString(),
                         LastUpdate = obj.LastUpdate.ToString(),
-                        CanDelete = !obj.IsReadOnly && !(obj is Transaction)
+                        CanDelete = !(obj is Transaction)
                     };
                 }
             }
@@ -298,11 +298,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
 
             return false;
-        }
-
-        private static bool IsUserEditableObject(KBModel model, KBObject obj)
-        {
-            return !obj.IsReadOnly && IsObjectInUserModule(model, obj);
         }
 
         private static bool HasReferencesTo(KBObject obj)

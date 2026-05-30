@@ -1,4 +1,4 @@
-using Artech.Architecture.Common;
+﻿using Artech.Architecture.Common;
 using Artech.Architecture.Common.Collections;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Architecture.Common.Objects;
@@ -52,7 +52,7 @@ namespace Concepto.Packages.KBDoctor
 
                 MakeAllObjectPublic(kbserv, output);
 
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                 {
                     KBDoctorOutput.Message( "Object " + obj.Name);
                     ICallableObject callableObject = obj as ICallableObject;
@@ -94,7 +94,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 ToContinue = false;
                 cant = 1;
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                 {
                     ObjectVisibility objVisibility = obj.GetPropertyValue<ObjectVisibility>("ObjectVisibility");
                     if (objVisibility != ObjectVisibility.Public && Utility.isRunable(obj) && !(obj is Transaction))
@@ -185,7 +185,7 @@ namespace Concepto.Packages.KBDoctor
                 SelectObjectOptions selectObjectOption = new SelectObjectOptions();
                 selectObjectOption.MultipleSelection = true;
 
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
                 {
                     if (obj == null)
                     {
@@ -578,7 +578,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             KBDoctorOutput.StartSection(title);
 
 
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
             {
                 if (Utility.HasModule(obj))
                 {
@@ -634,7 +634,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 intraModule[mdl.Name] = 0;
             }
 
-            foreach (KBObject objTo in kbserv.CurrentModel.Objects.GetAll())
+            foreach (KBObject objTo in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
             {
                 //     KBDoctorOutput.Message(objTo.Name + ":" + objTo.TypeDescriptor.Name );
                 int intraAcum = 0;
@@ -722,7 +722,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
         private static double CF(Module mdl)
         {
-            foreach (KBObject obj in mdl.GetAllMembers())
+            foreach (KBObject obj in Utility.EditableObjects(mdl.GetAllMembers()))
             {
 
 
@@ -808,7 +808,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             int cantobjPub = 0;
             int cantInRef = 0;
             int cantOutRef = 0;
-            foreach (KBObject obj in mdl.GetAllMembers())
+            foreach (KBObject obj in Utility.EditableObjects(mdl.GetAllMembers()))
             {
                 cantobj += 1;
                 string aux = "";
@@ -889,6 +889,10 @@ El módulo tiene objetos públicos no referenciados por externos?
                 selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
                 foreach (Transaction trn in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
+                    if (!Utility.IsUserEditableObject(trn))
+                    {
+                        continue;
+                    }
 
 
                     foreach (TransactionLevel lvl in trn.Structure.GetLevels())
@@ -926,7 +930,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             Dictionary<string, int> objectWeight = new Dictionary<string, int>();
             KBDoctorOutput.StartSection("Detect Mavericks");
 
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
                // objRefName = GraphHelper.NombreNodo(objRef);
                 if (GraphHelper.IncludedInGraph(obj))
@@ -1056,7 +1060,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             string listPirvateObjReferenced = "";
             string ListobjOutsideModuleAccessPrivateTable = "";
 
-            foreach (KBObject obj in mdl.GetAllMembers())
+            foreach (KBObject obj in Utility.EditableObjects(mdl.GetAllMembers()))
             {
 
                 string aux = "";
@@ -1236,7 +1240,7 @@ El módulo tiene objetos públicos no referenciados por externos?
         private static KBObjectCollection CreateListObjectsModuleAndReferences(KBModel kbModel, Module mdl, KBDoctorXMLWriter writer)
         {
             KBObjectCollection objToBuild = new KBObjectCollection();
-            foreach (KBObject obj in mdl.GetAllMembers())
+            foreach (KBObject obj in Utility.EditableObjects(mdl.GetAllMembers()))
             {
                 if (KBObjectHelper.IsSpecifiable(obj) && KBDoctorCore.Sources.Utility.isGenerated(obj))
                 {
@@ -1309,7 +1313,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 SelectObjectOptions selectObjectOption = new SelectObjectOptions();
                 selectObjectOption.MultipleSelection = true;
                 selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
-                foreach (KBObject module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                foreach (KBObject module in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
                 {
                     foreach (Table t in Table.GetAll(module.Model))
 
@@ -1409,7 +1413,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 SelectObjectOptions selectObjectOption = new SelectObjectOptions();
                 selectObjectOption.MultipleSelection = true;
 
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
                 {
                     string modulename = ModulesHelper.ObjectModuleName(obj);
 
@@ -1652,7 +1656,7 @@ El módulo tiene objetos públicos no referenciados por externos?
         {
             {
                 KBObjectCollection objectsModule = new KBObjectCollection();
-                foreach (KBObject obj in module.GetAllMembers())
+                foreach (KBObject obj in Utility.EditableObjects(module.GetAllMembers()))
                 {
                     if (KBObjectHelper.IsSpecifiable(obj))
                     {
@@ -1700,7 +1704,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 // Module module2 = new Module(kbModel);
                 foreach (Module module in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
-                    foreach (KBObject obj in module.GetAllMembers())
+                    foreach (KBObject obj in Utility.EditableObjects(module.GetAllMembers()))
                     {
                         if (Utility.HasModule(obj))
                         {

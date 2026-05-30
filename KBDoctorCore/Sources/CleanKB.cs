@@ -173,7 +173,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             do
             {
                 continuar = false;
-                foreach (KBObject obj in kbmodel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbmodel.Objects.GetAll()))
                 {
                     ICallableObject callableObject = obj as ICallableObject;
                     if ((callableObject != null) | (obj is Artech.Genexus.Common.Objects.Attribute)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -713,7 +713,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorOutput.Message( "Procesiong objects..");
 
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                 {
                     // KBDoctorOutput.Message("Procesing .. " + obj.Name);
 

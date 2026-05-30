@@ -1,4 +1,4 @@
-using Artech.Architecture.Common.Collections;
+﻿using Artech.Architecture.Common.Collections;
 using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.Architecture.UI.Framework.Services;
@@ -168,10 +168,17 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Unreferenced objects in user modules";
             KBDoctorReport.Run(title, new string[] { "Type", "Object", "Description", "Module", "Public", "Last Update", "Action" }, writer =>
             {
-                foreach (KbStatistics.UnreferencedUserModuleObjectInfo obj in KbStatistics.GetUnreferencedObjectsInUserModules(UIServices.KB.CurrentModel))
+                List<KbStatistics.UnreferencedUserModuleObjectInfo> objects = KbStatistics.GetUnreferencedObjectsInUserModules(UIServices.KB.CurrentModel).ToList();
+                foreach (KbStatistics.UnreferencedUserModuleObjectInfo obj in objects)
                 {
                     string action = obj.CanDelete ? Functions.CommandLink("RemoveObject", "Remove", "guid", obj.Object.Guid.ToString()) : string.Empty;
                     writer.AddTableData(new string[] { obj.Type, Functions.linkObject(obj.Object), obj.Description, obj.ModuleName, obj.IsPublic, obj.LastUpdate, action });
+                }
+
+                if (objects.Any(obj => obj.CanDelete))
+                {
+                    string removeAll = Functions.CommandLink("RemoveUnreferencedObjectsInUserModules", "<span style=\"display:inline-block;padding:6px 12px;background-color:#b00020;color:white;border-radius:3px;font-family:Tahoma;text-decoration:none;\">Remove all deletable objects</span>");
+                    writer.WriteRaw("<tr><td colspan=\"7\" style=\"padding:10px;text-align:right;\">" + removeAll + "</td></tr>");
                 }
             });
         }
@@ -253,7 +260,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kB = UIServices.KB;
             IOutputService output = CommonServices.Output;
             KBCategory mainCategory = KBCategory.Get(kB.CurrentModel, "Main Programs");
-            foreach (KBObject obj in mainCategory.AllMembers)
+            foreach (KBObject obj in Utility.EditableObjects(mainCategory.AllMembers))
             {
                 string objLocation = (string)obj.GetProperty("AppLocation").Value;
 
@@ -359,7 +366,7 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Object", "Theme Object", "Component","Theme Component" });
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                 {
 
                     if (obj is WebPanel )
@@ -565,7 +572,7 @@ namespace Concepto.Packages.KBDoctor
             writer.AddHeader(titulo);
             writer.AddTableHeader(new string[] {"Type", "Object", "Variable", "Type", "Module" });
 
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
             {
 
                 if (obj != null)

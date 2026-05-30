@@ -1,4 +1,4 @@
-using Artech.Architecture.Common.Collections;
+﻿using Artech.Architecture.Common.Collections;
 using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.Architecture.UI.Framework.Services;
@@ -121,7 +121,7 @@ namespace Concepto.Packages.KBDoctor
             string[] modulosGeneXus = new string[] {"Client","Common","SD","Server","Social","Configuration","Notifications"
                         ,"UI","iOS","Media","Notifications","Store","Synchronization" };
 
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
                 string objName = obj.Name;
                 string nombrenodo = NombreNodoMinimized(obj);
@@ -175,7 +175,7 @@ namespace Concepto.Packages.KBDoctor
 
             string objRefName = "";
 
-            foreach (KBObject objRef in model.Objects.GetAll())
+            foreach (KBObject objRef in Utility.EditableObjects(model.Objects.GetAll()))
             {
                 objRefName = NombreNodo(objRef);
                 if (IncludedInGraph(objRef))
@@ -229,7 +229,7 @@ namespace Concepto.Packages.KBDoctor
 
             string objRefName = "";
 
-            foreach (KBObject objRef in model.Objects.GetAll())
+            foreach (KBObject objRef in Utility.EditableObjects(model.Objects.GetAll()))
             {
                 objRefName = NombreNodoMinimized(objRef);
                 if (IncludedInGraph(objRef))
@@ -325,7 +325,7 @@ namespace Concepto.Packages.KBDoctor
             string fileName = name + i + ".gexf";
             KBObjectCollection visited = new KBObjectCollection();
 
-            IEnumerable<KBObject> listObjNode = (from r in model.Objects.GetAll() where isNode(r) select model.Objects.Get(r.Key));
+            IEnumerable<KBObject> listObjNode = (from r in Utility.EditableObjects(model.Objects.GetAll()) where isNode(r) select model.Objects.Get(r.Key));
 
             foreach (KBObject obj in listObjNode)
                 {
@@ -476,7 +476,7 @@ namespace Concepto.Packages.KBDoctor
 
             string objName = "";
             StringCollection nodos = new StringCollection();
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
 
                 if ((Utility.isRunable(obj) && ObjectsHelper.isGenerated(obj) ) || (obj is Table ))
@@ -538,7 +538,7 @@ namespace Concepto.Packages.KBDoctor
 
             string objName = "";
             StringCollection nodos = new StringCollection();
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
 
                 bool includedInGraph = (Utility.isRunable(obj) && ObjectsHelper.isGenerated(obj)) || (obj is Table);
@@ -620,7 +620,7 @@ namespace Concepto.Packages.KBDoctor
 
             int objId = 0;
 
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
                 if (Utility.HasModule(obj) || (obj is Module))
                 {
@@ -644,7 +644,7 @@ namespace Concepto.Packages.KBDoctor
             }
 
 
-            foreach (KBObject obj in model.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(model.Objects.GetAll()))
             {
 
                 string objName = "";

@@ -114,6 +114,7 @@
     <CommandDefinition id="AttInOneTrnOnly" />
     <!-- Acciones sobre objetos -->
     <CommandDefinition id="RemoveObject" />
+    <CommandDefinition id="RemoveUnreferencedObjectsInUserModules" />
     <CommandDefinition id="OpenObject" />
     <CommandDefinition id="AssignAttributeToVariable" />
     <CommandDefinition id="AssignDomainToVariable" />

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -134,6 +134,7 @@ namespace Concepto.Packages.KBDoctor
 
             // Acciones sobre objetos
             AddCommand(CommandKeys.RemoveObject, new ExecHandler(ExecRemoveObject), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.RemoveUnreferencedObjectsInUserModules, new ExecHandler(ExecRemoveUnreferencedObjectsInUserModules), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.OpenObject, new ExecHandler(ExecOpenKBObject), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignAttributeToVariable, new ExecHandler(ExecAssignAttributeToVariable), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignDomainToVariable, new ExecHandler(ExecAssignDomainToVariable), new QueryHandler(QueryKBDoctor));
@@ -769,7 +770,7 @@ namespace Concepto.Packages.KBDoctor
                 foreach (KBObjectHistory kboh in kbohList)
                 {
                     KBObject obj = model.Objects.Get(kboh.Key);
-                    if (obj != null)
+                    if (Utility.IsUserEditableObject(obj))
                     {
                         List<KBObject> objsInContainer = new List<KBObject>();
                         if (obj is Artech.Architecture.Common.Objects.Module)
@@ -840,7 +841,7 @@ namespace Concepto.Packages.KBDoctor
 
                 List<KBObject> selectedObjects = new List<KBObject>();
 
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
                 {
                     if (obj != null)
                     {
@@ -905,7 +906,7 @@ namespace Concepto.Packages.KBDoctor
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Attribute>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Domain>());
             selectObjectOption.MultipleSelection = true;
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)).ToList();
             Thread thread = new Thread(() => AttributeAsOutput(objs, title));
             thread.Start();
             return true;
@@ -937,7 +938,7 @@ namespace Concepto.Packages.KBDoctor
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<SDT>());
             selectObjectOption.MultipleSelection = true;
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)).ToList();
             Thread thread = new Thread(() => GenerateSDTDataLoad(objs));
             thread.Start();
             return true;
@@ -954,7 +955,7 @@ namespace Concepto.Packages.KBDoctor
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             selectObjectOption.MultipleSelection = true;
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)).ToList();
             Thread thread = new Thread(() => SDTsWithDateInWS(objs));
             thread.Start();
             return true;
@@ -972,7 +973,7 @@ namespace Concepto.Packages.KBDoctor
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             selectObjectOption.MultipleSelection = true;
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)).ToList();
             Thread thread = new Thread(() => GenerateRESTCalls(objs));
             thread.Start();
             return true;
@@ -1469,6 +1470,12 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecRemoveUnreferencedObjectsInUserModules(CommandData cmdData)
+        {
+            ObjectsHelper.RemoveUnreferencedObjectsInUserModules();
+            return true;
+        }
+
         public bool ExecOpenKBObject(CommandData cmdData)
         {
             ObjectsHelper.OpenObject(cmdData.Parameters);
@@ -1916,13 +1923,21 @@ namespace Concepto.Packages.KBDoctor
                 {
                     foreach (object current in selectionContainer.SelectedObjects)
                     {
-                        list.Add(current as KBObject);
+                        KBObject obj = current as KBObject;
+                        if (Utility.IsUserEditableObject(obj))
+                        {
+                            list.Add(obj);
+                        }
                     }
                 }
             }
             else
             {
-                list.Add(data.Context as KBObject);
+                KBObject obj = data.Context as KBObject;
+                if (Utility.IsUserEditableObject(obj))
+                {
+                    list.Add(obj);
+                }
             }
             return list;
         }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -58,7 +58,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             KBModel model = kbserv.CurrentModel;
 
-            var sorted = from obj in model.Objects.GetAll()
+            var sorted = from obj in Utility.EditableObjects(model.Objects.GetAll())
                          where (!obj.Name.StartsWith("KBD_"))
                          select obj;
             KBDoctorOutput.Message(sorted.ToList().Count.ToString());
@@ -149,7 +149,7 @@ namespace Concepto.Packages.KBDoctor
 
 
 
-                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(UIServices.KB.CurrentModel.Objects.GetAll()))
                 {
                     if (Functions.isRunable(obj))
 
@@ -308,7 +308,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorOutput.Message("Processing commits");
                 Dictionary<string,int> dict_commits = GenerateCommitsDictionary(revisions_list, kbserv.CurrentModel);
-                IEnumerable<KBObject> kbobjs = UIServices.KB.CurrentModel.Objects.GetAll();
+                IEnumerable<KBObject> kbobjs = Utility.EditableObjects(UIServices.KB.CurrentModel.Objects.GetAll());
                 int total = kbobjs.Count();
                 int percent_cant = Convert.ToInt32(Math.Round((double)(total / 100)));
                 int nro_iter = 0;
@@ -547,7 +547,7 @@ namespace Concepto.Packages.KBDoctor
                 int ComplexityIndexTotal = 0;
                 int ObjectsTotal = 0;
 
-                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(UIServices.KB.CurrentModel.Objects.GetAll()))
                 {
 
                     if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)

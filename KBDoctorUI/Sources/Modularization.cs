@@ -25,6 +25,7 @@ using Artech.Genexus.Common.Services;
 using Artech.Udm.Framework.References;
 using System.Linq;
 using Artech.Udm.Framework;
+using Concepto.Packages.KBDoctorCore.Sources;
 
 namespace Concepto.Packages.KBDoctor.Modularization
 {
@@ -62,7 +63,7 @@ namespace Concepto.Packages.KBDoctor.Modularization
             //Create 3 rows
             DataRow row;
 
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
             {
                 if (obj is Table)
                 {

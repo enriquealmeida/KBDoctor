@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -70,7 +70,7 @@ namespace Concepto.Packages.KBDoctor
 
 
             int iObj = 0;
-            foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+            foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
             {
                 if (!(obj is Domain | obj is Artech.Genexus.Common.Objects.Theme | obj is DataView | obj is Index | obj is KBCategory | obj is DataProvider | obj is Artech.Genexus.Common.Objects.Menubar | obj is DataView | obj is Diagram | obj is Folder | obj is Image |
                     obj is ExternalObject | obj is ThemeClass | obj is ThemeColor | obj is DataViewIndex | obj is Artech.Architecture.Common.Objects.Module  | obj is Artech.Genexus.Common.Objects.DesignSystem | obj is Artech.Genexus.Common.Objects.Group))
@@ -481,7 +481,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Type", "Name", "Description", "UpdateDB?" });
 
-                foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
                 {
                     ICallableObject callableObject = obj as ICallableObject;
                     if (callableObject != null && isGenerated(obj))
@@ -816,7 +816,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 writer.AddTableHeader(legacyCode);
                 int objWithLegacyCode = 0;
 
-                foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetAll())
+                foreach (KBObject obj in Utility.EditableObjects(UIServices.KB.CurrentModel.Objects.GetAll()))
                 {
 
                     if (obj is Transaction || obj is WebPanel || obj is Procedure || obj is WorkPanel)
