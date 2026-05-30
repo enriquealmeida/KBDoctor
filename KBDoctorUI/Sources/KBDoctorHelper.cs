@@ -27,16 +27,31 @@ namespace Concepto.Packages.KBDoctor
 
         public static void ShowKBDoctorResults(string outputFile)
         {
-            UIServices.ToolWindows.ShowToolWindow(KBDoctorToolWindow.guid);
-            UIServices.ToolWindows.FocusToolWindow(KBDoctorToolWindow.guid);
-            IToolWindow ikbdtw;
-            if(UIServices.ToolWindows.TryGet(KBDoctorToolWindow.guid, out ikbdtw)) { 
-                KBDoctorToolWindow kbdtw = (KBDoctorToolWindow)ikbdtw;
-                kbdtw.Navigate(outputFile);
-            }
-            else
+            try
             {
-                KBDoctorOutput.Error("Error trying to show results.");
+                UIServices.ToolWindows.ShowToolWindow(KBDoctorToolWindow.guid);
+                UIServices.ToolWindows.FocusToolWindow(KBDoctorToolWindow.guid);
+                IToolWindow ikbdtw;
+                if (UIServices.ToolWindows.TryGet(KBDoctorToolWindow.guid, out ikbdtw))
+                {
+                    KBDoctorToolWindow kbdtw = (KBDoctorToolWindow)ikbdtw;
+                    kbdtw.Navigate(outputFile);
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                KBDoctorOutput.Warning("Could not open KBDoctor tool window: " + e.Message);
+            }
+
+            try
+            {
+                UIServices.StartPage.OpenPage(outputFile, "KBDoctor", null);
+                UIServices.ToolWindows.FocusToolWindow(UIServices.StartPage.ToolWindow.Id);
+            }
+            catch (Exception e)
+            {
+                KBDoctorOutput.Error("Error trying to show results. Output file: " + outputFile + ". " + e.Message);
             }
         }
 

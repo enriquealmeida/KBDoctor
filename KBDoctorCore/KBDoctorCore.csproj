@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
     <TargetFrameworkProfile />
     <DefineConstants Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">EVO3</DefineConstants>
   </PropertyGroup>
@@ -135,6 +136,7 @@
     <Compile Include="Sources\Navigation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sources\Objects.cs" />
+    <Compile Include="Sources\Tables.cs" />
     <Compile Include="Sources\Utility.cs" />
     <Compile Include="StringResources.Designer.cs">
       <AutoGen>True</AutoGen>

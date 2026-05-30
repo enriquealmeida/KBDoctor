@@ -22,6 +22,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
@@ -48,6 +49,11 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\Icons\Red-Cross.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SystemResourcesExtensionsPath Condition="Exists('$(GX_PROGRAM_DIR)\System.Resources.Extensions.dll')">$(GX_PROGRAM_DIR)\System.Resources.Extensions.dll</SystemResourcesExtensionsPath>
+    <SystemResourcesExtensionsPath Condition="'$(SystemResourcesExtensionsPath)' == '' and Exists('$(GX_PROGRAM_DIR)\..\GeneXus18\System.Resources.Extensions.dll')">$(GX_PROGRAM_DIR)\..\GeneXus18\System.Resources.Extensions.dll</SystemResourcesExtensionsPath>
+    <SystemResourcesExtensionsPath Condition="'$(SystemResourcesExtensionsPath)' == '' and Exists('C:\GeneXus\GeneXus18\System.Resources.Extensions.dll')">C:\GeneXus\GeneXus18\System.Resources.Extensions.dll</SystemResourcesExtensionsPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -166,12 +172,12 @@
     <Reference Include="Infragistics2.Win.UltraWinGrid.v11.1">
       <HintPath>$(GX_PROGRAM_DIR)\Infragistics2.Win.UltraWinGrid.v11.1.dll</HintPath>
     </Reference>
-    <Reference Include="KBDoctorCore, Version=10.20.8804.31264, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\KBDoctorCore\bin\Debug\KBDoctorCore.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>$(GX_SDK_DIR)\bin\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Resources.Extensions">
+      <HintPath>$(SystemResourcesExtensionsPath)</HintPath>
+      <Private>true</Private>
     </Reference>
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Tasks.v3.5" />
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v3.5' " Include="Microsoft.Build.Utilities.v3.5" />
@@ -231,13 +237,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj" />
     <ProjectReference Include="..\Louvain\LouvainCommunityPL.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ini-parser" Version="2.5.2" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Resources.Extensions" Version="9.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Properties\Resources.Designer.cs" />
@@ -254,10 +259,16 @@
   <Target Name="CopyKBDoctorToGeneXusPackages" AfterTargets="Build" Condition="'$(GX_PROGRAM_DIR)' != ''">
     <ItemGroup>
       <KBDoctorDebugFiles Include="$(TargetDir)KBDoctor*.dll;$(TargetDir)KBDoctor*.pdb;$(TargetDir)KBDoctor*.dll.config" />
+      <KBDoctorDependencyFiles Include="$(SystemResourcesExtensionsPath)" Condition="'$(SystemResourcesExtensionsPath)' != ''" />
+      <KBDoctorDependencyFiles Include="$(GX_PROGRAM_DIR)\System.Memory.dll" />
+      <KBDoctorDependencyFiles Include="$(GX_PROGRAM_DIR)\System.Buffers.dll" />
+      <KBDoctorDependencyFiles Include="$(GX_PROGRAM_DIR)\System.Numerics.Vectors.dll" />
+      <KBDoctorDependencyFiles Include="$(GX_PROGRAM_DIR)\System.Runtime.CompilerServices.Unsafe.dll" />
     </ItemGroup>
     <MakeDir Directories="$(GX_PROGRAM_DIR)\Packages" />
     <Copy SourceFiles="@(KBDoctorDebugFiles)" DestinationFolder="$(GX_PROGRAM_DIR)\Packages\" SkipUnchangedFiles="true" />
-    <Message Text="Copied @(KBDoctorDebugFiles->'%(Filename)%(Extension)', ', ') to $(GX_PROGRAM_DIR)\Packages" Importance="high" />
+    <Copy SourceFiles="@(KBDoctorDependencyFiles)" DestinationFolder="$(GX_PROGRAM_DIR)\Packages\" SkipUnchangedFiles="true" />
+    <Message Text="Copied @(KBDoctorDebugFiles->'%(Filename)%(Extension)', ', '), @(KBDoctorDependencyFiles->'%(Filename)%(Extension)', ', ') to $(GX_PROGRAM_DIR)\Packages" Importance="high" />
   </Target>
   <Target Name="WarnMissingGeneXusInstallDir" AfterTargets="Build" Condition="'$(GX_PROGRAM_DIR)' == ''">
     <Warning Text="GX_PROGRAM_DIR is not set. KBDoctor assemblies were not copied to the GeneXus Packages directory." />

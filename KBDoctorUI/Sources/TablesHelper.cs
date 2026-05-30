@@ -33,50 +33,17 @@ namespace Concepto.Packages.KBDoctor
         public static void ListTables()
         {
             IKBService kbserv = UIServices.KB;
-            KBModel model = UIServices.KB.CurrentModel;
 
             string title = "KBDoctor - Tables";
             KBDoctorReport.Run(title, new string[] {
                 "Name", "Description","Module","is Public", "#Key", "Key Width", "Width Variable", "Width Fixed", "Width Total" , "Cache Level"
             }, writer =>
             {
-                string description;
-                foreach (Table t in Table.GetAll(kbserv.CurrentModel))
+                foreach (Tables.TableSummary table in Tables.GetTableSummaries(kbserv.CurrentModel))
                 {
-                    description = Functions.CommandLink("AssignDescriptionToTable", t.Description, "tblName", t.Description);
-                    string objNameLink = Functions.linkObject(t);
-
-                    KBDoctorOutput.Message( "Processing... " + t.Name);
-
-                    int countAttr = 0;
-                    int countKeyAttr = 0;
-                    int widthKey = 0;
-                    int width = 0;
-                    int widthVariable = 0;
-                    int widthFixed = 0;
-                    foreach (TableAttribute attr in t.TableStructure.Attributes)
-                    {
-                        countAttr += 1;
-                        if (attr.IsKey)
-                        {
-                            countKeyAttr += 1;
-                            widthKey += attr.Attribute.Length;
-                        }
-                        width += attr.Attribute.Length;
-                        if ((attr.Attribute.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR) || (attr.Attribute.Type == Artech.Genexus.Common.eDBType.VARCHAR))
-                        {
-                            widthVariable += attr.Attribute.Length;
-                        }
-                        else
-                        {
-                            widthFixed += attr.Attribute.Length;
-                        }
-                    }
-
-                    string CacheLevel = t.GetPropertyValueString("CACHE_LEVEL");
-                    string isPublic = t.IsPublic ? "Yes" : "";
+                    KBDoctorOutput.Message("Processing... " + table.Table.Name);
                     writer.AddTableData(new string[] {
-                    objNameLink, t.Description, TableModule(model,t).Name, isPublic, countKeyAttr.ToString(), widthKey.ToString(), widthVariable.ToString(), widthFixed.ToString(), width.ToString() , CacheLevel
+                    Functions.linkObject(table.Table), table.Table.Description, table.ModuleName, table.IsPublic, table.KeyCount.ToString(), table.KeyWidth.ToString(), table.VariableWidth.ToString(), table.FixedWidth.ToString(), table.TotalWidth.ToString() , table.CacheLevel
                 });
 
                 }
@@ -85,16 +52,7 @@ namespace Concepto.Packages.KBDoctor
 
         internal static Table TableOfAttribute(Artech.Genexus.Common.Objects.Attribute a)
         {
-           foreach (EntityReference refer in a.GetReferencesTo(a.Model.Id))
-            {
-                KBObject t = KBObject.Get(a.Model, refer.From);
-                if (t != null)
-                {
-                    if (t is Table)
-                        return (Table)t;
-                }
-            }
-            return null;
+            return Tables.TableOfAttribute(a);
         }
 
         public static void ListWithoutDescription()
@@ -105,16 +63,12 @@ namespace Concepto.Packages.KBDoctor
                 "Name", "Description"
             }, writer =>
             {
-                string description;
-                foreach (Table t in Table.GetAll(kbserv.CurrentModel))
+                foreach (Tables.TableDescriptionIssue issue in Tables.GetTablesWithoutDescription(kbserv.CurrentModel))
                 {
-                    if (t.Name == t.Description.Replace(" ", ""))
-                    {
-                        description = Functions.CommandLink("AssignDescriptionToTable", t.Description, "tblName", t.Name);
-                        writer.AddTableData(new string[] {
-                        t.Name, description
+                    string description = Functions.CommandLink("AssignDescriptionToTable", issue.Table.Description, "tblName", issue.Table.Name);
+                    writer.AddTableData(new string[] {
+                        issue.Table.Name, description
                     });
-                    }
                 }
             });
         }
@@ -127,16 +81,11 @@ namespace Concepto.Packages.KBDoctor
                 "Name", "Description"
             }, writer =>
             {
-                foreach (Group g in Group.GetAll(kbserv.CurrentModel))
+                foreach (Tables.GroupDescriptionIssue issue in Tables.GetGroupsWithoutDescription(kbserv.CurrentModel))
                 {
-                    if (g.Name == g.Description.Replace(" ", "") || (g.Name == ""))
-                    {
-                        string grpLink = Functions.linkObject(g);
-
-                        writer.AddTableData(new string[] {
-                        grpLink, g.Description
+                    writer.AddTableData(new string[] {
+                        Functions.linkObject(issue.Group), issue.Group.Description
                     });
-                    }
                 }
             });
         }
@@ -183,40 +132,11 @@ namespace Concepto.Packages.KBDoctor
                 "Name", "Description", "#Key", "Key Width", "Width Variable", "Width Fixed", "Width Total" , "Cache Level"
             }, writer =>
             {
-                foreach (Table t in Table.GetAll(kbserv.CurrentModel))
+                foreach (Tables.TableSummary table in Tables.GetTableSummaries(kbserv.CurrentModel))
                 {
-                    string objNameLink = Functions.linkObject(t);
-
-                    KBDoctorOutput.Message( "Processing... " + t.Name);
-
-                    int countAttr = 0;
-                    int countKeyAttr = 0;
-                    int widthKey = 0;
-                    int width = 0;
-                    int widthVariable = 0;
-                    int widthFixed = 0;
-                    foreach (TableAttribute attr in t.TableStructure.Attributes)
-                    {
-                        countAttr += 1;
-                        if (attr.IsKey)
-                        {
-                            countKeyAttr += 1;
-                            widthKey += attr.Attribute.Length;
-                        }
-                        width += attr.Attribute.Length;
-                        if ((attr.Attribute.Type == Artech.Genexus.Common.eDBType.LONGVARCHAR) || (attr.Attribute.Type == Artech.Genexus.Common.eDBType.VARCHAR))
-                        {
-                            widthVariable += attr.Attribute.Length;
-                        }
-                        else
-                        {
-                            widthFixed += attr.Attribute.Length;
-                        }
-                    }
-
-                    string CacheLevel = t.GetPropertyValueString("CACHE_LEVEL");
+                    KBDoctorOutput.Message("Processing... " + table.Table.Name);
                     writer.AddTableData(new string[] {
-                    objNameLink, t.Description, countKeyAttr.ToString(), widthKey.ToString(), widthVariable.ToString(), widthFixed.ToString(), width.ToString() , CacheLevel
+                    Functions.linkObject(table.Table), table.Table.Description, table.KeyCount.ToString(), table.KeyWidth.ToString(), table.VariableWidth.ToString(), table.FixedWidth.ToString(), table.TotalWidth.ToString() , table.CacheLevel
                 });
 
                 }
@@ -233,21 +153,22 @@ namespace Concepto.Packages.KBDoctor
                 "Table", "Transactions with GenerateObject=False", " Transactions with GENERATEObject=True","Check"
             }, writer =>
             {
-                foreach (Table tbl in Table.GetAll(kbserv.CurrentModel))
+                foreach (Tables.TableTransactionRelation relation in Tables.GetTableTransactionRelations(kbserv.CurrentModel))
                 {
-                    string tblNamelink = Functions.linkObject((KBObject)tbl);
-
                     string trnGen = "";
                     string trnNoGen = "";
-                    foreach (Transaction trn in tbl.AssociatedTransactions)
+                    foreach (Transaction trn in relation.GeneratedTransactions)
                     {
-                        if (trn.GetPropertyValue<bool>(Properties.TRN.GenerateObject)) trnGen += Functions.linkObject(trn) + " ";
-                        else trnNoGen += Functions.linkObject(trn) + " ";
+                        trnGen += Functions.linkObject(trn) + " ";
+                    }
+                    foreach (Transaction trn in relation.NotGeneratedTransactions)
+                    {
+                        trnNoGen += Functions.linkObject(trn) + " ";
                     }
 
                     writer.AddTableData(new string[] {
 
-                    tblNamelink, trnNoGen, trnGen,(trnGen!="" && trnNoGen!="")?"*":""
+                    Functions.linkObject((KBObject)relation.Table), trnNoGen, trnGen, relation.HasMixedGeneration ? "*" : ""
                 });
                 }
             });
@@ -855,7 +776,7 @@ namespace Concepto.Packages.KBDoctor
 
         public static Module TableModule(KBModel m, Table t)
         {
-            return Artech.Genexus.Common.Services.GenexusBLServices.Tables.GetBestAssociatedTransaction(m, t.Key).Module;
+            return Tables.TableModule(m, t);
         }
 
         public static void GenerateDPFromOneTable(Table t)
@@ -1566,23 +1487,12 @@ namespace Concepto.Packages.KBDoctor
 
         public static string ShortName(int length, string name)
         {
-            if (name.Length > length)
-                name = name.Substring(0, length);
-            return name;
+            return Tables.ShortName(length, name);
         }
 
         public static string KeyList(Table t, int ATTNAME_LEN)
         {
-            string tblKey = "";
-            string coma = "";
-            foreach (TableAttribute a in t.TableStructure.PrimaryKey)
-            {
-                string attName = ShortName(ATTNAME_LEN, a.Name);
-                tblKey += coma + attName;
-                coma = ",";
-            }
-
-            return tblKey;
+            return Tables.KeyList(t, ATTNAME_LEN);
         }
 
         private static string NullConditionKey(Table t, int ATTNAME_LEN)

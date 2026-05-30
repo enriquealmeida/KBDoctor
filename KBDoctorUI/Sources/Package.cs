@@ -30,6 +30,7 @@ namespace Concepto.Packages.KBDoctor
         public override void Initialize(IGxServiceProvider services)
         {
          base.Initialize(services);
+            LoadToolWindows();
             AddCommandTarget(new CommandManager());
         }
 

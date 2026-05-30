@@ -11,6 +11,7 @@
     <AssemblyName>KBDoctorCmd</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -93,14 +94,6 @@
     <Compile Include="SaveObjectsWSDLCmd.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IniFileParser\INIFileParser.csproj">
-      <Project>{5e46dcf4-c473-4171-9f9b-f3910b5ec407}</Project>
-      <Name>INIFileParser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj">
-      <Project>{280a5263-3efa-4585-86dd-ea8fd5310a4f}</Project>
-      <Name>KBDoctorCore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\KBDoctorCore\KBDoctorCore.csproj">
       <Project>{280a5263-3efa-4585-86dd-ea8fd5310a4f}</Project>
       <Name>KBDoctorCore</Name>
