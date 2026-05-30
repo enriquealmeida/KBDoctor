@@ -134,7 +134,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey listProperties = new CommandKey(Package.guid, "ListProperties");
 
         private static CommandKey cleanVarsNotUsed = new CommandKey(Package.guid, "CleanVarsNotUsed");
-        private static CommandKey objectsComplex = new CommandKey(Package.guid, "ObjectsComplex");
+        private static CommandKey objectMigration = new CommandKey(Package.guid, "ObjectMigration");
         private static CommandKey objectsLegacyCode = new CommandKey(Package.guid, "ObjectsLegacyCode");
         private static CommandKey changeLegacyCode = new CommandKey(Package.guid, "ChangeLegacyCode");
 
@@ -160,6 +160,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static CommandKey generateGraph = new CommandKey(Package.guid, "GenerateGraph");
         private static CommandKey themeClassesNotUsed = new CommandKey(Package.guid, "ThemeClassesNotUsed");
+        private static CommandKey objthemeClassesNotUsed = new CommandKey(Package.guid, "ObjThemeClassesNotUsed");
         private static CommandKey parameterTypeComparer = new CommandKey(Package.guid, "ParameterTypeComparer");
         private static CommandKey objectsWithRuleOld = new CommandKey(Package.guid, "ObjectsWithRuleOld");
         private static CommandKey emptyConditionalBlocks = new CommandKey(Package.guid, "EmptyConditionalBlocks");
@@ -170,9 +171,10 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey generateRESTCalls = new CommandKey(Package.guid, "GenerateRESTCalls");
         private static CommandKey sDTsWithDateInWS = new CommandKey(Package.guid, "SDTsWithDateInWS");
         private static CommandKey generateSDTDataLoad = new CommandKey(Package.guid, "GenerateSDTDataLoad");
-        
+        private static CommandKey listWebObjectsProperties = new CommandKey(Package.guid, "ListWebObjectsProperties");
+        public static CommandKey ListWebObjectsProperties { get { return listWebObjectsProperties ; } }
 
-        public static CommandKey ObjNotReacheable { get { return objNotReacheable; } }
+        public static CommandKey ObjNotReacheable { get { return objNotReacheable; } } 
         public static CommandKey ObjectsWithoutInOut { get { return objectsWithoutInOut; } }
         public static CommandKey ObjectsMainCalled { get { return objectsMainCalled; } }
         public static CommandKey ObjectsReferenced { get { return objectsReferenced; } }
@@ -191,7 +193,7 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey ObjectsWithVarsNotUsed { get { return objectsWithVarsNotUsed; } }
 
         public static CommandKey CleanVarsNotUsed { get { return cleanVarsNotUsed; } }
-        public static CommandKey ObjectsComplex { get { return objectsComplex; } }
+        public static CommandKey ObjectMigration { get { return objectMigration; } }
         public static CommandKey ObjectsLegacyCode { get { return objectsLegacyCode; } }
         public static CommandKey ChangeLegacyCode { get { return changeLegacyCode; } }
         public static CommandKey ChangeCommitOnExit { get { return changeCommitOnExit; } }
@@ -218,6 +220,7 @@ namespace Concepto.Packages.KBDoctor
         
         public static CommandKey GenerateGraph { get { return generateGraph; } }
         public static CommandKey ThemeClassesNotUsed { get { return themeClassesNotUsed; } }
+        public static CommandKey ObjThemeClassesNotUsed { get { return objthemeClassesNotUsed; } }
         public static CommandKey ParameterTypeComparer { get { return parameterTypeComparer; } }
         public static CommandKey ObjectsWithRuleOld { get { return objectsWithRuleOld; } }
         public static CommandKey EmptyConditionalBlocks { get { return emptyConditionalBlocks; } }
@@ -335,6 +338,9 @@ namespace Concepto.Packages.KBDoctor
 
         private static CommandKey listModularizationQuality = new CommandKey(Package.guid, "ListModularizationQuality");
         public static CommandKey ListModularizationQuality { get { return listModularizationQuality; } }
+
+        private static CommandKey addModularizationInfo = new CommandKey(Package.guid, "AddModularizationInfo");
+        public static CommandKey AddModularizationInfo { get { return addModularizationInfo; } }
 
         private static CommandKey detectMavericks = new CommandKey(Package.guid, "DetectMavericks");
         public static CommandKey DetectMavericks { get { return detectMavericks; } }

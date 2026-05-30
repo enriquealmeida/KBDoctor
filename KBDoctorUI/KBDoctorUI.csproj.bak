@@ -43,7 +43,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
-    <DefineConstants Condition="'$(TargetFrameworkVersion)' == 'v3.5' ">EVO3</DefineConstants>
+    <DefineConstants Condition="'$(TargetFrameworkVersion)' == 'v4.7.2' ">EVO3</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\Icons\Red-Cross.ico</ApplicationIcon>
@@ -178,6 +178,8 @@
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.6' " Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7.1' " Include="Microsoft.Build.Tasks.v4.0" />
     <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7.1' " Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7.2' " Include="Microsoft.Build.Tasks.v4.0" />
+    <Reference Condition=" '$(TargetFrameworkVersion)' == 'v4.7.2' " Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
       <HintPath>$(GX_SDK_DIR)\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
     </Reference>
@@ -236,14 +238,19 @@
     <PackageReference Include="ini-parser" Version="2.5.2" />
     <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Resources.Extensions" Version="9.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="AttributesHelper.cs" />
+    <Compile Remove="Functions.cs" />
+    <Compile Remove="Modularization\Modularization.cs" />
+    <Compile Remove="Modularization\Modularization.Designer.cs" />
+    <Compile Remove="ObjectsHelper.cs" />
     <Compile Remove="Properties\Resources.Designer.cs" />
     <Compile Remove="SearchReplace.cs" />
     <Compile Remove="SearchReplace.Designer.cs" />
     <Compile Remove="Sources\Modularization.cs" />
     <Compile Remove="Sources\Modularization.Designer.cs" />
+    <EmbeddedResource Remove="Modularization\Modularization.resx" />
     <EmbeddedResource Remove="SearchReplace.resx" />
     <EmbeddedResource Remove="Sources\Modularization.resx" />
   </ItemGroup>
@@ -251,10 +258,8 @@
     <Message Text="Version = $(Major).$(Minor).$(Build).$(Revision)" Importance="high" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy C:\mis_cosas\Projects\KBDoctor\KBDoctorUI\bin\Debug\net472\kbdoctor*.dll  "C:\GeneXus\GeneXus18U10dev\Packages\Packages\" /q /Y </PostBuildEvent>
-    <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
-    <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
-    <EnableNETAnalyzers>True</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <PostBuildEvent>xcopy kbdoctor*.*  "%GX_PROGRAM_DIR%\Packages\" /q /Y 
+rem xcopy KBDoctorCore.* "%GX_PROGRAM_DIR%\Packages\" /q /Y
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

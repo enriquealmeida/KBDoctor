@@ -26,6 +26,7 @@
     <CommandDefinition id="GenerateGraph" />
     <CommandDefinition id="ApplyExternalModularization" />
     <CommandDefinition id="ListModularizationQuality" />
+    <CommandDefinition id="AddModularizationInfo" />
     <CommandDefinition id="DetectMavericks" />
     <!-- Tablas -->
     <CommandDefinition id="ListTables" />
@@ -40,6 +41,7 @@
     <CommandDefinition id="TableUpdate" />
     <CommandDefinition id="TableInsertNew" />
     <CommandDefinition id="GenerateTrnFromTables2" />
+	<CommandDefinition id="GenerateTrnFromTables" />
     <CommandDefinition id="ListTablesInModules" />
     <CommandDefinition id="ListObjectsWithTableInOtherModule" />    
     <CommandDefinition id="GenerateDPfromTable" />
@@ -63,7 +65,7 @@
     <CommandDefinition id="ObjectsWithCommitOnExit" />
     <CommandDefinition id="ListCommitOnExit" />
     <CommandDefinition id="RemovableTransactions" />
-    <CommandDefinition id="ObjectsComplex" />
+    <CommandDefinition id="ObjectMigration" />
     <CommandDefinition id="ObjectsLegacyCode" />
     <CommandDefinition id="ChangeLegacyCode" />
     <CommandDefinition id="ChangeCommitOnExit" />
@@ -119,6 +121,7 @@
     <CommandDefinition id="CleanObjects" />
     <CommandDefinition id="ResetWINForm" />
     <CommandDefinition id="ThemeClassesNotUsed" />
+	<CommandDefinition id="ObjThemeClassesNotUsed" />
     <CommandDefinition id="AssignTypeComparer" />
     <CommandDefinition id="ParameterTypeComparer" />
     <CommandDefinition id="ObjectsWithRuleOld" />
@@ -131,6 +134,7 @@
     <CommandDefinition id="SDTsWithDateInWS" />
     <CommandDefinition id="GenerateSDTDataLoad" />
     <CommandDefinition id="CheckVariableUsages"/>
+	<CommandDefinition id="ListWebObjectsProperties"/>
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
     <CommandDefinition id="CountGeneratedByPattern" />
@@ -234,6 +238,7 @@
               <Command refid="CompareLastOBJDirectory" />
               <Command refid="OpenFolderObjComparerNavigation"  />
 			  <Command refid="FixVariablesNotBasedInAttributesOrDomain" />
+				<Command refid="ListWebObjectsProperties"/>
             </Group>
 
           </Popup>
@@ -306,6 +311,7 @@
               <Command refid="GenerateGraph"/>
               <Command refid="ApplyExternalModularization" />
               <Command refid="ListModularizationQuality" />
+              <Command refid="AddModularizationInfo" />
               <Command refid="DetectMavericks" />
             </Popup>
           </Group>
@@ -326,18 +332,21 @@
             <Command refid="AboutKBDoctor"  />
             <Command refid="ListDynamicCombo"/>
           </Popup>
-   <!--
+
+			
+          
+			
           <Group id="LABS" >
             <Popup name ="Labs">
-             
+			  <Command refid="GenerateTrnFromTables"/>
               <Command refid="AddINParmRule"/>
               <Command refid="ProcedureSDT"/>
               <Command refid="ProcedureGetSet"/>
-              <Command refid="CreateDeployUnits" />
-              <Command refid="GenerateSimpleTransactionFromNotGeneratedTransactions" />
+              <Command refid="CreateDeployUnits"/>
+              <Command refid="GenerateSimpleTransactionFromNotGeneratedTransactions"/>
               <Command refid="RenameVariables"/>
               <Command refid="ObjectsWithVarsNotUsed"/>
-              <Command refid="GenerateTrnFromTables2" />
+              <Command refid="GenerateTrnFromTables2"/>
               <Command refid="AttDescWithoutUniqueIndex"/>
               <Command refid="TableInsertNew" />
               <Command refid="MainTableUsed"  />
@@ -345,7 +354,7 @@
               <Command refid="ObjectsWithCommitOnExit"/>
               <Command refid="ListCommitOnExit"/>
               <Command refid="ObjectsWINWEB" />
-              <Command refid="ListProcedureCallWebpanelTransaction" />
+              <Command refid="ListProcedureCallWebpanelTransaction"/>
               <Command refid="ObjectsLegacyCode" />
               <Command refid="MarkPublicObjects" />
               <Command refid="ObjectsNotReacheable"/>
@@ -366,41 +375,44 @@
               <Command refid="GenerateSDTDataLoad" />
               <Command refid="GenerateDPfromTable"/>
               <Command refid="AttributeAsOutput"/>
-              <Command refid="CheckVariableUsages"/>
-
-
+              <Command refid="CheckVariableUsages"/> 
+			  <Command refid="GenerateSQLScripts"/>
+	
               <Popup name ="Themes" >
                   <Group>
                     <Command refid="ClassNotInTheme" />
                     <Command refid="ClassUsed" />
                     <Command refid="ListClassUsed" />
+				          	<Command refid="ObjThemeClassesNotUsed"/>
                     <Command refid="ThemeClassesNotUsed"/>
                   </Group>
                 </Popup>
-               <Command refid="GenerateSQLScripts"/>
+
                
 
             </Popup>
           </Group>
-          
-          
+         
 
-          
-          <Group id="LABS2" >
-              <Popup>
+
+		  <Group id="ObjMigration" >
+			  <Popup name ="ObjMigration">
+				  <Command refid="ObjectMigration" />
+				  <!--
                 <Command refid="GenerateSQLScripts"/>
                 <Command refid="GenerateLocationXML" />
                 <Command refid="CleanObjects" />
-                <Command refid="ObjectsComplex" />
+                
                 <Group>
                   <Command refid="ObjectsMainCalled"/>
                   <Command refid="ChangeLegacyCode" />
                   <Command refid="EditLegacyCodeToReplace" />
                   <Command refid="UDPCallables"/>
                 </Group>
+				-->
              </Popup>
           </Group>
-          -->
+  
           
       </Popup>
     </Popup>

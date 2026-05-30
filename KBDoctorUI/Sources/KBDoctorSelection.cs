@@ -1,0 +1,38 @@
+using System.Collections.Generic;
+using Artech.Architecture.Common.Descriptors;
+using Artech.Architecture.Common.Objects;
+using Artech.Architecture.UI.Framework.Services;
+using Artech.Common.Framework.Selection;
+using Artech.Genexus.Common.Objects;
+
+namespace Concepto.Packages.KBDoctor
+{
+    static class KBDoctorSelection
+    {
+        public static List<KBObject> SelectProcedureWebPanelTransaction()
+        {
+            SelectObjectOptions options = new SelectObjectOptions();
+            options.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            options.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            options.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
+            options.MultipleSelection = true;
+
+            return SelectObjects(options);
+        }
+
+        private static List<KBObject> SelectObjects(SelectObjectOptions options)
+        {
+            List<KBObject> selectedObjects = new List<KBObject>();
+
+            foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(options))
+            {
+                if (obj != null)
+                {
+                    selectedObjects.Add(obj);
+                }
+            }
+
+            return selectedObjects;
+        }
+    }
+}

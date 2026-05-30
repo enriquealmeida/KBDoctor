@@ -487,7 +487,7 @@ namespace Concepto.Packages.KBDoctor
         {
             string attBAux = v.AttributeBasedOn == null ? "" : v.AttributeBasedOn.Name;
             string domBAux = v.DomainBasedOn == null ? "" : v.DomainBasedOn.Name;
-            string varaux = v.Name + ":" + v.Type.ToString() + ":" + v.Length.ToString() + ":" + attBAux + ":" + domBAux;
+            string varaux = v.Name + ":" + Utility.FormattedTypeVariable(v) + ":" + attBAux + ":" + domBAux;
             varaux = varaux + "->" + varaux; 
                    
             Functions.AddLine("RenameVariables.txt", varaux);

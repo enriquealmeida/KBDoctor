@@ -2,7 +2,6 @@ using System;
 using System.Windows.Forms;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Reflection;
 using System.Linq;
 using System.IO;
 using System.Diagnostics;
@@ -17,47 +16,38 @@ using Artech.Genexus.Common.Parts.SDT;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Helpers;
 using Artech.Genexus.Common.CustomTypes;
-using Artech.Common.Properties;
-using Artech.Common.Language.Parser;
 
 using Artech.Common.Diagnostics;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Architecture.UI.Framework.Objects;
 using Artech.Architecture.Language.Services;
 using Artech.Architecture.Language.Parser;
-using Artech.Architecture.Language.Parser.Objects;
-using Artech.Architecture.Language.Parser.Data;
 using Artech.Architecture.Common;
 using Artech.Architecture.Common.Services;
 using Artech.Architecture.Common.Objects;
-using Artech.Architecture.Common.Helpers;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Architecture.Common.Collections;
-using Artech.Architecture.BL.Framework;
 using Artech.Architecture.BL.Framework.Services;
 using GeneXus.Server.Contracts;
 using Artech.Architecture.Language.ComponentModel;
 
 using Artech.Udm.Framework;
 using Concepto.Packages.KBDoctorCore.Sources;
-using Artech.Genexus.Common.AST;
-using Artech.Architecture.Common.Location;
-using Artech.Genexus.Common.Types;
 using System.Threading;
 using Artech.Genexus.Common.Parts.WebForm;
-using Artech.Common.Helpers.Structure;
-using Artech.Genexus.Common.Parts.ExternalObject;
 using API = Concepto.Packages.KBDoctorCore.Sources.API;
 using Concepto.Packages.KBDoctor.Sources;
-using static Artech.Genexus.Common.Properties;
-using System.Xml;
 
 using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.Text.RegularExpressions;
 using Formatting = Newtonsoft.Json.Formatting;
-using System.Runtime.Remoting;
+using Artech.Genexus.Common.Parts.Form.DOM;
+using Artech.Genexus.Common.Parts.Form;
+using Artech.Patterns.WorkWithDevices.Objects;
+using Artech.Packages.Patterns.Objects;
+using Artech.Patterns.WorkWithDevices.Helpers;
+using Artech.Patterns.WorkWithDevices;
+using Artech.Common.Helpers.Reflection;
+//using Menubar = Artech.Genexus.Common.KMW.Menubar;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -117,7 +107,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     KBDoctorOutput.Message( "Removing " + obj.Name + " from  KBDoctor.Unreachable category");
                     obj.RemoveCategory(catR);
-                    if (!obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject) && (obj is Procedure | obj is WebPanel | obj is WorkPanel | obj is Transaction | obj is DataProvider | obj is Menubar))
+                    if (!obj.GetPropertyValue<bool>(Properties.TRN.GenerateObject) && (obj is Procedure | obj is WebPanel | obj is WorkPanel | obj is Transaction | obj is DataProvider ))
                     {
                         obj.SetPropertyValue(Properties.TRN.GenerateObject, true);
                     }
@@ -156,7 +146,7 @@ namespace Concepto.Packages.KBDoctor
                         }
 
                         string objNameLink = Functions.linkObject(obj);
-                        string remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
+                        string remove = Functions.CommandLink("RemoveObject", "Remove", "guid", obj.Guid.ToString());
                         writer.AddTableData(new string[] { objNameLink, obj.TypeDescriptor.Name, obj.Description, remove });
 
                         if (SaveObj)
@@ -448,7 +438,7 @@ namespace Concepto.Packages.KBDoctor
                                 }
                                 else
                                 {
-                                    remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + obj.Guid.ToString() + "\">Remove</a>";
+                                    remove = Functions.CommandLink("RemoveObject", "Remove", "guid", obj.Guid.ToString());
                                 }
                                 string objNameLink = Functions.linkObject(obj);
                                 string isMainstr = (Utility.IsMain(obj) ? "Main" : string.Empty);
@@ -535,7 +525,7 @@ namespace Concepto.Packages.KBDoctor
                         if (isRemovable)
                         {
                             KBDoctorOutput.Message( "Procesing... " + trn.Name + " REMOVABLE ");
-                            remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
+                            remove = Functions.CommandLink("RemoveObject", "Remove", "guid", trn.Guid.ToString());
                             writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, "" });
                         }
                         else
@@ -543,7 +533,7 @@ namespace Concepto.Packages.KBDoctor
 
                         {
                             KBDoctorOutput.Message( "Procesing... " + trn.Name + " REMOVABLE with warning ");
-                            remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveObject&guid=" + trn.Guid.ToString() + "\">Remove</a>";
+                            remove = Functions.CommandLink("RemoveObject", "Remove", "guid", trn.Guid.ToString());
                             writer.AddTableData(new string[] { "", Functions.linkObject(trn), remove, trn.Description, lstTrns + " WHIT WARNING" });
                         }
                         else
@@ -913,8 +903,8 @@ namespace Concepto.Packages.KBDoctor
                   // 40
             TKN_TRUE, // TRUE
             TKN_FALSE, // FALSE
-            TKN_NONE, // NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR 
-            PRM,  // Parámetro, utilizado en DYNQ
+            TKN_NONE, // NONE, para expresiÃ³n FOR EACH ... ORDER NONE ... ENDFOR 
+            PRM,  // ParÃ¡metro, utilizado en DYNQ
             FND,  // Name Domain
             FLV,  // LEVEL token
             TKN_NEW, // NEW token
@@ -948,7 +938,7 @@ namespace Concepto.Packages.KBDoctor
             TSIGN, // Now that rules supports comments, define the TSIGN token to specified the sign of an expression (e.g. "-1")
             TEXO,
 
-            // ¡¡¡ UNTIL 99 !!!
+            // Â¡Â¡Â¡ UNTIL 99 !!!
             //  Commands codes starts at 100, See dedotcmd.h
 
             ///////////////////////////////////////////////////////////
@@ -1035,10 +1025,10 @@ namespace Concepto.Packages.KBDoctor
             // 170
             DTEFF,
             DTLNK, // Comando LINK
-            DTAPL, // Asignación del tipo +=
-            DTAMI, // Asignación del tipo -=
-            DTAMU, // Asignación del tipo *=
-            DTADI, // Asignación del tipo /=
+            DTAPL, // AsignaciÃ³n del tipo +=
+            DTAMI, // AsignaciÃ³n del tipo -=
+            DTAMU, // AsignaciÃ³n del tipo *=
+            DTADI, // AsignaciÃ³n del tipo /=
             DTFIN, // FOR <var> IN <array>
             DTEFI, // END // del token anterior
             DTFFT, // FOR <var>=<exp> TO <exp> STEP <exp>
@@ -1498,7 +1488,7 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             int iObj = 0;
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
-                if (!(obj is Domain | obj is Artech.Genexus.Common.Objects.Theme | obj is DataView | obj is Index | obj is KBCategory | obj is DataProvider | obj is Menubar | obj is DataView | obj is Diagram | obj is Folder | obj is Image |
+                if (!(obj is Domain | obj is Artech.Genexus.Common.Objects.Theme | obj is DataView | obj is Index | obj is KBCategory | obj is DataProvider | obj is Artech.Genexus.Common.Objects.Menubar | obj is DataView | obj is Diagram | obj is Folder | obj is Image |
                     obj is ExternalObject | obj is ThemeClass | obj is ThemeColor | obj is DataViewIndex | obj is Artech.Architecture.Common.Objects.Module  | obj is Artech.Genexus.Common.Objects.DesignSystem | obj is Artech.Genexus.Common.Objects.Group))
                 {
                     iObj += 1;
@@ -1758,7 +1748,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             {
                 writer.Formatting = Formatting.Indented; // Para una mejor legibilidad del archivo JSON
 
-                // Crear un objeto anónimo con toda la información necesaria
+                // Crear un objeto anÃ³nimo con toda la informaciÃ³n necesaria
                 var objData = new
                 {
                     ObjectName = obj.Name,
@@ -1786,7 +1776,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         {
             foreach (var parte in obj.Parts)
             {
-                // Aquí puedes acceder a las propiedades de cada parte
+                // AquÃ­ puedes acceder a las propiedades de cada parte
                 return  parte.Name;
                 
             }
@@ -1882,12 +1872,12 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         }
 
         // Asumo que ya tienes funciones como GetAttributeData, GetProcedureData, etc., que
-        // devuelven datos específicos formateados para ser parte del objeto JSON.
-        // Similar a los métodos HandleAttribute, HandleProcedure, etc., pero retornando
+        // devuelven datos especÃ­ficos formateados para ser parte del objeto JSON.
+        // Similar a los mÃ©todos HandleAttribute, HandleProcedure, etc., pero retornando
         // objetos o estructuras en lugar de escribir directamente a un archivo.
 
-        // Nota: Deberás implementar métodos como GetRulesPart, GetReferences, y otros para cada tipo de objeto,
-        // que deberán devolver la información correspondiente en formato adecuado para ser serializada a JSON.
+        // Nota: DeberÃ¡s implementar mÃ©todos como GetRulesPart, GetReferences, y otros para cada tipo de objeto,
+        // que deberÃ¡n devolver la informaciÃ³n correspondiente en formato adecuado para ser serializada a JSON.
         private static object GetRulesPart(KBObject obj)
         {
             RulesPart rp = obj.Parts.Get<RulesPart>();
@@ -1993,7 +1983,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         private static void ListItem(SDTItem item, int tabs, System.IO.StreamWriter file)
         {
             WriteTabs(tabs, file);
-            string dataType = item.Type.ToString().Substring(0, 1) + "(" + item.Length.ToString() + (item.Decimals > 0 ? "." + item.Decimals.ToString() : "") + ")" + (item.Signed ? "-" : "");
+            string dataType = Utility.ReturnFormattedType(item.Type, item.Length, item.Decimals, item.Signed);
             file.WriteLine("{0}, {1}, {2} {3}", item.Name, dataType, item.Description, (item.IsCollection ? ", collection " + item.CollectionItemName : ""));
             //if (item.IsCollection)
             //    file.Write(", collection: {0}", item.CollectionItemName);
@@ -2027,7 +2017,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 {
                     if (!Utility.IsMain(objRef))
                     {
-                        if (objRef is Transaction || objRef is WorkPanel || objRef is WebPanel || objRef is Menubar || objRef is Procedure || objRef is DataProvider || objRef is DataSelector)
+                        if (objRef is Transaction || objRef is WorkPanel || objRef is WebPanel || objRef is Artech.Genexus.Common.Objects.Menubar || objRef is Procedure || objRef is DataProvider || objRef is DataSelector)
                             WriteCopyObject(output, objRef, tableOperation, objMarked, mainstr, Dircopia);
                     }
                     else
@@ -2039,59 +2029,363 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             }
         }
 
-        public static void ObjectsComplex()
+        public static void ObjectMigration()
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            string title = "KBDoctor - Complex Objects";
-            try
+
+            /*
+            foreach (KBObject webp in WebPanel.GetAll(kbserv.CurrentModel))
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-                output.StartSection("KBDoctor", title);
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Size" });
-
-                string[] fileEntries = Directory.GetFiles(KBDoctorHelper.SpcDirectory(kbserv), "*.SP0", System.IO.SearchOption.AllDirectories);
-
-                foreach (string fileName in fileEntries)
+                WebFormPart wfp = webp.Parts.Get<WebFormPart>();
+                foreach (IWebTag webTag in WebFormHelper.EnumerateWebTag(wfp))
                 {
-
-                    var length = new System.IO.FileInfo(fileName).Length;
-                    string objName = Path.GetFileNameWithoutExtension(fileName);
-
-                    string[] ns = new[] { "Objects" }; //System.Collections.SortedList()  ;
-                                                       //
-
-
-                    foreach (KBObject obj in UIServices.KB.CurrentModel.Objects.GetByPartialName(ns, objName))
+                    if (webTag != null)
                     {
+                        output.AddLine(webTag.Node.Name + " " + webTag.Type);
+                    }
 
-                        if ((obj.Name == objName) && (length > 200000))
-                        {
-                            writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, length.ToString("N0") });
-                            KBDoctorOutput.Message( fileName);
-                        }
+                }
+                  
+            }
+            */
 
+
+            foreach (WorkPanel obj in WorkPanel.GetAll(kbserv.CurrentModel))
+            {
+                string objName = obj.Name.ToUpper();
+                //  if (objName == "WINV500" || objName == "WINV250" || objName == "WINV501" || objName == "WBaePorE".ToUpper())
+                if  (objName == "WINV501")
+                      {
+                    CreateNewWebPanel(obj);
+                }
+               //CreateNewWebPanel(obj);
+               // CreateNewPanel(obj);
+            }
+            
+
+
+        }
+        public static void CreateNewWebPanel(WorkPanel workPanel)
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            KBModel kbModel = kbserv.CurrentModel;
+
+            WebPanel newWebPanel = new WebPanel(kbModel);
+            newWebPanel.Name = workPanel.Name + "_v18";
+
+            // Copy Variables
+            VariablesPart workPanelVariables = workPanel.Parts.Get<VariablesPart>();
+            if (workPanelVariables != null)
+            {
+                foreach (Variable variable in workPanelVariables.Variables)
+                {
+                    if (!variable.IsStandard)
+                    {
+                        newWebPanel.Variables.Add(variable);
                     }
                 }
-                writer.AddFooter();
-                writer.Close();
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                output.EndSection("KBDoctor", title, success);
             }
-            catch
+
+            // Copy Conditions
+            ConditionsPart workPanelConditions = workPanel.Parts.Get<ConditionsPart>();
+            if (workPanelConditions != null)
             {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
+                newWebPanel.Conditions.Source = workPanelConditions.Source;
+            }
+
+            // Copy Rules
+            RulesPart workPanelRules = workPanel.Parts.Get<RulesPart>();
+            if (workPanelRules != null)
+            {
+                newWebPanel.Rules.Source = workPanelRules.Source;
+            }
+
+            // Copy Events
+            EventsPart workPanelEvents = workPanel.Parts.Get<EventsPart>();
+            if (workPanelEvents != null)
+            {
+                newWebPanel.Events.Source = workPanelEvents.Source;
+            }
+            // Copy Help
+            HelpPart workPanelHelp = workPanel.Parts.Get<HelpPart>();
+            if (workPanelHelp != null)
+            {
+                newWebPanel.Help.HtmlContent = workPanelHelp.HtmlContent;
+            }
+
+            // Copy Documentation
+            DocumentationPart workPanelDocumentation = workPanel.Parts.Get<DocumentationPart>();
+            if (workPanelDocumentation != null)
+            {
+                newWebPanel.Documentation.Page = workPanelDocumentation.Page;
+            }
+
+            // Process Form
+            WinFormPart winForm = workPanel.Parts.Get<WinFormPart>();
+            WebFormPart webForm = newWebPanel.Parts.Get<WebFormPart>();
+            if (winForm != null && webForm != null)
+            {
+                ProcessFormDefinitions(winForm.MyDocument, output, webForm);
+            }
+
+            try
+            {
+                newWebPanel.Save();
+                output.AddLine("WebPanel created successfully: " + newWebPanel.Name);
+            }
+            catch (Exception e)
+            {
+                output.AddErrorLine("Error saving WebPanel: " + e.Message);
+
+                newWebPanel.Name = workPanel.Name + "_v18_error";
+                newWebPanel.Events.Source = "/* " + workPanelEvents.Source + " */";
+                newWebPanel.Rules.Source = "/*" +  workPanelRules.Source + " */";
+               
+                try { newWebPanel.Save();
+                    output.AddLine("WebPanel created successfully: " + newWebPanel.Name);
+                }
+                catch (Exception ex) { output.AddErrorLine("Error saving second WebPanel: " + ex.Message); }   
             }
         }
 
+
+        public static void CreateNewPanel(WorkPanel workPanel)
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            KBModel kbModel = kbserv.CurrentModel;
+
+            SDPanel newPanel = new SDPanel(kbModel);
+            PatternInstanceElement panel = newPanel.PatternPart.PanelElement;
+
+
+ 
+            newPanel.Name = workPanel.Name + "_Pv18";
+            var variablesPart = WorkWithDevicesSources.GetVariablesPartForPanel(panel);
+
+            
+            // Copy Variables
+            VariablesPart workPanelVariables = workPanel.Parts.Get<VariablesPart>();
+            if (workPanelVariables != null)
+            {
+                foreach (Variable variable in workPanelVariables.Variables)
+                {
+                    if (!variable.IsStandard)
+                    {
+                        variablesPart.Add(variable);
+                    }
+                }
+            }
+            /*
+            // Copy Conditions
+            ConditionsPart workPanelConditions = workPanel.Parts.Get<ConditionsPart>();
+            if (workPanelConditions != null)
+            {
+                newPanel.Conditions.Source = workPanelConditions.Source;
+            }
+
+            // Copy Rules
+            RulesPart workPanelRules = workPanel.Parts.Get<RulesPart>();
+            if (workPanelRules != null)
+            {
+                newPanel.Rules.Source = workPanelRules.Source;
+            }
+            */
+
+      
+            // Copy Events
+            var eventsSource = panel.Attributes.GetPropertyValue<string>(InstanceAttributes.Panel.Events);
+
+
+            EventsPart workPanelEvents = workPanel.Parts.Get<EventsPart>();
+            if (workPanelEvents != null)
+            {
+                panel.Attributes.SetPropertyValue(InstanceAttributes.Panel.Events, workPanelEvents.ToString());
+            }
+            /*
+            // Copy Help
+            HelpPart workPanelHelp = workPanel.Parts.Get<HelpPart>();
+            if (workPanelHelp != null)
+            {
+                newPanel.Help.HtmlContent = workPanelHelp.HtmlContent;
+            }
+
+            // Copy Documentation
+            DocumentationPart workPanelDocumentation = workPanel.Parts.Get<DocumentationPart>();
+            if (workPanelDocumentation != null)
+            {
+                newPanel.Documentation.Page = workPanelDocumentation.Page;
+            }
+
+            // Process Form
+            WinFormPart winForm = workPanel.Parts.Get<WinFormPart>();
+            WebFormPart webForm = newPanel.Parts.Get<WebFormPart>();
+            if (winForm != null && webForm != null)
+            {
+                ProcessFormDefinitions(winForm.MyDocument, output, webForm);
+            }
+            */
+            try
+            {
+                newPanel.Save();
+                output.AddLine("WebPanel created successfully: " + newPanel.Name);
+            }
+            catch (Exception e)
+            {
+                output.AddErrorLine("Error saving WebPanel: " + e.Message);
+            }
+            
+        }
+
+        /*
+                CreateNewPanel(obj);
+                if (!obj.IsReadOnly && obj is SDPanel)
+                {
+                    string objName = obj.Name;
+                    output.AddLine(objName);
+     
+              //  if (obj is Transaction || obj is WorkPanel || obj is WebPanel || objName.Contains("_panel"))
+                        if ( objName.Contains("_panel"))
+
+                        {
+
+                    WebPanel newWbp = new WebPanel(kbserv.CurrentModel);
+                    newWbp.Name = obj.Name + "_v18";
+                    WebFormPart wp = newWbp.Parts.Get<WebFormPart>();
+
+                    //iterate in all Parts in obj
+                    foreach (KBObjectPart part in obj.Parts)
+                    {
+                      //  output.AddLine(obj.Name + ' ' + part.Name);
+                        switch (part.Type)
+                        {
+                            case var type when type == PartType.Rules:
+                                RulesPart rp = (RulesPart)part;
+                                newWbp.Rules.Source = ProcessRulesSource(rp.Source);    
+                                output.AddLine(rp.Source);
+                                break;
+                            case var type when type == PartType.Events:
+                                EventsPart ep = (EventsPart)part;
+                           //     newWbp.Events.Source = "/* " + ep.Source + "*
+                                output.AddLine(ep.Source);
+                                break;
+                            case var type when type == PartType.Structure:
+                                StructurePart sp = (StructurePart)part;
+                                //output.AddLine(sp.Source);
+                                break;
+                            case var type when type == PartType.Procedure:
+                                ProcedurePart pp = (ProcedurePart)part;
+                                output.AddLine(pp.Source);
+                                break;
+                            case var type when type == PartType.Variables:
+                                VariablesPart vp = (VariablesPart)part;
+                                foreach (Variable v in vp.Variables)
+                                {
+                                    if (! v.IsStandard) 
+                                    { 
+                                        newWbp.Variables.Add(v);
+                                    }
+                                }
+                               
+                                //output.AddLine(vp.Source);
+                                break;
+                            case var type when type == PartType.WebForm:
+                               // WebFormPart wp = (WebFormPart)part;
+                                // output.AddLine(wp.Source);
+                                break;
+                            case var type when type == PartType.WinForm:
+                                output.AddLine(obj.Name + ' ' + part.Name);
+                                WinFormPart winForm = obj.Parts.Get<WinFormPart>();
+                                
+                                ProcessFormDefinitions(winForm.MyDocument,output,wp);
+
+                                
+                               // output.AddLine(winForm.Name);
+                                break;
+                            case var type when type == PartType.Conditions:
+                                ConditionsPart cp = (ConditionsPart)part;
+                                newWbp.Conditions.Source = cp.Source;
+                               // newWbp.Parts.Add(cp);
+                                output.AddLine(cp.Source);
+                                break;
+                        }
+
+                        try
+                        {
+                            
+                           
+                            newWbp.Save();
+                        }
+                        catch (Exception e)
+                        {
+
+                           output.AddErrorLine(e.Message.Replace("\r\n"," ") + " - " + e.InnerException);
+                        }
+
+
+                        }
+
+                    }
+
+                }
+
+            }
+        }
+        */
+
+        private static string ProcessRulesSource(string source)
+        {
+            source = source.Replace("search(", "//search(");
+            return source;
+        }
+
+        private static void ProcessFormDefinitions(FormDocument formDocument, IOutputService output, WebFormPart webForm)
+        {
+
+            foreach (var definition in formDocument.Definitions
+                .Where(def => def.Value.FormClass.ToString() == "Text"))
+            {
+                var sortedElements = definition.Value.Canvas.Elements
+                    .OrderBy(e => e.Properties.GetPropertyValue<int>("Top"))
+                    .ThenBy(e => e.Properties.GetPropertyValue<int>("Left"));
+
+                foreach (var element in sortedElements)
+                {
+                    ProcessElement(element, output, webForm);
+                }
+            }
+            
+        }
+
+        private static void ProcessElement(FormElement element, IOutputService output, WebFormPart webForm)
+        {
+            // List of property names to ignore  
+            var ignoredProperties = new HashSet<string>
+           {
+               "Font", "ForeColorText", "FormType", "FromDefault", "FromStyle",
+               "LinesFont", "LinesForeColorText", "TitleFont", "TitleForeColorText"
+           };
+
+            // Process the element here  
+            output.AddLine($"Element: {element.Name} {element.Type.ToString()}");
+
+            // Iterate through all properties of the element and display their content  
+            foreach (var pt in element.Properties.GetPropertiesDescriptors())
+            {
+                if (!pt.IsDefaultValue && !ignoredProperties.Contains(pt.Name))
+                {
+                    output.AddLine($"      Property: {pt.Name} = {pt.Value}");
+                }
+            }
+
+            // Recursively process child elements  
+            foreach (FormElement childElement in element.Children)
+            {
+                ProcessElement(childElement, output, webForm);
+            }
+        }
         public static void ObjectsLegacyCode()
         {
             IKBService kbserv = UIServices.KB;
@@ -2621,7 +2915,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     {
                         fin = true;
                     }
-                    KBDoctorOutput.Message("Iteración: " + i.ToString());
+                    KBDoctorOutput.Message("IteraciÃ³n: " + i.ToString());
                 }
 
                 KBDoctorOutput.Message("Processing commits");
@@ -3300,7 +3594,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                                 line.Replace(".udp(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace("call(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace("udp(", "(", StringComparison.CurrentCultureIgnoreCase);
-                                line.Replace(objRef.Name, "Ñ", StringComparison.CurrentCultureIgnoreCase);
+                                line.Replace(objRef.Name, "Ã‘", StringComparison.CurrentCultureIgnoreCase);
                                 //                     KBDoctorOutput.Message("............ Line . " + line);
 
                                 StringCollection interfazCallerObject = ProcessingObjectCall(obj, line);
@@ -3788,7 +4082,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     if ((!v.IsStandard) && (v.AttributeBasedOn == null) && (v.DomainBasedOn == null) && (v.Type != eDBType.GX_USRDEFTYP)
                         && (v.Type != eDBType.GX_SDT) && (v.Type != eDBType.GX_EXTERNAL_OBJECT) && (v.Type != eDBType.Boolean))
                     {
-                        variables += v.Name + " " + v.Type.ToString().ToLower() + "(" + v.Length.ToString() + ")<br>" + Environment.NewLine;
+                        variables += v.Name + " " + Utility.FormattedTypeVariable(v).ToLower() + "<br>" + Environment.NewLine;
                         string objaux = obj.Name + "," + v.Name + "," + Utility.FormattedTypeVariable(v);
                         Functions.AddLineSummary("ObjectsVariableSinDom.Txt", objaux);
 
@@ -3971,9 +4265,9 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                         if (indexWithAtt)
                         {
                             indexatt.Add(ind);
-                            remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveIndexAttribute&mode=1&indId=" + ind.Id + "&attId=" + obj.Id + "\">Remove Index</a>";
-                            remAtt = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveIndexAttribute&mode=2&indId=" + ind.Id + "&attId=" + obj.Id + "\">Remove attribute from the index</a>";
-                            remAttRigth = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;RemoveIndexAttribute&mode=3&indId=" + ind.Id + "&attId=" + obj.Id + "\">Remove attribute and next attributes from the index</a>";
+                            remove = Functions.CommandLink("RemoveIndexAttribute", "Remove Index", "mode", "1", "indId", ind.Id.ToString(), "attId", obj.Id.ToString());
+                            remAtt = Functions.CommandLink("RemoveIndexAttribute", "Remove attribute from the index", "mode", "2", "indId", ind.Id.ToString(), "attId", obj.Id.ToString());
+                            remAttRigth = Functions.CommandLink("RemoveIndexAttribute", "Remove attribute and next attributes from the index", "mode", "3", "indId", ind.Id.ToString(), "attId", obj.Id.ToString());
                             writer.AddTableData(new string[] { ind.Table.Name, ind.Name, obj.Name, composition, remove, remAtt, remAttRigth });
                         }
                     }
@@ -4225,7 +4519,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                         }
                         if (varsNotUsed != "")
                         {
-                            remove = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;CleanVarsNotUsed&ObjName=" + obj.Name + "&varid=" + varsNotUsed + "\">Clean vars not used</a>";
+                            remove = Functions.CommandLink("CleanVarsNotUsed", "Clean vars not used", "ObjName", obj.Name, "varid", varsNotUsed);
                             writer.AddTableData(new string[] { obj.TypeDescriptor.Name, obj.Name, remove });
                         }
                     }
@@ -4289,15 +4583,15 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
         private static void SetDocumentDirty(IGxDocument doc)
         {
-            if (UIServices.Environment.InvokeRequired) // devuelve true cuando el thread que está ejecutando no es el thread de UI
-                UIServices.Environment.BeginInvoke(() => SetDocumentDirty(doc)); // dispara un invoke asincrónico a SetDocumentDirty
+            if (UIServices.Environment.InvokeRequired) // devuelve true cuando el thread que estÃ¡ ejecutando no es el thread de UI
+                UIServices.Environment.BeginInvoke(() => SetDocumentDirty(doc)); // dispara un invoke asincrÃ³nico a SetDocumentDirty
             else
                 doc.Dirty = true;
         }
 
         public static bool IsCallalable(KBObject obj)
         {
-            return ((obj is Transaction) || (obj is Procedure) || (obj is WebPanel) || (obj is WorkPanel) || (obj is DataProvider) || (obj is Menubar) || (obj is DataSelector));
+            return ((obj is Transaction) || (obj is Procedure) || (obj is WebPanel) || (obj is WorkPanel) || (obj is DataProvider) || (obj is Artech.Genexus.Common.Objects.Menubar) || (obj is DataSelector));
         }
 
         public static bool isGeneratedbyPattern(KBObject obj)
@@ -4432,6 +4726,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             }
 
         }
+
 
         public static void BuildObjectWithProperty()
         {
@@ -4612,15 +4907,15 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             }
 
             */
-            void ListaObjectProperties( KBObject obj)
+            void ListaObjectProperties(KBObject obj)
             {
-                if (isGenerated(obj) )
+                if (isGenerated(obj))
                 {
 
 
                     WebFormPart webForm = obj.Parts.Get<WebFormPart>();
                     KBDoctorOutput.Message(obj.Name + "," + obj.GetPropertyValueString("WebUX") + "," + obj.GetPropertyValueString("MasterPage") + "," + obj.GetPropertyValueString("Theme")
-                        + "," + obj.GetPropertyValueString("WebFormDefaults") + ","+ isGeneratedbyPattern(obj) + "," + webForm.IsDefault);
+                        + "," + obj.GetPropertyValueString("WebFormDefaults") + "," + obj.GetPropertyValueString("AUTO_REFRESH") + "," + webForm.IsDefault);
 
                     KBModel kbModel = obj.Model;
 
@@ -4640,12 +4935,45 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     obj.Save();
                     */
 
-                    
-                   
+
+
 
                 }
 
             }
+        }
+
+        public static void ListWebObjectsProperties()
+        {
+
+           
+            IKBService kbserv = UIServices.KB;
+            KBModel kbModel = UIServices.KB.CurrentModel;
+            IOutputService output = CommonServices.Output;
+
+            bool success = true;
+            string title = "KBDoctor - Objects with property";
+            output.StartSection("KBDoctor", title);
+
+            string propertyString = Properties.WBP.WebUserExperience ;
+            string propertyValue = Properties.WBP.WebUserExperience_Values.Smooth;
+            try
+            {
+
+
+                KBDoctorOutput.Message("Type, Name, Web User Exp, MasterPage, Theme, Web Form Defaults, AutoRefreh, IsGenerated ");
+
+                foreach (KBObject obj in kbModel.Objects.GetAll())
+                    if (obj is WebPanel)
+
+                    {
+                        KBDoctorOutput.Message(obj.Name + "," + obj.GetPropertyValueString("WebUX") + "," + obj.GetPropertyValueString("MasterPage") + "," + obj.GetPropertyValueString("Theme")
+                      + "," + obj.GetPropertyValueString("WebFormDefaults") + "," + obj.GetPropertyValueString("AUTO_REFRESH") + "," + isGenerated(obj).ToString() );
+                    }
+            }
+            catch { }
+            finally { };
+                
         }
 
 private static void ListSdtNamespace(SDTLevel level, string sdtName)
@@ -5071,8 +5399,8 @@ public static void ListAPIObjects()
             token_meaning.Add(TokensIds.FOR, " ORDER ...");
             token_meaning.Add(TokensIds.TKN_TRUE, " TRUE");
             token_meaning.Add(TokensIds.TKN_FALSE, " FALSE");
-            token_meaning.Add(TokensIds.TKN_NONE, " NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR");
-            token_meaning.Add(TokensIds.PRM, " Parámetro, utilizado en DYNQ");
+            token_meaning.Add(TokensIds.TKN_NONE, " NONE, para expresiÃ³n FOR EACH ... ORDER NONE ... ENDFOR");
+            token_meaning.Add(TokensIds.PRM, " ParÃ¡metro, utilizado en DYNQ");
             token_meaning.Add(TokensIds.FND, " Name Domain");
             token_meaning.Add(TokensIds.FLV, " LEVEL token");
             token_meaning.Add(TokensIds.TKN_NEW, " NEW token");
@@ -5174,10 +5502,10 @@ public static void ListAPIObjects()
             token_meaning.Add(TokensIds.DTFSS, "DTFSS");
             token_meaning.Add(TokensIds.DTEFF, "DTEFF");
             token_meaning.Add(TokensIds.DTLNK, " Comando LINK");
-            token_meaning.Add(TokensIds.DTAPL, " Asignación del tipo +=");
-            token_meaning.Add(TokensIds.DTAMI, " Asignación del tipo -=");
-            token_meaning.Add(TokensIds.DTAMU, " Asignación del tipo *=");
-            token_meaning.Add(TokensIds.DTADI, " Asignación del tipo /=");
+            token_meaning.Add(TokensIds.DTAPL, " AsignaciÃ³n del tipo +=");
+            token_meaning.Add(TokensIds.DTAMI, " AsignaciÃ³n del tipo -=");
+            token_meaning.Add(TokensIds.DTAMU, " AsignaciÃ³n del tipo *=");
+            token_meaning.Add(TokensIds.DTADI, " AsignaciÃ³n del tipo /=");
             token_meaning.Add(TokensIds.DTFIN, " FOR <var> IN <array>");
             token_meaning.Add(TokensIds.DTEFI, " END' del token anterior");
             token_meaning.Add(TokensIds.DTFFT, " FOR <var>=<exp> TO <exp> STEP <exp>");
@@ -5271,8 +5599,94 @@ public static void ListAPIObjects()
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
+        public static void CopyWinFormToWebForm(KBObject obj)
+        {
+            IOutputService output = CommonServices.Output;
+            WinFormPart winForm = obj.Parts.Get<WinFormPart>();
+            WebFormPart webForm = obj.Parts.Get<WebFormPart>();
+
+            if (winForm == null || webForm == null)
+            {
+                output.AddErrorLine("WinForm or WebForm part not found in the object.");
+                return;
+            }
+
+            foreach (var element in winForm.MyDocument.Definitions.SelectMany(def => def.Value.Canvas.Elements))
+            {
+                AddElementToWebForm(element, webForm);
+            }
+
+            try
+            {
+                obj.Save();
+                output.AddLine("Elements copied from WinForm to WebForm successfully.");
+            }
+            catch (Exception e)
+            {
+                output.AddErrorLine("Error saving object: " + e.Message);
+            }
+        }
+
+        private static void AddElementToWebForm(FormElement element, WebFormPart webForm)
+        {
+
+  /*
+            // Create a new WebForm element based on the WinForm element
+            var newElement = new WebFormElement
+            {
+                Name = element.Name,
+                Type = element.Type,
+                Properties = element.Properties
+            };
+
+            // Add the new element to the WebForm
+            webForm.Document.AppendChild(newElement);
+
+            // Recursively add child elements
+            foreach (var childElement in element.Children)
+            {
+                AddElementToWebForm(childElement, webForm);
+            }
+  */
+        }
+        public static void AddObjectToSDPanel(SDPanel sDPanel, KBObject objToAdd)
+        {
+            IOutputService output = CommonServices.Output;
+            try
+            {
+              //  sDPanel.Objects..Add(objToAdd, objToAdd.Name, null);
+                sDPanel.Save();
+                output.AddLine($"Object {objToAdd.Name} added to SDPanel {sDPanel.Name} successfully.");
+            }
+            catch (Exception e)
+            {
+                output.AddErrorLine($"Error adding object to SDPanel: {e.Message}");
+            }
+        }
+        public static bool ObjThemeClassesNotUsed()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            foreach (WebPanel webPanel in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+            {
+                KBDoctorCore.Sources.API.ObjThemeClassesNotUsed(kbserv.CurrentKB, output, webPanel);
+            }
+            output.AddErrorLine("KBDoctor", "No theme was selected");
 
 
-        
+            return true;
+        }
+
+
     }
+
+ //   internal class WebFormElement : XmlNode
+ //   {
+  //      public string Name { get; set; }
+   //     public RuntimeControlType Type { get; set; }
+   //     public PropertiesObject Properties { get; set; }
+  //  }
 }

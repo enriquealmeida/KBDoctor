@@ -303,9 +303,21 @@ namespace Concepto.Packages.KBDoctor
         public static string linkObject(KBObject obj)
         {
             if (obj != null)
-                return "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;OpenObject&name=" + obj.Guid.ToString() + "\">" + obj.Name + "</a>";
+                return CommandLink("OpenObject", obj.Name, "name", obj.Guid.ToString());
             else
                 return "";
+        }
+
+        public static string CommandLink(string command, string text, params string[] parameters)
+        {
+            string href = "gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;" + command;
+
+            for (int i = 0; i + 1 < parameters.Length; i += 2)
+            {
+                href += "&" + parameters[i] + "=" + Uri.EscapeDataString(parameters[i + 1] ?? "");
+            }
+
+            return "<a href=\"" + href + "\">" + text + "</a>";
         }
 
         public static string linkFile(string file)

@@ -617,39 +617,52 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Name", "Value", "Observation" });
+                writer.AddTableHeader(new string[] { "Object", "Theme Object", "Component","Theme Component" });
                 foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
 
-                    if (obj is Procedure || obj is Transaction)
+                    if (obj is WebPanel )
                     {
-                        KBDoctorOutput.Message( "Procesing up " + obj.Name);
-                        IEnumerable<int> generatorTypes = GetObjectGenerators(obj.Key);
+                        string objName = obj.Name;
+                       // KBDoctorOutput.Message("Procesing down " + objName);
 
-                        string objNamePrior = "";
-                        int count = 0;
-                        foreach (int genType in generatorTypes)
+                        // Replace check of obj.IsComponent with property "WEB_COMP" == "Component"
+                        string webComp = obj.GetPropertyValueString("WEB_COMP");
+                        if (!string.IsNullOrEmpty(webComp) && webComp.Equals("Component", StringComparison.OrdinalIgnoreCase))
                         {
-                            count += 1;
-                        }
-                        if (count > 1)
-                        {
-                            KBObjectCollection objColl = new KBObjectCollection();
-                            string mainss = "";
+                            KBDoctorOutput.Message("Procesing up " + objName);
 
-                            KBDoctorOutput.Message( "Procesing down " + obj.Name);
-                            foreach (EntityReference reference in obj.GetReferences())
+
+                            // 1) Store the Theme of the webcomponent
+                            string compTheme = obj.GetPropertyValueString("Theme") ?? "";
+
+                            // Write the component row so it's clear which theme is the reference
+                            //writer.AddTableData(new string[] { Functions.linkObject(obj), compTheme, "WebComponent Theme" });
+
+                            // 2) Iterate all incoming references to this webcomponent
+                            foreach (EntityReference reference in obj.GetReferencesTo())
                             {
-                                KBObject objRef = KBObject.Get(obj.Model, reference.To);
-                                if ((objRef != null) && (objRef is WorkPanel || objRef is WebPanel) && (reference.ReferenceType == ReferenceType.Hard)) //&& (objRef.TypeDescriptor.Name != "MasterPage") ) 
+                                try
                                 {
-                                    if (objNamePrior != obj.Name)
+                                    KBObject fromObj = KBObject.Get(obj.Model, reference.From);
+                                    if (fromObj == null)
+                                        continue;
+
+                                    // Read the referencing object's Theme
+                                    string fromTheme = fromObj.GetPropertyValueString("Theme") ?? "";
+
+                                    // If different (case-insensitive) list it
+                                    if (!string.Equals(compTheme ?? string.Empty, fromTheme ?? string.Empty, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        string callTree = "";
-                                        mainss = MainsOf(obj, objColl, callTree);
+                                        string obs = string.IsNullOrEmpty(fromTheme) ? "Theme missing (component=" + compTheme + ")" : "Theme different (component=" + compTheme + ")";
+                                        writer.AddTableData(new string[] { Functions.linkObject(fromObj), fromTheme, Functions.linkObject(obj), compTheme });
+                                        KBDoctorOutput.Message($"Reference with different Theme: {fromObj.Name} (Theme='{fromTheme}') -> Component '{obj.Name}' (Theme='{compTheme}')");
                                     }
-                                    writer.AddTableData(new string[] { Functions.linkObject(obj), Functions.linkObject(objRef), mainss });
-                                    objNamePrior = obj.Name;
+                                }
+                                catch (Exception ex)
+                                {
+                                    // Avoid breaking the whole run on a single bad reference
+                                    KBDoctorOutput.Message("Error processing reference to " + objName + ": " + ex.Message);
                                 }
                             }
                         }

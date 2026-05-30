@@ -1,10 +1,10 @@
+@echo off
 REM VARIABLES DE AMBIENTES USADAS EN KBDOCTOR
 SET VisualStudioDir="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE"
 SET NETFRAMEWORK_DIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
 SET TargetGenexusVersion=%1
 CALL :CASE_%1
 IF ERRORLEVEL 1 CALL :DEFAULT_CASE 
-PAUSE
 EXIT /B
 
 
@@ -25,7 +25,7 @@ ctt.exe source:KBDoctorUI\KBDoctorUI.csproj.user transform:KBDoctorUI\Transforma
 GOTO END_CASE
 
 :CASE_GX18
-SET GX_PROGRAM_DIR=c:\GeneXus\GeneXus18
+SET GX_PROGRAM_DIR=C:\GeneXus\GeneXus18U10dev
 SET GX_SDK_DIR=c:\GeneXus\GeneXus18SDK
 rem SET NETFRAMEWORK_DIR="C:\Windows\Microsoft.NET\Framework64\v4.0.30319"
 SET TargetFrameworkVersion=v4.8

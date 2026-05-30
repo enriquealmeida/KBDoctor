@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 
+using Artech.Architecture.Common.Services;
 using Artech.Architecture.Common.Packages;
 using Artech.Architecture.UI.Framework.Services;
 
@@ -17,6 +18,13 @@ namespace Concepto.Packages.KBDoctor
 {
     public static class KBDoctorHelper
     {
+        public static IOutputService SelectOutput()
+        {
+            IOutputService output = CommonServices.Output;
+            output.SelectOutput("KBDoctor");
+            return output;
+        }
+
         public static void ShowKBDoctorResults(string outputFile)
         {
             UIServices.ToolWindows.ShowToolWindow(KBDoctorToolWindow.guid);

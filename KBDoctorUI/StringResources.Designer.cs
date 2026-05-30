@@ -572,6 +572,15 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListModularizationQuality", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Add modularization information to documentation.
+        /// </summary>
+        internal static string AddModularizationInfo {
+            get {
+                return ResourceManager.GetString("AddModularizationInfo", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to List Modules Errors.

@@ -395,6 +395,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             return Objects.ThemeClassesNotUsed(KB, output, themeclass);
         }
+
+        public static bool ObjThemeClassesNotUsed(KnowledgeBase KB, IOutputService output, WebPanel webPanel)
+        {
+            return Objects.ObjThemeClassesNotUsed(KB, output, webPanel);
+        }
         //
         public static bool AssignTypesComprarer(KnowledgeBase KB, List<KBObject> objs, ref string recommendations, out int cant)
         {

@@ -78,6 +78,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ObjectsWithVarNotBasedOnAtt, new ExecHandler(ExecObjectsWithVarNotBasedOnAtt), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListDynamicCombo, new ExecHandler(ExecListDynamicCombo), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListProperties, new ExecHandler(ExecListProperties), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListWebObjectsProperties, new ExecHandler(ExecListWebObjectsProperties), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.RenameVariables, new ExecHandler(ExecRenameVariables), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildModule, new ExecHandler(ExecBuildModule), new QueryHandler(QueryKBDoctor));
@@ -104,7 +105,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ListCommitOnExit, new ExecHandler(ExecListCommitOnExit), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWithVarsNotUsed, new ExecHandler(ExecObjectsWithVarsNotUsed), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ResetWINForm, new ExecHandler(ExecResetWINForm), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectsComplex, new ExecHandler(ExecObjectsComplex), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ObjectMigration, new ExecHandler(ExecObjectMigration), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ObjectsUpdateAttribute, new ExecHandler(ExecProceduresThatUpdatesAttributes), new QueryHandler(QueryKBDoctor));
 
@@ -168,6 +169,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.AboutKBDoctor, new ExecHandler(ExecAboutKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             AddCommand(CommandKeys.HelpKBDoctor, new ExecHandler(ExecHelpKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
             AddCommand(CommandKeys.ThemeClassesNotUsed, new ExecHandler(ExecThemeClassesNotUsed), new QueryHandler(QueryKBDoctorNoKB));
+            AddCommand(CommandKeys.ObjThemeClassesNotUsed, new ExecHandler(ExecObjThemeClassesNotUsed), new QueryHandler(QueryKBDoctorNoKB));
 
 
             //Labs
@@ -198,6 +200,7 @@ namespace Concepto.Packages.KBDoctor
 
             //Modularization
             AddCommand(CommandKeys.ListModularizationQuality, new ExecHandler(ExecListModularizationQuality), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.AddModularizationInfo, new ExecHandler(ExecAddModularizationInfo), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ApplyExternalModularization, new ExecHandler(ExecApplyExternalModularization), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.DetectMavericks, new ExecHandler(ExecDetectMavericks), new QueryHandler(QueryKBDoctor));
 
@@ -212,8 +215,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAttWithoutDescription(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(AttributesHelper.ListAttWithoutDescription));
             t.Start();
             return true;
@@ -221,8 +223,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAttWithNoDomain(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(AttributesHelper.ListWithoutDomain));
             t.Start();
             return true;
@@ -230,8 +231,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecListAttributes(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(AttributesHelper.ListAttributes));
             t.Start();
             return true;
@@ -239,8 +239,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAttInOneTrnOnly(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(AttributesHelper.AttInOneTrnOnly));
             t.Start();
             return true;
@@ -248,8 +247,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAttCharToVarchar(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(AttributesHelper.ListCharToVarchar));
             t.Start();
             return true;
@@ -257,8 +255,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAttVarcharToChar(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(AttributesHelper.ListVarcharToChar));
             t.Start();
             return true;
@@ -266,8 +263,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAttKeyVarchar(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(AttributesHelper.ListKeyVarchar));
             t.Start();
             return true;
@@ -275,8 +271,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAttDescWithoutUniqueIndex(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(AttributesHelper.ListAttDescWithoutUniqueIndex));
             t.Start();
             return true;
@@ -291,8 +286,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAttWithoutBaseTable(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             // Atributo sin tabla. Abrir objetos que referencien a att sin tablas y que permita corregirlo.
             Thread t = new Thread(new ThreadStart(CleanKBHelper.RemoveAttributeWithoutTable));
             t.Start();
@@ -301,8 +295,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecDetectMavericks(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             // Atributo sin tabla. Abrir objetos que referencien a att sin tablas y que permita corregirlo.
             Thread t = new Thread(new ThreadStart(ModulesHelper.DetectMavericks));
             t.Start();
@@ -311,8 +304,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAttFormula(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(AttributesHelper.AttFormula));
             t.Start();
             return true;
@@ -320,24 +312,21 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecReplaceDomain(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             AttributesHelper.ReplaceDomain();
             return true;
         }
 
         public bool ExecListDomain(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             AttributesHelper.ListDomain();
             return true;
         }
 
         public bool ExecAttUpdated(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             NavigationHelper.AttUpdated();
             return true;
         }
@@ -346,8 +335,7 @@ namespace Concepto.Packages.KBDoctor
         #region Acciones sobre atributos
         public bool ExecAssignDomainToAttribute(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             AttributesHelper.AssignDomainToAttribute(cmdData.Parameters);
             return true;
         }
@@ -375,8 +363,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAddDescriptorIndex(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             AttributesHelper.AddDescriptorIndex(cmdData.Parameters);
             return true;
         }
@@ -386,8 +373,7 @@ namespace Concepto.Packages.KBDoctor
         #region Tablas
         public bool ExecTblWihNoDescription(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(TablesHelper.ListWithoutDescription));
             t.Start();
             return true;
@@ -395,8 +381,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecGrpWihNoDescription(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(TablesHelper.ListGroupWithoutDescription));
             t.Start();
             return true;
@@ -405,8 +390,7 @@ namespace Concepto.Packages.KBDoctor
         public bool ExecTblWidth(CommandData cmdData)
         {
 
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(TablesHelper.ListTablesWidth));
             t.Start();
             return true;
@@ -414,8 +398,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecListTables(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
 
             Thread t = new Thread(new ThreadStart(TablesHelper.ListTables));
             t.Start();
@@ -425,8 +408,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecTblTableTransaction(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(TablesHelper.ListTableTransaction));
             t.Start();
             return true;
@@ -434,8 +416,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecTblGenerateSimpleTransactionFromNotGeneratedTransactions(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(TablesHelper.GenterateSimpleTransactionFromNotGeneratedTransaction));
             t.Start();
             return true;
@@ -443,8 +424,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecTblScriptToCompareNULLABLE_GXvsDB(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(TablesHelper.ScriptToCompareNULLABLE_GXvsDB));
             t.Start();
             return true;
@@ -452,8 +432,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecTblScriptToCompareNULLABLE_GXvsDB2(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(TablesHelper.ScriptToCompareNULLABLE_GXvsDB2));
             t.Start();
             return true;
@@ -461,8 +440,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecTblListTableWithAttributeNullableCompatible(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(TablesHelper.ListTableWithAttributeNullableCompatible));
             t.Start();
             return true;
@@ -475,8 +453,7 @@ namespace Concepto.Packages.KBDoctor
         /// <returns></returns>
         public bool ExecTblTableUpdate(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(TablesHelper.ListTableUpdate));
             t.Start();
             return true;
@@ -484,16 +461,14 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecGenerateTrnFromTables(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             TablesHelper.GenerateTrnFromTables();
             return true;
         }
 
         public bool ExecGenerateTrnFromTables2(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             TablesHelper.GenerateTrnFromTables2();
             return true;
         }
@@ -505,8 +480,7 @@ namespace Concepto.Packages.KBDoctor
         /// <returns></returns>
         public bool ExecListTablesInModules(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.ListTableInModules();
             return true;
         }
@@ -519,8 +493,7 @@ namespace Concepto.Packages.KBDoctor
         public bool ExecListObjectsWithTableInOtherModule(CommandData cmdData)
         {
 
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.ListObjectsWithTableInOtherModule();
             return true;
         }
@@ -528,16 +501,14 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecModuleDependencies(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.ModuleDependencies();
             return true;
         }
 
         public bool ExecTblTableInsertNew(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(TablesHelper.ListTableInsertNew));
             t.Start();
             return true;
@@ -546,8 +517,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecRenameAttributesAndTables(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(CleanKBHelper.RenameAttributesAndTables));
             t.Start();
             return true;
@@ -557,8 +527,7 @@ namespace Concepto.Packages.KBDoctor
         #region Acciones sobre tablas
         public bool ExecAssignDescriptionToTable(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             TablesHelper.AssignDescriptionToTable(cmdData.Parameters);
             return true;
         }
@@ -567,8 +536,7 @@ namespace Concepto.Packages.KBDoctor
         #region Indices
         public bool ExecIndexWithNotRefAtt(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             // Cambiar las variables para que se basen en atributos o dominios.
             Thread t = new Thread(new ThreadStart(ObjectsHelper.IndexWithNotRefAtt));
             t.Start();
@@ -577,8 +545,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecRremoveIndexAttribute(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.RemoveIndexAttribute(cmdData.Parameters);
             return true;
         }
@@ -588,8 +555,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecPreprocessPendingObjects(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread thread = new Thread(() => PreprocessPendingObjects(cmdData));
             thread.Start();
             return true;
@@ -597,16 +563,14 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecParametersTypeComparer(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ParametersTypeComparer();
             return true;
         }
 
         public bool ExecObjectsWithRuleOld(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsWithRuleOld();
             return true;
         }
@@ -614,13 +578,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ObjectsWithRuleOld()
         {
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
-            selectObjectOption.MultipleSelection = true;
-
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = KBDoctorSelection.SelectProcedureWebPanelTransaction();
             int cant = 0;
             string recommendations = "";
             Thread thread = new Thread(() => ObjectsWithRuleOld(UIServices.KB.CurrentKB, objs, ref recommendations ,out cant));
@@ -639,68 +597,52 @@ namespace Concepto.Packages.KBDoctor
         private static void ParametersTypeComparer()
         {
 
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
-            selectObjectOption.MultipleSelection = true;
-
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = KBDoctorSelection.SelectProcedureWebPanelTransaction();
             int cant = 0;
-            Thread thread = new Thread(() => ParametersTypeComparer(UIServices.KB.CurrentKB, objs, out cant));
+            Thread thread = new Thread(() => ParametersTypeComparer2(UIServices.KB.CurrentKB, objs, out cant));
             thread.Start();
         }
 
-        private static void ParametersTypeComparer(KnowledgeBase KB, List<KBObject> objs, out int cant)
+        private static void ParametersTypeComparer2(KnowledgeBase KB, List<KBObject> objs, out int cant)
         {
             cant = 0;
             KBDoctorOutput.StartSection("KBDoctor - Parameters Type Comparer");
             string recommendations = "";
-            ParametersTypeComparer(UIServices.KB.CurrentKB, objs,  out cant);
+           API.ParametersTypeComparer(UIServices.KB.CurrentKB, objs,ref recommendations,  out cant);
             KBDoctorOutput.EndSection("KBDoctor - Parameters Type Comparer");
         }
 
         public bool ExecEmptyConditionalBlock(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             EmptyConditionalBlock();
             return true;
         }
 
         public bool ExecNewsWithoutWhenDuplicate(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             NewsWithoutWhenDuplicate();
             return true;
         }
 
         public bool ExecConstantsInCode(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ConstantsInCode();
             return true;
         }
 
         public bool ExecReviewCommits(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ReviewCommits();
             return true;
         }
 
         private static void ConstantsInCode()
         {
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
-            selectObjectOption.MultipleSelection = true;
-
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = KBDoctorSelection.SelectProcedureWebPanelTransaction();
 
             Thread thread = new Thread(() => ConstantsInCode(UIServices.KB.CurrentKB, objs));
             thread.Start();
@@ -709,9 +651,9 @@ namespace Concepto.Packages.KBDoctor
         private static void ConstantsInCode(KnowledgeBase KB, List<KBObject> objs)
         {
             int cant;
-            KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
+            KBDoctorOutput.StartSection("KBDoctor - Constants in code");
             API.ConstantsInCode(UIServices.KB.CurrentKB, objs, out cant);
-            KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
+            KBDoctorOutput.EndSection("KBDoctor - Constants in code");
         }
 
         private static void ReviewCommits()
@@ -747,8 +689,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecForEachsWithoutWhenNone(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ForEachsWithoutWhenNone();
             return true;
         }
@@ -757,13 +698,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void EmptyConditionalBlock()
         {
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
-            selectObjectOption.MultipleSelection = true;
-
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = KBDoctorSelection.SelectProcedureWebPanelTransaction();
 
             Thread thread = new Thread(() => EmptyConditionalBlock(UIServices.KB.CurrentKB, objs));
             thread.Start();
@@ -771,13 +706,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void NewsWithoutWhenDuplicate()
         {
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
-            selectObjectOption.MultipleSelection = true;
-
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = KBDoctorSelection.SelectProcedureWebPanelTransaction();
 
             Thread thread = new Thread(() => NewsWithoutWhenDuplicate(UIServices.KB.CurrentKB, objs));
             thread.Start();
@@ -785,13 +714,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ForEachsWithoutWhenNone()
         {
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
-            selectObjectOption.MultipleSelection = true;
-
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = KBDoctorSelection.SelectProcedureWebPanelTransaction();
 
             Thread thread = new Thread(() => ForEachsWithoutWhenNone(UIServices.KB.CurrentKB, objs));
             thread.Start();
@@ -801,16 +724,16 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ForEachsWithoutWhenNone(KnowledgeBase KB, List<KBObject> objs)
         {
-            KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
+            KBDoctorOutput.StartSection("KBDoctor - For eachs without When None");
             API.ForEachsWithoutWhenNone(UIServices.KB.CurrentKB, objs);
-            KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
+            KBDoctorOutput.EndSection("KBDoctor - For eachs without When None");
         }
 
         private static void NewsWithoutWhenDuplicate(KnowledgeBase KB, List<KBObject> objs)
         {
-            KBDoctorOutput.StartSection("KBDoctor - Verify empty conditional blocks");
+            KBDoctorOutput.StartSection("KBDoctor - News without When Duplicate");
             API.NewsWithoutWhenDuplicate(UIServices.KB.CurrentKB, objs);
-            KBDoctorOutput.EndSection("KBDoctor - Verify empty conditionals blocks");
+            KBDoctorOutput.EndSection("KBDoctor - News without When Duplicate");
         }
 
         private static void EmptyConditionalBlock(KnowledgeBase KB, List<KBObject> objs)
@@ -824,8 +747,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void PreprocessPendingObjects(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             SelectedRowsCollection selrows = cmdData.Context as SelectedRowsCollection;
             List<KBObjectHistory> kbohList = GetGenericHistoryObjects(selrows);
             IKBService kbserv = UIServices.KB;
@@ -892,16 +814,14 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecReviewObjects(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ReviewObjects();
             return true;
         }
 
         private static void ReviewObjects()
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
             IKBService kbserv = UIServices.KB;
@@ -970,8 +890,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecReviewObject(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread thread = new Thread(() => ReviewObject(cmdData));
             thread.Start();
             return true;
@@ -979,8 +898,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecAttributeAsOutput(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             string title = "KBDoctor - Get Objects With Attribute/Domain as Output";
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Attribute>());
@@ -1014,8 +932,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecGenerateSDTDataLoad(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<SDT>());
             selectObjectOption.MultipleSelection = true;
@@ -1032,8 +949,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecSDTsWithDateInWS(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
             selectObjectOption.MultipleSelection = true;
@@ -1050,8 +966,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecGenerateRESTCalls(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
 
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
@@ -1064,15 +979,9 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExeCheckVariableUsages(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
 
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
-            selectObjectOption.MultipleSelection = true;
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = KBDoctorSelection.SelectProcedureWebPanelTransaction();
             CheckVariableUsages(objs);
             return true;
         }
@@ -1080,8 +989,7 @@ namespace Concepto.Packages.KBDoctor
         public void CheckVariableUsages(List<KBObject> objs)
          {
 
-             IOutputService output = CommonServices.Output;
-             output.SelectOutput("KBDoctor");
+             IOutputService output = KBDoctorHelper.SelectOutput();
              string recommendations = "";
              int cant;
              Thread thread = new Thread(() => KBDoctorCore.Sources.API.CheckVariableUsages(UIServices.KB.CurrentKB, objs, ref recommendations, out cant));
@@ -1092,23 +1000,16 @@ namespace Concepto.Packages.KBDoctor
         public bool ExecVariablesNotBasedOnAttributes(CommandData cmddata)
         {
 
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
 
-            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Artech.Genexus.Common.Objects.Transaction>());
-            selectObjectOption.MultipleSelection = true;
-            List<KBObject> objs = (List<KBObject>)UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
+            List<KBObject> objs = KBDoctorSelection.SelectProcedureWebPanelTransaction();
             CheckVariablesNotBasedOnAttributes(objs);
             return true;
         }
 
         public void CheckVariablesNotBasedOnAttributes(List<KBObject> objs)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
 
   
             Thread thread = new Thread(() => VariablesNotBasedOnAttributes(objs));
@@ -1145,8 +1046,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static void ReviewObject(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             string title = "KBDoctor - Review Objects";
             IKBService kbserv = UIServices.KB;
             try
@@ -1182,8 +1082,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecReviewModuleOrFolder(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread thread = new Thread(() => ReviewModuleOrFolder(cmdData));
             thread.Start();
             return true;
@@ -1251,8 +1150,7 @@ namespace Concepto.Packages.KBDoctor
 
         public static List<KBObjectHistory> GetGenericHistoryObjects(SelectedRowsCollection rows)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             return (from UltraGridRow row in rows
                     where !row.IsGroupByRow // Quitamos las rows de grupo.
                     select (KBObjectHistory)row.Cells["KBObjectHistory"].Value).ToList();
@@ -1260,8 +1158,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecObjNotReacheable(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.Unreachables));
             t.Start();
             return true;
@@ -1269,8 +1166,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecObjectsWithoutInOut(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ParmWOInOut));
             t.Start();
             return true;
@@ -1278,8 +1174,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecObjectsMainsCalled(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsMainsCalled));
             t.Start();
             return true;
@@ -1287,16 +1182,14 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecObjectsReferenced(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             CleanKBHelper.ObjectsReferenced();
             return true;
         }
 
         public bool ExecObjectsWithVarNotBasedOnAtt(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             // Cambiar las variables para que se basen en atributos o dominios.
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsWithVarNotBasedOnAtt));
             t.Start();
@@ -1304,8 +1197,7 @@ namespace Concepto.Packages.KBDoctor
         }
         public bool ExecListDynamicCombo(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             // Cambiar las variables para que se basen en atributos o dominios.
             Thread t = new Thread(new ThreadStart(BadSmells.ListDynamicCombo));
             t.Start();
@@ -1314,8 +1206,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecListProperties(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             // Cambiar las variables para que se basen en atributos o dominios.
             Thread t = new Thread(new ThreadStart(BadSmells.ListNamespace));
             t.Start();
@@ -1324,8 +1215,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecBuildModule(CommandData cmdData)
         {
-           IOutputService output = CommonServices.Output;
-           output.SelectOutput("KBDoctor");
+           IOutputService output = KBDoctorHelper.SelectOutput();
                 // Hace el Build with this only de los objetos de un modulo y de los que lo referencian
            ModulesHelper.BuildModule();
             return true;
@@ -1340,8 +1230,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecBuildObjectAndReferences(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             //Hace el Build with this only de los objetos de un modulo y de los que lo referencian
             ObjectsHelper.BuildObjectAndReferences();
             return true;
@@ -1349,8 +1238,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecBuildObjectWithProperty(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             //Hace el Build with this only de los objetos de un modulo y de los que lo referencian
             ObjectsHelper.BuildObjectWithProperty();
             return true;
@@ -1358,8 +1246,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecRenameVariables(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             // Cambiar las variables para que se basen en atributos o dominios.
             Thread t = new Thread(new ThreadStart(CleanKBHelper.RenameVariables));
             t.Start();
@@ -1368,8 +1255,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecProceduresThatUpdatesAttributes(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsUpdatingAttributes));
             t.SetApartmentState(System.Threading.ApartmentState.STA);
             t.Start();
@@ -1378,8 +1264,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecObjectsNotCalled(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjetNotCalled));
             t.Start();
             return true;
@@ -1387,8 +1272,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecObjectsWithCommitOnExit(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsWithParmAndCommitOnExit));
             t.Start();
             return true;
@@ -1396,8 +1280,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecListCommitOnExit(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ListCommitOnExit));
             t.Start();
             return true;
@@ -1405,8 +1288,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecObjectsWithVarsNotUsed(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsWithVarsNotUsed));
             t.Start();
             return true;
@@ -1414,8 +1296,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecResetWINForm(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ResetWINForm));
             t.Start();
             return true;
@@ -1423,26 +1304,23 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecListProcedureCallWebpanelTransaction(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ListProcedureCallWebPanelTransaction));
             t.Start();
             return true;
         }
 
-        public bool ExecObjectsComplex(CommandData cmdData)
+        public bool ExecObjectMigration(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
-            Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsComplex));
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectMigration));
             t.Start();
             return true;
         }
 
         public bool ExecObjectsLegacyCode(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsLegacyCode));
             t.Start();
             return true;
@@ -1450,16 +1328,14 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecEditLegacyCodeToReplace(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.EditLegacyCodeToReplace();
             return true;
         }
 
         public bool ExecEditReviewObjects(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.EditReviewObjects();
             return true;
         }
@@ -1467,32 +1343,28 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecChangeLegacyCode(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.ChangeLegacyCode();
             return true;
         }
 
         public bool ExecChangeCommitOnExit(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.ChangeCommitOnExit();
             return true;
         }
 
         public bool ExecTreeCommit(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.TreeCommit();
             return true;
         }
 
         public bool ExecObjectsRefactoringCandidates(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             //  Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsRefactoringCandidates));
             Thread t = new Thread(new ThreadStart(ObjectsHelper.GenerateCSV_ObjectsRefactoring));
             t.Start();
@@ -1501,8 +1373,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecCountTableAccess(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.CountTableAccess));
             t.Start();
             return true;
@@ -1510,8 +1381,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecObjectsWithConstants(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             //Thread t = new Thread(new ThreadStart(ObjectsHelper.ObjectsWithConstants));
             ObjectsHelper.ObjectsWithConstants();
             return true;
@@ -1522,15 +1392,14 @@ namespace Concepto.Packages.KBDoctor
 
             return true;
             /*
-             * Comento este procedimiento para usarlo como opción nueva. 
+             * Comento este procedimiento para usarlo como opciÃ³n nueva. 
              * ObjectsHelper.ObjectsUDPCallables();
             return true;*/
         }
 
         public bool ExecFixVariablesNotBasedInAttributesOrDomain(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.FixVariablesNotBasedInAttributesOrDomain();
             return true;
         }
@@ -1538,8 +1407,7 @@ namespace Concepto.Packages.KBDoctor
         public bool ExecObjectsWINWEB(CommandData cmdData)
         {
 
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(KbStats.ObjectsWINWEB));
             t.Start();
             return true;
@@ -1547,16 +1415,14 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecMainTableUsed(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.MainTableUsed));
             t.Start();
             return true;
         }
         public bool ExecRemovableTransactions(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.RemovableTransactions));
             t.Start();
             return true;
@@ -1564,23 +1430,20 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecGenerateSQLScripts(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             TablesHelper.GenerateSQLScripts();
             return true;
         }
 
         public bool ExecGenerateDPfromTable(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             TablesHelper.GenerateTrnFromTables2();
             return true;
         }
         public bool ExecGenerateGraph(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(GraphHelper.GenerateGraph));
             t.Start();
             return true;
@@ -1588,8 +1451,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecKBInterfaces(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             // Lista objetos complejos.
             Thread t = new Thread(new ThreadStart(KbStats.KBInterfaces));
             t.Start();
@@ -1635,6 +1497,11 @@ namespace Concepto.Packages.KBDoctor
         {
             return ObjectsHelper.ThemeClassesNotUsed();
         }
+
+        public bool ExecObjThemeClassesNotUsed(CommandData cmdData)
+        {
+            return ObjectsHelper.ObjThemeClassesNotUsed();
+        }
         #endregion
 
         #region Acerca de
@@ -1651,8 +1518,7 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecHelpKBDoctor(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             KBDoctorHelper.ShowKBDoctorResults("http://wiki.genexus.com/commwiki/servlet/hwikibypageid?26679");
             return true;
         }
@@ -1766,31 +1632,27 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecCountGeneratedByPattern(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             KbStats.CountGeneratedByPattern();
             return true;
         }
         public bool ExecGeneratedByPatternWithoutDynamism(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             KbStats.GeneratedByPatternWithoutDynamism();
             return true;
         }
 
         public bool ExecReplaceNullCompatible(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             AttributesHelper.ReplaceNullsCompatible();
             return true;
         }
 
         public bool ExecListObj(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(KbStats.ListObj));
             t.Start();
             return true;
@@ -1798,24 +1660,21 @@ namespace Concepto.Packages.KBDoctor
 
         public bool ExecCreateDeployUnits(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.CreateDeployUnits();
             return true;
         }
 
         public bool ExecMarkPublicObjects(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.MarkPublicObjects();
             return true;
         }
 
         public bool ExecListModules(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.ListModulesErrors();
             return true;
         }
@@ -1827,96 +1686,100 @@ namespace Concepto.Packages.KBDoctor
         }
         public bool ExecListModulesStatistics(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.ListModulesStatistics();
             return true;
         }
 
         public bool ExecListModularizationQuality(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.ListModularizationQuality();
             return true;
         }
+
+        public bool ExecAddModularizationInfo(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            ModulesHelper.AddModularizationInformationToObjects();
+            return true;
+        }
+
         public bool ExecMoveTransactions(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.MoveTransactions();
             return true;
         }
 
         public bool ExecCalculateCheckSum(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.CalculateCheckSum();
             return true;
         }
 
         public bool ExecGenerateLocationXML(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.GenerateLocationXML();
             return true;
         }
 
         public bool ExecListLastReports(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             KbStats.ListLastReports();
             return true;
         }
 
         public bool ExecListObjWarningsErrors(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             NavigationHelper.ListObjWarningsErrors();
             return true;
         }
 
         public bool ExecListObjSimilarNavigation(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             NavigationHelper.ListObjSimilarNavigation();
             return true;
         }
 
         public bool ExecListAPIObjects(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.ListAPIObjects();
             return true;
         }
         public bool ExecRecomendedModule(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.RecomendedModule();
             return true;
         }
 
         public bool ExecApplyExternalModularization(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.ApplyExternalModularization();
             return true;
         }
         public bool ExecSplitMainObject(CommandData cmdData)
         {
-            IOutputService output = CommonServices.Output;
-            output.SelectOutput("KBDoctor");
+            IOutputService output = KBDoctorHelper.SelectOutput();
             ObjectsHelper.SplitMainObject();
             return true;
         }
+
+        public bool ExecListWebObjectsProperties(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            ObjectsHelper.ListWebObjectsProperties();
+            return true;
+        }
+        
         #region QueryKBDoctor
         private bool QueryKBDoctor(CommandData cmdData, ref CommandStatus status)
         {

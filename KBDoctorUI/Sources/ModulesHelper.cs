@@ -167,6 +167,389 @@ namespace Concepto.Packages.KBDoctor
             
         }
 
+        private const string ModularizationInfoStart = "KBDoctor Modularization Information --Start--";
+        private const string ModularizationInfoEnd = "KBDoctor Modularization Information --End--";
+
+        public static void AddModularizationInformationToObjects()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            string title = "KBDoctor - Add Modularization Information";
+            bool success = true;
+            int updatedObjects = 0;
+
+            output.StartSection("KBDoctor", title);
+
+            try
+            {
+                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+                selectObjectOption.MultipleSelection = true;
+
+                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
+                {
+                    if (obj == null)
+                    {
+                        continue;
+                    }
+
+                    KBDoctorOutput.Message("Processing " + obj.Name);
+                    DocumentationPart documentation = obj.Parts.Get<DocumentationPart>();
+
+                    if (documentation == null)
+                    {
+                        output.AddWarningLine("Object " + obj.Name + " does not have documentation part.");
+                        continue;
+                    }
+
+                    string currentDocumentation = documentation.Page == null ? "" : documentation.Page.Content;
+                    Artech.Genexus.Common.Wiki.WikiPage page = documentation.Page ?? new Artech.Genexus.Common.Wiki.WikiPage(obj.Module);
+                    page.Content = ReplaceModularizationInformation(currentDocumentation, BuildModularizationInformation(obj));
+                    documentation.Page = page;
+                    Functions.SaveObject(output, obj);
+                    updatedObjects += 1;
+                }
+
+                KBDoctorOutput.Message("Objects updated: " + updatedObjects.ToString());
+            }
+            catch (Exception e)
+            {
+                success = false;
+                output.AddErrorLine(e.Message);
+            }
+            finally
+            {
+                output.EndSection("KBDoctor", title, success);
+            }
+        }
+
+        private static string ReplaceModularizationInformation(string documentation, string modularizationInformation)
+        {
+            if (documentation == null)
+            {
+                documentation = "";
+            }
+
+            int startIndex = documentation.IndexOf(ModularizationInfoStart);
+            int endIndex = documentation.IndexOf(ModularizationInfoEnd);
+
+            if (startIndex >= 0 && endIndex >= startIndex)
+            {
+                endIndex += ModularizationInfoEnd.Length;
+                string before = documentation.Substring(0, startIndex).TrimEnd();
+                string after = documentation.Substring(endIndex).TrimStart();
+
+                return JoinDocumentationParts(before, modularizationInformation, after);
+            }
+
+            return JoinDocumentationParts(documentation.TrimEnd(), modularizationInformation, "");
+        }
+
+        private static string JoinDocumentationParts(string before, string modularizationInformation, string after)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            if (!String.IsNullOrEmpty(before))
+            {
+                builder.AppendLine(before);
+                builder.AppendLine();
+            }
+
+            builder.AppendLine(modularizationInformation);
+
+            if (!String.IsNullOrEmpty(after))
+            {
+                builder.AppendLine();
+                builder.Append(after);
+            }
+
+            return builder.ToString();
+        }
+
+        private static string BuildModularizationInformation(KBObject obj)
+        {
+            StringBuilder builder = new StringBuilder();
+            string source = Functions.ObjectSourceUpper(obj);
+            source = Functions.RemoveEmptyLines(source);
+            string sourceWOComments = Functions.ExtractComments(source);
+            sourceWOComments = Functions.RemoveEmptyLines(sourceWOComments);
+
+            builder.AppendLine(ModularizationInfoStart);
+            builder.AppendLine();
+            builder.AppendLine("## KBDoctor Modularization Information");
+            builder.AppendLine();
+            builder.AppendLine("- **Objeto:** " + MarkdownCell(obj.QualifiedName.ToString()));
+            builder.AppendLine("- **Tipo:** " + MarkdownCell(obj.TypeDescriptor.Name));
+            builder.AppendLine("- **Modulo:** " + MarkdownCell(ObjectModuleName(obj)));
+            builder.AppendLine();
+            builder.AppendLine("### Tablas accedidas por el objeto");
+            builder.AppendLine();
+            builder.AppendLine("| Acceso | Tabla | Modulo |");
+            builder.AppendLine("| --- | --- | --- |");
+            AppendTableAccessRows(builder, "Actualizada", GetTablesByAccess(obj, TableAccessType.Update));
+            AppendTableAccessRows(builder, "Borrada", GetTablesByAccess(obj, TableAccessType.Delete));
+            AppendTableAccessRows(builder, "Insertada", GetTablesByAccess(obj, TableAccessType.Insert));
+            AppendTableAccessRows(builder, "Leida", GetTablesByAccess(obj, TableAccessType.Read));
+            builder.AppendLine();
+            builder.AppendLine("### Objetos referenciados");
+            builder.AppendLine();
+            AppendReferenceTable(builder, GetReferencedObjects(obj), "Objeto referenciado");
+            builder.AppendLine();
+            builder.AppendLine("### Objetos que lo referencian");
+            builder.AppendLine();
+            AppendReferenceTable(builder, GetReferencingObjects(obj), "Objeto que lo referencia");
+            builder.AppendLine();
+            builder.AppendLine("### Metricas");
+            builder.AppendLine();
+            builder.AppendLine("| Metrica | Valor |");
+            builder.AppendLine("| --- | ---: |");
+            AppendMetricRow(builder, "Bloque de Codigo mas largo", Functions.MaxCodeBlock(sourceWOComments));
+            AppendMetricRow(builder, "Numero ciclomatico del codigo", Functions.ComplexityLevel(sourceWOComments));
+            AppendMetricRow(builder, "Cantidad de Controles en pantalla", CountWebFormTags(obj));
+            AppendMetricRow(builder, "Cantidad de Reglas", CountRules(obj));
+            AppendMetricRow(builder, "Cantidad de Conditions", CountConditions(obj));
+            AppendMetricRow(builder, "Cantidad de lineas de codigo", Functions.LineCount(source));
+            builder.AppendLine();
+            builder.AppendLine(ModularizationInfoEnd);
+
+            return builder.ToString().TrimEnd();
+        }
+
+        private static void AppendTableAccessRows(StringBuilder builder, string access, IList<TableAccessInfo> values)
+        {
+            if (values.Count == 0)
+            {
+                builder.AppendLine("| " + MarkdownCell(access) + " | None |  |");
+                return;
+            }
+
+            foreach (TableAccessInfo value in values)
+            {
+                builder.AppendLine("| " + MarkdownCell(access) + " | " + MarkdownCell(value.TableName) + " | " + MarkdownCell(value.ModuleName) + " |");
+            }
+        }
+
+        private static void AppendReferenceTable(StringBuilder builder, IList<ReferenceInfo> values, string objectHeader)
+        {
+            builder.AppendLine("| Tipo de referencia | " + MarkdownCell(objectHeader) + " | Tipo de objeto | Modulo |");
+            builder.AppendLine("| --- | --- | --- | --- |");
+
+            if (values.Count == 0)
+            {
+                builder.AppendLine("| None | None |  |  |");
+            }
+            else
+            {
+                foreach (ReferenceInfo value in values)
+                {
+                    builder.AppendLine("| " + MarkdownCell(value.ReferenceType) + " | " + MarkdownCell(value.ObjectName) + " | " + MarkdownCell(value.ObjectType) + " | " + MarkdownCell(value.ModuleName) + " |");
+                }
+            }
+        }
+
+        private static void AppendMetricRow(StringBuilder builder, string metric, int value)
+        {
+            builder.AppendLine("| " + MarkdownCell(metric) + " | " + value.ToString() + " |");
+        }
+
+        private static string MarkdownCell(string value)
+        {
+            if (value == null)
+            {
+                return "";
+            }
+
+            return value.Replace("\\", "\\\\").Replace("|", "\\|").Replace("\r", " ").Replace("\n", " ").Trim();
+        }
+
+        private static IList<TableAccessInfo> GetTablesByAccess(KBObject obj, TableAccessType accessType)
+        {
+            List<TableAccessInfo> tables = new List<TableAccessInfo>();
+
+            foreach (EntityReference reference in obj.Model.GetReferencesFrom(obj.Key, LinkType.UsedObject))
+            {
+                if (reference.ReferenceType != ReferenceType.WeakExternal || !ReferenceHasAccess(reference, accessType))
+                {
+                    continue;
+                }
+
+                KBObject referencedObject = obj.Model.Objects.Get(reference.To);
+                Table table = referencedObject as Table;
+
+                if (table != null)
+                {
+                    AddDistinct(tables, new TableAccessInfo(table.Name, ObjectModuleName(table)));
+                }
+            }
+
+            return tables;
+        }
+
+        private static bool ReferenceHasAccess(EntityReference reference, TableAccessType accessType)
+        {
+            switch (accessType)
+            {
+                case TableAccessType.Update:
+                    return ReferenceTypeInfo.HasUpdateAccess(reference.LinkTypeInfo);
+                case TableAccessType.Delete:
+                    return ReferenceTypeInfo.HasDeleteAccess(reference.LinkTypeInfo);
+                case TableAccessType.Insert:
+                    return ReferenceTypeInfo.HasInsertAccess(reference.LinkTypeInfo);
+                case TableAccessType.Read:
+                    return ReferenceTypeInfo.HasReadAccess(reference.LinkTypeInfo);
+                default:
+                    return false;
+            }
+        }
+
+        private static IList<ReferenceInfo> GetReferencedObjects(KBObject obj)
+        {
+            List<ReferenceInfo> objects = new List<ReferenceInfo>();
+
+            foreach (EntityReference reference in obj.GetReferences())
+            {
+                KBObject referencedObject = KBObject.Get(obj.Model, reference.To);
+
+                if (IsRelevantModularizationReference(referencedObject))
+                {
+                    AddDistinct(objects, BuildReferenceInfo(reference, referencedObject));
+                }
+            }
+
+            return objects;
+        }
+
+        private static IList<ReferenceInfo> GetReferencingObjects(KBObject obj)
+        {
+            List<ReferenceInfo> objects = new List<ReferenceInfo>();
+
+            foreach (EntityReference reference in obj.GetReferencesTo())
+            {
+                KBObject referencingObject = KBObject.Get(obj.Model, reference.From);
+
+                if (IsRelevantModularizationReference(referencingObject))
+                {
+                    AddDistinct(objects, BuildReferenceInfo(reference, referencingObject));
+                }
+            }
+
+            return objects;
+        }
+
+        private static bool IsRelevantModularizationReference(KBObject obj)
+        {
+            return obj != null
+                && !(obj is Artech.Genexus.Common.Objects.Attribute)
+                && !(obj is Domain)
+                && !(obj is Image)
+                && !(obj is Theme)
+                && !(obj is ThemeClass)
+                && !(obj is GeneratorCategory)
+                && !(obj is KBCategory);
+        }
+
+        private static ReferenceInfo BuildReferenceInfo(EntityReference reference, KBObject obj)
+        {
+            return new ReferenceInfo(FormatReferenceType(reference), obj.QualifiedName.ToString(), obj.TypeDescriptor.Name, ObjectModuleName(obj));
+        }
+
+        private static string FormatReferenceType(EntityReference reference)
+        {
+            return reference.ReferenceType.ToString() + " / " + reference.LinkType.ToString();
+        }
+
+        private static void AddDistinct(List<TableAccessInfo> values, TableAccessInfo value)
+        {
+            if (!values.Any(v => v.TableName == value.TableName && v.ModuleName == value.ModuleName))
+            {
+                values.Add(value);
+            }
+        }
+
+        private static void AddDistinct(List<ReferenceInfo> values, ReferenceInfo value)
+        {
+            if (!values.Any(v => v.ReferenceType == value.ReferenceType && v.ObjectName == value.ObjectName && v.ObjectType == value.ObjectType && v.ModuleName == value.ModuleName))
+            {
+                values.Add(value);
+            }
+        }
+
+        private static int CountRules(KBObject obj)
+        {
+            string rules = Functions.ObjectRulesUpper(obj);
+            rules = Functions.RemoveEmptyLines(rules);
+
+            string rulesWOComments = Functions.ExtractComments(rules);
+            rulesWOComments = Functions.RemoveEmptyLines(rulesWOComments);
+
+            return Functions.LineCount(rulesWOComments);
+        }
+
+        private static int CountConditions(KBObject obj)
+        {
+            ConditionsPart conditionsPart = obj.Parts.Get<ConditionsPart>();
+
+            if (conditionsPart == null || String.IsNullOrEmpty(conditionsPart.Source))
+            {
+                return 0;
+            }
+
+            string conditions = Functions.RemoveEmptyLines(Functions.ExtractComments(conditionsPart.Source.ToUpper()));
+            return Functions.LineCount(conditions);
+        }
+
+        private static int CountWebFormTags(KBObject obj)
+        {
+            int tagcant = 0;
+
+            if (((obj is Transaction) || (obj is WebPanel) || obj is ThemeClass) && ObjectsHelper.isGenerated(obj))
+            {
+                WebFormPart webForm = obj.Parts.Get<WebFormPart>();
+
+                if (webForm != null && webForm.Document != null)
+                {
+                    tagcant = webForm.Document.SelectNodes("//*").Count;
+                }
+            }
+
+            return tagcant;
+        }
+
+        private enum TableAccessType
+        {
+            Update,
+            Delete,
+            Insert,
+            Read
+        }
+
+        private class TableAccessInfo
+        {
+            public TableAccessInfo(string tableName, string moduleName)
+            {
+                TableName = tableName;
+                ModuleName = moduleName;
+            }
+
+            public string TableName { get; private set; }
+            public string ModuleName { get; private set; }
+        }
+
+        private class ReferenceInfo
+        {
+            public ReferenceInfo(string referenceType, string objectName, string objectType, string moduleName)
+            {
+                ReferenceType = referenceType;
+                ObjectName = objectName;
+                ObjectType = objectType;
+                ModuleName = moduleName;
+            }
+
+            public string ReferenceType { get; private set; }
+            public string ObjectName { get; private set; }
+            public string ObjectType { get; private set; }
+            public string ModuleName { get; private set; }
+        }
+
         /*
 
 Dependencias Entrantes

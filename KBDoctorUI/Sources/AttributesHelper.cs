@@ -27,17 +27,10 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes with incomplete description";
-            try
+            KBDoctorReport.Run(title, new string[] {
+                "Attribute", "Description", "Data type", "Title", "Column Title"
+            }, writer =>
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Title", "Column Title" });
                 string description;
                 string titlesuggested;
                 string columnTitle;
@@ -54,14 +47,14 @@ namespace Concepto.Packages.KBDoctor
 
                         if (a.Title == a.Description)
                         {
-                            titlesuggested = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignTitleToAttribute&attName=" + a.Name + "\">" + a.Title + "</a>";
+                            titlesuggested = Functions.CommandLink("AssignTitleToAttribute", a.Title, "attName", a.Name);
                             writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
 
                         }
 
                         if (a.Description.Replace(" ", "") == a.Name)
                         {
-                            description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToAttribute&attName=" + a.Name + "\">" + a.Description + "</a>";
+                            description = Functions.CommandLink("AssignDescriptionToAttribute", a.Description, "attName", a.Name);
                             Table t = TablesHelper.TableOfAttribute(a);
                             writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
 
@@ -69,7 +62,7 @@ namespace Concepto.Packages.KBDoctor
 
                         if (a.ColumnTitle == a.Description)
                         {
-                            columnTitle = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignColumnTitleToAttribute&attName=" + a.Name + "\">" + a.ColumnTitle + "</a>";
+                            columnTitle = Functions.CommandLink("AssignColumnTitleToAttribute", a.ColumnTitle, "attName", a.Name);
                             writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
                         }
 
@@ -77,19 +70,7 @@ namespace Concepto.Packages.KBDoctor
                     }
 
                 }
-
-                writer.AddFooter();
-                writer.Close();
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                output.EndSection("KBDoctor", title, success);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+            });
         }
 
         public static void AttFormula()
@@ -98,17 +79,10 @@ namespace Concepto.Packages.KBDoctor
 
 
             string title = "KBDoctor - Attributes Formula";
-            try
+            KBDoctorReport.Run(title, new string[] {
+                "Attribute", "Description", "DataType", "Formula", "Tables", "Redundant in Tables", "#References"
+            }, writer =>
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Attribute", "Description", "DataType", "Formula", "Tables", "Redundant in Tables", "#References" });
                 string description;
                 string titlesuggested;
                 string columnTitle;
@@ -170,19 +144,7 @@ namespace Concepto.Packages.KBDoctor
                     }
 
                 }
-
-                writer.AddFooter();
-                writer.Close();
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+            });
         }
 
 
@@ -312,17 +274,10 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Attributes Char that shoud be Varchar";
-            try
+            KBDoctorReport.Run(title, new string[] {
+                "Attribute", "Description", "Data type", "Domain"
+            }, writer =>
             {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain" });
-
                 foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
                 {
                     string Picture = Utility.FormattedTypeAttribute(a);
@@ -336,19 +291,7 @@ namespace Concepto.Packages.KBDoctor
                         writer.AddTableData(new string[] { attNameLink, a.Description, Picture, domLink });
                     }
                 }
-
-                writer.AddFooter();
-                writer.Close();
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+            });
         }
 
         private static string DomainLinkFromAttribute(Artech.Genexus.Common.Objects.Attribute a)
@@ -428,7 +371,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
-                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain", "ControlType", "Subtype", "Title", "Column Title", "Contextual", "IsFormula" });
+                writer.AddTableHeader(new string[] { "Attribute", "Description", "Data type", "Domain", "ControlType", "Subtype", "Title", "Column Title", "Contextual", "IsFormula", "ValueRange" });
 
                 foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))
                 {
@@ -436,9 +379,11 @@ namespace Concepto.Packages.KBDoctor
                     string domlink = a.DomainBasedOn == null ? " " : Functions.linkObject(a.DomainBasedOn);
                     string superTypeName = a.SuperTypeKey == null ? " " : a.SuperType.Name;
                     string controlType = a.GetPropertyValueString("ControlType");
+                    string valueRange = a.GetPropertyValueString("AttValueRange");
                     KBDoctorOutput.Message( "Procesing " + a.Name);
+         
                     string isFormula = a.Formula == null ? "" : "*";
-                    writer.AddTableData(new string[] { Functions.linkObject(a), a.Description, Picture, domlink, controlType, superTypeName, a.Title, a.ColumnTitle, a.ContextualTitleProperty, isFormula });
+                    writer.AddTableData(new string[] { Functions.linkObject(a), a.Description, Picture, domlink, controlType, superTypeName, a.Title, a.ColumnTitle, a.ContextualTitleProperty, isFormula, valueRange });
                 }
 
                 writer.AddFooter();
@@ -556,7 +501,7 @@ namespace Concepto.Packages.KBDoctor
                     }
                     if (!existeIndice)
                     {
-                        add = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AddDescriptorIndex&tabName=" + t.Name + "\">Add index</a>";
+                        add = Functions.CommandLink("AddDescriptorIndex", "Add index", "tabName", t.Name);
                         writer.AddTableData(new string[] { Functions.linkObject((KBObject)t), t.Description, atributo, Utility.FormattedTypeAttribute(t.TableStructure.DescriptionAttribute.Attribute), add });
                     }
 
@@ -758,7 +703,7 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddHeader(title);
                 writer.AddTableHeader(new string[] { "Attribute", "can delete", "Description", "Data type", "Tables", "Transactions" });
 
-                // grabo todos los atributos en una colección
+                // grabo todos los atributos en una colecciÃ³n
                 KBDoctorOutput.Message( "Loading attributes..");
                 List<Artech.Genexus.Common.Objects.Attribute> attTodos = new List<Artech.Genexus.Common.Objects.Attribute>();
                 foreach (Artech.Genexus.Common.Objects.Attribute a in Artech.Genexus.Common.Objects.Attribute.GetAll(kbserv.CurrentModel))

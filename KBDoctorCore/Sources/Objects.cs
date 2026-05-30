@@ -1,37 +1,42 @@
 ﻿using Artech.Architecture.Common.Collections;
+using Artech.Architecture.Common.Descriptors;
+using Artech.Architecture.Common.Location;
 using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.Architecture.Language.ComponentModel;
 using Artech.Architecture.Language.Parser;
+using Artech.Architecture.Language.Parser.Data;
+
+//using Artech.Common.Language.Parser;
+using Artech.Architecture.Language.Parser.Objects;
 using Artech.Architecture.Language.Services;
+using Artech.Common.Diagnostics;
+using Artech.Common.Helpers.Structure;
+using Artech.Common.Properties;
+using Artech.Genexus.Common;
+using Artech.Genexus.Common.AST;
 using Artech.Genexus.Common.CustomTypes;
 using Artech.Genexus.Common.Objects;
-using Artech.Genexus.Common;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GeneXus.Server.Contracts;
-
-using System.Windows.Media;
-using Artech.Common.Diagnostics;
-using Artech.Architecture.Common.Location;
 using Artech.Genexus.Common.Parts;
-using Artech.Common.Helpers.Structure;
 using Artech.Genexus.Common.Parts.SDT;
+using Artech.Genexus.Common.Parts.WebForm;
+using Artech.Genexus.Common.Types;
 using Artech.Udm.Framework;
 using Artech.Udm.Framework.References;
 using Concepto.Packages.KBDoctor;
-using Artech.Genexus.Common.AST;
-using Artech.Architecture.Common.Descriptors;
-using Artech.Genexus.Common.Types;
-//using Artech.Common.Language.Parser;
-using Artech.Architecture.Language.Parser.Objects;
+using GeneXus.Server.Contracts;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows.Media;
 using System.Xml;
 using Attribute = Artech.Genexus.Common.Objects.Attribute;
-using System.IO;
-using System.Collections.ObjectModel;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
@@ -2899,18 +2904,102 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
             KBModel model = KB.DesignModel;
 
-            foreach (var entityRef in themeclass.GetReferencesTo())
+            foreach (KBObject obj in model.Objects)
             {
-                entityRef.From.Id.ToString();
-                entityRef.To.Id.ToString();
+                if (obj.IsComponent)
+                {
+                    string webcstyle = obj.GetPropertyValueString("Theme");
+
+                    foreach (EntityReference reference in obj.GetReferences())
+                    { 
+                       output.AddLine(obj.Name + reference.ToString()  );
+                    }
+
+
+                }
             }
-            IEnumerable<EntityReference> references = themeclass.GetReferencesTo();
-            if (references.Count<EntityReference>() == 0)
-            {
-                output.AddLine(themeclass.Name);
-            }
+            
             return true;
         }
+
+        internal static bool ObjThemeClassesNotUsed(KnowledgeBase KB, IOutputService output, WebPanel obj)
+        {
+
+            KBModel model = KB.DesignModel;
+
+            WebFormPart webForm = obj.Parts.Get<WebFormPart>();
+
+            ThemeClassReferenceList miclasslist = new ThemeClassReferenceList();
+
+            foreach (IWebTag tag in WebFormHelper.EnumerateWebTag(webForm))
+            {
+
+                                    if (tag.Properties != null)
+                                    {
+                                        PropertyDescriptor prop = tag.Properties.GetPropertyDescriptorByDisplayName("Class");
+                                        if (prop != null)
+                                        {
+                                            if (prop.PropertyType.Name == "ThemeClassReferenceList") { 
+                                           
+                                                try
+                                                {
+                                             miclasslist = (ThemeClassReferenceList)prop.GetValue(new object());
+                                              }
+                                             catch (Exception e) {
+                                                 KBDoctorOutput.Error("LoadAndCheckUsedClasses:" + e.Message + " " + e.InnerException);
+                                                 throw e;
+                                             };
+                                    } else 
+                                    {
+                            continue;
+                        }
+                        var list = miclasslist; // already obtained
+                        foreach (var item in list) // iterate reference entries if ThemeClassReferenceList is enumerable
+                        {
+                            /*
+                            if (item is Artech.Genexus.Common.CustomTypes.ThemeClassReference themeRef)
+                            {
+                                // resolve to ThemeClass via existing API
+                          //      ThemeClass t = themeRef...Resolve(obj.Model); // pseudocode: use real method to get ThemeClass
+                                if (t != null) {  }
+                            }
+                            else if (item is Artech.Genexus.Common.CustomTypes.DesignSystemClassReference dsRef)
+                            {
+                                // either skip or translate to ThemeClass using the appropriate API
+                           //     ThemeClass t = dsRef.ToThemeClass(obj.Model); // pseudocode - query SDK for conversion
+                                if (t != null) {  }
+                            }
+                                        */
+                        }
+
+
+                        foreach (ThemeClass miclass in miclasslist.GetThemeClasses(obj.Model))
+                            {
+                                if (miclass != null)
+                                {
+                                    string miclstr = miclass.Name.ToLower();
+
+                                    string objName = obj.Name;
+                                    output.AddLine(" Object : " + obj.Name + " reference class " + miclstr + " which not exist in Theme");
+
+                                }
+
+
+                            }
+                                        }
+                                    }
+                                
+
+            }
+            return true;
+
+        } 
+    
+
+                
+ 
+            
+
 
         internal static void ProceduresCalledAsFunction(KBModel model, KBObject obj, ref string recommendations, out int cant)
         {
@@ -3567,7 +3656,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static string GetItemDataType(SDTItem item)
         {
-            string dataType = item.Type.ToString() + "(" + item.Length.ToString() + (item.Decimals > 0 ? "." + item.Decimals.ToString() : "") + ")";
+            string dataType = Utility.ReturnFormattedType(item.Type, item.Length, item.Decimals, item.Signed);
             return dataType;
         }
 

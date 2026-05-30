@@ -36,25 +36,14 @@ namespace Concepto.Packages.KBDoctor
             KBModel model = UIServices.KB.CurrentModel;
 
             string title = "KBDoctor - Tables";
-            try
-            {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] {
+            KBDoctorReport.Run(title, new string[] {
                 "Name", "Description","Module","is Public", "#Key", "Key Width", "Width Variable", "Width Fixed", "Width Total" , "Cache Level"
-            });
-
+            }, writer =>
+            {
                 string description;
                 foreach (Table t in Table.GetAll(kbserv.CurrentModel))
                 {
-                    description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
+                    description = Functions.CommandLink("AssignDescriptionToTable", t.Description, "tblName", t.Description);
                     string objNameLink = Functions.linkObject(t);
 
                     KBDoctorOutput.Message( "Processing... " + t.Name);
@@ -91,19 +80,7 @@ namespace Concepto.Packages.KBDoctor
                 });
 
                 }
-
-                writer.AddFooter();
-                writer.Close();
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                output.EndSection("KBDoctor", title, success);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+            });
         }
 
         internal static Table TableOfAttribute(Artech.Genexus.Common.Objects.Attribute a)
@@ -124,68 +101,32 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Tables with incomplete description";
-            try
-            {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] {
+            KBDoctorReport.Run(title, new string[] {
                 "Name", "Description"
-            });
-
+            }, writer =>
+            {
                 string description;
                 foreach (Table t in Table.GetAll(kbserv.CurrentModel))
                 {
                     if (t.Name == t.Description.Replace(" ", ""))
                     {
-                        description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Name + "\">" + t.Description + "</a>";
+                        description = Functions.CommandLink("AssignDescriptionToTable", t.Description, "tblName", t.Name);
                         writer.AddTableData(new string[] {
                         t.Name, description
                     });
                     }
                 }
-
-                writer.AddFooter();
-                writer.Close();
-
-                //UIServices.StartPage.GetToolWindow().OpenPage(outputFile, "KBDoctor");
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                output.EndSection("KBDoctor", title, success);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+            });
         }
 
         public static void ListGroupWithoutDescription()
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Subtypes Group with incomplete description";
-            try
-            {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] {
+            KBDoctorReport.Run(title, new string[] {
                 "Name", "Description"
-            });
-
-
+            }, writer =>
+            {
                 foreach (Group g in Group.GetAll(kbserv.CurrentModel))
                 {
                     if (g.Name == g.Description.Replace(" ", "") || (g.Name == ""))
@@ -197,19 +138,7 @@ namespace Concepto.Packages.KBDoctor
                     });
                     }
                 }
-
-                writer.AddFooter();
-                writer.Close();
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                output.EndSection("KBDoctor", title, success);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+            });
         }
 
         public static void AssignDescriptionToTable(object[] parameters)
@@ -250,25 +179,12 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Tables Width";
-            try
-            {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] {
+            KBDoctorReport.Run(title, new string[] {
                 "Name", "Description", "#Key", "Key Width", "Width Variable", "Width Fixed", "Width Total" , "Cache Level"
-            });
-
-                string description;
+            }, writer =>
+            {
                 foreach (Table t in Table.GetAll(kbserv.CurrentModel))
                 {
-                    description = "<a href=\"gx://?Command=fa2c542d-cd46-4df2-9317-bd5899a536eb;AssignDescriptionToTable&tblName=" + t.Description + "\">" + t.Description + "</a>";
                     string objNameLink = Functions.linkObject(t);
 
                     KBDoctorOutput.Message( "Processing... " + t.Name);
@@ -304,19 +220,7 @@ namespace Concepto.Packages.KBDoctor
                 });
 
                 }
-
-                writer.AddFooter();
-                writer.Close();
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                output.EndSection("KBDoctor", title, success);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+            });
         }
 
 
@@ -325,22 +229,10 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             string title = "KBDoctor - Tables Transaction Relation";
-            try
-            {
-                string outputFile = Functions.CreateOutputFile(kbserv, title);
-
-
-                StringCollection strCol = new StringCollection();
-                IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
-
-                KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                writer.AddHeader(title);
-                writer.AddTableHeader(new string[] {
+            KBDoctorReport.Run(title, new string[] {
                 "Table", "Transactions with GenerateObject=False", " Transactions with GENERATEObject=True","Check"
-            });
-
-
+            }, writer =>
+            {
                 foreach (Table tbl in Table.GetAll(kbserv.CurrentModel))
                 {
                     string tblNamelink = Functions.linkObject((KBObject)tbl);
@@ -358,19 +250,7 @@ namespace Concepto.Packages.KBDoctor
                     tblNamelink, trnNoGen, trnGen,(trnGen!="" && trnNoGen!="")?"*":""
                 });
                 }
-
-                writer.AddFooter();
-                writer.Close();
-
-                KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                bool success = true;
-                output.EndSection("KBDoctor", title, success);
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
+            });
         }
 
         public static void GenterateSimpleTransactionFromNotGeneratedTransaction()
@@ -1013,7 +893,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = CommonServices.Output;
             Transaction trn = Transaction.Create(kbserv.CurrentModel);
-            trn.Name = "KBDoctor_table_" + t.Name;
+            trn.Name = "POC_table_" + t.Name;
             trn.Description = t.Description;
             trn.SetPropertyValue(Properties.TRN.GenerateObject, false);
             trn.SetPropertyValue(Properties.TRN.MasterPage, WebPanelReference.NoneRef);
@@ -1035,7 +915,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             Procedure p = Procedure.Create(kbserv.CurrentModel);
             string source = "";
-            p.Name = "KBDoctor_Initialize2_" + t.Name;
+            p.Name = "POC_Initialize2_" + t.Name;
             p.Description = t.Description;
             p.SetPropertyValue(Properties.PRC.GenerateObject, true);
             p.Module = m;
