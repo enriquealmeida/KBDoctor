@@ -16,7 +16,7 @@ namespace Concepto.Packages.KBDoctor
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 try
@@ -32,7 +32,7 @@ namespace Concepto.Packages.KBDoctor
                 }
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                output.EndSection("KBDoctor", title, true);
+                KBDoctorOutput.EndSection(title, true);
             }
             catch
             {

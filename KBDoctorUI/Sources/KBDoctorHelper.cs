@@ -55,10 +55,10 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
-        public static string SpcDirectory(IKBService kbserv ) 
+        public static string SpcDirectory(IKBService kbserv )
         {
             GxModel gxModel = kbserv.CurrentKB.DesignModel.Environment.TargetModel.GetAs<GxModel>();
-            return kbserv.CurrentKB.Location + string.Format(@"\GXSPC{0:D3}\", gxModel.Model.Id); 
+            return kbserv.CurrentKB.Location + string.Format(@"\GXSPC{0:D3}\", gxModel.Model.Id);
         }
 
         public static string ObjComparerDirectory(IKBService kbserv)

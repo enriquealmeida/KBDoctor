@@ -5,4 +5,4 @@ Para agregar una nueva opción de menú:
  - En el archivo CommandManager.cs, varias cosas
     * Agregar el AddCommand correspondiente en el constructor, cambiando el comando y el método Exec<nombre_comando>
     * Crear el método Exec<nombre_comando> que tenga el código para ejecutar el comando
-    
+

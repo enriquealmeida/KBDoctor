@@ -21,7 +21,7 @@ namespace Concepto.Packages.KBDoctor
     {
         public ReplaceDomain()
         {
-           
+
             InitializeComponent();
             labelError.Text = "";
         }
@@ -36,7 +36,7 @@ namespace Concepto.Packages.KBDoctor
 
             comboBoxOriginalDomain.Sorted = true;
             comboBoxUnifiy.Sorted = true;
-            
+
         }
 
 
@@ -57,7 +57,7 @@ namespace Concepto.Packages.KBDoctor
                 return;
             }
 
-          
+
         }
 
 

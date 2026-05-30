@@ -93,14 +93,15 @@ namespace Concepto.Packages.KBDoctor
                 {
                     obj.Save();
                 }
-                catch 
+                catch
                     {
-                    }          
+                    }
 
             }
-            
+
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar antes de eliminar.
         private static bool TokenIsConstant(TokenData token)
         {
             string tokenword = token.Word;
@@ -140,7 +141,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -175,10 +176,10 @@ namespace Concepto.Packages.KBDoctor
 
                         List<KBObject> outmodule = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
                                                     where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
-                                                    where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo) 
+                                                    where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo)
                                                        || ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
                                                     select model.Objects.Get(r.To)).ToList();
-                        //Busco las tablas fuera del modulo. 
+                        //Busco las tablas fuera del modulo.
                         int outmoduleint = 0;
                         string tablas = "";
                         foreach (KBObject o2 in outmodule)
@@ -201,7 +202,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -222,6 +223,7 @@ namespace Concepto.Packages.KBDoctor
             throw new Exception("Could not find Trunk KBversion");
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar antes de eliminar.
         private static int FindKBVersion(IEnumerable<KBVersionData> versions, string serverKbVersion)
         {
             if (string.IsNullOrEmpty(serverKbVersion))
@@ -237,6 +239,7 @@ namespace Concepto.Packages.KBDoctor
             throw new Exception(string.Format("Could not find KBversion '{0}'", serverKbVersion));
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar antes de eliminar.
         private static IEnumerable<KBRevisionData> FilterRevisions(IEnumerable<KBRevisionData> revisions, DateTime FromDate, DateTime ToDate)
         {
             foreach (KBRevisionData data in revisions)
@@ -257,7 +260,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title) + ".csv";
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddCSVLine(new string[] { "Object", "Description", "Type", "Module",
@@ -295,12 +298,12 @@ namespace Concepto.Packages.KBDoctor
                         KBDoctorOutput.Message("Error: " + e.Message);
                         KBDoctorOutput.Message("Retry nro: " + retrys.ToString());
                     }
-                    
+
                     if (revisions_list_iter.Count < 50)
                     {
                         fin = true;
                     }
-                    KBDoctorOutput.Message("Iteración: " + i.ToString());
+                    KBDoctorOutput.Message("Iteraciï¿½n: " + i.ToString());
                 }
 
                 KBDoctorOutput.Message("Processing commits");
@@ -321,7 +324,7 @@ namespace Concepto.Packages.KBDoctor
                     {
                         if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                         {
-                            
+
 
                             string source = Functions.ObjectSourceUpper(obj);
                             source = Functions.RemoveEmptyLines(source);
@@ -341,8 +344,8 @@ namespace Concepto.Packages.KBDoctor
                             int parametersCount = ParametersCountObject(obj);
 
                             int ParamIn = ParametersTypeCountObject(obj, "PARM_IN");
-                            int ParamOUT = ParametersTypeCountObject(obj, "PARM_OUT"); 
-                            int ParamINOUT = ParametersTypeCountObject(obj, "PARM_INOUT"); 
+                            int ParamOUT = ParametersTypeCountObject(obj, "PARM_OUT");
+                            int ParamINOUT = ParametersTypeCountObject(obj, "PARM_INOUT");
                             int VarNumber = VariablesCountObject(obj);
                             int FromRef = ReferencesFromCountObject(obj);
                             int ToRef = ReferencesToCountObject(obj);
@@ -376,7 +379,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -384,7 +387,7 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
-        
+
         private static Dictionary<string, int> GenerateCommitsDictionary(IEnumerable<KBRevisionData> revisions_list, KBModel model)
         {
             Dictionary<string, int> dict_commits = new Dictionary<string, int>();
@@ -404,7 +407,7 @@ namespace Concepto.Packages.KBDoctor
             }
             return dict_commits;
         }
-            
+
         private static Dictionary<string, int> GenerateCommitsDictionary(List<IKBVersionRevision> revisions_list, KBModel model)
         {
             Dictionary<string, int> dict_commits = new Dictionary<string, int>();
@@ -535,7 +538,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -605,7 +608,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
                 Functions.AddLineSummary(title + ".txt", "Totals Objects= " + ObjectsTotal.ToString() + " Complexity Index Sum= " + ComplexityIndexTotal.ToString() + " Complexity Index Average= " + Average.ToString());
             }
             catch
@@ -629,7 +632,7 @@ namespace Concepto.Packages.KBDoctor
             return countparm;
         }
 
-        
+
         private static int ParametersTypeCountObject(KBObject obj, string type)
         {
             int countparm = 0;
@@ -660,7 +663,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -702,7 +705,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -727,7 +730,7 @@ namespace Concepto.Packages.KBDoctor
                             && (v.Type != eDBType.GX_SDT) && (v.Type != eDBType.GX_EXTERNAL_OBJECT) && (v.Type != eDBType.Boolean) && v.Type != eDBType.GX_BUSCOMP && v.Type != eDBType.GX_BUSCOMP_LEVEL && v.Type != eDBType.BITMAP)
                         {
                             tieneVarSinDomain = true;
-                            cantVar += 1;                
+                            cantVar += 1;
                         }
                     }
                 }
@@ -748,7 +751,7 @@ namespace Concepto.Packages.KBDoctor
 
                 string callers = "";
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -783,7 +786,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -813,6 +816,7 @@ namespace Concepto.Packages.KBDoctor
             return callers;
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar antes de eliminar.
         private static string ReplaceCallForUDP(KBObject obj)
         {
             IOutputService output = CommonServices.Output;
@@ -909,6 +913,7 @@ namespace Concepto.Packages.KBDoctor
             return udpCallable;
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar antes de eliminar.
         private static string CompareCallParameters(KBObject obj)
         {
             IOutputService output = CommonServices.Output;
@@ -941,7 +946,7 @@ namespace Concepto.Packages.KBDoctor
                                 line.Replace(".udp(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace("call(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace("udp(", "(", StringComparison.CurrentCultureIgnoreCase);
-                                line.Replace(objRef.Name, "Ñ", StringComparison.CurrentCultureIgnoreCase);
+                                line.Replace(objRef.Name, "ï¿½", StringComparison.CurrentCultureIgnoreCase);
 
                                 StringCollection interfazCallerObject = ProcessingObjectCall(obj, line);
                                 for (int i = 0; i < interfazCallerObject.Count; i++)
@@ -1139,7 +1144,7 @@ namespace Concepto.Packages.KBDoctor
                     line = line.TrimStart().ToUpper();
                     if (line.StartsWith("DO '"))
                     {
-                        //Si es un llamado a una subrutina, no hago nada y lo salteo. 
+                        //Si es un llamado a una subrutina, no hago nada y lo salteo.
                     }
                     else
                     {

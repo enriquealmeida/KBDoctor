@@ -60,7 +60,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Tree Commit  ";
 
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -89,7 +89,7 @@ namespace Concepto.Packages.KBDoctor
                 writer.Close();
 
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
@@ -176,7 +176,7 @@ namespace Concepto.Packages.KBDoctor
             if (source != null)
             {
                 parserInfo = new ParserInfo(source);
-                
+
                 int FCLobjClass = 0;
                 string FCIobjName = "";
                 foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
@@ -257,8 +257,8 @@ namespace Concepto.Packages.KBDoctor
                   // 40
             TKN_TRUE, // TRUE
             TKN_FALSE, // FALSE
-            TKN_NONE, // NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR 
-            PRM,  // Parámetro, utilizado en DYNQ
+            TKN_NONE, // NONE, para expresiï¿½n FOR EACH ... ORDER NONE ... ENDFOR
+            PRM,  // Parï¿½metro, utilizado en DYNQ
             FND,  // Name Domain
             FLV,  // LEVEL token
             TKN_NEW, // NEW token
@@ -292,7 +292,7 @@ namespace Concepto.Packages.KBDoctor
             TSIGN, // Now that rules supports comments, define the TSIGN token to specified the sign of an expression (e.g. "-1")
             TEXO,
 
-            // ¡¡¡ UNTIL 99 !!!
+            // ï¿½ï¿½ï¿½ UNTIL 99 !!!
             //  Commands codes starts at 100, See dedotcmd.h
 
             ///////////////////////////////////////////////////////////
@@ -379,10 +379,10 @@ namespace Concepto.Packages.KBDoctor
             // 170
             DTEFF,
             DTLNK, // Comando LINK
-            DTAPL, // Asignación del tipo +=
-            DTAMI, // Asignación del tipo -=
-            DTAMU, // Asignación del tipo *=
-            DTADI, // Asignación del tipo /=
+            DTAPL, // Asignaciï¿½n del tipo +=
+            DTAMI, // Asignaciï¿½n del tipo -=
+            DTAMU, // Asignaciï¿½n del tipo *=
+            DTADI, // Asignaciï¿½n del tipo /=
             DTFIN, // FOR <var> IN <array>
             DTEFI, // END // del token anterior
             DTFFT, // FOR <var>=<exp> TO <exp> STEP <exp>

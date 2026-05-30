@@ -26,7 +26,7 @@ using System.Windows.Forms;
 
 namespace Concepto.Packages.KBDoctor
 {
-    public class AttributeTree 
+    public class AttributeTree
     {
         private CallTree m_MyDependencies;
         private Dictionary<EntityKey, bool> m_ParsedObjects;
@@ -189,7 +189,7 @@ namespace Concepto.Packages.KBDoctor
               //      goto end;
             }
 
-            
+
            // K2BStatusBar.Clear();
             return;
         }
@@ -339,7 +339,7 @@ namespace Concepto.Packages.KBDoctor
                             result = false;
                             K2BOutput.InternalError(e);
                         }
-                        
+
                     }
 
                 }
@@ -397,7 +397,7 @@ namespace Concepto.Packages.KBDoctor
                 }
             }
         }
-        
+
         private static IEnumerable<Dependency> ScanDependencies(Dependency Member, KBModel model, Dependencies dependencies, Dictionary<EntityKey, bool> parsedObjects, List<Dependency.Identifier> Visited, K2BThreading backgroundWorker, bool RecursiveSearch)
         {
             if (RecursiveSearch)
@@ -549,7 +549,7 @@ namespace Concepto.Packages.KBDoctor
             }
         }
         */
-        
+
         public static void ParseSource2(AbstractNode AbstractNode, KBModel model, CallTree calltree)
         {
             if (AbstractNode == null || AbstractNode.Node == null)
@@ -615,7 +615,7 @@ namespace Concepto.Packages.KBDoctor
                     break;
             }
         }
-        
+
         private static void CallStatement(AbstractNode AbstractNode, KBModel model, CallTree calltree)
         {
             bool CallVariable = false;
@@ -837,7 +837,7 @@ namespace Concepto.Packages.KBDoctor
                         RuleDefinition.ParameterAccess Accessor = RuleDefinition.ParameterAccess.PARM_INOUT;
                         if (signatures[0].ParametersCount >= parmNo)
                             Accessor = signatures[0].Parameters.Skip(parmNo - 1).First().Accessor;
-                        
+
                         if (Accessor == RuleDefinition.ParameterAccess.PARM_IN)
                             ExpandStructureDependencies(parm, model, dependencies, parmNo.ToString(), Dependency.Types.ProgramParameter, program, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject);
                         else if (Accessor == RuleDefinition.ParameterAccess.PARM_OUT)
@@ -847,7 +847,7 @@ namespace Concepto.Packages.KBDoctor
                             ExpandStructureDependencies(parm, model, dependencies, parmNo.ToString(), Dependency.Types.ProgramParameter, program, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject);
                             ExpandStructureDependencies(parm, model, dependencies, GetNodeText(parm), ReferenceNodeType, parm.Part.KBObject, parmNo.ToString(), Dependency.Types.ProgramParameter, program);
                         }
-                        
+
                     }
                 }
             }
@@ -1769,7 +1769,7 @@ namespace Concepto.Packages.KBDoctor
                            return m_DataView;
                        }
                    }
-                   
+
             [XmlAttribute]
             public string ExternalName
             {
@@ -1781,7 +1781,7 @@ namespace Concepto.Packages.KBDoctor
                 }
                 set {; }
             }
-            
+
             [XmlAttribute]
             public string ExternalDescription
             {
@@ -1802,7 +1802,7 @@ namespace Concepto.Packages.KBDoctor
             public XMLObject(KBObject kbobject)
             {
                 m_KBObject = kbobject;
-                
+
             }
             private XMLObject() { }
 

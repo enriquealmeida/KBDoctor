@@ -21,7 +21,7 @@
     <CommandDefinition id="ListDomain" />
     <CommandDefinition id="AttUpdated" />
     <CommandDefinition id="GenerateSQLScripts" />
-   
+
     <!-- Modularization -->
     <CommandDefinition id="GenerateGraph" />
     <CommandDefinition id="ApplyExternalModularization" />
@@ -43,7 +43,7 @@
     <CommandDefinition id="GenerateTrnFromTables2" />
 	<CommandDefinition id="GenerateTrnFromTables" />
     <CommandDefinition id="ListTablesInModules" />
-    <CommandDefinition id="ListObjectsWithTableInOtherModule" />    
+    <CommandDefinition id="ListObjectsWithTableInOtherModule" />
     <CommandDefinition id="GenerateDPfromTable" />
     <!-- Indices -->
     <CommandDefinition id="IndexWithNotRefAtt" />
@@ -70,7 +70,7 @@
     <CommandDefinition id="ChangeLegacyCode" />
     <CommandDefinition id="ChangeCommitOnExit" />
     <CommandDefinition id="TreeCommit" />
-    <CommandDefinition id="EditLegacyCodeToReplace" /> 
+    <CommandDefinition id="EditLegacyCodeToReplace" />
     <CommandDefinition id="ObjectsRefactoringCandidates" />
     <CommandDefinition id="CountTableAccess"  />
     <CommandDefinition id="ObjectsWithConstants" />
@@ -84,7 +84,7 @@
     <CommandDefinition id="ListDynamicCombo" />
     <CommandDefinition id="ListProperties" />
     <CommandDefinition id="VariablesNotBasedOnAttributes"/>
-   
+
     <CommandDefinition id="SplitMainObject" />
     <CommandDefinition id="MainTableUsed" />
     <CommandDefinition id="CreateDeployUnits" />
@@ -96,14 +96,14 @@
     <CommandDefinition id="ModuleDependencies" />
     <CommandDefinition id="CalculateCheckSum" />
     <CommandDefinition id="GenerateLocationXML" />
-    <CommandDefinition id="KBInterfaces" /> 
+    <CommandDefinition id="KBInterfaces" />
     <CommandDefinition id="UDPCallables" />
     <CommandDefinition id="PreprocessPendingObjects" context="selection" image="Red_Cross" imageType="ico" />
     <CommandDefinition id="ReviewObject" context="selection" image="Red_Cross" imageType="ico" />
     <CommandDefinition id="ReviewObjects" image="Red_Cross" imageType="ico" />
     <CommandDefinition id="ReviewModuleOrFolder" context="selection" image="Red_Cross" imageType="ico" />
-    <CommandDefinition id="EditReviewObjects" /> 
-    <CommandDefinition id="AttributeAsOutput" /> 
+    <CommandDefinition id="EditReviewObjects" />
+    <CommandDefinition id="AttributeAsOutput" />
     <!-- Acciones sobre atributos -->
     <CommandDefinition id="AssignDomainToAttribute" />
     <CommandDefinition id="AssignDeionToAttribute" />
@@ -141,10 +141,11 @@
     <CommandDefinition id="GeneratedByPatternWithoutDynamism" />
     <CommandDefinition id="ReplaceNullCompatible" />
     <CommandDefinition id="ListObj" />
+    <CommandDefinition id="ListUnreferencedObjectsInUserModules" />
     <CommandDefinition id="PrepareComparerNavigations" />
     <CommandDefinition id="CompareLastNVGDirectory" />
     <CommandDefinition id="OpenFolderComparerNavigation" />
-	
+
     <CommandDefinition id="CompareLastOBJDirectory" />
     <CommandDefinition id="OpenFolderObjComparerNavigation" />
     <!-- Acciones sobre tablas -->
@@ -171,7 +172,7 @@
         <Command refid='PreprocessPendingObjects' initVisible='true' />
       </Group>
     </Group>
-     
+
     <Group refid='KBObjectGrp' package='98121D96-A7D8-468b-9310-B1F468F812AE'>
       <Group id='KBDoctor'></Group>
       <Command refid='ReviewObject' initVisible='true'/>
@@ -182,7 +183,7 @@
     </Group>
   </Groups>
 
-  
+
   <Menus>
     <Menu type="menubar">
       <Popup refid='ToolsMenu' name='Tools' >
@@ -223,6 +224,7 @@
 
           <Popup name ="Objects">
             <Command refid="ListObj" />
+            <Command refid="ListUnreferencedObjectsInUserModules" />
             <Command refid="ObjectsWithoutInOut"/>
             <Command refid="KBInterfaces" />
             <Command refid="BuildObjectAndReferences"/>
@@ -279,7 +281,7 @@
               <Command refid="ResetWINForm"/>
               <Command refid="ReplaceNullCompatible"  />
               <Command refid="ChangeCommitOnExit" />
-              
+
             </Popup>
           </Group>
           <Group id="Common errors" >
@@ -333,9 +335,9 @@
             <Command refid="ListDynamicCombo"/>
           </Popup>
 
-			
-          
-			
+
+
+
           <Group id="LABS" >
             <Popup name ="Labs">
 			  <Command refid="GenerateTrnFromTables"/>
@@ -361,7 +363,7 @@
               <Command refid="CleanKBAsMuchAsPossible"/>
               <Command refid="ListTableAttributesUsingDomain"/>
               <Command refid="ObjectsWithConstants" />
-             
+
               <Command refid="AssignTypeComparer"/>
               <Command refid="ParameterTypeComparer" />
               <Command refid="ObjectsWithRuleOld" />
@@ -375,9 +377,9 @@
               <Command refid="GenerateSDTDataLoad" />
               <Command refid="GenerateDPfromTable"/>
               <Command refid="AttributeAsOutput"/>
-              <Command refid="CheckVariableUsages"/> 
+              <Command refid="CheckVariableUsages"/>
 			  <Command refid="GenerateSQLScripts"/>
-	
+
               <Popup name ="Themes" >
                   <Group>
                     <Command refid="ClassNotInTheme" />
@@ -388,11 +390,11 @@
                   </Group>
                 </Popup>
 
-               
+
 
             </Popup>
           </Group>
-         
+
 
 
 		  <Group id="ObjMigration" >
@@ -402,7 +404,7 @@
                 <Command refid="GenerateSQLScripts"/>
                 <Command refid="GenerateLocationXML" />
                 <Command refid="CleanObjects" />
-                
+
                 <Group>
                   <Command refid="ObjectsMainCalled"/>
                   <Command refid="ChangeLegacyCode" />
@@ -412,8 +414,8 @@
 				-->
              </Popup>
           </Group>
-  
-          
+
+
       </Popup>
     </Popup>
     </Menu>
@@ -422,7 +424,7 @@
     <ToolWindow id="37fc47d7-03d7-4389-9017-b8b711870599" title="KBDoctor" location ="navigator" visible="true"/>
   </ToolWindows>
 </Package>
-     
+
 
     <!--
       <Menu type='context' id='KBConfigurationContext' package='4703F0A9-2AEB-4469-9466-25E2A56C7B6D'>

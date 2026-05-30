@@ -6,7 +6,7 @@ using System.Linq;
 namespace LouvainCommunityPL {
     /// <summary>
     /// Represents an undirected graph.
-    /// 
+    ///
     /// Written from scratch by Kyle Miller (v-kymil@microsoft.com) February 2014
     /// </summary>
     public class Graph {
@@ -221,7 +221,7 @@ namespace LouvainCommunityPL {
         }
 
         /// <summary>
-        /// Creates a 
+        /// Creates a
         /// </summary>
         /// <returns></returns>
         public Graph RandomizedNodes(Random random) {

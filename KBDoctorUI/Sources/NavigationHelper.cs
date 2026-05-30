@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,7 +42,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
@@ -161,13 +161,13 @@ namespace Concepto.Packages.KBDoctor
 
                 if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
                 {
-                    
+
                     //if ((numFiles % 200) == 0 )
                             KBDoctorOutput.Message(x);
                     numFiles += 1;
 
                     string xmlstring = AddXMLHeader(x);
-                    
+
                     KBObject obj = ExtractObject(xmlstring);
                    // if (!ObjectsHelper.isGeneratedbyPattern(obj))
                    // {
@@ -239,7 +239,7 @@ namespace Concepto.Packages.KBDoctor
                             if (reader.NodeType == XmlNodeType.Element)
                             {
                                 //IMPRIMO EL LEVEL ANTERIOR
-                                //      if (LevelType!="") 
+                                //      if (LevelType!="")
                                 //             KBDoctorOutput.Message(String.Format("OBJECT= {0} EVENTNAME= {1} ROW= {2} LEVELTYPE= {3} TABLES= {4} ATTRIBUTES= {5} ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
                                 reader.Read();
                                 LevelType = reader.Value;
@@ -290,7 +290,7 @@ namespace Concepto.Packages.KBDoctor
                                     hash = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(aux))
                                                     ).Replace("-", String.Empty);
                                 }
-                                //Cuento Cantidad de tablas. 
+                                //Cuento Cantidad de tablas.
                                 hash = TableNames.Count(Char.IsWhiteSpace).ToString("D2") + hash;
 
                                KBDoctorOutput.Message(String.Format("{0} ,  {1} ,  {2} ,  {3} , {4}, {5}  ", ObjName, EventName, LevelRow, LevelType, TableNames, AttNames));
@@ -310,17 +310,17 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
-        
+
         public static void PrepareComparerNavigations(KnowledgeBase KB, IOutputService output)
         {
             string title = "KBDoctor - Prepare Comparer Navigation Files";
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
             IKBService kbserv = UIServices.KB;
-            string directoryArg = KBDoctorHelper.NvgComparerDirectory(kbserv); 
+            string directoryArg = KBDoctorHelper.NvgComparerDirectory(kbserv);
             string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
             string newDir = directoryArg + @"\NVG-" + fechahora + @"\";
             Directory.CreateDirectory(newDir);
@@ -340,14 +340,14 @@ namespace Concepto.Packages.KBDoctor
             // Get the elapsed time as a TimeSpan value.
             TimeSpan ts = stopWatch.Elapsed;
 
-            // Format and display the TimeSpan value. 
+            // Format and display the TimeSpan value.
             string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                 ts.Hours, ts.Minutes, ts.Seconds,
                 ts.Milliseconds / 10);
 
             KBDoctorOutput.Message(title + " elepsed time: " + elapsedTime);
-            output.EndSection("KBDoctor", title, true);
-            
+            KBDoctorOutput.EndSection(title, true);
+
         }
 
         private static void WriteXSLTtoDir()
@@ -358,7 +358,7 @@ namespace Concepto.Packages.KBDoctor
 
         }
 
-        
+
         public static void ProcesoDir(string directoryArg, string newDir, string generator, IOutputService output)
         {
 
@@ -382,21 +382,21 @@ namespace Concepto.Packages.KBDoctor
                     KBDoctorOutput.Message(x);
                     string xTxt = newDir + generator + Path.GetFileNameWithoutExtension(x) + ".nvg";
 
-                   
+
                     string xmlstring = AddXMLHeader(x);
-                    
+
                     string newXmlFile = x.Replace(".xml", ".xxx");
                     File.WriteAllText(newXmlFile, xmlstring);
 
                     try
-                    { 
+                    {
                         xslTransform.Transform(newXmlFile, xTxt);
                     }
                     catch(Exception e)
                     {
                         KBDoctorOutput.Error(x + ' ' + e.Message);
                     }
-                    
+
                     //  xslt.Transform(newXmlFile, xTxt);
 
                     File.Delete(newXmlFile);
@@ -417,7 +417,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
@@ -455,7 +455,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -635,7 +635,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
 
                 AskAttributeandTable at = new AskAttributeandTable();
@@ -696,7 +696,7 @@ namespace Concepto.Packages.KBDoctor
 
                     KBDoctorHelper.ShowKBDoctorResults(outputFile);
                     bool success = true;
-                    output.EndSection("KBDoctor", title, success);
+                    KBDoctorOutput.EndSection(title, success);
                 }
             }
             catch
@@ -705,9 +705,9 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
-            
 
-         
+
+
 
         private static string AddXMLHeader(string fileName)
         {
@@ -732,17 +732,17 @@ namespace Concepto.Packages.KBDoctor
                     return false;
                 else
                 {
-                    
+
                     return true;
                 }
                  }
             catch (Exception e) { Console.WriteLine(e.Message); };
 
-               
-           
+
+
             return false;
-                     
+
         }
-             
+
     }
 }

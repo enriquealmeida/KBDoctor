@@ -15,7 +15,7 @@ using Artech.Common.Helpers;
 
 namespace Concepto.Packages.KBDoctorCore.Sources
 {
-    public static class CodigoGX { 
+    public static class CodigoGX {
         public static KBObject ObjectHelperGet(KBModel model, string name)
         {
             ResolveResult resolveResult;
@@ -88,7 +88,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     yield return kBObject;
                 }
             }
- 
+
         }
 
         public static void HandleError(ResolveResult result)

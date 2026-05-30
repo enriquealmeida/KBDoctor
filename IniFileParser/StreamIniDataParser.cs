@@ -46,7 +46,7 @@ namespace IniParser
         {
             if (reader == null)
                 throw new ArgumentNullException("reader");
-            
+
             return Parser.Parse(reader.ReadToEnd());
         }
 
@@ -68,7 +68,7 @@ namespace IniParser
             writer.Write(iniData.ToString());
         }
 
-        
+
         /// <summary>
         ///     Writes the ini data to a stream.
         /// </summary>

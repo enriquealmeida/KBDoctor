@@ -12,27 +12,27 @@
     <Object parent="Seguridad" parentType="c88fffcd-b6f8-0000-8fec-00b5497e2117" parentGuid="1d41214f-acf6-4fd4-849e-d465901e4e3b" user="VAIOEALMEIDA\nsanguinetti" versionDate="2018-04-16T18:42:01.0000000Z" lastUpdate="2018-04-27T13:57:39.0000000Z" checksum="93218e99ee67cf8200d2d6470b8127ab" fullyQualifiedName="Seguridad.SetCustomProperties" guid="d97a58c3-6106-446c-993f-10ab59c281b7" name="SetCustomProperties" type="84a12160-f59b-4ad7-a683-ea4481ac23e9" description="Set Custom Properties">
       <Part type="528d1c06-a9c2-420d-bd35-21dca83f12ff">
         <Source><![CDATA[	&CustomProperty = new()
-	
+
 	&CustomProperty.Id    = "LDAPpath"
 	&CustomProperty.Token    = "LDAPpath"
 	&CustomProperty.Value    = "LDAP://concepto.com.uy/OU=Usuarios,OU=Concepto,DC=concepto,DC=com,DC=uy"
 	&AdditionalParameter.Properties.Add(&CustomProperty)
-	
+
 	&CustomProperty = new()
 	&CustomProperty.Id    = "LDAPFilter"
 	&CustomProperty.Token    = "LDAPFilter"
 	&CustomProperty.Value    = "(&(memberOf=CN=usuarios_mt,OU=Listas Distribucion,OU=Concepto,DC=concepto,DC=com,DC=uy)(CN="+ &UserName +"))"
 	&AdditionalParameter.Properties.Add(&CustomProperty)
-	
+
 	Do Case
-		Case &KeepMeLoggedIn	
+		Case &KeepMeLoggedIn
 			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.Authentication
-		Case &RememberMe		
+		Case &RememberMe
 			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.Login
 		Otherwise
-			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.None		
+			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.None
 	EndCase
-	
+
 	&AdditionalParameter.AuthenticationTypeName = &LogOnTo
 	// Login User //////////////////////////////////////////////
 	&LoginOK = GAMRepository.Login(&UserName, &UserPassword, &AdditionalParameter, &Errors )
@@ -44,7 +44,7 @@
 			&GAMExampleSDTApplicationData.FromJson(&ApplicationData)
 		Endif
 		////////////////////////////////////////////////////////////
-		
+
 		////////////////////////////////////////////////////////////
 		&ret = setuserid(&UserName.ToUpper())
 		&URL = GAMRepository.GetLastErrorsURL()
@@ -53,9 +53,9 @@
 		Else
 			Link(&URL)
 		Endif
-		////////////////////////////////////////////////////////////	
+		////////////////////////////////////////////////////////////
 	Else
-		If &Errors.Count > 0 
+		If &Errors.Count > 0
 			Do Case
 				Case (&Errors.Item(1).Code = GAMErrorMessages.UserPasswordExpired   OR  &Errors.Item(1).Code = GAMErrorMessages.UserPasswordMustBeChanged)
 					//Webpanel to Change Password
@@ -257,11 +257,11 @@ EndSub
 	//Used when multiple repository connections exist
 	&isOK = GAM.CheckConnection()
 	&ConnectionInfoCollection = GAM.GetConnections()
-	If not &isOK		
-		If &ConnectionInfoCollection.Count > 0 
-			//The first connection found is established by default 
-			&isOK = GAM.SetConnection(&ConnectionInfoCollection.Item(1).Name, &Errors)			
-		EndIf		
+	If not &isOK
+		If &ConnectionInfoCollection.Count > 0
+			//The first connection found is established by default
+			&isOK = GAM.SetConnection(&ConnectionInfoCollection.Item(1).Name, &Errors)
+		EndIf
 	Endif
 	If &ConnectionInfoCollection.Count > 1
 		&GAMRepository = GAMrepository.Get()
@@ -273,8 +273,8 @@ EndSub
 EndEvent
 
 Event Refresh
-	&isRedirect = False	
-	//Gets last error in the GAM 
+	&isRedirect = False
+	//Gets last error in the GAM
 	&ErrorsLogin = GAMRepository.GetLastErrors()
 	If &ErrorsLogin.Count > 0
 		Do Case
@@ -323,7 +323,7 @@ Event Refresh
 				&LogOnTo = &AuthenticationTypes.Item(1).Name
 			Endif
 
-			//Initialize variables if the user chooses to keep that information 
+			//Initialize variables if the user chooses to keep that information
 			&isOK = GAMRepository.GetRememberLogin(&LogOnTo, &UserName, &UserRememberMe, &Errors)
 			If &UserRememberMe = GAMRememberUserTypes.Login
 				&RememberMe = True
@@ -346,7 +346,7 @@ Event Refresh
 					&RememberMe.Visible		= False
 					&KeepMeLoggedIn.Visible	= False
 			EndCase
-			
+
 		EndIf
 	Endif
 EndEvent
@@ -354,12 +354,12 @@ EndEvent
 Event Enter
 	//Set Remember User type
 	Do Case
-		Case &KeepMeLoggedIn	
+		Case &KeepMeLoggedIn
 			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.Authentication
-		Case &RememberMe		
+		Case &RememberMe
 			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.Login
 		Otherwise
-			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.None		
+			&AdditionalParameter.RememberUserType = GAMRememberUserTypes.None
 	EndCase
 
 	////////////////////////////////////////////////////////////
@@ -368,20 +368,20 @@ Event Enter
 	//&CustomProperty.Value	= "120"
 	//&AdditionalParameter.Properties.Add(&CustomProperty)
 	////////////////////////////////////////////////////////////
-	
+
 	&AdditionalParameter.AuthenticationTypeName = &LogOnTo
-	
-	//Login User	
+
+	//Login User
 	&LoginOK = GAMRepository.Login(&UserName, &UserPassword, &AdditionalParameter, &Errors )
 	If &LoginOK
 		//Get my custom application data in json format
-		
+
 		//The &ApplicationData is saved in the Login action when authentication type is "Web service" or "Custom"
 		&ApplicationData = GAMSession.GetApplicationData()
 		If not &ApplicationData.IsEmpty()
 			&GAMExampleSDTApplicationData.FromJson(&ApplicationData)
-		Endif		
-		
+		Endif
+
 		&URL = GAMRepository.GetLastErrorsURL()
 		If &URL.IsEmpty()
 			GAMRepository.ApplicationGoHome(GAMInternalGUIDs.AppGAMUserBackend)
@@ -390,9 +390,9 @@ Event Enter
 		Else
 			Link(&URL)
 		Endif
-		
+
 	Else
-		If &Errors.Count > 0 
+		If &Errors.Count > 0
 			Do Case
 				Case (&Errors.Item(1).Code = GAMErrorMessages.UserPasswordExpired   OR  &Errors.Item(1).Code = GAMErrorMessages.UserPasswordMustBeChanged)
 					//Webpanel to Change Password
@@ -432,7 +432,7 @@ Event ButtonGoogle.Click
 	GAMRepository.LoginGoogle()
 EndEvent
 
-Event ButtonTwitter.Click		
+Event ButtonTwitter.Click
 	GAMRepository.LoginTwitter()
 EndEvent
 
@@ -440,22 +440,22 @@ Event ButtonGAMRemote.Click
 	GAMRepository.LoginGAMRemote()
 EndEvent
 
-Sub 'DisplayExternalAuthentications'	
+Sub 'DisplayExternalAuthentications'
 	Buttons.Visible				= False
 	If GAMRepository.CanAuthenticateWith(GAMAuthenticationTypes.Facebook)
-		ButtonFacebook.Visible 	= True	
+		ButtonFacebook.Visible 	= True
 		Buttons.Visible			= True
 	Else
 		ButtonFacebook.Visible 	= False
 	Endif
 	If GAMRepository.CanAuthenticateWith(GAMAuthenticationTypes.Google)
-		ButtonGoogle.Visible	= True		
+		ButtonGoogle.Visible	= True
 		Buttons.Visible			= True
 	Else
 		ButtonGoogle.Visible	= False
 	Endif
 	If GAMRepository.CanAuthenticateWith(GAMAuthenticationTypes.Twitter)
-		ButtonTwitter.Visible 	= True	
+		ButtonTwitter.Visible 	= True
 		Buttons.Visible			= True
 	Else
 		ButtonTwitter.Visible	= False

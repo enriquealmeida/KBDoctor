@@ -33,7 +33,7 @@ namespace KBDoctorCmd
                    // API.PrepareCompareNavigations(KB, output);
                     API.PrepareNavigations(KB, output);
                 }
-                
+
             }
             catch (Exception e) {
                 output.AddErrorLine(e.Message);

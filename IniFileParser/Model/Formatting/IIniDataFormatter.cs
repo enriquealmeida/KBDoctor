@@ -20,5 +20,5 @@ namespace IniParser.Model.Formatting
         /// </summary>
         IniParserConfiguration Configuration {get;set;}
     }
-    
-} 
+
+}

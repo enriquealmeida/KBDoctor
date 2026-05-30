@@ -6,7 +6,7 @@ namespace IniParser
 {
     /// <summary>
     ///     Represents an INI data parser for strings.
-    ///     
+    ///
     /// </summary>
     /// <remarks>
     ///     This class is deprecated and kept for backwards compatibility.

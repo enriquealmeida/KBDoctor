@@ -59,7 +59,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             bool success = true;
             string title = "KBDoctor - Unreachable Objects";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -86,7 +86,7 @@ namespace Concepto.Packages.KBDoctor
                     }
                 }
                 int cantObj = unreachablesObjects.Count;
-                //saco los objetos alcanzables. 
+                //saco los objetos alcanzables.
                 unreachablesObjects.RemoveAll(reachablesObjects);
                 int cantUnObj = unreachablesObjects.Count;
                 KBDoctorOutput.Message( "(Re)creating KBDoctor.Unreachable category");
@@ -171,7 +171,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorOutput.Message( "");
                 KBDoctorOutput.Message( "Total Objects:" + cantObj.ToString() + ". Unreachable Objects: " + cantUnObj.ToString());
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
                 writer.AddFooter();
                 writer.Close();
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
@@ -191,7 +191,7 @@ namespace Concepto.Packages.KBDoctor
             foreach (EntityReference reference in obj.GetReferences()) // LinkType.UsedObject))
             {
                 KBObject objRef = KBObject.Get(obj.Model, reference.To);
-              
+
 
                 if ((objRef != null) && !reachablesObjects.Contains(objRef))
                 {
@@ -212,7 +212,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Object main called by others";
 
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -240,7 +240,7 @@ namespace Concepto.Packages.KBDoctor
                 writer.Close();
 
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
@@ -258,7 +258,7 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
             List<KBObject> objectsWithProblems = API.ObjectsWithoutINOUT(UIServices.KB.CurrentKB, output);
-            
+
             string title = "KBDoctor - Object with parameters without IN:/OUT:/INOUT:";
             try
             {
@@ -297,7 +297,7 @@ namespace Concepto.Packages.KBDoctor
 
         public static bool isGenerated(KBObject obj)
         {
-            if (obj is DataSelector)  //Los Dataselector no tienen la propiedad de generarlos o no , por lo que siempre devuelven falso y sin son referenciados se generan. 
+            if (obj is DataSelector)  //Los Dataselector no tienen la propiedad de generarlos o no , por lo que siempre devuelven falso y sin son referenciados se generan.
                 return true;
             if (obj is Artech.Architecture.Common.Objects.Module)
                 return false;
@@ -315,7 +315,7 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Object with parameters and Commit on Exit = Yes";
             string objNameLink;
 
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -361,7 +361,7 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -381,7 +381,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -456,7 +456,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -476,7 +476,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -533,7 +533,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -601,7 +601,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Change Commit on Exit ";
 
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -657,7 +657,7 @@ namespace Concepto.Packages.KBDoctor
                 writer.Close();
 
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
@@ -729,7 +729,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -755,7 +755,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -850,7 +850,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -924,7 +924,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -937,7 +937,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            output.StartSection("Split Main Object");
+            KBDoctorOutput.StartSection("Split Main Object");
 
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
@@ -996,13 +996,13 @@ namespace Concepto.Packages.KBDoctor
                 }
                 try
                 {
-                    output.AddWarningLine("Create new: " + nuevo.Name + " Protocol: " + callProtocol);
+                    KBDoctorOutput.Warning("Create new: " + nuevo.Name + " Protocol: " + callProtocol);
                     nuevo.Save();
                 }
                 catch (Exception e)
                 {
-                    output.AddErrorLine(e.Message + " - " + e.InnerException);
-                    output.AddErrorLine("Can't save object" + objName + ". Try to save commented");
+                    KBDoctorOutput.Error(e.Message + " - " + e.InnerException);
+                    KBDoctorOutput.Error("Can't save object" + objName + ". Try to save commented");
                     KBDoctorOutput.Message( "Parm = " + parm + " Parm2= " + parm2);
 
                     nuevo.ProcedurePart.Source = "//" + objName + "_core.call(" + parm2 + ") ";
@@ -1012,7 +1012,7 @@ namespace Concepto.Packages.KBDoctor
 
                 };
             }
-            output.EndSection("Split Main Object", true);
+            KBDoctorOutput.EndSection("Split Main Object", true);
         }
 
     }

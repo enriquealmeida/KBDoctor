@@ -48,7 +48,7 @@ namespace KBDoctorCmd
                     List<KBObject> objects = new List<KBObject>();
                     DateTime dt;
                     if (DateFrom != null)
-                    { 
+                    {
                         dt = DateTime.ParseExact(DateFrom, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture);
                     }
                     else
@@ -67,7 +67,7 @@ namespace KBDoctorCmd
 
                     output.AddLine("Review objects from " + dt.ToString());
                     List<string[]> lines = new List<string[]>();
-                    double cant; 
+                    double cant;
                     API.PreProcessPendingObjects(KB, output, objects, out lines, out cant);
                     lines.Clear();
                 }

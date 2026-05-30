@@ -28,7 +28,7 @@ namespace Concepto.Packages.KBDoctor
     static class TablesHelper
 
     {
-  
+
 
         public static void ListTables()
         {
@@ -181,7 +181,7 @@ namespace Concepto.Packages.KBDoctor
 
             StringCollection strCol = new StringCollection();
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
 
             foreach (Transaction trn in Transaction.GetAll(kbserv.CurrentModel))
             {
@@ -207,11 +207,11 @@ namespace Concepto.Packages.KBDoctor
 
 
             bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            KBDoctorOutput.EndSection(title, success);
 
         }
 
-   
+
         public static void ScriptToCompareNULLABLE_GXvsDB()
         {
             IKBService kbserv = UIServices.KB;
@@ -219,7 +219,7 @@ namespace Concepto.Packages.KBDoctor
 
             StringCollection strCol = new StringCollection();
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
 
             KBDoctorOutput.Message("set feedback off");
             KBDoctorOutput.Message("set heading off");
@@ -230,7 +230,7 @@ namespace Concepto.Packages.KBDoctor
                 foreach (TableAttribute att in tbl.TableStructure.Attributes)
                 {
 
-                    string strNullable = "Y";  //True y Compatible lo tomo como Y. 
+                    string strNullable = "Y";  //True y Compatible lo tomo como Y.
                     if (att.IsNullable == TableAttribute.IsNullableValue.False)
                         strNullable = "N";
                     string commillas = "'";
@@ -245,11 +245,11 @@ namespace Concepto.Packages.KBDoctor
                     " and OWNER = 'GENEXUS';");
 
                 }
-                    
+
             }
 
             bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            KBDoctorOutput.EndSection(title, success);
 
         }
 
@@ -260,7 +260,7 @@ namespace Concepto.Packages.KBDoctor
 
             StringCollection strCol = new StringCollection();
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
 
             string strDataType = "";
             string strDataLength = "";
@@ -376,7 +376,7 @@ namespace Concepto.Packages.KBDoctor
                             strSentence += String.Format(" VALUES('{0}','{1}','{2}',{3},{4},'{5}','{6}','{7}');", tbl.Name, att.Name, strDataType, strDataLength, strDataPrecision, att.Attribute.Signed.ToString(), strNullable_YN, strNullable);
                             /*
                             //Armad de la sentencia
-                            string strSentence = String.Format("select 'ALTER TABLE {0} MODIFY {1} {2} {3};  ", tbl.Name, att.Name, strDBType, strNullable); 
+                            string strSentence = String.Format("select 'ALTER TABLE {0} MODIFY {1} {2} {3};  ", tbl.Name, att.Name, strDBType, strNullable);
 
                                 strSentence += "-- DB -> ', data_type|| ' ' || data_length|| ' ' || data_scale || ' ' ||nullable || '' || ";
                                 strSentence += String.Format("  ' GX -> {0} {1} {2} {3} {4}' ", Utility.FormattedTypeAttribute(att.Attribute), strDataType, strDataLength, strDataPrecision, strNullable_YN);
@@ -389,7 +389,7 @@ namespace Concepto.Packages.KBDoctor
                             strSentence += String.Format(" and NOT (data_type='{0}' ", strDataType);
 
                             //CONTROL DE LARGO DE DATOS
-                            if (strDataLength != "0")  //Es 0 si no necesito controlar el largo 
+                            if (strDataLength != "0")  //Es 0 si no necesito controlar el largo
                                 strSentence += String.Format(" and ABS(DATA_PRECISION-{0})<={1} ", strDataLength, strTolerance);
 
                             //CONTROL DE POSICIONES DECIMALES
@@ -404,13 +404,13 @@ namespace Concepto.Packages.KBDoctor
                             /*
                             string strSentence = "SELECT table_name,column_name,DATA_TYPE,DATA_PRECISION,DATA_SCALE," +
                                  commillas + Utility.FormattedTypeAttribute(att.Attribute) + commillas + " as DBType," +
-                                 commillas + strDataLength + commillas + 
+                                 commillas + strDataLength + commillas +
                                  " FROM all_tab_columns where  table_name=" + commillas + tbl.Name.ToUpper() + commillas +
                                  " and column_name=" + commillas + att.Name.ToUpper() + commillas;
 
                             strSentence += " and ( DATA_TYPE <>" + commillas + strDataType + commillas;
 
-                            if (strDataLength !="0")  //Es 0 si no necesito controlar el largo 
+                            if (strDataLength !="0")  //Es 0 si no necesito controlar el largo
                                 strSentence += " OR ABS(DATA_PRECISION-" + strDataLength + ")>1" ;
 
                             if (att.Attribute.Type == eDBType.NUMERIC)
@@ -418,23 +418,23 @@ namespace Concepto.Packages.KBDoctor
 
                              strSentence += " ) and OWNER='GENEXUS';";
                             */
-                            // string strSentence = tbl.Name; 
+                            // string strSentence = tbl.Name;
                             KBDoctorOutput.Message(strSentence);
                         }
                     }
                 }
-               
 
-              
+
+
 
             }
 
             bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            KBDoctorOutput.EndSection(title, success);
 
         }
 
-  
+
 
         static bool HasDataViewAsociated(Table tbl)
         {
@@ -445,7 +445,7 @@ namespace Concepto.Packages.KBDoctor
                 return false;
             else
                 return true;
-            ///   return Artech.Genexus.Common.Properties.XFL.GetDatastore(dv).Identifier == ds.Id; 
+            ///   return Artech.Genexus.Common.Properties.XFL.GetDatastore(dv).Identifier == ds.Id;
         }
 
 
@@ -469,7 +469,7 @@ namespace Concepto.Packages.KBDoctor
 
             StringCollection strCol = new StringCollection();
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
 
             string outputFile = Functions.CreateOutputFile(kbserv, title);
             int posicion = 1;
@@ -480,25 +480,25 @@ namespace Concepto.Packages.KBDoctor
             string trnNamePrior = "";
             string trnList = "";
 
-            foreach (Transaction trn in Transaction.GetAll(kbserv.CurrentModel)) 
+            foreach (Transaction trn in Transaction.GetAll(kbserv.CurrentModel))
             {
                 foreach (TransactionLevel lvl in trn.Structure.GetLevels()  )
                 {
-                    
+
                     foreach (TransactionAttribute att in lvl.Attributes)
                     {
                         if (att.IsNullable == TableAttribute.IsNullableValue.Compatible)
                         {
                             //KBDoctorOutput.Message(posicion.ToString()+ " " +  trn.Module.Name + " " + trn.Name + " " + lvl.AssociatedTable.Name + " " + att.Name + " " + att.IsForeignKey );
-                            if (trn.Name != trnNamePrior) 
-                            { 
+                            if (trn.Name != trnNamePrior)
+                            {
                                 KBDoctorOutput.Message(trn.Name );
                                 if (trnList != "") trnList += ";";
 
                                 trnList += trn.Name ;
                                 trnNamePrior = trn.Name;
                             }
-                            
+
                              writer.AddTableData(new string[] { posicion.ToString(), trn.Module.Name, trn.Name, lvl.AssociatedTable.Name, att.Name, att.IsForeignKey.ToString() });
                             posicion += 1;
 
@@ -519,7 +519,7 @@ namespace Concepto.Packages.KBDoctor
             }
             KBDoctorOutput.Message(trnList);
             bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            KBDoctorOutput.EndSection(title, success);
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
         public static void ListTableUpdate()
@@ -535,7 +535,7 @@ namespace Concepto.Packages.KBDoctor
 
                 StringCollection strCol = new StringCollection();
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -569,7 +569,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -616,7 +616,7 @@ namespace Concepto.Packages.KBDoctor
             objReaderspar = objReaders;
             objDeleterspar = objDeleters;
         }
-    
+
 
 
         public static IList<KBObject> ObjectsUpdateTableOutsideModule(KBModel model, Table tbl)
@@ -629,7 +629,7 @@ namespace Concepto.Packages.KBDoctor
                                         where model.Objects.Get(r.From).Module != mdlTable
                                         select model.Objects.Get(r.From)).ToList();
             return updaters;
-            
+
         }
 
         public static IList<KBObject> ObjectsReadTableOutsideModule(Table tbl)
@@ -657,7 +657,7 @@ namespace Concepto.Packages.KBDoctor
 
                 StringCollection strCol = new StringCollection();
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -683,7 +683,7 @@ namespace Concepto.Packages.KBDoctor
                         Formula formula = att.Formula;
                         if (formula == null)
                         {
-                            if (!Functions.AttIsSubtype(att)) attTable.Add(att); //solo agrego si no es formula o subtipo. 
+                            if (!Functions.AttIsSubtype(att)) attTable.Add(att); //solo agrego si no es formula o subtipo.
                         }
                     }
 
@@ -725,7 +725,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -743,7 +743,7 @@ namespace Concepto.Packages.KBDoctor
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
             IOutputService output = CommonServices.Output;
-            output.StartSection("Creating Transaction from tables");
+            KBDoctorOutput.StartSection("Creating Transaction from tables");
 
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Table>());
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
@@ -751,7 +751,7 @@ namespace Concepto.Packages.KBDoctor
                 Module m = TableModule(kbserv.CurrentModel, (Table)obj);
                 GenerateTrnFromTable(kbserv, (Table)obj, m);
             }
-            output.EndSection("Creating Transaction from tables", true);
+            KBDoctorOutput.EndSection("Creating Transaction from tables", true);
         }
 
         internal static void GenerateTrnFromTables2()
@@ -763,7 +763,7 @@ namespace Concepto.Packages.KBDoctor
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
             IOutputService output = CommonServices.Output;
-            output.StartSection("Creating Procedure from tables");
+            KBDoctorOutput.StartSection("Creating Procedure from tables");
 
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Table>());
             foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
@@ -771,7 +771,7 @@ namespace Concepto.Packages.KBDoctor
                 Module m = TableModule(kbserv.CurrentModel, (Table)obj);
                 GenerateInitializdeProcedureFromTable(kbserv, (Table)obj, m);
             }
-            output.EndSection("Creating Procedure from tables", true);
+            KBDoctorOutput.EndSection("Creating Procedure from tables", true);
         }
 
         public static Module TableModule(KBModel m, Table t)
@@ -791,11 +791,11 @@ namespace Concepto.Packages.KBDoctor
             dp.Module = TableModule(designmodel,t);
             dp.ProcedurePart.Source = "//comienzo a recorrer la tabla";
             dp.ProcedurePart.Source += "for each " + Environment.NewLine;
-            
+
 
             foreach (TableAttribute attr in t.TableStructure.Attributes)
             {
-                dp.ProcedurePart.Source += "   '" + attr.Name + "' = " + attr.Name + Environment.NewLine; 
+                dp.ProcedurePart.Source += "   '" + attr.Name + "' = " + attr.Name + Environment.NewLine;
 
             };
 
@@ -898,7 +898,7 @@ namespace Concepto.Packages.KBDoctor
                 p.Save();
             }
             catch (Exception e) { output.AddErrorLine("ERROR: Can't Save. " + p.Name + Environment.NewLine + e.Message); }
-            
+
         }
 
         private static void DevuelveComillas(TableAttribute attr, out string comillaini, out string comillafin)
@@ -924,7 +924,7 @@ namespace Concepto.Packages.KBDoctor
 
             public static void GenerateSQLScripts()
         {
-            //Genera scripts que ayudan al manejo de nulos en la KB. 
+            //Genera scripts que ayudan al manejo de nulos en la KB.
             //  UpdateNullValues.sql - Update en la base para sacar los valores nulos
             //  CheckPKGXNullValues.sql - Lista las primary key con el null GX  (Error)
             //  CheckFKGXNullValues.sql - Lista todas los atributos que participan en una FK que tengan el nulo de GeneXus.
@@ -943,7 +943,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -1012,7 +1012,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -1155,12 +1155,12 @@ namespace Concepto.Packages.KBDoctor
                 string coma = "";
                 string tblName = ShortName(TBLNAME_LEN, t.Name);
                 string PreAutonumber="", PostAutonumber="";
-               
+
                 foreach (TableAttribute a in t.TableStructure.Attributes)
                 {
 
                     string attName = ShortName(ATTNAME_LEN, a.Name);
-                    bool isAutonumber = IsAutonumberAndPK(t, a); 
+                    bool isAutonumber = IsAutonumberAndPK(t, a);
 
                     if (isAutonumber && a.IsKey)
                     {
@@ -1172,13 +1172,13 @@ namespace Concepto.Packages.KBDoctor
                         //SeedAutonumber += Environment.NewLine + "DBCC CHECKIDENT ( <TargetDB>.<TargetSchema>." + tblName + ", RESEED, @max);";
                     }
 
-                    if (!(a.IsFormula) || (a.IsFormula && a.IsRedundant)) 
+                    if (!(a.IsFormula) || (a.IsFormula && a.IsRedundant))
                         if (!(a.IsInferred))
                         {
                             tblAtt += coma + attName;
                             coma = ",";
                         }
-                    
+
                 }
                 scriptFile.WriteLine(PreAutonumber);
                 scriptFile.WriteLine("insert into <TargetDB>.<TargetSchema>." + tblName + " (" + tblAtt + " ) select " + tblAtt + " from  <SourceDB>.<SourceSchema>." + tblName + ";");
@@ -1190,7 +1190,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static bool IsAutonumberAndPK(Table t, TableAttribute a)
         {
-            
+
             if ((t.TableStructure.PrimaryKey.Count==1) && a.IsKey && a.Attribute.GetPropertyValue<bool>("AUTONUMBER"))
                 return true;
             else
@@ -1215,7 +1215,7 @@ namespace Concepto.Packages.KBDoctor
 
             foreach (Table t in Table.GetAll(model))
             {
-               
+
                 string tblAtt = "";
                 string coma = "";
                 string tblName = ShortName(TBLNAME_LEN,t.Name);
@@ -1355,9 +1355,9 @@ namespace Concepto.Packages.KBDoctor
                     string whereCondition = ExtractWhereCondition(t, relation, ATTNAME_LEN,TBLNAME_LEN);
                     string whereJoinCondition = ExtractWhereJoinCondition(t, relation, ATTNAME_LEN, TBLNAME_LEN);
 
-                    scriptFile.WriteLine(" select " + comilla + ShortName(TBLNAME_LEN,t.Name) + comilla + "," + tblKey + ",'->'," + comilla + ShortName(TBLNAME_LEN,relation.RelatedTable.Name) 
-                        + comilla + "," + baseAttributes + " from " + ShortName(TBLNAME_LEN,relation.BaseTable.Name) 
-                        + " where not exists  " + "(select * from " + ShortName(TBLNAME_LEN,relation.RelatedTable.Name) + " where " 
+                    scriptFile.WriteLine(" select " + comilla + ShortName(TBLNAME_LEN,t.Name) + comilla + "," + tblKey + ",'->'," + comilla + ShortName(TBLNAME_LEN,relation.RelatedTable.Name)
+                        + comilla + "," + baseAttributes + " from " + ShortName(TBLNAME_LEN,relation.BaseTable.Name)
+                        + " where not exists  " + "(select * from " + ShortName(TBLNAME_LEN,relation.RelatedTable.Name) + " where "
                         + whereJoinCondition + ") " + whereCondition + ";");
                     KBDoctorOutput.Message(relation.BaseTable.Name + "," + relation.RelatedTable.Name);
                 }
@@ -1398,12 +1398,12 @@ namespace Concepto.Packages.KBDoctor
                         KBDoctorOutput.Message(line);
                         scriptFile.WriteLine(line);
                     }
-                       
+
                 }
             }
 
-              
-            
+
+
             scriptFile.Close();
         }
 
@@ -1437,10 +1437,10 @@ namespace Concepto.Packages.KBDoctor
                     string whereCondition = ExtractWhereCondition(t, relation,ATTNAME_LEN,TBLNAME_LEN);
                     string whereJoinCondition = ExtractWhereJoinCondition(t, relation,ATTNAME_LEN,TBLNAME_LEN);
                     scriptFile.WriteLine(" select " + comilla + ShortName(TBLNAME_LEN,relation.RelatedTable.Name) + comilla + ",'->',"
-                                                    + comilla + ShortName(TBLNAME_LEN, relation.BaseTable.Name) + comilla + "," 
-                                                    + baseAttributes + ",count(*) from " + ShortName(TBLNAME_LEN,relation.BaseTable.Name) 
-                                                    + " where not exists (select * from " + ShortName(TBLNAME_LEN,relation.RelatedTable.Name) 
-                                                    + " where " + whereJoinCondition + ") " 
+                                                    + comilla + ShortName(TBLNAME_LEN, relation.BaseTable.Name) + comilla + ","
+                                                    + baseAttributes + ",count(*) from " + ShortName(TBLNAME_LEN,relation.BaseTable.Name)
+                                                    + " where not exists (select * from " + ShortName(TBLNAME_LEN,relation.RelatedTable.Name)
+                                                    + " where " + whereJoinCondition + ") "
                                                     + whereCondition + " group by  " + baseAttributes + ";");
 
                 }
@@ -1476,7 +1476,7 @@ namespace Concepto.Packages.KBDoctor
 
                     string whereJoinCondition = ExtractWhereJoinCondition(t, relation,ATTNAME_LEN,TBLNAME_LEN);
 
-                    scriptFile.WriteLine("delete from " + ShortName(TBLNAME_LEN,t.Name) + " where not exists (select * from " 
+                    scriptFile.WriteLine("delete from " + ShortName(TBLNAME_LEN,t.Name) + " where not exists (select * from "
                         + ShortName(TBLNAME_LEN,relation.RelatedTable.Name) + " where " + whereJoinCondition + ");");
                 }
 
@@ -1554,7 +1554,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static string ExtractWhereJoinCondition(Table t, TableRelation relation,int ATTNAME_LEN,int TBLNAME_LEN)
         {
-            //Armo condicion de filtrado. 
+            //Armo condicion de filtrado.
             string whereCondition = "";
             string andstr = "";
             for (int i = 0; i < relation.BaseAttributes.Count; i++)
@@ -1584,6 +1584,6 @@ namespace Concepto.Packages.KBDoctor
                 gxnull = "'1753-01-01'";
             return gxnull;
             }
-        
+
     }
 }

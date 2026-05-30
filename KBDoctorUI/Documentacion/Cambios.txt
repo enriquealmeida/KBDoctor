@@ -1,92 +1,92 @@
 Enrique 03/2017
-  Nuevo script para copia de datos entre bases de datos. 
+  Nuevo script para copia de datos entre bases de datos.
 
 Enrique 05/2016
   Nuevo reporte List Domain
   Nuevo utilitario Unificar Dominios
   Change Legacy Code - permite usar un archivo con las palabras claves a cambiar
-  Generar scripts de validacion de datos de la base de datos. 
+  Generar scripts de validacion de datos de la base de datos.
 
 Enrique 03/2016
- - Se guarda registro historico de objetos generados por pattern. 
- - Se guarda registro historico de indice de complejidad. 
+ - Se guarda registro historico de objetos generados por pattern.
+ - Se guarda registro historico de indice de complejidad.
  - Al borra atributos que no estan en ninguna tabla, cambia los atributos de los SDT
  - Se restructuran opciones del menu (Clean KB, Utilities, etc)
  - Se genera procedure que carga datos a partir de los datos de la DB
 
 
-Enrique 03/2016 
-  - Se agrega opcion para generar transacciones desde tablas. 
-  - Se agrega reporte para listar las tablas que estan en modulos. 
-  - Se mejora el reporte de transacciones borrables. 
-    Se agrego opcion para Generar scripts para control de estructura y chqueos de integridad referencial. 
+Enrique 03/2016
+  - Se agrega opcion para generar transacciones desde tablas.
+  - Se agrega reporte para listar las tablas que estan en modulos.
+  - Se mejora el reporte de transacciones borrables.
+    Se agrego opcion para Generar scripts para control de estructura y chqueos de integridad referencial.
 
-  
+
 
 Enrique 11/2015
- - Nuevo reporte Interfaz de la KB. Lista todos los objetos que tienen interfaz con el file system, objetos externos, mails, etc. 
-   Facilita las migraciones pudiendose ver en que objetos se tiene contacto con el exterior. 
+ - Nuevo reporte Interfaz de la KB. Lista todos los objetos que tienen interfaz con el file system, objetos externos, mails, etc.
+   Facilita las migraciones pudiendose ver en que objetos se tiene contacto con el exterior.
 
 Enrique 07/2015
  - Lista Mains que son llamados por otros objetos
- - Dado un Objeto, listar todos los objetos  que son alcanzables por este. La idea es poder ver todas las dependencias de un objeto dado.  
- - Dado un atributo y una tabla, listar todos los objetos que hacen update en dicha tabla y a la vez actualizan dicho atributo. 
+ - Dado un Objeto, listar todos los objetos  que son alcanzables por este. La idea es poder ver todas las dependencias de un objeto dado.
+ - Dado un atributo y una tabla, listar todos los objetos que hacen update en dicha tabla y a la vez actualizan dicho atributo.
 
 
 Enrique 06/2015
     - Se agarega Opcion para encontrar candiatos a refactoring
-   - Se agrega opcion para encontrar objetos con textos de sintaxis viejas. 
+   - Se agrega opcion para encontrar objetos con textos de sintaxis viejas.
    - Se agrega opcion de encontrar objetos con for each similares
-   - Se puede hacer sort en las grillas con un click en el title. 
+   - Se puede hacer sort en las grillas con un click en el title.
    -
 Enrique 03/2015
-      - Se agrega comparador de objetos. 
-      - Se agrega Iniciacializacion de MasterPage en objetos inicializados. 
+      - Se agrega comparador de objetos.
+      - Se agrega Iniciacializacion de MasterPage en objetos inicializados.
 
 
 
-Enrique 09/2014 
-   - Se arregla el marcado de objetos no alcanzables, pues cancelaba cuando no existia la categoria KBDoctor.Unreachable. 
-   - Se implmenta Listado de Objetos llamados por WIN y WEB . 
-        - Se arregla reporte de falta de parametros IN/out/ para casos con sentencias /* */ estaba funcionando mal. 
-        - Se elimina reporte de class not in theme para Ev3. 
+Enrique 09/2014
+   - Se arregla el marcado de objetos no alcanzables, pues cancelaba cuando no existia la categoria KBDoctor.Unreachable.
+   - Se implmenta Listado de Objetos llamados por WIN y WEB .
+        - Se arregla reporte de falta de parametros IN/out/ para casos con sentencias /* */ estaba funcionando mal.
+        - Se elimina reporte de class not in theme para Ev3.
       - Refactoring de funcion linkObject()
 
 
 Enrique 09/2014
-   - List Last Reports - Permite listar los ultimos reportes hechos. 
-   - Remove not referenced objects - Se pasa a borrar automaticamente los objetos no referenciados. 
-   - Se agrega Listado de objetos de la KB. 
-   - CleanObject - Se pone el formulario WIN y WEB Default. 
-   - Att sin dominios - Acelerar el resultado. Poner un cache de dominios posibles. 
+   - List Last Reports - Permite listar los ultimos reportes hechos.
+   - Remove not referenced objects - Se pasa a borrar automaticamente los objetos no referenciados.
+   - Se agrega Listado de objetos de la KB.
+   - CleanObject - Se pone el formulario WIN y WEB Default.
+   - Att sin dominios - Acelerar el resultado. Poner un cache de dominios posibles.
    - Add Index Description Attribute - Daba error al agregar un indice pues el nombre de la tabla estaba mal especificado. Separar Tabla - Descripcion y poner la Picture del Att - Poder abrir la tabla.
-   - Se agrega tabla en Reporte de Atributos Formulas. 
+   - Se agrega tabla en Reporte de Atributos Formulas.
 
-Enrique 12/2013 
- - Reporte de Objetos con Errores y Warnings.   
- - Se pasa automaticamente a la masterpage. 
- - Se sube la version a 10.8 Ev2. 
+Enrique 12/2013
+ - Reporte de Objetos con Errores y Warnings.
+ - Se pasa automaticamente a la masterpage.
+ - Se sube la version a 10.8 Ev2.
 
 
-Enrique 15/03/2013. 
- - Se sube la version 10.4 Ev1 y Ev2. 
+Enrique 15/03/2013.
+ - Se sube la version 10.4 Ev1 y Ev2.
 
 Enrique 27/12/2012
  - Se agregar reporte de Tablas y objetos que hacen Update/Insert/Delete/Read
  - Se agrego la funcion LinkObject
 
 Enrique 6/12/2012
- - Attributos solo en transacciones, se excluyen los BC. 
+ - Attributos solo en transacciones, se excluyen los BC.
 
 Enrique 4/12/2012
- - Se agrega Borrado de variables en toda la KB 
- - CleanKBasMuchAsPosible hace borrado de variables. 
+ - Se agrega Borrado de variables en toda la KB
+ - CleanKBasMuchAsPosible hace borrado de variables.
 
 Enrique 2/12/2012
-  - CSS es Case Insensitive - Se arregla reporte. 
+  - CSS es Case Insensitive - Se arregla reporte.
 
 Enrique 1/12/2012
- - Se deja de usar  // UIServices.KB.CurrentKB.Disconnect();  porque Artech lo discontinuo. 
+ - Se deja de usar  // UIServices.KB.CurrentKB.Disconnect();  porque Artech lo discontinuo.
 
 Enrique 22/11/2012
   - Se agrega Search and Replace
@@ -95,7 +95,7 @@ Enrique 21/11/2012
   - Se agrega reporte de classes faltantes en el theme y classes sobrantes en el theme.
 
 Enrique  19/11/2012
-  - Se agrega Generacion Forzada de SDT. 
+  - Se agrega Generacion Forzada de SDT.
 
 Enrique 09/11/2012
  - Relacion Tablas Transacciones
@@ -106,38 +106,38 @@ Enrique 06/10/2012
   - Se agrega reporte de Atributos formula.
 
 Enrique 03/09/2012
- - KBDoctor.Unreachables, se crea siempre con el mismo GUID. 
+ - KBDoctor.Unreachables, se crea siempre con el mismo GUID.
  - Se agrega el CleanmyKBAsMuchAsPosible.
- - Comienzo a trabajar en el WarningDoctor (es mejor como otra extension?). 
+ - Comienzo a trabajar en el WarningDoctor (es mejor como otra extension?).
 
 Enrique 04/05/2012
   - Se agrega Opcion para cambiar la KB. (Surgery)
   - Se agrega AddINParmRule, que cambia la regla rule y le agrega IN: a todos los parametros que no tienen
 
 Enrique 27/04/2012
- - Se agrega reporte de ancho de tablas. 
- - Se agrega opcion para borrar lo mas posible. 
- - Se hace mas rapido el reporte de VarChar y Clave, porque estaba lento. 
- - El reporte de Atributos sin Tablas, quita referencia de variables e intenta borrar los atributos. 
+ - Se agrega reporte de ancho de tablas.
+ - Se agrega opcion para borrar lo mas posible.
+ - Se hace mas rapido el reporte de VarChar y Clave, porque estaba lento.
+ - El reporte de Atributos sin Tablas, quita referencia de variables e intenta borrar los atributos.
 
 
 Enrique 11/04/2012
-  - Agrego objeto Table a listado de Unreachables. 
+  - Agrego objeto Table a listado de Unreachables.
   - Agrego dominos a listado de objetos no alcanzables.
   - Agrego Tipo en listado de objetos no alcanzados.
   - Mejora mensajes en output en reporte de Key and Varchar.
-  - Ordenar Menu. 
-  - Ajusto menu para que aparezca en Tools. 
+  - Ordenar Menu.
+  - Ajusto menu para que aparezca en Tools.
   - Categoria KBDoctor.Ureachable se marca para que vaya en el Commit
-  - Se excluyen los subtipos en reporte Att sin tabla base. 
-  - OpenObject usa guid, para poder abrir atributos y otros objetos. 
-  - Cambie Base Table por Table. 
-  - Att que debn ser VarChar, permite abrir el att, para cambiarlo. 
-  - Att que deben ser varchar, no permite modificar el att si tiene se base en dominio. (se agrega link para editar dominio). 
-  - Att que deben ser Char y son Varchar. Abrir el Att o el Dominio si tiene. 
-  - Se agrega el control de descripcion de grupo de subtipos (se muestran en mensajes). 
-  - Not Referenced Object, se indica si es main o no y si se genera o no. 
-                           No se deja eliminar transacciones, imagenes, att y tablas. 
+  - Se excluyen los subtipos en reporte Att sin tabla base.
+  - OpenObject usa guid, para poder abrir atributos y otros objetos.
+  - Cambie Base Table por Table.
+  - Att que debn ser VarChar, permite abrir el att, para cambiarlo.
+  - Att que deben ser varchar, no permite modificar el att si tiene se base en dominio. (se agrega link para editar dominio).
+  - Att que deben ser Char y son Varchar. Abrir el Att o el Dominio si tiene.
+  - Se agrega el control de descripcion de grupo de subtipos (se muestran en mensajes).
+  - Not Referenced Object, se indica si es main o no y si se genera o no.
+                           No se deja eliminar transacciones, imagenes, att y tablas.
 
 
 
@@ -149,8 +149,8 @@ Diego 15/08/07
 
 Ealmeida 14/08/07
  - Falta de ortografia en el title de reporte
- - Unificacion de forma de abrir objetos en objetos no llamados. 
- - 
+ - Unificacion de forma de abrir objetos en objetos no llamados.
+ -
 Diego 15/08/07
 - Agregue el variables no usadas, tengo que preguntar como sacos las usadas en layout
 - Agregue output pero faltan más.
@@ -164,7 +164,7 @@ _ La funcion de remover indice con atributo anda, pero el remover indice no anda
 Enrique 10/08/07
 - Cambio de NAMESPACE Artech.Pacakges.GeneXus a Artech.Genexus.
 - Cambio en uso de Expresiones regulares en la consulta de parm sin in y out
-- cambio a que se incluyan atributos en los objetos no alcanzables. 
+- cambio a que se incluyan atributos en los objetos no alcanzables.
 - OJO: Tuve que recuperar el codigo de ObjectHelper (solo lo de los objetos no alcanzble, porque me manque y me lo pase por arriba como un banana.
 
 
@@ -191,13 +191,13 @@ Diego 05/08/2007
 
 Enrique 04/08/2007
 - Cambio en Objetos con commit on exit (cambie el nombre del archivo pues habia quedado uno viejo)
-  Renombre output2 a output en Objetos con commit on exit. 
+  Renombre output2 a output en Objetos con commit on exit.
 
 - Implementacion de Objetos con parm sin in/out:
-  Estaba implementada solo con un msg, ahora ya genera la pagina html y la muestra. 
+  Estaba implementada solo con un msg, ahora ya genera la pagina html y la muestra.
   Falta parsear la regla parm y ver cuando tiene inout:
-  Esta mostrando todos los objetos que tienen ALGUN parametro inout: pero puede ser implicito o explicito. 
-  Puse title en varios lugares para no repetir tantas veces el title del reporte (en la ventana output y en la pagina HTML. 
+  Esta mostrando todos los objetos que tienen ALGUN parametro inout: pero puede ser implicito o explicito.
+  Puse title en varios lugares para no repetir tantas veces el title del reporte (en la ventana output y en la pagina HTML.
 - Empece a poner comentarion con //TODO, para que aparezcan en la lista de tareas pendientes.
 
 Marcos, 3/8/07
@@ -238,4 +238,4 @@ Marcos, 9/6/07
 
 Marcos, 7/6/07
  - Esqueleto de la extensión, agrega un menú con algunas opciones
- 
+

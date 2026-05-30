@@ -33,25 +33,25 @@ namespace Concepto.Packages.KBDoctor
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
+            //
             // label1
-            // 
+            //
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "label1";
-            // 
+            //
             // textBox1
-            // 
+            //
             this.textBox1.Location = new System.Drawing.Point(13, 26);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(304, 20);
             this.textBox1.TabIndex = 1;
-            // 
+            //
             // button1
-            // 
+            //
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button1.Location = new System.Drawing.Point(94, 52);
             this.button1.Name = "button1";
@@ -59,9 +59,9 @@ namespace Concepto.Packages.KBDoctor
             this.button1.TabIndex = 2;
             this.button1.Text = "Apply";
             this.button1.UseVisualStyleBackColor = true;
-            // 
+            //
             // button2
-            // 
+            //
             this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button2.Location = new System.Drawing.Point(175, 52);
             this.button2.Name = "button2";
@@ -69,9 +69,9 @@ namespace Concepto.Packages.KBDoctor
             this.button2.TabIndex = 3;
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
-            // 
+            //
             // PromptDescription
-            // 
+            //
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

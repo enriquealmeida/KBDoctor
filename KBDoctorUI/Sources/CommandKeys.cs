@@ -22,7 +22,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey replaceDomain = new CommandKey(Package.guid, "ReplaceDomain");
         private static CommandKey listDomain = new CommandKey(Package.guid, "ListDomain");
         private static CommandKey attUpdated = new CommandKey(Package.guid, "AttUpdated");
-       
+
         public static CommandKey AttWithNoDomain { get { return attWithNoDomain; } }
         public static CommandKey ListAttributes { get { return listAttributes; } }
         public static CommandKey AttWithoutDescription { get { return attWithoutDescription; } }
@@ -46,22 +46,22 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey assignColumnTitleToAttribute = new CommandKey(Package.guid, "AssignColumnTitleToAttribute");
         private static CommandKey listAttribute = new CommandKey(Package.guid, "ListAttribute");
         private static CommandKey addDescriptorIndex = new CommandKey(Package.guid, "AddDescriptorIndex");
-  
+
         public static CommandKey AssignDomainToAttribute { get { return assignDomainToAttribute; } }
         public static CommandKey AssignDescriptionToAttribute { get { return assignDescriptionToAttribute; } }
         public static CommandKey AssignTitleToAttribute { get { return assignTitleToAttribute; } }
         public static CommandKey AssignColumnTitleToAttribute { get { return assignColumnTitleToAttribute; } }
         public static CommandKey ListAttribute { get { return listAttribute; } }
         public static CommandKey AddDescriptorIndex { get { return addDescriptorIndex; } }
-        
+
 
         // Tablas
         private static CommandKey tblWihNoDescription = new CommandKey(Package.guid, "TablesWithNoDescription");
         public static CommandKey TblWihNoDescription { get { return tblWihNoDescription; } }
-        
+
         private static CommandKey grpWihNoDescription = new CommandKey(Package.guid, "GroupWithNoDescription");
         public static CommandKey GrpWihNoDescription { get { return grpWihNoDescription; } }
-        
+
         private static CommandKey tblWidth            = new CommandKey(Package.guid, "TablesWidth");
         public static CommandKey TblWidth { get { return tblWidth; } }
 
@@ -112,7 +112,7 @@ namespace Concepto.Packages.KBDoctor
 
         public static CommandKey IndexWithNotRefAtt { get { return indexWithNotRefAtt; } }
         public static CommandKey RemoveIndexAttribute { get { return removeIndexAttribute; } }
-        
+
 
         // Objetos
         private static CommandKey objNotReacheable = new CommandKey(Package.guid, "ObjectsNotReacheable");
@@ -150,13 +150,13 @@ namespace Concepto.Packages.KBDoctor
 
         private static CommandKey objectsWIWEB = new CommandKey(Package.guid, "ObjectsWINWEB");
         private static CommandKey listProcedureCallWebpanelTransaction = new CommandKey(Package.guid, "ListProcedureCallWebpanelTransaction");
-        
+
         private static CommandKey mainTableUsed = new CommandKey(Package.guid, "MainTableUsed");
         private static CommandKey removableTransactions = new CommandKey(Package.guid, "RemovableTransactions");
         private static CommandKey generateSQLScripts  = new CommandKey(Package.guid, "GenerateSQLScripts");
         private static CommandKey generateDPfromTable  = new CommandKey(Package.guid, "GenerateDPfromTable");
         private static CommandKey attributeAsOutput = new CommandKey(Package.guid, "AttributeAsOutput");
-        
+
 
         private static CommandKey generateGraph = new CommandKey(Package.guid, "GenerateGraph");
         private static CommandKey themeClassesNotUsed = new CommandKey(Package.guid, "ThemeClassesNotUsed");
@@ -174,7 +174,7 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey listWebObjectsProperties = new CommandKey(Package.guid, "ListWebObjectsProperties");
         public static CommandKey ListWebObjectsProperties { get { return listWebObjectsProperties ; } }
 
-        public static CommandKey ObjNotReacheable { get { return objNotReacheable; } } 
+        public static CommandKey ObjNotReacheable { get { return objNotReacheable; } }
         public static CommandKey ObjectsWithoutInOut { get { return objectsWithoutInOut; } }
         public static CommandKey ObjectsMainCalled { get { return objectsMainCalled; } }
         public static CommandKey ObjectsReferenced { get { return objectsReferenced; } }
@@ -217,7 +217,7 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey GenerateSQLScripts { get { return generateSQLScripts; } }
         public static CommandKey GenerateDPfromTable { get { return generateDPfromTable; } }
         public static CommandKey AttributeAsOutput { get { return attributeAsOutput; } }
-        
+
         public static CommandKey GenerateGraph { get { return generateGraph; } }
         public static CommandKey ThemeClassesNotUsed { get { return themeClassesNotUsed; } }
         public static CommandKey ObjThemeClassesNotUsed { get { return objthemeClassesNotUsed; } }
@@ -231,7 +231,7 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey GenerateRESTCalls { get { return generateRESTCalls; } }
         public static CommandKey SDTsWithDateInWS { get { return sDTsWithDateInWS; } }
         public static CommandKey GenerateSDTDataLoad { get { return generateSDTDataLoad; } }
-        
+
 
         // Acciones sobre objetos
         private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");
@@ -239,8 +239,8 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey assignDomainToVariable = new CommandKey(Package.guid, "AssignDomainToVariable");
         private static CommandKey assignAttributeToVariable = new CommandKey(Package.guid, "AssignAttributeToVariable");
         private static CommandKey renameAttributesAndTables =  new CommandKey(Package.guid, "RenameAttributesAndTables");
-        
-        
+
+
 
         public static CommandKey RemoveObject { get { return removeObject; } }
         public static CommandKey OpenObject { get { return openObject; } }
@@ -322,6 +322,9 @@ namespace Concepto.Packages.KBDoctor
 
         private static CommandKey listObj = new CommandKey(Package.guid, "ListObj");
         public static CommandKey ListObj { get { return listObj; } }
+
+        private static CommandKey listUnreferencedObjectsInUserModules = new CommandKey(Package.guid, "ListUnreferencedObjectsInUserModules");
+        public static CommandKey ListUnreferencedObjectsInUserModules { get { return listUnreferencedObjectsInUserModules; } }
 
         private static CommandKey createDeployUnits = new CommandKey(Package.guid, "CreateDeployUnits");
         public static CommandKey CreateDeployUnits { get { return createDeployUnits; } }

@@ -1,4 +1,4 @@
-﻿using Artech.Architecture.Common.Objects;
+using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Common.Helpers.Templates;
@@ -32,7 +32,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -80,7 +80,7 @@ namespace Concepto.Packages.KBDoctor
 
                                 //                             }
                                 // }
-                            } 
+                            }
                             catch (Exception e)
                             {
                                // KBDoctorOutput.Message(e.Message);
@@ -93,7 +93,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
 
             }
@@ -115,7 +115,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -186,7 +186,7 @@ namespace Concepto.Packages.KBDoctor
 
                             foreach (KBModelPart kBObjectPart in  kBEnvironment.TargetModel.Parts)
                             {
-                                KBDoctorOutput.Message("PART:" + kBObjectPart.Name); 
+                                KBDoctorOutput.Message("PART:" + kBObjectPart.Name);
                                 foreach (Property kbp in kbserv.CurrentKB.DesignModel.Environment.TargetModel.Properties)
                                 {
                                     string kbpvalue = "";
@@ -208,7 +208,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
 
             }
@@ -219,7 +219,7 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
-        
+
         public static void ListNamespace()
             {
             IKBService kbserv = UIServices.KB;
@@ -230,7 +230,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorOutput.Message("");
                 KBDoctorOutput.Message("===== SOAP NAMESPACE IN PROCEDURE ========");
@@ -265,7 +265,7 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorOutput.EndSection(title, success);
             }
 
-         
+
         }
 
         private static void ListSdtNamespace(SDTLevel level, string sdtName)

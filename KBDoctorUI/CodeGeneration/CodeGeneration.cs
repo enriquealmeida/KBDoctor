@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Windows.Forms;
 using System.Xml;
@@ -52,7 +52,7 @@ namespace Concepto.Packages.KBDoctor
 
                     string title = "KBDoctor - Generating Get/Set/Insert/Delete for table " + tabla.Name;
                     IOutputService output = CommonServices.Output;
-                    output.StartSection("KBDoctor",title);
+                    KBDoctorOutput.StartSection(title);
 
                     try
                     {
@@ -80,7 +80,7 @@ namespace Concepto.Packages.KBDoctor
                         output.AddErrorLine("KBDoctor",ex);
                     }
                     Application.DoEvents();
-                    output.EndSection("KBDoctor", title, true);
+                    KBDoctorOutput.EndSection(title, true);
 
                 }
 
@@ -132,7 +132,7 @@ namespace Concepto.Packages.KBDoctor
         }
 
 
-    
+
 
         private static void GenerateSetProcedure(KBModel kbModel, Table tabla, SDT Sdt)
         {
@@ -189,14 +189,14 @@ namespace Concepto.Packages.KBDoctor
         {
             string Source = "New" + Environment.NewLine;
             string Comment = "/*" + Environment.NewLine;
-            
+
 
             foreach (TableAttribute atr in tabla.TableStructure.Attributes)
-            {    
+            {
                 if (!atr.IsFormula)
                     Source += "          " + atr.Name + " = &" + sdt.Name + "." + atr.Name + Environment.NewLine;
-                Comment += " &" + sdt.Name + "." + atr.Name + " = " + atr.Name; 
-                    
+                Comment += " &" + sdt.Name + "." + atr.Name + " = " + atr.Name;
+
             }
             Source += "when duplicate /*nothing*/ " +  Environment.NewLine;
             Source += "endnew" + Environment.NewLine;
@@ -232,7 +232,7 @@ namespace Concepto.Packages.KBDoctor
             String Source = Environment.NewLine;
             foreach (TableAttribute atr in tabla.TableStructure.Attributes)
             {
-                if (!atr.IsKey) 
+                if (!atr.IsKey)
                     Source += "          &" + sdt.Name + "." + atr.Name + " = " + atr.Name + Environment.NewLine;
             }
             Source += Environment.NewLine;
@@ -309,7 +309,7 @@ namespace Concepto.Packages.KBDoctor
 
             dp.Variables.Add(oVariableNew);
         }
-        
+
         private static void GenerateInsertProcedure(KBModel kbModel, Table tabla, SDT Sdt)
         {
             Artech.Genexus.Common.Objects.Procedure proc = new Artech.Genexus.Common.Objects.Procedure(kbModel);
@@ -327,7 +327,7 @@ namespace Concepto.Packages.KBDoctor
             proc.Description = "Insert for Table " + tabla.Name + ".";
             proc.Save();
         }
-        
+
 
         private static void GenerateDataProvider(KBModel kbModel, Table tabla, SDT Sdt)
         {
@@ -339,19 +339,19 @@ namespace Concepto.Packages.KBDoctor
             string Source;
 
             Source = Sdt.Name + Environment.NewLine;
-           
+
             Source += GenerateWhereSDT(tabla, sdtparam);
             Source += "{" + Environment.NewLine;
             Source += GenerateListaAtt(tabla);
             Source += "}";
 
             dp.DataProviderSource.Source = Source;
-            
+
             AddSDTVariableToDP(kbModel, dp , Sdt, sdtparam);
             AddSDTVariableToDP(kbModel, dp, Sdt, Sdt.Name);
 
             dp.Rules.Source = GenerateParmRuleINSDT(sdtparam);
-            
+
             dp.Description = "Data Provider for table  " + tabla.Name + ".";
 
             dp.SetPropertyValue(Properties.DPRV.Output, new KBObjectReference(Sdt));
@@ -370,7 +370,7 @@ namespace Concepto.Packages.KBDoctor
 
             proc.Name = procName;
             string Source;
-            
+
             Source = "for each" + Environment.NewLine;
             Source += GenerateWhere(tabla);
             Source += "         &Exists=true" + Environment.NewLine;

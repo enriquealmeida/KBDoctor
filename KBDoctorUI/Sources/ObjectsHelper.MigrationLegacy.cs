@@ -60,7 +60,7 @@ namespace Concepto.Packages.KBDoctor
             SpecificationListHelper helper = new SpecificationListHelper(kbserv.CurrentModel.Environment.TargetModel);
 
             string title = "KBDoctor - Generate objects in text format";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
 
             string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
             string newDir = KBDoctorHelper.ObjComparerDirectory(kbserv) + @"\OBJ-" + fechahora + @"\";
@@ -80,12 +80,12 @@ namespace Concepto.Packages.KBDoctor
                     {
                         KBDoctorOutput.Message( obj.GetFullName());
                     }
-                    WriteObjectToJsonFile(obj, newDir); 
+                    WriteObjectToJsonFile(obj, newDir);
                 }
             }
 
             bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            KBDoctorOutput.EndSection(title, success);
         }
 
         public static void GenerateLocationXML()
@@ -101,7 +101,7 @@ namespace Concepto.Packages.KBDoctor
                 File.Delete(outputFile);
             }
 
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             KBDoctorOutput.Message( "Generate Location.xml template in " + outputFile);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -152,10 +152,11 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            KBDoctorOutput.EndSection(title, success);
 
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar antes de eliminar.
         private static void WriteObjectToTextFile(KBObject obj, string newDir)
         {
             string name = Regex.Replace(obj.GetFullName(), "[':/\\\\ ]", "_");
@@ -211,7 +212,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 Console.WriteLine("Error al escribir en el archivo: " + e.Message);
             }
-           
+
         }
 
         private static void HandleReferences(KBObject objRef, StreamWriter file)
@@ -322,7 +323,7 @@ namespace Concepto.Packages.KBDoctor
 private static void WriteObjectToJsonFile(KBObject obj, string newDir)
     {
         string name = Regex.Replace(obj.GetFullName(), "[':/\\\\ ]", "_");
-        string FileName = newDir + name + ".json";  
+        string FileName = newDir + name + ".json";
 
         try
         {
@@ -331,7 +332,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             {
                 writer.Formatting = Formatting.Indented; // Para una mejor legibilidad del archivo JSON
 
-                // Crear un objeto anónimo con toda la información necesaria
+                // Crear un objeto anï¿½nimo con toda la informaciï¿½n necesaria
                 var objData = new
                 {
                     ObjectName = obj.Name,
@@ -359,9 +360,9 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         {
             foreach (var parte in obj.Parts)
             {
-                // Aquí puedes acceder a las propiedades de cada parte
+                // Aquï¿½ puedes acceder a las propiedades de cada parte
                 return  parte.Name;
-                
+
             }
             return null;
         }
@@ -396,8 +397,8 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             case "Table":
                 return GetTableData((Table)obj);
             case "SDT":
-                return GetSDTData((Artech.Genexus.Common.Objects.SDT)obj); 
-                    
+                return GetSDTData((Artech.Genexus.Common.Objects.SDT)obj);
+
             default:
                 return null;
         }
@@ -421,7 +422,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             StringBuilder line = new StringBuilder();
             foreach (TableAttribute attr in obj.TableStructure.Attributes)
             {
-                
+
                 line.Append(attr.IsKey ? "*" : " ");
                 line.Append(attr.Name).Append("  ").Append(attr.GetPropertiesObject().GetPropertyValueString("DataTypeString"));
                 line.Append("-").Append(attr.GetPropertiesObject().GetPropertyValueString("Formula"));
@@ -439,12 +440,12 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         }
 
         // Asumo que ya tienes funciones como GetAttributeData, GetProcedureData, etc., que
-        // devuelven datos específicos formateados para ser parte del objeto JSON.
-        // Similar a los métodos HandleAttribute, HandleProcedure, etc., pero retornando
+        // devuelven datos especï¿½ficos formateados para ser parte del objeto JSON.
+        // Similar a los mï¿½todos HandleAttribute, HandleProcedure, etc., pero retornando
         // objetos o estructuras en lugar de escribir directamente a un archivo.
 
-        // Nota: Deberás implementar métodos como GetRulesPart, GetReferences, y otros para cada tipo de objeto,
-        // que deberán devolver la información correspondiente en formato adecuado para ser serializada a JSON.
+        // Nota: Deberï¿½s implementar mï¿½todos como GetRulesPart, GetReferences, y otros para cada tipo de objeto,
+        // que deberï¿½n devolver la informaciï¿½n correspondiente en formato adecuado para ser serializada a JSON.
         private static object GetRulesPart(KBObject obj)
         {
             RulesPart rp = obj.Parts.Get<RulesPart>();
@@ -465,12 +466,12 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-            
+
             bool commitOnExit;
             string title = "KBDoctor - Commit on Exit = Yes";
             string objNameLink;
 
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 System.IO.StreamWriter file = new System.IO.StreamWriter("CommitOnExit.txt");
@@ -495,12 +496,12 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                         if (commitOnExit && obj.IsPropertyDefault("CommitOnExit") && isGenerated(obj))
                             {
-                           
+
                                 if (updateDBbool)
                                 {
                                 updateDB = "YES";
                                 }
-                                    
+
                                 objNameLink = Functions.linkObject(obj);
                                 writer.AddTableData(new string[] { obj.TypeDescriptor.Name, objNameLink, obj.Description, updateDB });
                             }
@@ -518,7 +519,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -527,7 +528,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             }
 
         }
-    
+
 
         private static void ListStructure(SDTLevel level, int tabs, System.IO.StreamWriter file)
         {
@@ -605,7 +606,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     CreateNewWebPanel(obj);
                 }
             }
-            
+
 
 
         }
@@ -685,15 +686,16 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 newWebPanel.Name = workPanel.Name + "_v18_error";
                 newWebPanel.Events.Source = "/* " + workPanelEvents.Source + " */";
                 newWebPanel.Rules.Source = "/*" +  workPanelRules.Source + " */";
-               
+
                 try { newWebPanel.Save();
                     output.AddLine("WebPanel created successfully: " + newWebPanel.Name);
                 }
-                catch (Exception ex) { output.AddErrorLine("Error saving second WebPanel: " + ex.Message); }   
+                catch (Exception ex) { output.AddErrorLine("Error saving second WebPanel: " + ex.Message); }
             }
         }
 
 
+        // TODO: Sin referencias textuales encontradas; revisar si se usa manualmente antes de eliminar.
         public static void CreateNewPanel(WorkPanel workPanel)
         {
             IKBService kbserv = UIServices.KB;
@@ -704,11 +706,11 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             PatternInstanceElement panel = newPanel.PatternPart.PanelElement;
 
 
- 
+
             newPanel.Name = workPanel.Name + "_Pv18";
             var variablesPart = WorkWithDevicesSources.GetVariablesPartForPanel(panel);
 
-            
+
             // Copy Variables
             VariablesPart workPanelVariables = workPanel.Parts.Get<VariablesPart>();
             if (workPanelVariables != null)
@@ -722,7 +724,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 }
             }
 
-      
+
             // Copy Events
             var eventsSource = panel.Attributes.GetPropertyValue<string>(InstanceAttributes.Panel.Events);
 
@@ -741,10 +743,11 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             {
                 output.AddErrorLine("Error saving WebPanel: " + e.Message);
             }
-            
+
         }
 
 
+        // TODO: Sin referencias textuales encontradas; revisar antes de eliminar.
         private static string ProcessRulesSource(string source)
         {
             source = source.Replace("search(", "//search(");
@@ -766,22 +769,22 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     ProcessElement(element, output, webForm);
                 }
             }
-            
+
         }
 
         private static void ProcessElement(FormElement element, IOutputService output, WebFormPart webForm)
         {
-            // List of property names to ignore  
+            // List of property names to ignore
             var ignoredProperties = new HashSet<string>
            {
                "Font", "ForeColorText", "FormType", "FromDefault", "FromStyle",
                "LinesFont", "LinesForeColorText", "TitleFont", "TitleForeColorText"
            };
 
-            // Process the element here  
+            // Process the element here
             output.AddLine($"Element: {element.Name} {element.Type.ToString()}");
 
-            // Iterate through all properties of the element and display their content  
+            // Iterate through all properties of the element and display their content
             foreach (var pt in element.Properties.GetPropertiesDescriptors())
             {
                 if (!pt.IsDefaultValue && !ignoredProperties.Contains(pt.Name))
@@ -790,7 +793,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 }
             }
 
-            // Recursively process child elements  
+            // Recursively process child elements
             foreach (FormElement childElement in element.Children)
             {
                 ProcessElement(childElement, output, webForm);
@@ -808,7 +811,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
 
-                output.StartSection(titulo);
+                KBDoctorOutput.StartSection(titulo);
                 writer.AddHeader(titulo);
                 writer.AddTableHeader(legacyCode);
                 int objWithLegacyCode = 0;
@@ -858,7 +861,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection(titulo, success);
+                KBDoctorOutput.EndSection(titulo, success);
                 Functions.AddLineSummary(titulo + ".txt", objWithLegacyCode.ToString());
             }
             catch
@@ -939,7 +942,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             }
 
             string titulo = "KBDoctor - Change code to improve readability";
-            output.StartSection(titulo);
+            KBDoctorOutput.StartSection(titulo);
 
             SelectObjectOptions selectObjectOption = new SelectObjectOptions();
             selectObjectOption.MultipleSelection = true;
@@ -968,7 +971,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                             newSource = re4[i].Replace(newSource, re4Replace[i]);
                         }
 
-                        //Solo cambio si NO tiene codigo nativo. Cambiar codigo nativo puede traer lios. 
+                        //Solo cambio si NO tiene codigo nativo. Cambiar codigo nativo puede traer lios.
                         if (!(newSource.ToLower().Contains("java") || newSource.ToLower().Contains("csharp")))
                         {
                             for (int i = 0; i < (leg.Length) / 2; i++)
@@ -985,8 +988,8 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                                 }
                                 catch (Exception e)
                                 {
-                                    output.AddErrorLine(e.Message);
-                                    output.AddErrorLine("========= newsource ===============");
+                                    KBDoctorOutput.Error(e.Message);
+                                    KBDoctorOutput.Error("========= newsource ===============");
                                     KBDoctorOutput.Message( newSource);
                                     success = false;
                                 };
@@ -998,10 +1001,11 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 }
             }
 
-            output.EndSection(titulo, success);
+            KBDoctorOutput.EndSection(titulo, success);
 
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar antes de eliminar.
         private static string ReplaceLegacyCode(string newSource, string original, string changeto)
         {
             newSource = newSource.Replace(original, changeto, StringComparison.CurrentCultureIgnoreCase);
@@ -1038,6 +1042,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             }
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar antes de eliminar.
         private static string ReplaceOneLegacy(string myString, string v)
         {
             int from, to;

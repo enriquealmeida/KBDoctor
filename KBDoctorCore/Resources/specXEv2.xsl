@@ -36,7 +36,7 @@
     <xsl:param name="HeaderMain">false</xsl:param>
     <xsl:param name="Subtitulo">true</xsl:param>
     <xsl:param name="image"/>
-    <xsl:variable name="Tables" select="document('tables.xml')/Tables"/> 
+    <xsl:variable name="Tables" select="document('tables.xml')/Tables"/>
     <xsl:choose>
       <xsl:when test="$HeaderMain = 'true'">
         <xsl:call-template name="TableHeaderMain">
@@ -53,7 +53,7 @@
 								<xsl:value-of select="$Tables/Table[@id = $ID]/Width"/>
 							</xsl:when>
 							<xsl:otherwise>100%</xsl:otherwise>
-						</xsl:choose> 
+						</xsl:choose>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:otherwise>
@@ -63,10 +63,10 @@
 			<xsl:variable name="Template" select="."/>
 			<xsl:for-each select="$CurrentNode/*[name() = $Template]">
 				<xsl:sort select="./Table/TableName"/>
-				12/01/05 Para que los prompt se listen ordenados 
+				12/01/05 Para que los prompt se listen ordenados
 				<xsl:apply-templates select="." mode="TableRow"/>
-			</xsl:for-each> 
-		</xsl:for-each> 
+			</xsl:for-each>
+		</xsl:for-each>
   </xsl:template>
   <xsl:template name="TableHeaderSubMain">
     <xsl:param name="title">Table Title</xsl:param>
@@ -543,7 +543,7 @@
   <xsl:template name="ProcessListConstraint">
     <xsl:param name="Sep"/>
     <xsl:for-each select="Token|Attribute|Variable|Object|Table|Parameter|SubtypeGroup">
-      		<xsl:sort select="AttriName"/>   
+			<xsl:sort select="AttriName"/>
       <xsl:choose>
         <xsl:when test="text()[.=$Sep]"/>
         <xsl:when test="starts-with(text(),$Sep) and string-length($Sep) > 0">
@@ -967,7 +967,7 @@
     <xsl:apply-templates select="GenId"/>
   </xsl:template>
   <!--  Standa-rd Templates  -->
-  
+
 	<xsl:template match="ObjClsName">
 		<xsl:variable name="Classes"
             			select="document('classes.xml')"/>
@@ -983,7 +983,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-  
+
   <xsl:template name="MainInfo">
     Name: <xsl:apply-templates select="Object"
                   mode="icon"/>

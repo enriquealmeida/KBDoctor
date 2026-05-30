@@ -40,7 +40,7 @@ namespace IniParser.Model
         ///     Data from the original KeyDataCollection instance is deeply copied
         /// </remarks>
         /// <param name="ori">
-        ///     The instance of the <see cref="KeyDataCollection"/> class 
+        ///     The instance of the <see cref="KeyDataCollection"/> class
         ///     used to create the new instance.
         /// </param>
         public KeyDataCollection(KeyDataCollection ori, IEqualityComparer<string> searchComparer)
@@ -116,7 +116,7 @@ namespace IniParser.Model
         /// <param name="keyName">
         ///     New key to be added.
         /// </param>
-        ///     <c>true</c> if the key was added  <c>false</c> if a key with the same name already exist 
+        ///     <c>true</c> if the key was added  <c>false</c> if a key with the same name already exist
         ///     in the collection
 
         public bool AddKey(string keyName)
@@ -133,7 +133,7 @@ namespace IniParser.Model
         [Obsolete("Pottentially buggy method! Use AddKey(KeyData keyData) instead (See comments in code for an explanation of the bug)")]
         public bool AddKey(string keyName, KeyData keyData)
         {
-            // BUG: this actually can allow you to add the keyData having 
+            // BUG: this actually can allow you to add the keyData having
             // keyData.KeyName different from the argument 'keyName' in this method
             // which doesn't make any sense
             if (AddKey(keyName))
@@ -153,7 +153,7 @@ namespace IniParser.Model
         ///     KeyData instance.
         /// </param>
         /// <returns>
-        ///     <c>true</c> if the key was added  <c>false</c> if a key with the same name already exist 
+        ///     <c>true</c> if the key was added  <c>false</c> if a key with the same name already exist
         ///     in the collection
         /// </returns>
         public bool AddKey(KeyData keyData)
@@ -176,7 +176,7 @@ namespace IniParser.Model
         ///     Value associated to the key.
         /// </param>
         /// <returns>
-        ///     <c>true</c> if the key was added  <c>false</c> if a key with the same name already exist 
+        ///     <c>true</c> if the key was added  <c>false</c> if a key with the same name already exist
         ///     in the collection.
         /// </returns>
         public bool AddKey(string keyName, string keyValue)
@@ -252,7 +252,7 @@ namespace IniParser.Model
         /// </summary>
         /// <param name="keyName">The key to be removed.</param>
         /// <returns>
-        /// <c>true</c> if a key with the specified name was removed 
+        /// <c>true</c> if a key with the specified name was removed
         /// <c>false</c> otherwise.
         /// </returns>
         public bool RemoveKey(string keyName)

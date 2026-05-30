@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Windows.Forms;
 using System.Xml;
@@ -8,7 +8,7 @@ using Artech.Architecture.UI.Framework.Services;
 using Artech.Genexus.Common;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Parts;
-using Artech.Architecture.Common.Collections;  
+using Artech.Architecture.Common.Collections;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -115,7 +115,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - ADD IN: to Parm() rule";
 
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -188,7 +188,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Attributes using domain";
 
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -269,7 +269,7 @@ namespace Concepto.Packages.KBDoctor
                     }
 
                 }
-                
+
             }
             writer.AddTableData(new string[] { Utility.linkObject(obj),  name, linesWithParmName });
         }
@@ -352,7 +352,7 @@ namespace Concepto.Packages.KBDoctor
                     }
                 }
             }
-           
+
             return newParm;
         }
 
@@ -363,13 +363,13 @@ namespace Concepto.Packages.KBDoctor
 
             string newRules = "";
             try {
-                newParm = newParm.Replace(";", " "); 
+                newParm = newParm.Replace(";", " ");
                 newRules = rulPart.Source.Replace(oldParm, newParm);
                 rulPart.Source = newRules;
 
             }
                 catch (Exception e) { KBDoctorOutput.Message(e.Message); };
-            
+
 
             try
             {
@@ -391,7 +391,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -420,7 +420,7 @@ namespace Concepto.Packages.KBDoctor
                 // Processing
                 data.Sort();
 
-                // Output   
+                // Output
                 string outputFile2 = kbserv.CurrentKB.UserDirectory + @"\RenameVariables2.txt";
                 File.WriteAllLines(outputFile2, data.ToArray());
 
@@ -430,7 +430,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -488,8 +488,8 @@ namespace Concepto.Packages.KBDoctor
             string attBAux = v.AttributeBasedOn == null ? "" : v.AttributeBasedOn.Name;
             string domBAux = v.DomainBasedOn == null ? "" : v.DomainBasedOn.Name;
             string varaux = v.Name + ":" + Utility.FormattedTypeVariable(v) + ":" + attBAux + ":" + domBAux;
-            varaux = varaux + "->" + varaux; 
-                   
+            varaux = varaux + "->" + varaux;
+
             Utility.AddLine("RenameVariables.txt", varaux);
         }
 
@@ -499,7 +499,7 @@ namespace Concepto.Packages.KBDoctor
 
             if (Utility.IsMain(obj))
                 output.AddLine(obj.Name);
-            
+
 
             foreach (EntityReference reference in obj.GetReferences(LinkType.UsedObject))
             {
@@ -516,7 +516,7 @@ namespace Concepto.Packages.KBDoctor
         }
 
         /// <summary>
-        /// Crea un procedure con todos los SDT seleccionados por el usuario. 
+        /// Crea un procedure con todos los SDT seleccionados por el usuario.
         /// </summary>
         public static void CreateProcedureSDT()
         {
@@ -549,7 +549,7 @@ namespace Concepto.Packages.KBDoctor
                 proc.Save();
 
 
-                //Para cada uno de los generadores del environment, genero el proc con los SDT.  
+                //Para cada uno de los generadores del environment, genero el proc con los SDT.
 
                 GxModel gm = UIServices.KB.WorkingEnvironment.TargetModel.GetAs<GxModel>();
 
@@ -584,7 +584,7 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
-     
+
 
         /// <summary>
         /// Search and replace text in objects
@@ -596,7 +596,7 @@ namespace Concepto.Packages.KBDoctor
 
             string mensaje = "";
             string title = "Search and replace";
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             if (kB != null && kB.CurrentModel != null)
             {
 
@@ -670,14 +670,14 @@ namespace Concepto.Packages.KBDoctor
 
                         }
                         title = "Changed objects " + objcambiados.ToString();
-                        output.EndSection("KBDoctor", title, true);
+                        KBDoctorOutput.EndSection(title, true);
                     }
                 }
             }
 
         }
 
-        
+
         public static string Replace(this string str, string old, string @new, StringComparison comparison)
         {
             @new = @new ?? "";
@@ -701,7 +701,7 @@ namespace Concepto.Packages.KBDoctor
 
             string mensaje = "";
             string title = "Search and replace string with !";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             if (kB != null && kB.CurrentModel != null)
             {
 
@@ -774,7 +774,7 @@ namespace Concepto.Packages.KBDoctor
 
                         }
                         title = "Changed objects " + objcambiados.ToString();
-                        output.EndSection("KBDoctor", title, true);
+                        KBDoctorOutput.EndSection(title, true);
                     }
                 }
             }
@@ -827,7 +827,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             string title = "KBDoctor - Object referenced by object ";
 
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -903,7 +903,7 @@ namespace Concepto.Packages.KBDoctor
                 writer.Close();
 
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
@@ -927,7 +927,7 @@ namespace Concepto.Packages.KBDoctor
         }
 
         /// <summary>
-        /// Cambia los objetos que tienen source o eventos. 
+        /// Cambia los objetos que tienen source o eventos.
         /// </summary>
         /// <param name="obj">Objeto a cambiar</param>
         /// <param name="txtfind">texto a buscar</param>
@@ -956,7 +956,7 @@ namespace Concepto.Packages.KBDoctor
         }
 
         /// <summary>
-        /// Cambia los objetos que tienen source o eventos. 
+        /// Cambia los objetos que tienen source o eventos.
         /// </summary>
         /// <param name="obj">Objeto a cambiar</param>
         /// <param name="txtfind">texto a buscar</param>
@@ -985,7 +985,7 @@ namespace Concepto.Packages.KBDoctor
         }
 
         /// <summary>
-        /// Cambia los objetos transaction y webpanels y los WebForms. 
+        /// Cambia los objetos transaction y webpanels y los WebForms.
         /// </summary>
         /// <param name="obj">Objeto a cambiar</param>
         /// <param name="txtfind">texto a buscar</param>
@@ -1037,7 +1037,7 @@ namespace Concepto.Packages.KBDoctor
         public static void RenameAttributesAndTables()
         {
 
-            string message = "This option rename Objects (attributes, tables and objects) to significant name length. " + 
+            string message = "This option rename Objects (attributes, tables and objects) to significant name length. " +
                 Environment.NewLine + Environment.NewLine + "Do you have KB BACKUP? ";
             const string caption = "ATTENTION!!";
             var result = MessageBox.Show(message, caption,
@@ -1063,7 +1063,7 @@ namespace Concepto.Packages.KBDoctor
                     writer.AddTableHeader(new string[] { "Type", "Object", "Description" });
 
                     IOutputService output = CommonServices.Output;
-                    output.StartSection("KBDoctor", title);
+                    KBDoctorOutput.StartSection(title);
 
                     foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                     {
@@ -1131,7 +1131,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 List<string[]> lineswriter;
                 KBDoctorCore.Sources.API.RemoveAttributesWithoutTable(kbserv.CurrentModel, output, out lineswriter);
@@ -1148,7 +1148,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -1157,7 +1157,7 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
-       
+
     }
 }
 

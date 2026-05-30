@@ -63,7 +63,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -78,7 +78,7 @@ namespace Concepto.Packages.KBDoctor
                         KBDoctorOutput.Message("MAIN:" + obj.Name);
                         MarkReachables(output, obj, reachablesObjects);
                     }
-                                  
+
                 }
 
                 writer.AddFooter();
@@ -86,7 +86,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch (Exception e)
             {
@@ -160,6 +160,7 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar si se usa por comando/reflection antes de eliminar.
         public static void OpenObjectRules(object[] parameters)
         {
             foreach (object o in parameters)
@@ -192,7 +193,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -257,7 +258,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -266,6 +267,7 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar si se usa manualmente antes de eliminar.
         public static string VariablesNotBasedAttributesOrDomain(KBObject obj)
         {
             IKBService kbserv = UIServices.KB;
@@ -419,7 +421,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -476,7 +478,7 @@ namespace Concepto.Packages.KBDoctor
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -644,7 +646,7 @@ namespace Concepto.Packages.KBDoctor
             string varname = "";
             string remove = "";
 
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -728,7 +730,7 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -770,18 +772,18 @@ namespace Concepto.Packages.KBDoctor
         {
             string title = "KBDoctor - Clean variables not used by DVelop Software.";
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
 
             KBDoctorCore.Sources.API.CleanAllKBObjectVariables(UIServices.KB.CurrentKB, output);
 
-            output.EndSection("KBDoctor", title, true);
+            KBDoctorOutput.EndSection(title, true);
 
         }
 
         private static void SetDocumentDirty(IGxDocument doc)
         {
-            if (UIServices.Environment.InvokeRequired) // devuelve true cuando el thread que está ejecutando no es el thread de UI
-                UIServices.Environment.BeginInvoke(() => SetDocumentDirty(doc)); // dispara un invoke asincrónico a SetDocumentDirty
+            if (UIServices.Environment.InvokeRequired) // devuelve true cuando el thread que estï¿½ ejecutando no es el thread de UI
+                UIServices.Environment.BeginInvoke(() => SetDocumentDirty(doc)); // dispara un invoke asincrï¿½nico a SetDocumentDirty
             else
                 doc.Dirty = true;
         }
@@ -804,11 +806,11 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
-  
+
             string title = "KBDoctor - Reset WIN Forms";
 
 
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -847,7 +849,7 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -864,7 +866,7 @@ namespace Concepto.Packages.KBDoctor
 
             bool success = true;
             string title = "KBDoctor - Build Objects with references";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -911,7 +913,7 @@ namespace Concepto.Packages.KBDoctor
                 } while (GenexusUIServices.Build.IsBuilding);
 
                 KBDoctorOutput.Message( lista);
-                output.EndSection("KBDoctor", title, true);
+                KBDoctorOutput.EndSection(title, true);
             }
             catch
             {
@@ -961,14 +963,14 @@ namespace Concepto.Packages.KBDoctor
         public static void ListWebObjectsProperties()
         {
 
-           
+
             IKBService kbserv = UIServices.KB;
             KBModel kbModel = UIServices.KB.CurrentModel;
             IOutputService output = CommonServices.Output;
 
             bool success = true;
             string title = "KBDoctor - Objects with property";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
 
             string propertyString = Properties.WBP.WebUserExperience ;
             string propertyValue = Properties.WBP.WebUserExperience_Values.Smooth;
@@ -988,7 +990,7 @@ namespace Concepto.Packages.KBDoctor
             }
             catch { }
             finally { };
-                
+
         }
 
 private static void ListSdtNamespace(SDTLevel level, string sdtName)
@@ -996,7 +998,7 @@ private static void ListSdtNamespace(SDTLevel level, string sdtName)
             foreach (var childItem in level.GetItems<SDTItem>())
             {
                 string sp = childItem.GetPropertyValue<string>("idXmlNamespace");
-                if (sp != "") 
+                if (sp != "")
                  KBDoctorOutput.Message("SDT: " + sdtName + " Element: " + childItem.Name + " Namespace: " + childItem.GetPropertyValue<string>("idXmlNamespace"));
             }
             foreach (var childLevel in level.GetItems<SDTLevel>())
@@ -1016,7 +1018,7 @@ public static void ListAPIObjects()
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 string  sw2 = "";
                 SortedDictionary<string, string> sw3 = new SortedDictionary<string, string>();
@@ -1084,7 +1086,7 @@ public static void ListAPIObjects()
                 string fileName2 = directoryArg + @"\API3-" + fechahora + ".txt";
                 System.IO.File.WriteAllText(fileName2, sw2);
                 KBDoctorOutput.Message( "URL/URI file generated in " + fileName2);
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -1104,7 +1106,7 @@ public static void ListAPIObjects()
             KBModel kbModel = kbserv.CurrentModel;
 
             string title = "KBDoctor - Objects updating attribute";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -1168,7 +1170,7 @@ public static void ListAPIObjects()
                     else
                     {
                         bool success = false;
-                        output.EndSection("KBDoctor", title, success);
+                        KBDoctorOutput.EndSection(title, success);
                         writer.AddFooter();
                         writer.Close();
                     }
@@ -1181,6 +1183,7 @@ public static void ListAPIObjects()
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
+        // TODO: Sin referencias textuales encontradas; revisar si debe exponerse como comando antes de eliminar.
         public static void ObjectsWithTheSameSignature()
         {
             // Object with parm() rule without in: out: or inout:
@@ -1188,7 +1191,7 @@ public static void ListAPIObjects()
             IOutputService output = CommonServices.Output;
 
             string title = "KBDoctor - Objects with the same signature";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -1228,7 +1231,7 @@ public static void ListAPIObjects()
                 writer.AddFooter();
                 writer.Close();
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
@@ -1239,6 +1242,7 @@ public static void ListAPIObjects()
             }
         }
 
+        // TODO: Sin referencias textuales encontradas; revisar si debe exponerse como comando antes de eliminar.
         public static void ObjectsWithTheSameSignatureAssociated()
         {
             // Object with parm() rule without in: out: or inout:
@@ -1246,7 +1250,7 @@ public static void ListAPIObjects()
             IOutputService output = CommonServices.Output;
 
             string title = "KBDoctor - Objects with the same signature associated to a transaction";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -1303,7 +1307,7 @@ public static void ListAPIObjects()
                 writer.AddFooter();
                 writer.Close();
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
@@ -1341,14 +1345,14 @@ public static void ListAPIObjects()
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
             selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
             List<KBObject> objs = (List<KBObject>) UIServices.SelectObjectDialog.SelectObjects(selectObjectOption);
-            output.SelectOutput("KBDoctor");
-            output.StartSection("KBDoctor - Assign Types Comparer");
+            KBDoctorOutput.StartSection("KBDoctor - Assign Types Comparer");
             string recommendations = "";
             int cant;
             Thread thread = new Thread(() => API.AssignTypesComprarer(kbserv.CurrentKB, objs, ref recommendations, out cant));
             thread.Start();
         }
 
+        // TODO: Sin referencias textuales encontradas; parece herramienta de prueba/manual. Revisar antes de eliminar.
         public static void TestParser()
         {
 
@@ -1397,8 +1401,8 @@ public static void ListAPIObjects()
             token_meaning.Add(TokensIds.FOR, " ORDER ...");
             token_meaning.Add(TokensIds.TKN_TRUE, " TRUE");
             token_meaning.Add(TokensIds.TKN_FALSE, " FALSE");
-            token_meaning.Add(TokensIds.TKN_NONE, " NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR");
-            token_meaning.Add(TokensIds.PRM, " Parámetro, utilizado en DYNQ");
+            token_meaning.Add(TokensIds.TKN_NONE, " NONE, para expresiï¿½n FOR EACH ... ORDER NONE ... ENDFOR");
+            token_meaning.Add(TokensIds.PRM, " Parï¿½metro, utilizado en DYNQ");
             token_meaning.Add(TokensIds.FND, " Name Domain");
             token_meaning.Add(TokensIds.FLV, " LEVEL token");
             token_meaning.Add(TokensIds.TKN_NEW, " NEW token");
@@ -1500,10 +1504,10 @@ public static void ListAPIObjects()
             token_meaning.Add(TokensIds.DTFSS, "DTFSS");
             token_meaning.Add(TokensIds.DTEFF, "DTEFF");
             token_meaning.Add(TokensIds.DTLNK, " Comando LINK");
-            token_meaning.Add(TokensIds.DTAPL, " Asignación del tipo +=");
-            token_meaning.Add(TokensIds.DTAMI, " Asignación del tipo -=");
-            token_meaning.Add(TokensIds.DTAMU, " Asignación del tipo *=");
-            token_meaning.Add(TokensIds.DTADI, " Asignación del tipo /=");
+            token_meaning.Add(TokensIds.DTAPL, " Asignaciï¿½n del tipo +=");
+            token_meaning.Add(TokensIds.DTAMI, " Asignaciï¿½n del tipo -=");
+            token_meaning.Add(TokensIds.DTAMU, " Asignaciï¿½n del tipo *=");
+            token_meaning.Add(TokensIds.DTADI, " Asignaciï¿½n del tipo /=");
             token_meaning.Add(TokensIds.DTFIN, " FOR <var> IN <array>");
             token_meaning.Add(TokensIds.DTEFI, " END' del token anterior");
             token_meaning.Add(TokensIds.DTFFT, " FOR <var>=<exp> TO <exp> STEP <exp>");
@@ -1536,7 +1540,7 @@ public static void ListAPIObjects()
             IOutputService output = CommonServices.Output;
 
             string title = "KBDoctor - TESTEO DE PARSER ";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -1575,7 +1579,7 @@ public static void ListAPIObjects()
                 writer.AddFooter();
                 writer.Close();
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
             }
             catch
@@ -1584,6 +1588,7 @@ public static void ListAPIObjects()
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
+        // TODO: Sin referencias textuales encontradas; revisar si se usa manualmente antes de eliminar.
         public static void CopyWinFormToWebForm(KBObject obj)
         {
             IOutputService output = CommonServices.Output;
@@ -1616,6 +1621,7 @@ public static void ListAPIObjects()
         {
 
         }
+        // TODO: Sin referencias textuales encontradas; revisar si se usa manualmente antes de eliminar.
         public static void AddObjectToSDPanel(SDPanel sDPanel, KBObject objToAdd)
         {
             IOutputService output = CommonServices.Output;

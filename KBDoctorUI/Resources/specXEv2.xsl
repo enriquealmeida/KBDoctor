@@ -809,7 +809,7 @@
         <xsl:if test="JoinType[.='Outer']">
           <xsl:text> allowing nulls</xsl:text>
         </xsl:if>
-        <xsl:text> 
+        <xsl:text>
          WHERE </xsl:text>
         <xsl:apply-templates select="JoinConditions"/>
         <xsl:if test="Into/Attribute">
@@ -984,7 +984,7 @@
     </xsl:if>
     <xsl:if test="Parameters">
       Parameters:   <xsl:apply-templates select="Parameters"/><xsl:text>
-   
+
    </xsl:text>
     </xsl:if>
   </xsl:template>

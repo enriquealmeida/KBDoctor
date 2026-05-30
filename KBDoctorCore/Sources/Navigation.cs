@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -35,7 +35,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         internal static void PrepareNavigation(KnowledgeBase KB, IOutputService output)
         {
             string title = "KBDoctor - Prepare Comparer Navigation Files";
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             string directoryArg = Utility.NvgComparerDirectory(KB);
@@ -63,13 +63,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 // Get the elapsed time as a TimeSpan value.
                 TimeSpan ts = stopWatch.Elapsed;
 
-                // Format and display the TimeSpan value. 
+                // Format and display the TimeSpan value.
                 string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                     ts.Hours, ts.Minutes, ts.Seconds,
                     ts.Milliseconds / 10);
-                
+
                 KBDoctorOutput.Message(title + " elepsed time: " + elapsedTime);
-                output.EndSection("KBDoctor", title, true);
+                KBDoctorOutput.EndSection(title, true);
             }
             catch (Exception e){
                 output.AddErrorLine(e.Message);
@@ -83,7 +83,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             XsltSettings xsltSettings = new XsltSettings(true,true);
 
             KBDoctorOutput.Message("Cargando archivo xslt: " + outputFile);
-            
+
             xslTransform.Load(outputFile,xsltSettings, null );
             KBDoctorOutput.Message("Archivo xslt cargado correctamente2.");
             string fileWildcard = @"*.xml";
@@ -113,7 +113,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
             }
 
-            //Me quedo sólo con el archivo más nuevo y cambio el nombre de todos los demás. 
+            //Me quedo sólo con el archivo más nuevo y cambio el nombre de todos los demás.
             foreach (string name in colisionesStr)
             {
                 FileInfo newestFile = null;
@@ -122,14 +122,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 List<FileInfo> oldfiles = new List<FileInfo>();
                 foreach (string path in paths)
                 {
-         
+
                     FileInfo file = new FileInfo(path);
                     if(file.LastWriteTime >= newestDate)
                     {
                         if (newestFile != null)
                         {
                             oldfiles.Add(newestFile);
-                        }                    
+                        }
                         newestDate = file.LastWriteTime;
                         newestFile = file;
                     }
@@ -154,7 +154,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         }
                     }
 
-                    
+
                     i++;
                 }
             }
@@ -183,7 +183,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                  //   {
                  //       output.AddErrorLine(e);
                  //   }
-                    
+
                 }
             }
         }
@@ -222,7 +222,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Encoding enc = sr.CurrentEncoding;
                 sr.Close();
 
-    
+
                 DeleteFirstLines(2, filePath);
 
                 string text = File.ReadAllText(filePath);
@@ -300,9 +300,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     {
                                         KBDoctorOutput.Message("-- ERROR " + objname + " fue modificado en \t\t" + obj.Timestamp.ToString());
                                     }
-                                    
+
                                     isSuccess = false;
-                                    cant_error++; 
+                                    cant_error++;
                                 }
                                 else
                                 {
@@ -385,7 +385,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
 
         private static string[] GetLast2Directorys(string[] Files, IOutputService output)
-        {   
+        {
             DateTime FechaMax = new DateTime(1830,1,1);
             DateTime FechaMaxSec = new DateTime(1830,1,1);
             string DirectoryMax = "";
@@ -464,7 +464,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 string fileNewPath = Path.Combine(pathNew, Path.GetFileName(fileSourcePath));
                 if (File.Exists(fileNewPath))
                 {
-                    FileInfo fileNew = new FileInfo(fileNewPath);                   
+                    FileInfo fileNew = new FileInfo(fileNewPath);
                     FileInfo fileSource = new FileInfo(fileSourcePath);
                     if (!Utility.FilesAreEqual(fileSource, fileNew))
                     {
@@ -487,7 +487,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         FileInfo fileNewReplace = new FileInfo(fileNewPath);
                         FileInfo fileSourceReplace = new FileInfo(fileSourcePath);
                         if (!Utility.FilesAreEqual(fileSourceReplace, fileNewReplace))
-                            Diffs.Add(fileSourcePath);                            
+                            Diffs.Add(fileSourcePath);
 
                         File.WriteAllText(fileNewPath, datalineNew + "\r\n" + namelineNew + "\r\n" + textnew, encnew);
                         File.WriteAllText(fileSourcePath, datalineSource + "\r\n" + namelineSource + "\r\n" + textsource, encSource);
@@ -504,9 +504,9 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static void SaveObjectsWSDL(KnowledgeBase KB, IOutputService output, bool isSource)
         {
-            
+
             IEnumerable<KBObject> soapobjs = Utility.GetObjectsSOAP(KB);
-            string urlbase = Utility.GetWebRootProperty(KB, "Default"); 
+            string urlbase = Utility.GetWebRootProperty(KB, "Default");
             foreach (KBObject obj in soapobjs)
             {
                 string objqname = obj.QualifiedName.ModuleName.ToLower() + ".a" + obj.QualifiedName.ObjectName.ToLower();
@@ -524,7 +524,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 sr.Dispose();
                 stream.Dispose();
                 //response.Dispose();
-                
+
                 if (responseuri  == urlbase + path)
                 {
                     KBDoctorOutput.Message(absolutePath + ": OK");
@@ -563,7 +563,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 KBDoctorOutput.Message("- No se encontraron diferencias. ");
             }
-            
+
         }
 
         internal static string GetLastWSDLDir(KnowledgeBase KB)

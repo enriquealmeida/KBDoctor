@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  
+
   <xsl:output method="text"/>
 
 
@@ -25,7 +25,7 @@
 
 <!-- RULES-->
 <xsl:template match="StandAloneRules|StandAloneWithModeRules|BaseTableRule|AfterConfirmRules|AfterInsertRules|AfterUpdateRules|BeforeConfirmRules|BeforeInsertRules|BeforeUpdateRules|BeforeDeleteRules|BeforeTrnRules">
-	<xsl:apply-templates select="Action"></xsl:apply-templates>    
+	<xsl:apply-templates select="Action"></xsl:apply-templates>
 </xsl:template>
 
 <xsl:template match="AfterDeleteRules|AfterTrnRules|AfterLevelRules|NotIncludedRules">
@@ -33,7 +33,7 @@
 </xsl:template>
 
 <xsl:template match="Rules">
-	
+
 		<xsl:apply-templates select="Action"/>
 	<xsl:if test="NonTriggeredActions/Action">
 		<xsl:call-template name="TitledRules">
@@ -62,7 +62,7 @@
 			<xsl:apply-templates select="Table"/>
 				<xsl:if test="ActionType[.='ReadCKey']"><xsl:text> UNIQUE</xsl:text></xsl:if>
 					<xsl:if test="JoinType[.='Outer']"><xsl:text> allowing nulls</xsl:text></xsl:if>
-		<xsl:text> 
+		<xsl:text>
 			WHERE </xsl:text>
 				<xsl:apply-templates select="JoinConditions"/>
 				<xsl:if test="Into/Attribute">
@@ -117,12 +117,12 @@
 <xsl:template match="ActionType"/>
 
 <xsl:template match="DynamicLoad">
-FILL <xsl:apply-templates select="ControlName"/> with <xsl:apply-templates select="CodeAttributes"/>, <xsl:apply-templates select="DescriptionAttributes"/> in <xsl:apply-templates select="Navigation"/> 
+FILL <xsl:apply-templates select="ControlName"/> with <xsl:apply-templates select="CodeAttributes"/>, <xsl:apply-templates select="DescriptionAttributes"/> in <xsl:apply-templates select="Navigation"/>
 <xsl:call-template name="NewLine"/>
 </xsl:template>
 
 <xsl:template match="HideCode">
-FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates select="DescriptionAttributes"/> in <xsl:apply-templates select="Navigation"/> 
+FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates select="DescriptionAttributes"/> in <xsl:apply-templates select="Navigation"/>
 </xsl:template>
 
 <xsl:template match="SubtypeAction">
@@ -170,7 +170,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 	<xsl:apply-templates select="Table"/>
 </xsl:template>
 
-<xsl:template match="Generator"><xsl:apply-templates select="GenId"/></xsl:template>	
+<xsl:template match="Generator"><xsl:apply-templates select="GenId"/></xsl:template>
 
 <!--  Standard Templates  -->
 
@@ -191,20 +191,20 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 </xsl:template>
 
 <xsl:template name="MainInfo">
-	  
+
 	Name: <xsl:apply-templates select="Object" mode="icon"/>
   	Description : <xsl:value-of select="Object/ObjDesc"/>
 	<xsl:if test="Result!='genreq'">
      <!-- 	Status: <xsl:apply-templates select="Result"/>  -->
 	</xsl:if>
-    
+
     <xsl:if test="$Product='Deklarit'">
 	<xsl:if test="Parameters/*">
 	Parameters:	<xsl:apply-templates select="Parameters"/>
 	</xsl:if>
    </xsl:if>
   <xsl:if test="not($Product='Deklarit')">
-	
+
 	<xsl:if test="OutputDevices">
 	Output Devices: <xsl:apply-templates select="OutputDevices"/>
 	</xsl:if>
@@ -226,14 +226,14 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 	</xsl:if>
 	<xsl:if test="Parameters">
 	Parameters:	<xsl:apply-templates select="Parameters"/><xsl:text>
-	
+
 	</xsl:text>
 	</xsl:if>
 </xsl:template>
 
 <xsl:template name="Levels">
 <!-- BEGIN LEVELS -->
-<xsl:if test="Levels/Level">    
+<xsl:if test="Levels/Level">
 	<xsl:call-template name="TableHeaderSubMain">
 		<xsl:with-param name="id">level</xsl:with-param>
 		<xsl:with-param name="title">Levels</xsl:with-param>
@@ -336,12 +336,12 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 </xsl:template>
 
 <xsl:template match="Order">
-	<xsl:choose> 
+	<xsl:choose>
 		<xsl:when test="*">
 			<xsl:call-template name="ProcessList"/>
 		</xsl:when>
 		<xsl:otherwise>None</xsl:otherwise>
-	</xsl:choose> 
+	</xsl:choose>
 </xsl:template>
 
 <xsl:template match="IndexName">
@@ -350,7 +350,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 
 <xsl:template match="NavigationTree">
 	<xsl:call-template name="NewLine"/>
-	<xsl:apply-templates select="Table" mode="Tree"/>	
+	<xsl:apply-templates select="Table" mode="Tree"/>
 </xsl:template>
 
 <xsl:template match="KeyAttributes">
@@ -395,17 +395,17 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 
 <xsl:template match="ConditionalOrders">
 <xsl:if test="ConditionalOrder">
-	Order: 
+	Order:
 	<xsl:for-each select="ConditionalOrder">
 		<xsl:apply-templates select="Order"/><xsl:text> </xsl:text>
-		<xsl:choose> 
+		<xsl:choose>
 			<xsl:when test="Condition/*">
-				<xsl:text>WHEN </xsl:text><xsl:apply-templates select="Condition"/>							
+				<xsl:text>WHEN </xsl:text><xsl:apply-templates select="Condition"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>OTHERWISE </xsl:text>
 			</xsl:otherwise>
-		</xsl:choose> 
+		</xsl:choose>
 		<xsl:call-template name="UsedIndex"/>
 	</xsl:for-each>
 </xsl:if>
@@ -439,9 +439,9 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 					<xsl:call-template name="TableHeader">
 						<xsl:with-param name="id">gx<xsl:value-of select="BaseTable/Table/TableId"/></xsl:with-param>
 						<xsl:with-param name="title">
-							<xsl:apply-templates select="LevelType"/> 
-							<xsl:text> </xsl:text><xsl:apply-templates select="BaseTable"/> 
-							<xsl:text> </xsl:text><xsl:apply-templates select="LevelBeginRow"/> 
+							<xsl:apply-templates select="LevelType"/>
+							<xsl:text> </xsl:text><xsl:apply-templates select="BaseTable"/>
+							<xsl:text> </xsl:text><xsl:apply-templates select="LevelBeginRow"/>
 						</xsl:with-param>
 					</xsl:call-template>
 		<xsl:call-template name="NewLine"/>
@@ -463,7 +463,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 	</xsl:if>
 	<xsl:if test="LevelType[text()!='New']">
 	<xsl:if test="Order">
-	Order:	<xsl:apply-templates select="Order"/><xsl:text> </xsl:text>			
+	Order:	<xsl:apply-templates select="Order"/><xsl:text> </xsl:text>
 							<xsl:call-template name="UsedIndex"/>
 	</xsl:if>
 	</xsl:if>
@@ -544,13 +544,13 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 	</xsl:if>
 	<xsl:apply-templates select="TablesToControlOnDelete"/>
 	<xsl:apply-templates select="Levels"/>
-	
-		
+
+
 			<xsl:for-each select="Level">
 				<xsl:apply-templates select="."/>
 			</xsl:for-each>
-		
-	
+
+
 	<xsl:if test="BeforeTrnRules/Action">
 		<xsl:call-template name="TitledRules">
 			<xsl:with-param name="Title">Before Complete Rules</xsl:with-param>
@@ -580,7 +580,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 	</xsl:if>
 	<xsl:if test="Binding">
 		<xsl:text>   </xsl:text><xsl:apply-templates select="Binding"/>
-	</xsl:if>   
+	</xsl:if>
 </xsl:template>
 
 <!-- END LEVEL TEMPLATE -->
@@ -596,7 +596,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 		<xsl:for-each select="Table">
 			<xsl:sort select="TableName"/>
 			<xsl:apply-templates select="."/> <xsl:apply-templates select="KeyAttributes"/>
-			<xsl:call-template name="NewLine"/> 
+			<xsl:call-template name="NewLine"/>
 </xsl:for-each>
 
 </xsl:if>
@@ -663,7 +663,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 	</xsl:call-template>
 </xsl:template>
 
-<!-- 17/12/05 Agregado por PM para procesar lista ordenada alfabeticamente --> 
+<!-- 17/12/05 Agregado por PM para procesar lista ordenada alfabeticamente -->
 <xsl:template match="AttrisToUpdate|Into">
 	<xsl:call-template name="ProcessListOrdered">
 		<xsl:with-param name="Sep">,</xsl:with-param>
@@ -707,7 +707,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 <!-- END STATUS TEMPLATE -->
 <xsl:template match="OptimizedWhere">
 	<xsl:if test="../LevelType != 'Break'">
-	Navigation filters: 
+	Navigation filters:
 		Start from: <xsl:apply-templates select="StartFrom"/>
 		Loop while: <xsl:apply-templates select="LoopWhile"/><xsl:call-template name="NewLine"/>
 	</xsl:if>
@@ -752,7 +752,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 	<xsl:for-each select="Table">
 	<xsl:sort select="TableName"/>
 		<xsl:apply-templates select="." mode="Tree"/>
-	</xsl:for-each>	
+	</xsl:for-each>
 </xsl:template>
 <!-- tableSTOUPDATE TEMPLATE -->
 <xsl:template match="TablesToUpdate">
@@ -771,7 +771,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 	</xsl:if>
 	<xsl:if test="UpdateRedundancyCall">
 		<xsl:call-template name="NewLine"/>
-		<xsl:text>Update Redundancy:</xsl:text> 
+		<xsl:text>Update Redundancy:</xsl:text>
 			<xsl:apply-templates select="UpdateRedundancyCall"/>
 	</xsl:if>
 </xsl:template>
@@ -802,7 +802,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 <!-- EVENT TEMPLATE -->
 <xsl:template match="Event">
 	<xsl:if test="ImplicitForEach|Level|CALL|SUBMIT|Binding">
-		<xsl:call-template name="NewLine"/>  
+		<xsl:call-template name="NewLine"/>
 		<xsl:choose><xsl:when test="EventType[text()='Subrutine']">Subroutine</xsl:when><xsl:otherwise>Event </xsl:otherwise></xsl:choose><xsl:value-of select="EventName"/>
 			<xsl:call-template name="NewLine"/>
 			<xsl:for-each select="ImplicitForEach|Level|CALL|SUBMIT|Binding">
@@ -880,7 +880,7 @@ FIND <xsl:apply-templates select="CodeAttributes"/> with <xsl:apply-templates se
 		<xsl:text>
 			INTO </xsl:text><xsl:apply-templates select="Into"/>
 		</xsl:if>
-		<xsl:call-template name="NewLine"/>   
+		<xsl:call-template name="NewLine"/>
 		<xsl:apply-templates select="Tables"/>
 </xsl:template>
 

@@ -9,7 +9,7 @@
     <CompareNavigationsCmd />
     <CloseKnowledgeBase />
   </Target>
-  
+
   <Target  Name="JustCompare">
     <OpenKnowledgeBase Directory="$(KBPath)"/>
     <CompareNavigationsCmd />
@@ -41,7 +41,7 @@
     <RemoveObjectsNotReferencedCmd/>
     <CloseKnowledgeBase />
   </Target>
-  
+
   <Target  Name="UpdateSourceWSDL">
     <OpenKnowledgeBase Directory="$(KBPath)"/>
     <UpdateSourceObjectsWSDLCmd/>
@@ -58,24 +58,24 @@
     <OpenKnowledgeBase Directory="$(KBPath)"/>
     <CompareWSDLCmd/>
     <CloseKnowledgeBase />
-  </Target>  
-  
+  </Target>
+
 <Target  Name="SaveAndCompareWSDL">
     <OpenKnowledgeBase Directory="$(KBPath)"/>
     <SaveObjectsWSDLCmd/>
     <CompareWSDLCmd/>
     <CloseKnowledgeBase />
   </Target>
-  
+
    <Target  Name="ObjectsWOInOut">
     <OpenKnowledgeBase Directory="$(KBPath)"/>
     <ObjectsWithoutInOutCmd/>
     <CloseKnowledgeBase />
   </Target>
-  
+
   <Target  Name="ReviewObjects">
-    <Message Text="Using GeneXus DIR = $(GX_PROGRAM_DIR)" /> 
-	<Message Text="KB DIR = $(KBPath)" /> 
+    <Message Text="Using GeneXus DIR = $(GX_PROGRAM_DIR)" />
+	<Message Text="KB DIR = $(KBPath)" />
     <OpenKnowledgeBase Directory="$(KBPath)" />
     <ReviewObjectsCmd  DateFrom="$(DateFrom)" />
     <CloseKnowledgeBase />
@@ -85,10 +85,10 @@
     <Message Text="Using GeneXus DIR = $(GX_PROGRAM_DIR)" />
     <Message Text="KB DIR = $(KBPath)" />
     <OpenKnowledgeBase Directory="$(KBPath)" />
-    <ReviewCommitCmd  DateFrom="$(DateFrom)" DateTo="$(DateTo)" ServerUser="$(ServerUser)" ServerPassword="$(ServerPassword)"/> 
+    <ReviewCommitCmd  DateFrom="$(DateFrom)" DateTo="$(DateTo)" ServerUser="$(ServerUser)" ServerPassword="$(ServerPassword)"/>
     <CloseKnowledgeBase />
   </Target>
-  
+
    <Target  Name="CheckBldObjects">
     <OpenKnowledgeBase Directory="$(KBPath)"/>
     <CheckBldObjectsCmd/>

@@ -100,17 +100,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
 
         /// <summary>
-        /// Clean and destroy objects. Initizlize objects 
+        /// Clean and destroy objects. Initizlize objects
         /// </summary>
         public static void CleanObjects(KnowledgeBase kb, IEnumerable<KBObject> kbojs, IOutputService output)
         {
 
-            output.StartSection("Cleaning objects");
+            KBDoctorOutput.StartSection("Cleaning objects");
             foreach (KBObject obj in kbojs)
             {
                 CleanObject(obj, output);
             }
-            output.EndSection("Cleaning objects", true);
+            KBDoctorOutput.EndSection("Cleaning objects", true);
 
         }
 

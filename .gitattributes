@@ -1,8 +1,18 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Auto detect text files and keep Windows line endings in the working tree.
+* text=auto eol=crlf
 
 # Custom for Visual Studio
 *.cs     diff=csharp
+
+# Binary files
+*.dll binary
+*.exe binary
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.snk binary
 
 # Standard to msysgit
 *.doc	 diff=astextplain

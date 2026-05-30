@@ -114,7 +114,7 @@ namespace Concepto.Packages.KBDoctor.Sources
                 return isChanged;
             }
 
-           
+
 
         }
 
@@ -149,7 +149,7 @@ namespace Concepto.Packages.KBDoctor.Sources
             }
 
 
-     
+
 
 
 
@@ -181,7 +181,7 @@ namespace Concepto.Packages.KBDoctor.Sources
             KBModel kbModel = UIServices.KB.CurrentModel;
             IOutputService output = CommonServices.Output;
 
-            foreach (Transaction obj in Transaction.GetAll(kbModel)) 
+            foreach (Transaction obj in Transaction.GetAll(kbModel))
             {
                 if (ObjectsHelper.isGenerated(obj) && ObjectsHelper.isGeneratedbyPattern(obj))
                 {
@@ -203,7 +203,7 @@ namespace Concepto.Packages.KBDoctor.Sources
                 {
                     string eventList = ListOfEvents(obj);
                  //   output.AddLine(obj.Name + "," + obj.GetPropertyValueString(Properties.TRN.WebUserExperience) + "," + obj.IsPropertyDefault(Properties.TRN.WebUserExperience) + eventList);
-                          
+
                   //  output.AddLine(obj.Name + "," + obj.GetPropertyValueString(Properties.TRN.WebUserExperience) + "," + obj.IsPropertyDefault(Properties.TRN.WebUserExperience) +  eventList);
                     output.AddLine(obj.Name + "," + obj.GetPropertyValueString(Properties.TRN.WebUserExperience) + "," + eventList);
 
@@ -241,7 +241,7 @@ namespace Concepto.Packages.KBDoctor.Sources
                             containREFRESH = true;
                         if (line.ToUpper().Contains("START"))
                             containSTART = true;
-                      
+
                     }
                 }
 
@@ -273,7 +273,7 @@ namespace Concepto.Packages.KBDoctor.Sources
             //    output.AddWarningLine(masterRef.GetName(kbModel));
             int objTotal = 0;
             int objToFix = 0;
- 
+
 
             foreach (KBObject obj in Transaction.GetAll(kbModel))
             {
@@ -287,7 +287,7 @@ namespace Concepto.Packages.KBDoctor.Sources
 
             output.AddLine("   ");
             output.AddLine("#Objects:" + objTotal.ToString()  + "  #Objects to Fix: " + objToFix.ToString() );
-  
+
 
             void CuentoSmoothResponsive(KBObject obj)
             {

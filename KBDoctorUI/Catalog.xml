@@ -13,7 +13,7 @@
       this package depends) needs to be copied to the
       base execution path.
       -->
-      <!-- 
+      <!--
       <File Name="Dependency1.dll" Target="." />
       <File Name="Dependency2.dll" Target="." />
       -->

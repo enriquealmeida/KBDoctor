@@ -41,7 +41,7 @@
 	<xsl:param name="HeaderMain">false</xsl:param>
 	<xsl:param name="Subtitulo">true</xsl:param>
 	<xsl:param name="image"/>
-	
+
 	<xsl:variable name="Tables" select="document('tables.xml')/Tables"/>
 	<xsl:choose>
 		<xsl:when test="$HeaderMain = 'true'">
@@ -75,7 +75,7 @@
 </xsl:template>
 
 <xsl:template name="TableHeaderSubMain">
-	<xsl:param name="title">Table Title</xsl:param> 
+	<xsl:param name="title">Table Title</xsl:param>
 	<xsl:param name="image"/>
 	<xsl:param name="width">100%</xsl:param>
 	<xsl:call-template name="TableHeader">
@@ -110,7 +110,7 @@
 
 <xsl:template name="GetClsPrefix">
 <xsl:param name="Class"/>
-<xsl:choose>			
+<xsl:choose>
 			<xsl:when test="$Class=0">trn</xsl:when>
 			<xsl:when test="$Class=1">prc</xsl:when>
 			<xsl:when test="$Class=2">rpt</xsl:when>
@@ -215,7 +215,7 @@
 </xsl:template>
 
 <xsl:template name="PrintType">
-	<xsl:param name="Type"/> 
+	<xsl:param name="Type"/>
 	<xsl:param name="Length">0</xsl:param>
 	<xsl:param name="Decimals">0</xsl:param>
 	<xsl:call-template name="TypeName">
@@ -287,7 +287,7 @@
 
 <!-- Subtype Group TEMPLATE -->
 <xsl:template match="SubtypeGroup">
-	<xsl:value-of select="SubtypeGroupName"/>	
+	<xsl:value-of select="SubtypeGroupName"/>
 </xsl:template>
 
 
@@ -329,7 +329,7 @@
 	<xsl:param name="Name"></xsl:param>
 	<xsl:param name="Value"></xsl:param>
 	<xsl:value-of select="$Name"/> : <xsl:value-of select="$Value"/>
-	
+
 </xsl:template>
 
 <xsl:template name="ChangeObject">
@@ -352,7 +352,7 @@
 <xsl:template match="Warnings">
 	-- Warnings --
 	<xsl:for-each select="Warning">
-	<xsl:sort select="Message/Token"/> 
+	<xsl:sort select="Message/Token"/>
 	<xsl:text>!! </xsl:text><xsl:value-of select="MsgCode"/><xsl:text>: </xsl:text><xsl:apply-templates select="Message"/>
 		<xsl:apply-templates select="Location">
 			<xsl:with-param name="ObjId" select="../../Object/ObjId"/>
@@ -360,18 +360,18 @@
 		</xsl:apply-templates>
 	<xsl:text>
 	</xsl:text>
-	</xsl:for-each> 
+	</xsl:for-each>
 	-- End Warnings --
 	<xsl:text>
 	</xsl:text>
-</xsl:template>		
+</xsl:template>
 
-		
+
 <!-- ERRORS -->
 <xsl:template match="Errors">
 	-- Errors --
 	<xsl:for-each select="Error">
-	<xsl:sort select="Message/Token"/> 
+	<xsl:sort select="Message/Token"/>
 	<xsl:text>!! </xsl:text><xsl:value-of select="MsgCode"/><xsl:text>: </xsl:text><xsl:apply-templates select="Message"/>
 	<xsl:apply-templates select="Location">
 			<xsl:with-param name="ObjId" select="../../Object/ObjId"/>
@@ -379,9 +379,9 @@
 		</xsl:apply-templates>
 	<xsl:text>
 	</xsl:text>
-	</xsl:for-each> 
+	</xsl:for-each>
 	-- End Errors --
-</xsl:template>	
+</xsl:template>
 <!-- END ERRORS -->
 
 <xsl:template match="Location">
@@ -403,7 +403,7 @@
 					<xsl:text>')</xsl:text>
 				</xsl:attribute>
 			</xsl:if>
-			
+
 			<xsl:value-of select="Type"/>
 			<xsl:if test="Line">
 				<xsl:text>, Line: </xsl:text>
@@ -422,9 +422,9 @@
 
 <xsl:template name="ProcessList">
 	<xsl:param name="Sep"></xsl:param>
-	<xsl:for-each select="Token|Attribute|Variable|Object|Table|Parameter|SubtypeGroup">    
-<!--		<xsl:sort select="AttriName"/>   -->  
-		<xsl:choose> 
+	<xsl:for-each select="Token|Attribute|Variable|Object|Table|Parameter|SubtypeGroup">
+<!--		<xsl:sort select="AttriName"/>   -->
+		<xsl:choose>
 			<xsl:when test="text()[.=$Sep]"></xsl:when>
 			<xsl:when test="starts-with(text(),$Sep) and string-length($Sep) > 0">
 				<xsl:value-of select="$Sep"/><xsl:value-of select="substring-after(text(),$Sep)"/>
@@ -434,13 +434,13 @@
 			</xsl:when>
 			<xsl:when test="starts-with(text(),'.')">
 				<xsl:apply-templates select="." />
-			</xsl:when>  
+			</xsl:when>
 			<xsl:when test="starts-with(text(),')')">
 				<xsl:apply-templates select="." />
 			</xsl:when>
 			<xsl:when test="starts-with(text(),' ')">
 				<xsl:apply-templates select="." />
-			</xsl:when>			
+			</xsl:when>
 			<xsl:when test="position() != 1">
 				<xsl:value-of select="$Sep"/><xsl:text> </xsl:text><xsl:apply-templates select="." />
 			</xsl:when>
@@ -454,9 +454,9 @@
 
 <xsl:template name="ProcessListOrdered">
 	<xsl:param name="Sep"></xsl:param>
-	<xsl:for-each select="Attribute|Variable|Object|Table|Parameter|SubtypeGroups">    
-		<xsl:sort select="AttriName"/>     
-		<xsl:choose> 
+	<xsl:for-each select="Attribute|Variable|Object|Table|Parameter|SubtypeGroups">
+		<xsl:sort select="AttriName"/>
+		<xsl:choose>
 			<xsl:when test="text()[.=$Sep]"></xsl:when>
 			<xsl:when test="starts-with(text(),$Sep) and string-length($Sep) > 0">
 				<xsl:value-of select="$Sep"/><xsl:value-of select="substring-after(text(),$Sep)"/>
@@ -483,12 +483,12 @@
 	</xsl:for-each>
 </xsl:template>
 
-<!--13/02/06 ProcessLista para separar las constraint que incluyen AND y comparar con 7.5 --> 
+<!--13/02/06 ProcessLista para separar las constraint que incluyen AND y comparar con 7.5 -->
 <xsl:template name="ProcessListConstraint">
 	<xsl:param name="Sep"></xsl:param>
-	<xsl:for-each select="Token|Attribute|Variable|Object|Table|Parameter|SubtypeGroup">    
-<!--		<xsl:sort select="AttriName"/>   -->  
-		<xsl:choose> 
+	<xsl:for-each select="Token|Attribute|Variable|Object|Table|Parameter|SubtypeGroup">
+<!--		<xsl:sort select="AttriName"/>   -->
+		<xsl:choose>
 			<xsl:when test="text()[.=$Sep]"></xsl:when>
 			<xsl:when test="starts-with(text(),$Sep) and string-length($Sep) > 0">
 				<xsl:value-of select="$Sep"/><xsl:value-of select="substring-after(text(),$Sep)"/>
@@ -507,7 +507,7 @@
 			</xsl:when>
 			<xsl:when test="starts-with(text(),'and')">
 				<xsl:call-template name="NewLine2"/>
-			</xsl:when>			
+			</xsl:when>
 			<xsl:when test="position() != 1">
 				<xsl:value-of select="$Sep"/><xsl:text> </xsl:text><xsl:apply-templates select="." />
 			</xsl:when>
@@ -522,7 +522,7 @@
 	<xsl:param name="Title">Title</xsl:param>
 	<xsl:param name="Node">AfterConfirmRules</xsl:param>
 	-- <xsl:value-of select="$Title"/> --
-	
+
 	<xsl:variable name="CurrentNode" select="."/>
 	<xsl:for-each select="$CurrentNode/*[name() = $Node]">
 		<xsl:apply-templates select="."/>

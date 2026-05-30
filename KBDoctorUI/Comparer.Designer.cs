@@ -10,8 +10,8 @@
 
 namespace Concepto.Packages.KBDoctor {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace Concepto.Packages.KBDoctor {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Comparer {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Comparer() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Concepto.Packages.KBDoctor {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace Concepto.Packages.KBDoctor {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
@@ -69,7 +69,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ((byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
@@ -79,7 +79,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ((byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
@@ -89,20 +89,20 @@ namespace Concepto.Packages.KBDoctor {
                 return ((byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to #Contain text to be replaced (Replace is case insensitive)
         ///#FindText| ReplaceToText
         ///#
-        ///.and. | and 
-        ///.like.| like 
-        ///.not.| not 
-        ///.or.| or 
+        ///.and. | and
+        ///.like.| like
+        ///.not.| not
+        ///.or.| or
         ///AND|and
-        ///OR |or 
+        ///OR |or
         ///NOT|not
         ///LIKE|like
-        ///IF |if 
+        ///IF |if
         ///.udp(|(
         ///.call(|(
         ///SUB|Sub

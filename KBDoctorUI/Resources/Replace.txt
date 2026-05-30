@@ -1,15 +1,15 @@
 #Contain text to be replaced (Replace is case insensitive)
 #FindText| ReplaceToText
 #
-.and. | and 
-.like.| like 
-.not.| not 
-.or.| or 
+.and. | and
+.like.| like
+.not.| not
+.or.| or
 AND|and
-OR |or 
+OR |or
 NOT|not
 LIKE|like
-IF |if 
+IF |if
 .udp(|(
 .call(|(
 SUB|Sub

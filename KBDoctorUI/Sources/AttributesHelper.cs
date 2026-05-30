@@ -66,7 +66,7 @@ namespace Concepto.Packages.KBDoctor
                             writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
                         }
 
-                       
+
                     }
 
                 }
@@ -149,7 +149,7 @@ namespace Concepto.Packages.KBDoctor
 
 
 
-   
+
 
         static void GetTablesAttIsRedundant(KBModel model, Artech.Genexus.Common.Objects.Attribute att, out string tables, out string tablesRedundant)
         {
@@ -194,7 +194,7 @@ namespace Concepto.Packages.KBDoctor
 
                 IOutputService output = CommonServices.Output;
                 output.SelectOutput("KBDoctor");
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -212,7 +212,7 @@ namespace Concepto.Packages.KBDoctor
                         string suggestedDomains = "";
                         string value = "";
 
-                        //busco el 
+                        //busco el
                         if (myDict.TryGetValue(Picture, out value))
                         {
                             suggestedDomains = value;
@@ -319,7 +319,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -366,7 +366,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -381,7 +381,7 @@ namespace Concepto.Packages.KBDoctor
                     string controlType = a.GetPropertyValueString("ControlType");
                     string valueRange = a.GetPropertyValueString("AttValueRange");
                     KBDoctorOutput.Message( "Procesing " + a.Name);
-         
+
                     string isFormula = a.Formula == null ? "" : "*";
                     writer.AddTableData(new string[] { Functions.linkObject(a), a.Description, Picture, domlink, controlType, superTypeName, a.Title, a.ColumnTitle, a.ContextualTitleProperty, isFormula, valueRange });
                 }
@@ -408,7 +408,7 @@ namespace Concepto.Packages.KBDoctor
             string outputFile = Functions.CreateOutputFile(kbserv, title);
 
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
             writer.AddHeader(title);
@@ -441,7 +441,7 @@ namespace Concepto.Packages.KBDoctor
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
             bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            KBDoctorOutput.EndSection(title, success);
 
         }
 
@@ -458,7 +458,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 string tabla = "";
                 string atributo = "";
@@ -666,10 +666,10 @@ namespace Concepto.Packages.KBDoctor
 
                             IndexMember idxMember = new IndexMember(i.IndexStructure);
                             idxMember.Attribute = t.TableStructure.DescriptionAttribute.Attribute;
-                            idxMember.Order = IndexOrder.Ascending; // o IndexOrder.Descending 
+                            idxMember.Order = IndexOrder.Ascending; // o IndexOrder.Descending
                             i.IndexStructure.Members.Add(idxMember);
 
-                            // Agregarlo a la tabla 
+                            // Agregarlo a la tabla
                             t.TableIndexes.Indexes.Add(new TableIndex(t.TableIndexes, i));
                             t.Save();
                             MessageBox.Show("Index " + i.Name + " was successfully created.");
@@ -696,7 +696,7 @@ namespace Concepto.Packages.KBDoctor
 
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -775,7 +775,7 @@ namespace Concepto.Packages.KBDoctor
 
             if (dr == DialogResult.OK)
             {
-                output.StartSection("KBDoctor",title);
+                KBDoctorOutput.StartSection(title);
                 Domain od = Functions.DomainByName(rd.originalDomainName);
                 Domain ud = Functions.DomainByName(rd.destDomainName);
                 if (od != null && ud != null)
@@ -816,10 +816,10 @@ namespace Concepto.Packages.KBDoctor
                         }
                     }
                 }
-                output.EndSection("KBDoctor", title,success);
+                KBDoctorOutput.EndSection(title, success);
             }
 
-            
+
         }
 
         public static void ListDomain()
@@ -832,7 +832,7 @@ namespace Concepto.Packages.KBDoctor
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -931,7 +931,7 @@ namespace Concepto.Packages.KBDoctor
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -954,7 +954,7 @@ namespace Concepto.Packages.KBDoctor
                         {
 
                             Table TBL = LVL.AssociatedTable;
-                           
+
 
                             foreach (TransactionAttribute a in LVL.Structure.GetAttributes())
                             {
@@ -980,7 +980,7 @@ namespace Concepto.Packages.KBDoctor
                             {
                                 KBDoctorOutput.Error(trn.Name + " " + aName + " " + e.Message);
                             }
-                            
+
                         }
                     }
                 }
@@ -998,7 +998,7 @@ namespace Concepto.Packages.KBDoctor
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
         }
-   
+
 
     public static void ListAtttributes2()
     {
@@ -1012,7 +1012,7 @@ namespace Concepto.Packages.KBDoctor
 
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
 
 
             KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -1030,7 +1030,7 @@ namespace Concepto.Packages.KBDoctor
                     string suggestedDomains = "";
                     string value = "";
 
-                    //busco el 
+                    //busco el
                     if (myDict.TryGetValue(Picture, out value))
                     {
                         suggestedDomains = value;

@@ -76,13 +76,13 @@ namespace IniParser.Model
 
         /// <summary>
         /// 	Global sections. Contains key/value pairs which are not
-        /// 	enclosed in any section (i.e. they are defined at the beginning 
+        /// 	enclosed in any section (i.e. they are defined at the beginning
         /// 	of the file, before any section.
         /// </summary>
         public KeyDataCollection Global { get; protected set; }
 
         /// <summary>
-        /// Gets the <see cref="KeyDataCollection"/> instance 
+        /// Gets the <see cref="KeyDataCollection"/> instance
         /// with the specified section name.
         /// </summary>
         public KeyDataCollection this[string sectionName]
@@ -100,7 +100,7 @@ namespace IniParser.Model
         }
 
         /// <summary>
-        /// Gets or sets all the <see cref="SectionData"/> 
+        /// Gets or sets all the <see cref="SectionData"/>
         /// for this IniData instance.
         /// </summary>
         public SectionDataCollection Sections
@@ -110,8 +110,8 @@ namespace IniParser.Model
         }
 
         /// <summary>
-        ///     Used to mark the separation between the section name and the key name 
-        ///     when using <see cref="IniData.TryGetKey"/>. 
+        ///     Used to mark the separation between the section name and the key name
+        ///     when using <see cref="IniData.TryGetKey"/>.
         /// </summary>
         /// <remarks>
         ///     Defaults to '.'.
@@ -148,7 +148,7 @@ namespace IniParser.Model
 
         #region Fields
         /// <summary>
-        ///     See property <see cref="Configuration"/> for more information. 
+        ///     See property <see cref="Configuration"/> for more information.
         /// </summary>
         private IniParserConfiguration _configuration;
         #endregion
@@ -171,7 +171,7 @@ namespace IniParser.Model
         ///     Comments get appended.
         /// </summary>
         /// <param name="toMergeIniData">
-        ///     IniData instance to merge into this. 
+        ///     IniData instance to merge into this.
         ///     If it is null this operation does nothing.
         /// </param>
         public void Merge(IniData toMergeIniData)
@@ -186,13 +186,13 @@ namespace IniParser.Model
         }
 
         /// <summary>
-        ///     Attempts to retrieve a key, using a single string combining section and 
+        ///     Attempts to retrieve a key, using a single string combining section and
         ///     key name.
         /// </summary>
         /// <param name="key">
-        /// 
+        ///
         ///     If key contains no separator, it is treated as a key in the <see cref="Global"/> section.
-        /// 
+        ///
         ///     Key may contain no more than one separator character.
         /// </param>
         /// <param name="value">
@@ -242,9 +242,9 @@ namespace IniParser.Model
         ///     Retrieves a key using a single input string combining section and key name.
         /// </summary>
         /// <param name="key">
-            /// 
+            ///
         ///     If key contains no separator, it is treated as a key in the <see cref="Global"/> section.
-        /// 
+        ///
         ///     Key may contain no more than one separator character.
         /// </param>
         /// <returns>

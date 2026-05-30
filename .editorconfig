@@ -1,0 +1,9 @@
+root = true
+
+[*]
+end_of_line = crlf
+insert_final_newline = true
+charset = utf-8
+
+[*.{cs,csproj,sln,config,resx,xml,xsl,cmd,targets,props,nuspec,md,txt,js,json,html,htm}]
+end_of_line = crlf

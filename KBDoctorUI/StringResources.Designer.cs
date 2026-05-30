@@ -10,8 +10,8 @@
 
 namespace Concepto.Packages.KBDoctor {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace Concepto.Packages.KBDoctor {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class StringResources {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal StringResources() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Concepto.Packages.KBDoctor {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace Concepto.Packages.KBDoctor {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to About KBDoctor.
         /// </summary>
@@ -68,7 +68,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AboutKBDoctor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add IN: to parametrs without IN:/OUT:/INOUT:.
         /// </summary>
@@ -77,7 +77,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AddINParmRule", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Apply External Modularization.
         /// </summary>
@@ -86,7 +86,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ApplyExternalModularization", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Assign Type Comparer.
         /// </summary>
@@ -95,7 +95,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AssignTypeComparer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Char that should be VarChar.
         /// </summary>
@@ -104,7 +104,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttCharToVarchar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Description attribute without unique index.
         /// </summary>
@@ -113,7 +113,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttDescWithoutUniqueIndex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List attributes Formula.
         /// </summary>
@@ -122,7 +122,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttFormula", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Attributes only in transactions.
         /// </summary>
@@ -131,7 +131,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttInOneTrnOnly", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Attributes Key and Varchar.
         /// </summary>
@@ -140,7 +140,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttKeyVarchar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Not referenced by any reachable object.
         /// </summary>
@@ -149,7 +149,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttNotReferenced", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Objects With Attribute/Domain as Output.
         /// </summary>
@@ -158,7 +158,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttributeAsOutput", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Where is updated this attribute? .
         /// </summary>
@@ -167,7 +167,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttUpdated", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to VarChar that shoud be Char.
         /// </summary>
@@ -176,7 +176,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttVarcharToChar", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to With no description.
         /// </summary>
@@ -185,7 +185,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttWithNoDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Without domain.
         /// </summary>
@@ -194,7 +194,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttWithNoDomain", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Remove attribute with no table.
         /// </summary>
@@ -203,7 +203,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttWithoutBaseTable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Without column title.
         /// </summary>
@@ -212,7 +212,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttWithoutColumnTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to With incomplete description or title.
         /// </summary>
@@ -221,7 +221,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttWithoutDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Without title.
         /// </summary>
@@ -230,7 +230,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AttWithoutTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Build Module Objects and References.
         /// </summary>
@@ -239,7 +239,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("BuildModule", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Build Object and References.
         /// </summary>
@@ -248,7 +248,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("BuildObjectAndReferences", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List objects with property.
         /// </summary>
@@ -257,7 +257,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("BuildObjectWithProperty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generate objects in text files.
         /// </summary>
@@ -266,7 +266,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("CalculateCheckSum", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change code to improve readability.
         /// </summary>
@@ -275,7 +275,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ChangeLegacyCode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Class not in Theme and Class not used.
         /// </summary>
@@ -284,7 +284,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ClassNotInTheme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Classes Used.
         /// </summary>
@@ -293,7 +293,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ClassUsed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Clean my KB as much as possible.
         /// </summary>
@@ -302,7 +302,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("CleanKBAsMuchAsPossible", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Initialize and clean objects.
         /// </summary>
@@ -311,7 +311,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("CleanObjects", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Clean variables not used.
         /// </summary>
@@ -320,7 +320,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("CleanVarsNotUsed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Compare Navigations (two last snapshots).
         /// </summary>
@@ -329,7 +329,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("CompareLastNVGDirectory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Compare Objects in text format (two last snapshots).
         /// </summary>
@@ -338,7 +338,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("CompareLastOBJDirectory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Constants in code.
         /// </summary>
@@ -347,7 +347,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ConstantsInCode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generatd by patterns without dinamisms.
         /// </summary>
@@ -356,7 +356,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("CountGeneratedByPattern", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Count table access.
         /// </summary>
@@ -365,7 +365,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("CountTableAccess", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Objects difficult to modularize.
         /// </summary>
@@ -374,7 +374,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("DetectMaverics", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Edit  code to replace.
         /// </summary>
@@ -383,7 +383,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("EditLegacyCodeToReplace", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Edit review objects ini file.
         /// </summary>
@@ -392,7 +392,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("EditReviewObjects", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Empty Conditional Blocks.
         /// </summary>
@@ -401,7 +401,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("EmptyConditionalBlocks", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Fix variables not based in Domain/Attributes.
         /// </summary>
@@ -410,7 +410,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("FixVariablesNotBasedInAttributesOrDomain", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to For Each without When None.
         /// </summary>
@@ -419,7 +419,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ForEachsWithoutWhenNone", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generate DP from Table.
         /// </summary>
@@ -428,7 +428,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("GenerateDPfromTable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generate KB Graphs.
         /// </summary>
@@ -437,7 +437,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("GenerateGraph", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generate Location.XML.
         /// </summary>
@@ -446,7 +446,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("GenerateLocationXML", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generate Simple Trn from Not Generate Transactions.
         /// </summary>
@@ -455,7 +455,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("GenerateSimpleTransactionFromNotGeneratedTransactions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generate scripts to check data.
         /// </summary>
@@ -464,7 +464,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("GenerateSQLScripts", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generate transactions from tables.
         /// </summary>
@@ -473,7 +473,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("GenerateTrnFromTable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Subtype groups with incomplete description.
         /// </summary>
@@ -482,7 +482,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("GroupWithNoDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to KBDoctor Help (in Spanish).
         /// </summary>
@@ -491,7 +491,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("HelpKBDoctor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Index with not referenced attributes.
         /// </summary>
@@ -500,7 +500,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("IndexWithNotRefAtt", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to KB Interfaces.
         /// </summary>
@@ -509,7 +509,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("KBInterfaces", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List system public URI/URL.
         /// </summary>
@@ -518,7 +518,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListAPIObjects", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List Attributes.
         /// </summary>
@@ -527,7 +527,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListAttributes", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List classes used.
         /// </summary>
@@ -536,7 +536,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListClassUsed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List Commit On Exit.
         /// </summary>
@@ -545,7 +545,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListCommitOnExit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List Domains.
         /// </summary>
@@ -554,7 +554,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListDomain", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List last KBDoctor reports.
         /// </summary>
@@ -563,7 +563,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListLastReports", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Modularization Quality.
         /// </summary>
@@ -581,7 +581,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("AddModularizationInfo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List Modules Errors.
         /// </summary>
@@ -590,7 +590,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListModules", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List Modules Statistics.
         /// </summary>
@@ -599,7 +599,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListModulesStatistics", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List Objects.
         /// </summary>
@@ -608,7 +608,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListObj", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Find Similar Navigations.
         /// </summary>
@@ -617,7 +617,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListObjSimilarNavigation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Objects with warnings and errors.
         /// </summary>
@@ -626,7 +626,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListObjWarningsErrors", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Webpanels and Transactions called by Procedures.
         /// </summary>
@@ -635,7 +635,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListProcedureCallWebpanelTransaction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List tables/attributes using domain.
         /// </summary>
@@ -644,7 +644,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListTableAttributesUsingDomain", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List Tables.
         /// </summary>
@@ -653,7 +653,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListTables", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List tables in modules.
         /// </summary>
@@ -662,7 +662,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListTablesInModules", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Attributes with Nullable=&quot;Compatible&quot;.
         /// </summary>
@@ -671,7 +671,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ListTableWithAttributeNullableCompatible", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tables used by mains.
         /// </summary>
@@ -680,7 +680,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("MainTableUsed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mark Public Objects.
         /// </summary>
@@ -689,7 +689,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("MarkPublicObjects", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Modules dependencies.
         /// </summary>
@@ -698,7 +698,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ModuleDependencies", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Move Transactions to Folders.
         /// </summary>
@@ -707,7 +707,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("MoveTransactions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to News without When Duplicate.
         /// </summary>
@@ -716,7 +716,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("NewsWithoutWhenDuplicate", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Complex Specification Objects.
         /// </summary>
@@ -725,7 +725,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsComplex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Objects with legacy code.
         /// </summary>
@@ -734,7 +734,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsLegacyCode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mains called by others.
         /// </summary>
@@ -743,7 +743,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsMainCalled", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Remove not referenced objects.
         /// </summary>
@@ -752,7 +752,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsNotCalled", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mark unreachable objects with GenerateObject=FALSE.
         /// </summary>
@@ -761,7 +761,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsNotReacheable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Calculate KBDoctor complexity index.
         /// </summary>
@@ -770,7 +770,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsRefactoringCandidates", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to List all object dependencies.
         /// </summary>
@@ -779,7 +779,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsReferenced", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Procedures that updates attributes.
         /// </summary>
@@ -788,7 +788,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsUpdateAttribute", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generated for WIN and WEB.
         /// </summary>
@@ -797,7 +797,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsWINWEB", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to With parm() and Commit on exit=Yes.
         /// </summary>
@@ -806,7 +806,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsWithCommitOnExit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Anonimize KB.
         /// </summary>
@@ -815,7 +815,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsWithConstants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to With parm() without in:/out:/inout:.
         /// </summary>
@@ -824,7 +824,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsWithoutInOut", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to With variables not based on attribute/domain.
         /// </summary>
@@ -833,7 +833,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsWithVarNotBasedOnAtt", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Objects with variables not used.
         /// </summary>
@@ -842,7 +842,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ObjectsWithVarsNotUsed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Open navigation folder.
         /// </summary>
@@ -851,7 +851,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("OpenFolderComparerNavigation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Open object  in text format folder.
         /// </summary>
@@ -860,7 +860,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("OpenFolderObjComparerNavigation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Parameter type comparer.
         /// </summary>
@@ -869,7 +869,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ParameterTypeComparer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Forced generation of SDT .
         /// </summary>
@@ -878,7 +878,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("PrcCalledByTrn", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create a snapshot of navigations.
         /// </summary>
@@ -887,7 +887,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("PrepareComparerNavigations", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Review Object by KBDoctor.
         /// </summary>
@@ -896,7 +896,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("PreprocessPendingObjects", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generate Get/Set Procedures.
         /// </summary>
@@ -905,7 +905,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ProcedureGetSet", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Generate SDT Sources.
         /// </summary>
@@ -914,7 +914,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ProcedureSDT", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Recommended Module.
         /// </summary>
@@ -923,7 +923,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("RecomendedModule", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Removable Transactions.
         /// </summary>
@@ -932,7 +932,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("RemovableTransactions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Rename Objects to significant name length.
         /// </summary>
@@ -941,7 +941,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("RenameAttributesAndTables", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Replace Domain.
         /// </summary>
@@ -950,7 +950,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ReplaceDomain", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change attributes with Nullable=Compatible.
         /// </summary>
@@ -959,7 +959,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ReplaceNullCompatible", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Reset all transaction and workpanel WIN Forms.
         /// </summary>
@@ -968,7 +968,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ResetWINForm", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Review Objects by KBDoctor.
         /// </summary>
@@ -977,7 +977,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ReviewModuleOrFolder", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Review Object by KBDoctor.
         /// </summary>
@@ -986,7 +986,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ReviewObject", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Review Objects.
         /// </summary>
@@ -995,7 +995,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ReviewObjects", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Script to check Attribute Nullable &quot;GeneXus vs Database&quot;.
         /// </summary>
@@ -1004,7 +1004,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ScriptToCompareNULLABLE_GXvsDB", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Script to check Attribute Type &quot;GeneXus vs Database&quot;.
         /// </summary>
@@ -1013,7 +1013,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("ScriptToCompareNULLABLE_GXvsDB2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Search and Replace in Objects.
         /// </summary>
@@ -1022,7 +1022,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("SearchAndReplace", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&apos;1.0&apos;?&gt;
         ///&lt;xsl:stylesheet version=&quot;1.0&quot; xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;
@@ -1046,7 +1046,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("specXEv2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&apos;1.0&apos;?&gt;
         ///&lt;xsl:stylesheet version=&quot;1.0&quot; xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;&lt;xsl:output method=&quot;text&quot;/&gt;
@@ -1071,7 +1071,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("specXEv3_V15", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Split main object.
         /// </summary>
@@ -1080,7 +1080,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("SplitMainObject", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to New - Attribute not instanciated.
         /// </summary>
@@ -1089,7 +1089,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("TableInsertNew", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Table&apos;s width.
         /// </summary>
@@ -1098,7 +1098,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("TablesWidth", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tables with incomplete description.
         /// </summary>
@@ -1107,7 +1107,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("TablesWithNoDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Table &lt;-&gt; Transaction Relation.
         /// </summary>
@@ -1116,7 +1116,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("TableTransaction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Table - Update/Insert/Delete/Read.
         /// </summary>
@@ -1125,7 +1125,7 @@ namespace Concepto.Packages.KBDoctor {
                 return ResourceManager.GetString("TableUpdate", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tree call - Commit.
         /// </summary>

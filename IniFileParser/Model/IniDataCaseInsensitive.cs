@@ -45,5 +45,5 @@ namespace IniParser.Model
             Configuration = ori.Configuration.Clone();
         }
     }
-    
-} 
+
+}

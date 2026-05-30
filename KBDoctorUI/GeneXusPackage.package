@@ -59,7 +59,7 @@
 
     <!-- Acciones sobre tablas -->
     <CommandDefinition id="AssignDescriptionToTable" />
-    
+
     <!-- Acciones sobre la KB-->
     <CommandDefinition id="AddINParmRule" />
     <CommandDefinition id="CleanKBAsMuchAsPossible" />
@@ -119,7 +119,7 @@
             <Command refid="CleanKBAsMuchAsPossible"/>
             <Command refid="CleanObjects" />
             <Command refid="CleanVarsNotUsed" />
-          </Popup> 
+          </Popup>
         </Group>
         <Group id="AboutKBDoctor" insertAfter="Objects">
           <Command refid="AboutKBDoctor"/>

@@ -23,23 +23,23 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
             WriteStartElement("head");
             WriteElementString("title", title);
-           
+
             WriteStartElement("style");
                 WriteAttributeString("type", "text/css");
                 WriteString("h2 {font-family: Tahoma; color: Navy;}");
                 WriteString("table {border-width: thin; border-style: solid; font-family: Tahoma; font-size: 10pt;}");
                 WriteString("th {background-color: Gray;   color: White;}");
             WriteEndElement();   // style
-  
+
             WriteRaw(@"<script type='text/javascript' src='jquery_latest.js'></script> ");
             WriteRaw(@"<script type='text/javascript' src='jquery_tablesorter.js'></script>");
-            WriteRaw(@"<script type='text/javascript'> $(function() { $('table').tablesorter() } ); </script>");   
-            
+            WriteRaw(@"<script type='text/javascript'> $(function() { $('table').tablesorter() } ); </script>");
+
             WriteEndElement();   // head
 
             WriteStartElement("body");
             AddTitle(title);
-       
+
             WriteStartElement("table");
             WriteAttributeString("width", "100%");
             WriteAttributeString("style","BORDER-COLLAPSE: collapse");
@@ -59,7 +59,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
 
         public void AddTableFooterOnly()
-        {  
+        {
         WriteEndElement();
         }
 
@@ -73,10 +73,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             WriteEndElement();   // tr
             WriteEndElement(); // thead
-           
+
             WriteStartElement("tbody");
             WriteAttributeString("style","{vertical-align: top}");
-           
+
         }
 
         public void AddTableData(string[] datos)
@@ -92,16 +92,16 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
 
         public void AddTitle(string title)
-        { 
-            WriteElementString("h2", title); 
+        {
+            WriteElementString("h2", title);
         }
-        
+
         private static void WriteJScripttoDir()
         {
             IKBService kbserv = UIServices.KB;
             string outputFile = kbserv.CurrentKB.UserDirectory + @"\jquery_latest.js";
             File.WriteAllText(outputFile, StringResources.jquery_latest);
-            
+
             outputFile = kbserv.CurrentKB.UserDirectory + @"\jquery_tablesorter.js";
             File.WriteAllText(outputFile, StringResources.jquery_tablesorter);
 
@@ -113,8 +113,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             foreach (string s in datos)
             {
                 string str = s.Replace(',', '-');
-                WriteRaw(str + ","); 
-                
+                WriteRaw(str + ",");
+
             }
             WriteRaw(Environment.NewLine);
         }

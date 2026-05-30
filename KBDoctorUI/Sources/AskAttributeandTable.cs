@@ -40,7 +40,7 @@ namespace Concepto.Packages.KBDoctor
             comboBoxAtt.Items.Clear();
             Table t = Artech.Genexus.Common.Objects.Table.Get(UIServices.KB.CurrentModel, comboBoxTable.SelectedItem.ToString());
             List<string> names = new List<string>();
-            foreach (TableAttribute attr in t.TableStructure.Attributes) 
+            foreach (TableAttribute attr in t.TableStructure.Attributes)
             {
                 names.Add(attr.Name);
             }

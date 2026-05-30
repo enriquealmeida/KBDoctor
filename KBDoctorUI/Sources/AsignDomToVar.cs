@@ -30,7 +30,7 @@ namespace Concepto.Packages.KBDoctor
             objRules = obj.Parts.Get<RulesPart>().Source;
 
             model = obj.Model;
-      
+
 
             VariablesPart vp = obj.Parts.Get<VariablesPart>();
             if (vp != null)
@@ -42,7 +42,7 @@ namespace Concepto.Packages.KBDoctor
                         && (v.Type != eDBType.GX_SDT) && (v.Type != eDBType.GX_EXTERNAL_OBJECT) && (v.Type != eDBType.Boolean) && v.Type != eDBType.GX_BUSCOMP && v.Type != eDBType.GX_BUSCOMP_LEVEL)
                     {
                         comboVar.Items.Add(new Item(v.Name + "  " + Utility.FormattedTypeVariable(v), v));
-                       
+
                     }
                     cantVariables.Text = comboVar.Items.Count.ToString() + " not based variables";
                 }
@@ -53,7 +53,7 @@ namespace Concepto.Packages.KBDoctor
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) //, KBObject obj, string vName)
         {
-            
+
             Item it = (Item)comboVar.SelectedItem;
             Variable v2 = it.Var;
             string toSearch = @"&" + v2.Name +@"\b";
@@ -148,7 +148,7 @@ namespace Concepto.Packages.KBDoctor
                         }
                         else
                         {
-                           
+
                             Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)selectedAtts[0];
                             if (att != null)
                             {
@@ -171,7 +171,7 @@ namespace Concepto.Packages.KBDoctor
                             }
                         }
                     }
-     
+
                 }
             }
             else

@@ -129,7 +129,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     //Check objects with parameteres without inout
                     if (CheckKeyInINI(parsedData, SectionName, "ParamINOUT", "true", "Check if all parameters have IN: OUT: INOUT: keywords", filename))
-                    { 
+                    {
                         Objects.ParmWOInOut(objlist, output, ref recommendations, out cant);
                         obj_tech_debt += cant * valor;
                     }
@@ -140,7 +140,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     //Check commit on exit
                     if (CheckKeyInINI(parsedData, SectionName, "CheckCommitOnExit", "true", "Check if property Commit on exit = YES", filename))
-                    { 
+                    {
                         Objects.CommitOnExit(objlist, output, ref recommendations, out cant);
                         obj_tech_debt += cant * valor;
                     }
@@ -159,27 +159,27 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     //With variables not based on attributes
                     if (CheckKeyInINI(parsedData, SectionName, "VariablesBasedAttOrDomain", "true", "Variables must be based on Attributes or Domains", filename))
-                    { 
+                    {
                         Objects.ObjectsWithVarNotBasedOnAtt(objlist, output, fixvar, ref recommendations, out cant);
                         obj_tech_debt += cant * valor;
                     }
                     //Code commented
                     if (CheckKeyInINI(parsedData, SectionName, "CodeCommented", "true", "Code commented is marked as error", filename))
-                    { 
+                    {
                         Objects.CodeCommented(objlist, output, ref recommendations, out cant);
                         obj_tech_debt += cant * valor;
                     }
 
                     //Assign types comparer
                     if (CheckKeyInINI(parsedData, SectionName, "AssignTypes", "true", "Check if assignments have the correct Type or Domain", filename))
-                    { 
+                    {
                         AssignTypesComprarer(KB, objlist, ref recommendations, out cant);
                         obj_tech_debt += cant * valor;
                     }
 
                     //Parameter types comparer
                     if (CheckKeyInINI(parsedData, SectionName, "ParameterTypes", "true", "Check if call parameters have the correct Type or Domain", filename))
-                    { 
+                    {
                         ParametersTypeComparer(KB, objlist, ref recommendations, out cant);
                         obj_tech_debt += cant * valor;
                     }
@@ -188,11 +188,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (CheckKeyInINI(parsedData, SectionName, "EmptyConditionalBlocks", "true", "Checks if exists any IF/Else block without code in it", filename))
                     {
                         EmptyConditionalBlocks(KB, objlist, ref recommendations, out cant);
-                        obj_tech_debt += cant * valor; 
+                        obj_tech_debt += cant * valor;
                     }
                     //Constants in code
                     if (CheckKeyInINI(parsedData, SectionName, "ConstantsInCode", "true", "Check if there are hardcoded constants", filename))
-                    { 
+                    {
                         ConstantsInCode(KB, objlist, out cant);
                         obj_tech_debt += cant * valor;
                     }
@@ -203,7 +203,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     if (CheckKeyInINI(parsedData, SectionName, "NewsWithoutWhenDuplicate", "true", "Check if there is any 'New' block without 'When Duplicate' clause", filename))
                         NewsWithoutWhenDuplicate(KB, objlist);
                     if (CheckKeyInINI(parsedData, SectionName, "ProceduresCalledAsFuction", "true", "Check if the procedures are called as functions", filename))
-                    { 
+                    {
                         ProceduresCalledAsFunction(KB, objlist, ref recommendations, out cant);
                         obj_tech_debt += cant * valor;
                     }
@@ -267,7 +267,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     Objects.AttributeHasDomain(Objects.GetAttributesFromTrn((Transaction)obj), output, ref recommendations, out cant);
                     obj_tech_debt += cant * valor;
                 }
-               
+
                 if (recommendations != "")
                 {
                     Tuple<KBObject, string, double> recommend_tuple = new Tuple<KBObject, string, double>(obj, recommendations, obj_tech_debt);
@@ -453,7 +453,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             bool success = Objects.ReviewCommitsFromTo(KB, revisions_list, out review_by_user);
             bool successfile = CreateReviewFiles(KB, review_by_user, success, out List<string> cmdlines);
             successfile = successfile && CreateCmdMailReview(KB, cmdlines);
-            
+
             return success && successfile;
         }
         //
@@ -484,7 +484,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             try
             {
 
-                string dirname = KB.UserDirectory + @"\KBDoctor_Review_Commits";                
+                string dirname = KB.UserDirectory + @"\KBDoctor_Review_Commits";
 
                 if (!Directory.Exists(dirname))
                     Directory.CreateDirectory(dirname);
@@ -502,7 +502,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     File.AppendAllText(outputFile, "set domain=<insert domain>" + Environment.NewLine);
 
                 }
-                    
+
                 outputFile = dirname + @"\sender.cmd";
                 File.WriteAllText(outputFile, StringResources.sender);
 
@@ -577,7 +577,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             foreach (KBObject obj in objs)
             {
                 Objects.ProceduresCalledAsFunction(KB.DesignModel, obj, ref recommendations, out cant_aux);
-                cant += cant_aux; 
+                cant += cant_aux;
             }
         }
         //
@@ -664,7 +664,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         }
         //
 
-        //public static void 
+        //public static void
 #if EVO3
         public class Tuple<T1, T2>
         {
@@ -675,7 +675,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 Item1 = item1;
                 Item2 = item2;
             }
-            
+
         }
         public class Tuple<T1, T2, T3>
         {

@@ -26,7 +26,7 @@ namespace IniParser
             Parser = parser;
         }
 
- 
+
 
         /// <summary>
         ///     Implements reading ini data from a file.
@@ -58,8 +58,8 @@ namespace IniParser
 
             try
             {
-                // (FileAccess.Read) we want to open the ini only for reading 
-                // (FileShare.ReadWrite) any other process should still have access to the ini file 
+                // (FileAccess.Read) we want to open the ini only for reading
+                // (FileShare.ReadWrite) any other process should still have access to the ini file
                 using (FileStream fs = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     using (StreamReader sr = new StreamReader(fs, fileEncoding))
@@ -91,7 +91,7 @@ namespace IniParser
         {
             WriteFile(filePath, parsedData, Encoding.UTF8);
         }
-                             
+
         /// <summary>
         ///     Writes INI data to a text file.
         /// </summary>

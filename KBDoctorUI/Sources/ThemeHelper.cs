@@ -43,7 +43,7 @@ namespace Concepto.Packages.KBDoctor
             writer.AddHeader(title);
             writer.AddTableHeader(new string[] { "Object", "Class", "Error" });
 
-            //Cargo todas las clases de todos los theme de la KB. 
+            //Cargo todas las clases de todos los theme de la KB.
             StringCollection ThemeClasses = LoadThemeClasses();
 
             StringCollection UsedClasses = LoadUsedClasses();
@@ -77,7 +77,7 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorOutput.EndSection(title,true);
 
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
-            
+
         }
 
 
@@ -141,7 +141,7 @@ namespace Concepto.Packages.KBDoctor
                             PropertyDescriptor prop = tag.Properties.GetPropertyDescriptorByDisplayName("Class");
                             if (prop != null)
                             {
-                                //arreglar acan cancela con la Evo3. 
+                                //arreglar acan cancela con la Evo3.
                                 ThemeClassReferenceList miclasslist = new ThemeClassReferenceList();
                                 //    try
                                 //    {
@@ -190,19 +190,19 @@ namespace Concepto.Packages.KBDoctor
             foreach (ThemeClass themeClass in ThemeClass.GetAll(model))
             {
                 KBDoctorOutput.Message("Class:" + themeClass.Name);
-                int cant = 0; 
+                int cant = 0;
                 foreach (EntityReference entityRef in themeClass.GetReferencesTo()) {
                    // KBDoctorOutput.Message("ObjRef: From:" + entityRef.From.Type.ToString() + " To: " + entityRef.To.Type.ToString());
                     KBObject objRefTo = KBObject.Get(model, entityRef.To);
                     KBObject objRefFrom = KBObject.Get(model, entityRef.From);
 
-                    
+
                     if (objRefFrom != null && !(objRefFrom is Theme) && !(objRefFrom is ThemeClass))
                     {
                         KBDoctorOutput.Message("ObjRefFrom: :" + objRefFrom.Name + " Type : " + objRefFrom.TypeName);
                         cant++;
                     }
-                    
+
                 }
                 KBDoctorOutput.Message("Class Name: :" + themeClass.Name + " Referencias: " + cant.ToString());
             }
@@ -210,10 +210,10 @@ namespace Concepto.Packages.KBDoctor
 
             return UsedClasses;
 
-            
 
-           
-            
+
+
+
         }
 
 
@@ -304,7 +304,7 @@ namespace Concepto.Packages.KBDoctor
 
                     }
                     writer.AddTableData(new string[] { themeClass.Name, cant.ToString() , themeClass.ExternalClass.ToString()});
-                    
+
                     KBDoctorOutput.Message("Class Name: :" + themeClass.Name + " Referencias: " + cant.ToString());
                 }
 

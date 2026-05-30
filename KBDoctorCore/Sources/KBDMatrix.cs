@@ -53,6 +53,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             return resultMatrix;
         }
-        
+
     }*/
 }

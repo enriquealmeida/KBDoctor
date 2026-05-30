@@ -258,7 +258,7 @@
     <Message Text="Version = $(Major).$(Minor).$(Build).$(Revision)" Importance="high" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy kbdoctor*.*  "%GX_PROGRAM_DIR%\Packages\" /q /Y 
+    <PostBuildEvent>xcopy kbdoctor*.*  "%GX_PROGRAM_DIR%\Packages\" /q /Y
 rem xcopy KBDoctorCore.* "%GX_PROGRAM_DIR%\Packages\" /q /Y
 </PostBuildEvent>
   </PropertyGroup>

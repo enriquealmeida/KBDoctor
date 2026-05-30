@@ -1,4 +1,4 @@
-﻿using Artech.Architecture.Common.Collections;
+using Artech.Architecture.Common.Collections;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Architecture.Common.Location;
 using Artech.Architecture.Common.Objects;
@@ -97,7 +97,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                   // 40
             TKN_TRUE, // TRUE
             TKN_FALSE, // FALSE
-            TKN_NONE, // NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR 
+            TKN_NONE, // NONE, para expresión FOR EACH ... ORDER NONE ... ENDFOR
             PRM,  // Parámetro, utilizado en DYNQ
             FND,  // Name Domain
             FLV,  // LEVEL token
@@ -271,7 +271,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                  {
                      if (token.Token >= 100)
                      {
-                         //Command   
+                         //Command
                          List<TokensIds>[] IndentTokens = GetIndentationTokens()
                      }
                      else
@@ -294,7 +294,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     if (token.Token >= 100)
                     {
-                        //Command   
+                        //Command
                         List<TokensIds>[] IndentTokens = GetIndentationTokens();
                     }
                     else
@@ -303,7 +303,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
                     }
                 }
-           
+
             } */
             return null;
 
@@ -365,7 +365,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             classes = new HashSet<int>();
             List<KBObject>[] Classes_quantity = new List<KBObject>[MAX_PARAMS];
 
-            //Divido el conjunto de objetos en clases determinadas por la cantidad de parametros (tomando en cuenta si son IN/OUT/INOUT). 
+            //Divido el conjunto de objetos en clases determinadas por la cantidad de parametros (tomando en cuenta si son IN/OUT/INOUT).
             foreach (KBObject obj in objects)
             {
 
@@ -393,7 +393,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
             }
 
-            //Divido el conjunto de objetos nuevamente por tipo de datos. 
+            //Divido el conjunto de objetos nuevamente por tipo de datos.
             Classes_types = new Hashtable[max_quantity];
             foreach (int i in classes)
             {
@@ -422,7 +422,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         private static string GetParametersString(KBObject obj)
         {
 
-            
+
             List<Tuple<int, string>> parameters = new List<Tuple<int, string>>();
             ICallableObject callableObject = obj as ICallableObject;
             foreach (Signature signature in callableObject.GetSignatures())
@@ -457,12 +457,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         internal static List<KBObject> ParmWOInOut(KnowledgeBase KB, IOutputService output)
         {
             string title = "KBDoctor - Objects with parameters without IN:/OUT:/INOUT:";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
             string rec = "";
             List<KBObject> objs = KB.DesignModel.Objects.GetAll().ToList();
             List<KBObject> objectsWithProblems = GetObjectsWithProblems(objs, output, ref rec);
             bool success = true;
-            output.EndSection("KBDoctor", title, success);
+            KBDoctorOutput.EndSection(title, success);
             return objectsWithProblems;
         }
 
@@ -545,7 +545,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         private static bool isGenerated(KBObject obj)
 #pragma warning restore IDE1006 // Estilos de nombres
         {
-            if (obj is DataSelector)  //Los Dataselector no tienen la propiedad de generarlos o no , por lo que siempre devuelven falso y sin son referenciados se generan. 
+            if (obj is DataSelector)  //Los Dataselector no tienen la propiedad de generarlos o no , por lo que siempre devuelven falso y sin son referenciados se generan.
                 return true;
             object aux = obj.GetPropertyValue(Artech.Genexus.Common.Properties.TRN.GenerateObject);
             return ((aux != null) && (aux.ToString() == "True"));
@@ -621,7 +621,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     int ComplexityLevel = Utility.ComplexityLevel(sourceWOComments);
 
                     KBObjectPart part = Utility.ObjectSourcePart(obj);
-                      
+
                     if (NestLevel > maxNestLevel)
                     {
                         diffNestLevel = NestLevel - maxNestLevel;
@@ -707,7 +707,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     string vname = v.Name.ToLower();
                                     vnames += vname + " ";
                                     hasErrors = true;
-                                    if (fixvar) { 
+                                    if (fixvar) {
                                         if (FixObjectVariable(v, ref recommendations, output))
                                             SaveObj = true;
                                     }
@@ -746,7 +746,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     output.Add("KBDoctor", err);
                     v.AttributeBasedOn = att;
                     return true;
-                   
+
                 }
                 else
                 {
@@ -770,7 +770,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         output.Add("KBDoctor", err);
                         v.DomainBasedOn = d;
                         return true;
-                        
+
                     }
                     else
                     {
@@ -865,7 +865,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
             }
         }
-        
+
         internal static List<KBObject> GetAttributesFromTrn(Transaction trn)
         {
             List<KBObject> atts = new List<KBObject>();
@@ -970,7 +970,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         Equal = false;
                         HasAttribute = false;
                     }
-                    if (token.Token == 107) //Assignment 
+                    if (token.Token == 107) //Assignment
                     {
                         InAssign = true;
                     }
@@ -1042,7 +1042,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             VariablesPart vp = obj.Parts.Get<VariablesPart>();
             foreach(Variable v in vp.Variables)
             {
-                if (!v.IsStandard) { 
+                if (!v.IsStandard) {
                     foreach (KBObject aux in designModel.Objects.GetByPropertyValue("Name", v.Name))
                     {
                         if(aux is Attribute)
@@ -1081,7 +1081,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                         cant_aux += 1;
                                     }
                                 }
-                            }                                
+                            }
                         }
                     }
                 }
@@ -1306,7 +1306,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         private static void RemoveWriteOnlyVar(ref HashSet<string> writeonly_var, VariableNameNode vnn)
         {
             if (writeonly_var.Contains(vnn.VarName.ToLower()))
-                writeonly_var.Remove(vnn.VarName.ToLower());         
+                writeonly_var.Remove(vnn.VarName.ToLower());
         }
 
         private static void RemoveReadOnlyVar(ref HashSet<string> readonly_var, ObjectMethodNode omn)
@@ -1344,7 +1344,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (node.Node.Token == 107)
                         {
                             if (node is AssignmentNode)
-                            { 
+                            {
                                 assigns.Add(node);
                                 assigns.AddRange(getVariablesUsages(node));
                             }
@@ -1352,12 +1352,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         else if (node.Node.Token == 104)
                         {
                             if (node is AssignmentNode)
-                            { 
+                            {
                                 assigns.Add(node);
                                 assigns.AddRange(getVariablesUsages(node));
                             }
                             if (node is FunctionNode)
-                            { 
+                            {
                                 assigns.Add(node);
                                 assigns.AddRange(getVariablesUsages(node));
                             }
@@ -1365,12 +1365,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         else if (node.Node.Token == 158)
                         {
                             if (node is AssignmentNode)
-                            { 
+                            {
                                 assigns.Add(node);
                                 assigns.AddRange(getVariablesUsages(node));
                             }
                             if (node is FunctionNode)
-                            { 
+                            {
                                 assigns.Add(node);
                                 assigns.AddRange(getVariablesUsages(node));
                             }
@@ -1410,7 +1410,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             }
                         }
                         else
-                        { 
+                        {
                             assigns.AddRange(getVariablesUsages(node));
                         }
                     }
@@ -1419,7 +1419,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             return null;
         }
-        
+
         internal static void ParameterTypeComparer(KBModel model, KBObject obj, ref string recommendations, out int cant)
         {
             cant = 0;
@@ -1456,7 +1456,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         ProcessCallsInSource(model, rules, vp, ref recommendations, out cant_aux);
                         cant += cant_aux;
                     }
-                } 
+                }
             }
         }
 
@@ -1523,7 +1523,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                 CheckParameterTypeObjectMethod(model, call, omn, param, source, vp, ref recommendations, out cant_aux);
                                 cant += cant_aux;
                             }
-                        }       
+                        }
                     }
                     else if(call is FunctionNode)
                     {
@@ -1615,7 +1615,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 if (types_accessors != null && i < types_accessors.Count)
                 {
-                    
+
                     Tuple<string, string> parm_types_acc = types_accessors[i];
                     Tuple<Domain, string> parm_domain_acc = domain_accessors[i];
                     if (parm_types_acc != null && parm_domain_acc != null )
@@ -1627,7 +1627,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         {
                             if(call_type_domain.Item3 != 0) // Is not constant
                             {
-                                if(call_type_domain.Item3 == 1) //String 
+                                if(call_type_domain.Item3 == 1) //String
                                 {
                                     string extra_text = " -- Parameter: (" + parm.Text + ") ";
                                     CheckAssignTypesStringConstant(call, parm_types_acc.Item1, part, int.Parse(call_type_domain.Item2), extra_text, ref recommendations, out cant_aux);
@@ -1666,7 +1666,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                     cant += cant_aux;
                                 }
                             }
-                            
+
                         }
                      /*   else
                         {
@@ -1745,7 +1745,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     //((FunctionNode)an).Node.Data..Code //val(asdfas,.. )
                 }
-                if(an is ArithmeticOperationNode) //"asasdf" + "asdfa" 
+                if(an is ArithmeticOperationNode) //"asasdf" + "asdfa"
                 {
 
                 }
@@ -1800,7 +1800,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     foreach(AbstractNode an in ((RuleNode)root).Conditions)
                     {
-                        olds.AddRange(getOldsInSource(an)); 
+                        olds.AddRange(getOldsInSource(an));
                     }
                 }
                 foreach (AbstractNode node in root.Children)
@@ -1835,7 +1835,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 foreach (AbstractNode node in root.Children)
                 {
                     if (node.Node != null)
-                    { 
+                    {
                         if (node.Node.Token == 107)
                         {
                             if(node is AssignmentNode && ((AssignmentNode)node).Right is FunctionNode)
@@ -2020,7 +2020,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     if (procpart != null)
-                    { 
+                    {
                         ProcessConstantsInSource(model, procpart, vp, out cant_aux);
                         cant += cant_aux;
                     }
@@ -2032,7 +2032,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
                         VariablesPart vp = obj.Parts.Get<VariablesPart>();
                         if (eventspart != null)
-                        { 
+                        {
                             ProcessConstantsInSource(model, eventspart, vp, out cant_aux);
                             cant += cant_aux;
                         }
@@ -2172,7 +2172,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         OutputError error = new OutputError("This 'New' block has no code.", MessageLevel.Warning, new SourcePosition(source, @new.Node.Row, 0));
                         KBDoctorOutput.OutputError(error);
                     }
-                    else 
+                    else
                     {
                         bool hasWD = false;
                         CommandBlockNode wd = null;
@@ -2181,7 +2181,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             if (an is CommandBlockNode && an.Node.Token == 129) //when duplicate
                             {
                                 hasWD = true;
-                                wd =(CommandBlockNode)an; 
+                                wd =(CommandBlockNode)an;
                             }
                         }
                         if(hasWD)
@@ -2281,11 +2281,11 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     RulesPart rules = obj.Parts.Get<RulesPart>();
-                    if (procpart != null) { 
+                    if (procpart != null) {
                         ProccessAssignmentsInSource(model, procpart, vp, obj.Name, ref recommendations, out cant_aux);
                         cant += cant_aux;
                     }
-                    if (rules != null) { 
+                    if (rules != null) {
                         ProccessAssignmentsInSource(model, rules, vp, obj.Name, ref recommendations, out cant_aux);
                         cant += cant_aux;
                     }
@@ -2300,10 +2300,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         if (eventspart != null) {
                             ProccessAssignmentsInSource(model, eventspart, vp, obj.Name, ref recommendations, out cant_aux);
                             cant += cant_aux;
-                        }   
-                    if (rules != null) { 
+                        }
+                    if (rules != null) {
                             ProccessAssignmentsInSource(model, rules, vp, obj.Name, ref recommendations, out cant_aux);
-                            cant += cant_aux;   
+                            cant += cant_aux;
                         }
                     }
                 }
@@ -2321,7 +2321,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     ProcedurePart procpart = obj.Parts.Get<Artech.Genexus.Common.Parts.ProcedurePart>();
                     VariablesPart vp = obj.Parts.Get<VariablesPart>();
                     if (procpart != null)
-                    { 
+                    {
                         ProcessIfElseInSource(model, procpart, vp, ref recommendations, out cant_aux);
                         cant += cant_aux;
                     }
@@ -2334,7 +2334,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         EventsPart eventspart = obj.Parts.Get<Artech.Genexus.Common.Parts.EventsPart>();
                         VariablesPart vp = obj.Parts.Get<VariablesPart>();
                         if (eventspart != null)
-                        { 
+                        {
                             ProcessIfElseInSource(model, eventspart, vp, ref recommendations, out cant_aux);
                             cant += cant_aux;
                         }
@@ -2429,7 +2429,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         private static void CompareAssignTypes(KBModel model, VariablesPart vp, AssignmentNode assign, string formatTypeL, Domain domL, string objname, KBObjectPart part, ref string recommendations, out int cant)
         {
             cant = 0;
-            int cant_aux; 
+            int cant_aux;
             if (assign.Right is VariableNameNode)
             {
                 VariableNameNode vnr = (VariableNameNode)assign.Right;
@@ -2461,7 +2461,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if (fn.Element != null)
                 {
                     KBObject proc = (KBObject)(((FunctionNode)assign.Right).Element.Name.Tag);
-                    if(proc != null) { 
+                    if(proc != null) {
                         CheckAssignTypesFromObject(assign, formatTypeL, domL, objname, part, proc, ref recommendations, out cant_aux);
                         cant += cant_aux;
                     }
@@ -2503,7 +2503,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 {
                     string methodname = omn.MethodName;
                     if (methodname == "udp") {
-                        if(omn.Children.First() is ObjectPropertyNode) { 
+                        if(omn.Children.First() is ObjectPropertyNode) {
                             ObjectPropertyNode opn = (ObjectPropertyNode)omn.Children.First();
                             if (opn.Node != null)
                             {
@@ -2660,7 +2660,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             else
             {
                 if(formatTypeL != "Unknown" && formatTypeR != "Unknown")
-                { 
+                {
                     if (formatTypeR != formatTypeL)
                     {
                         string msgOutput = " " + formatTypeL + "<>" + formatTypeR;
@@ -2681,7 +2681,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 CheckAssignTypesLengthString(an, formatTypeL, formatTypeR, part, lengthPicL, lengthPicR, extra_text, ref recommendations, out cant_aux);
                 cant += cant_aux;
                 CheckParametersTypesDomains(an, domL, domR, objname, part, extra_text, ref recommendations, out cant_aux);
-                cant += cant_aux;                
+                cant += cant_aux;
             }
             else if (formatTypeL.ToLower().Contains("numeric") && formatTypeR.ToLower().Contains("numeric"))
             {
@@ -2874,29 +2874,29 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 return "0";
             }
-            
+
         }
 
 #pragma warning disable IDE1006 // Estilos de nombres
         private static List<AbstractNode> getAssignmentsInSource(AbstractNode root)
 #pragma warning restore IDE1006 // Estilos de nombres
         {
-            if(root != null) { 
+            if(root != null) {
                 List<AbstractNode> assignments = new List<AbstractNode>();
                 foreach(AbstractNode node in root.Children)
                 {
                     if (node.Node != null)
-                        if (node.Node.Token == 107 || node.Node.Token == -1) { 
+                        if (node.Node.Token == 107 || node.Node.Token == -1) {
                             if (node is AssignmentNode)
                                 assignments.Add(node);
                         }
-                        else { 
+                        else {
                             assignments.AddRange(getAssignmentsInSource(node));
                         }
                 }
                 return assignments;
             }
-            return null; 
+            return null;
         }
 
         internal static bool ThemeClassesNotUsed(KnowledgeBase KB, IOutputService output, ThemeClass themeclass)
@@ -2911,14 +2911,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     string webcstyle = obj.GetPropertyValueString("Theme");
 
                     foreach (EntityReference reference in obj.GetReferences())
-                    { 
+                    {
                        output.AddLine(obj.Name + reference.ToString()  );
                     }
 
 
                 }
             }
-            
+
             return true;
         }
 
@@ -2939,8 +2939,8 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                         PropertyDescriptor prop = tag.Properties.GetPropertyDescriptorByDisplayName("Class");
                                         if (prop != null)
                                         {
-                                            if (prop.PropertyType.Name == "ThemeClassReferenceList") { 
-                                           
+                                            if (prop.PropertyType.Name == "ThemeClassReferenceList") {
+
                                                 try
                                                 {
                                              miclasslist = (ThemeClassReferenceList)prop.GetValue(new object());
@@ -2949,7 +2949,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                                                  KBDoctorOutput.Error("LoadAndCheckUsedClasses:" + e.Message + " " + e.InnerException);
                                                  throw e;
                                              };
-                                    } else 
+                                    } else
                                     {
                             continue;
                         }
@@ -2988,17 +2988,17 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             }
                                         }
                                     }
-                                
+
 
             }
             return true;
 
-        } 
-    
+        }
 
-                
- 
-            
+
+
+
+
 
 
         internal static void ProceduresCalledAsFunction(KBModel model, KBObject obj, ref string recommendations, out int cant)
@@ -3200,7 +3200,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             if(obj is Procedure)
             {
                 RulesPart rp = obj.Parts.Get<RulesPart>();
-                VariablesPart vp = obj.Parts.Get<VariablesPart>(); 
+                VariablesPart vp = obj.Parts.Get<VariablesPart>();
                 if(rp != null)
                 {
                     return hasOutputInRules(rp, vp);
@@ -3233,7 +3233,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         }
                     }
                 }
-                
+
                 foreach (AbstractNode node in root.Children)
                 {
                     if (node.Node != null)
@@ -3244,7 +3244,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             if (node.Node is IParserObjectBase)
                             {
                                 IParserObjectBase pob = node.Node;
-                                
+
                                 if(pob.Data is Artech.Architecture.Language.Parser.Data.Rule)
                                 {
                                     Artech.Architecture.Language.Parser.Data.Rule ruledata = (Artech.Architecture.Language.Parser.Data.Rule)pob.Data;
@@ -3359,10 +3359,10 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     KBDoctorOutput.Message("%protocol%%subdomain%%url%%virtualdir%" + qualifiedName + ".aspx?" + GetDataFromSignature(strsignature));
                     KBDoctorOutput.Message(Environment.NewLine);
                 }
-                
+
             }
         }
-        
+
         internal static string GetDataFromSignature(string signature)
         {
             bool first = true;
@@ -3394,7 +3394,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         public static void SDTWithDateInWS(KBObject obj)
         {
-            
+
             if (obj.GetPropertyValue("CALL_PROTOCOL").ToString().ToUpper() == "SOAP")
             {
                 string sdtout = "";
@@ -3497,7 +3497,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 return false;
             }
         }
-        
+
 
         public static void ListSDT(KBObject obj)
         {
@@ -3532,7 +3532,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 }
             }
             foreach (var childItem in level.GetItems<SDTItem>())
-            {   
+            {
                 if(childItem.IsCollection)
                 {
                     string XmlSerializationProperty = childItem.GetPropertyValue("idXmlInclude").ToString();
@@ -3564,7 +3564,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string levelname = prev_levelname + level.Name;
             string namevariable;
             namevariable = GetSDTLevelName(level, prev_levelname);
-            
+
             if (level.IsCollection)
             {
                 KBDoctorOutput.Message("&" + levelname + " = new ()" + "//Type: " + level.FullName + "(Collection)");
@@ -3728,13 +3728,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 case "boolean":
                     return GetRandomBoolean().ToString();
-                    
+
                 case "character":
                     return GetRandomString(int_len);
-                    
+
                 case "varchar":
                     return GetRandomString(int_len);
-                    
+
                 case "numeric":
                     if (decimal_len == 0)
                     {
@@ -3918,7 +3918,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var random = new Random();
-            
+
             int length = random.Next(Math.Min(max_length, 512) - 1) + 1;
             var stringChars = new char[length];
 
@@ -3987,12 +3987,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 aux = "0";
             }
-            
+
             var numberDecChars = new char[dec_lenght];
             for (int i = 0; i < numberDecChars.Length; i++)
             {
                 numberDecChars[i] = chars[random.Next(chars.Length)];
-            }            
+            }
             string aux2 = new String(numberDecChars);
             if (dec_lenght > 0)
             {
@@ -4081,7 +4081,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static void ShowOutputAttributeMessages(KBObject obj, Procedure proc, ref List<string[]> output_list)
         {
-            
+
             string parm_rule = Utility.ExtractRuleParm(proc);
             KBDoctorOutput.Message("PROCEDURE:     " + proc.Name.ToString());
             KBDoctorOutput.Message("DESCRIPTION:   " + proc.Description);
@@ -4117,7 +4117,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             if (parsedname.Contains("-"))
             {
                 string[] splits = parsedname.Split('-');
-               
+
                 bool first = true;
                 foreach(string split in splits)
                 {
@@ -4164,7 +4164,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     {
                         KBDoctorOutput.Warning("Object " + name + " doesn't exists");
                     }
-                    
+
                 }
             }
         }
@@ -4175,12 +4175,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             KBCategory mainCategory = Utility.MainCategory(model);
             foreach (KBObject obj in mainCategory.AllMembers)
             {
-                hash_ret.Add(obj.QualifiedName.ToString().ToLower(), obj);             
+                hash_ret.Add(obj.QualifiedName.ToString().ToLower(), obj);
             }
             return hash_ret;
         }
 
-      
+
 
 #if EVO3
     public class Tuple<T1, T2>

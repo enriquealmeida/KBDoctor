@@ -40,12 +40,12 @@ namespace IniParser.Model
         /// Data is deeply copied
         /// </remarks>
         /// <param name="ori">
-        /// The instance of the <see cref="SectionDataCollection"/> class 
+        /// The instance of the <see cref="SectionDataCollection"/> class
         /// used to create the new instance.</param>
         public SectionDataCollection(SectionDataCollection ori, IEqualityComparer<string> searchComparer)
         {
             _searchComparer = searchComparer ?? EqualityComparer<string>.Default;
-                
+
             _sectionData = new Dictionary<string, SectionData>(_searchComparer);
             foreach(var sectionData in ori)
             {
@@ -65,7 +65,7 @@ namespace IniParser.Model
         /// <summary>
         /// Gets the key data associated to a specified section name.
         /// </summary>
-        /// <value>An instance of as <see cref="KeyDataCollection"/> class 
+        /// <value>An instance of as <see cref="KeyDataCollection"/> class
         /// holding the key data from the current parsed INI data, or a <c>null</c>
         /// value if the section doesn't exist.</value>
         public KeyDataCollection this[string sectionName]
@@ -150,7 +150,7 @@ namespace IniParser.Model
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
         /// <returns>
-        /// An instance of a <see cref="SectionData"/> class 
+        /// An instance of a <see cref="SectionData"/> class
         /// holding the section data for the currently INI data
         /// </returns>
         public SectionData GetSectionData(string sectionName)
@@ -188,10 +188,10 @@ namespace IniParser.Model
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="keyName"></param>
-        /// <return><c>true</c> if the section with the specified name was removed, 
+        /// <return><c>true</c> if the section with the specified name was removed,
         /// <c>false</c> otherwise</return>
         public bool RemoveSection(string keyName)
         {

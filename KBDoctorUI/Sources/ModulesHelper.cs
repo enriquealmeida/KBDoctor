@@ -1,4 +1,4 @@
-﻿using Artech.Architecture.Common;
+using Artech.Architecture.Common;
 using Artech.Architecture.Common.Collections;
 using Artech.Architecture.Common.Descriptors;
 using Artech.Architecture.Common.Objects;
@@ -42,7 +42,7 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = CommonServices.Output;
             bool success = true;
             string title = "KBDoctor - Mark Public Object";
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -73,7 +73,7 @@ namespace Concepto.Packages.KBDoctor
                     }
                 }
                 KBDoctorOutput.Message( "");
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
                 writer.AddFooter();
                 writer.Close();
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
@@ -155,7 +155,7 @@ namespace Concepto.Packages.KBDoctor
 
         private static ObjectVisibility TableVisibility(Table tbl)
         {
-            
+
             ObjectVisibility objVisibility = ObjectVisibility.Private;
 
             foreach (Transaction trn in tbl.AssociatedTransactions)
@@ -164,7 +164,7 @@ namespace Concepto.Packages.KBDoctor
                     objVisibility = ObjectVisibility.Public;
             }
             return objVisibility;
-            
+
         }
 
         private const string ModularizationInfoStart = "KBDoctor Modularization Information --Start--";
@@ -178,7 +178,7 @@ namespace Concepto.Packages.KBDoctor
             bool success = true;
             int updatedObjects = 0;
 
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
 
             try
             {
@@ -218,7 +218,7 @@ namespace Concepto.Packages.KBDoctor
             }
             finally
             {
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
         }
 
@@ -575,8 +575,8 @@ El módulo tiene objetos públicos no referenciados por externos?
             int objTot = 0;
             int modules = 0;
             string title = "KBDoctor - List Modules Statistics Total";
-            output.StartSection("KBDoctor",title);
-           
+            KBDoctorOutput.StartSection(title);
+
 
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
             {
@@ -609,8 +609,8 @@ El módulo tiene objetos públicos no referenciados por externos?
             KBDoctorOutput.Message("# Tables in Module: " + tblInModule.ToString() + " in Root: " + tblInRoot.ToString());
 
 
-            output.EndSection("KBDoctor", title, success);
-           
+            KBDoctorOutput.EndSection(title, success);
+
           //  Utility.AddLineSummary("moduleStats.txt", Resumen);
 
         }
@@ -622,7 +622,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             bool success = true;
 
             string title = "KBDoctor - List Modularization Quality (More is better)";
-            output.StartSection("KBDoctor", title);
+            KBDoctorOutput.StartSection(title);
 
             Dictionary<string,int> interModule = new Dictionary<string, int>();
             Dictionary<string, int> intraModule = new Dictionary<string, int>();
@@ -668,7 +668,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
                         }
                     }
-                  
+
                 }
                 if (GraphHelper.IncludedInGraph(objTo))
                     KBDoctorOutput.Message(objTo.Name + ":" + objTo.TypeDescriptor.Name + "," + intraAcum + "," + interAcum);
@@ -702,9 +702,9 @@ El módulo tiene objetos públicos no referenciados por externos?
 
             writer.AddTableData(new string[] { "TurboMQ = "  , "", "", TurboMQ.ToString("N" + 6) });
                 KBDoctorOutput.Message( "");
-                output.EndSection("KBDoctor", title, success);
-                
-   
+                KBDoctorOutput.EndSection(title, success);
+
+
                 writer.AddFooter();
                 writer.Close();
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
@@ -718,7 +718,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             */
         }
 
-    
+
 
         private static double CF(Module mdl)
         {
@@ -738,7 +738,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             int objInRoot = 0;
             int objSinRoot = 0;
             string title = "KBDoctor - List Modules Statistics";
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -769,7 +769,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
                 }
                 KBDoctorOutput.Message( "");
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
                 int ratio = (objInRoot == 0) ? 0 : (objSinRoot * 100) / objInRoot;
                 string Resumen = "Obj in Modules, Obj Root, Ratio  " + objSinRoot.ToString() + "," + objInRoot.ToString() + "," + ratio.ToString();
 
@@ -813,11 +813,11 @@ El módulo tiene objetos públicos no referenciados por externos?
                 cantobj += 1;
                 string aux = "";
                 bool isReferencedFromOutside = IsReferencedFromOutside(mdl, obj, out aux);
-                
+
                 ObjectVisibility objVisibility = RecoverObjectVisibility(obj);
 
                 if (Utility.isRunable(obj))
-                    { 
+                    {
                         if (objVisibility == ObjectVisibility.Public)
                             {
                                 cantobjPub += 1;
@@ -828,12 +828,12 @@ El módulo tiene objetos públicos no referenciados por externos?
                                 cantInRef += 1; ;
                             }
                     }
-                
+
 
             }
 
 
-            //Hago lo mismo para las tablas del modulo. 
+            //Hago lo mismo para las tablas del modulo.
 
             IList<KBObject> tblList = (from r in Table.GetAll(kbModel)
                                        where TablesHelper.TableModule(kbModel, r) == mdl
@@ -859,13 +859,13 @@ El módulo tiene objetos públicos no referenciados por externos?
                 {
                     cantInRef += 1; ;
                 }
-                
+
             }
 
 
             int rel = (cantobj == 0 ? 0 : (cantobjPub * 100) / cantobj);
             string[] mdlStats = new string[] { Utility.linkObject(mdl), mdl.Description, cntTables.ToString(), cntPublicTables.ToString(), cantobj.ToString(),  cantobjPub.ToString(), rel.ToString() + " %" , cantInRef.ToString(), cantOutRef.ToString() };
-                                              
+
             return mdlStats;
         }
 
@@ -876,7 +876,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             bool success = true;
 
             string title = "KBDoctor - Move Transaction";
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -933,7 +933,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 {
                     int cantReferences = 0;
                     int totWeight = 0;
-                    int cantReferencesTables = 0; 
+                    int cantReferencesTables = 0;
                     foreach (EntityReference r in obj.GetReferences())
                     {
                         KBObject objRef = KBObject.Get(model, r.To);
@@ -951,11 +951,11 @@ El módulo tiene objetos públicos no referenciados por externos?
                             }
                         }
                     }
-                    objectWeight[obj.TypeDescriptor.Name + "," + obj.Name + "," 
+                    objectWeight[obj.TypeDescriptor.Name + "," + obj.Name + ","
                            + totWeight.ToString() + "," + cantReferences.ToString() + "," + cantReferencesTables.ToString()] = totWeight;
 
                     //KBDoctorOutput.Message(obj.TypeDescriptor.Name + "," + obj.Name + "," + totWeight.ToString() + "," + cantReferences.ToString()+"," + cantReferencesTables.ToString()  );
-                 
+
                 }
             }
 
@@ -990,11 +990,11 @@ El módulo tiene objetos públicos no referenciados por externos?
                     if (objRef.Parent is Module)
                         list.Add("MODULE:" + objRef.Parent.Name + " |  " + updated);
                 }
-                
+
             }
             KBDoctorOutput.Message(" ");
             KBDoctorOutput.Message("============> " + tbl.Name);
-            
+
             list.Sort();
             foreach (string s in list)
                 KBDoctorOutput.Message(s);
@@ -1008,7 +1008,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             bool success = true;
 
             string title = "KBDoctor - List Modules Errors";
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -1032,7 +1032,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
                 }
                 KBDoctorOutput.Message( "");
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
                 writer.AddFooter();
                 writer.Close();
@@ -1074,7 +1074,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 }
 
 
-                // Por un error de GX, no se listan los SDT pues todos quedan como publicos aunque esten marcados como privados. 
+                // Por un error de GX, no se listan los SDT pues todos quedan como publicos aunque esten marcados como privados.
                 if (objVisibility == ObjectVisibility.Private && isReferencedFromOutside && !(obj is SDT) && !(obj is Folder))
                 {
                     listPirvateObjReferenced += Utility.linkObject(obj) + " ";
@@ -1084,7 +1084,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             string objOutsideModuleAccessPrivateTable = "";
             string objUpdateOutsideModuleList = "";
             string objToMove = "";
-            //Hago lo mismo para las tablas del modulo. 
+            //Hago lo mismo para las tablas del modulo.
 
             IList<KBObject> tblList = (from r in Table.GetAll(kbModel)
                                        where TablesHelper.TableModule(kbModel, r) == mdl
@@ -1116,18 +1116,18 @@ El módulo tiene objetos públicos no referenciados por externos?
                     objUpdateOutsideModuleList += tbl.Name + "  (" + objUpdateOutsideModuleListTable + ")<BR>";
 
                 //Veo los objetos que referencian alguna tabla desde fuera del modulo, si tienen alguna tabla de otro modulo
-                //Si son todas de mi modulo, lo pongo en la lista de los objetos a mover a mi modulo. 
-               
+                //Si son todas de mi modulo, lo pongo en la lista de los objetos a mover a mi modulo.
+
                 foreach (KBObject objreadOutsideModule in TablesHelper.ObjectsReadTableOutsideModule(tbl))
                 {
-                    
+
                     if (ListModulesOfReferencedTables(objreadOutsideModule).Count == 1)
                         objToMove += Utility.linkObject(objreadOutsideModule) +"; " ;
                 }
             }
 
             string[] mdlStats = new string[] { Utility.linkObject(mdl), listPubObjNotReferenced, listPirvateObjReferenced, ListobjOutsideModuleAccessPrivateTable, objUpdateOutsideModuleList,objToMove };
-          
+
             return mdlStats;
         }
 
@@ -1145,7 +1145,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             foreach (EntityReference refer in obj.GetReferencesTo())
             {
                 KBObject objRef = KBObject.Get(obj.Model, refer.From);
-                if (objRef != null && Utility.isRunable(objRef)) 
+                if (objRef != null && Utility.isRunable(objRef))
                 {
                     Module modref = objRef.Module;
                     if (modref != mdl)
@@ -1160,23 +1160,23 @@ El módulo tiene objetos públicos no referenciados por externos?
             return isReferencedFromOutside;
         }
 
-        
+
         private static KBObjectCollection ObjectsReferencesFromOutside(KBObject obj)
         {
             KBObjectCollection objCol = new KBObjectCollection();
 
             string mdlName = ObjectModuleName(obj);
-           
+
             foreach (EntityReference refer in obj.GetReferencesTo())
             {
                 KBObject objRef = KBObject.Get(obj.Model, refer.From);
-                if (objRef != null && Utility.isRunable(objRef)) 
+                if (objRef != null && Utility.isRunable(objRef))
                 {
                     string mdlNameRef = ObjectModuleName(objRef);
                     if (mdlNameRef != mdlName)
                     {
                         if (obj is Table)
-                            objCol.Add(obj); 
+                            objCol.Add(obj);
                     }
                 }
             }
@@ -1192,7 +1192,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
             bool success = true;
             string title = "KBDoctor - Build Module";
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -1223,7 +1223,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                     Application.DoEvents();
                 } while (GenexusUIServices.Build.IsBuilding);
 
-                output.EndSection("KBDoctor", true);
+                KBDoctorOutput.EndSection(title, true);
             }
             catch
             {
@@ -1295,7 +1295,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
             string title = "KBDoctor - List tables in modules";
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
 
             try
             {
@@ -1319,7 +1319,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                             string objNameLink = Utility.linkObject(t);
 
                             KBDoctorOutput.Message( "Processing... " + t.Name);
-                           
+
 
                             ObjectVisibility objVisibility = TableVisibility(t);
                             KBObject trnBest = GenexusBLServices.Tables.GetBestAssociatedTransaction(model, t.Key);
@@ -1379,7 +1379,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -1396,7 +1396,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
             string title = "KBDoctor - List Objects with table in other module";
             IOutputService output = CommonServices.Output;
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -1445,7 +1445,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -1463,7 +1463,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             bool success = true;
 
             string title = "KBDoctor - Module references";
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -1536,7 +1536,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                     writer.AddTableData(new string[] { Utility.linkObject(o), oModule.Name, o.TypeDescriptor.Name, listObj });
                 }
                 KBDoctorOutput.Message( "");
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
                 writer.AddFooter();
                 writer.Close();
@@ -1559,7 +1559,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             bool success = true;
 
             string title = "KBDoctor - Objects to divide";
-            output.StartSection("KBDoctor",title);
+            KBDoctorOutput.StartSection(title);
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -1632,7 +1632,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                     writer.AddTableData(new string[] { Utility.linkObject(o), oModule.Name, o.TypeDescriptor.Name, listObj });
                 }
                 KBDoctorOutput.Message( "");
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
 
                 writer.AddFooter();
                 writer.Close();
@@ -1658,7 +1658,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                     {
                         if (!objectsModule.Contains(obj))
                                     objectsModule.Add(obj);
-                        
+
                     }
 
                 }
@@ -1686,7 +1686,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
-                output.StartSection("KBDoctor", title);
+                KBDoctorOutput.StartSection(title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
@@ -1720,7 +1720,7 @@ El módulo tiene objetos públicos no referenciados por externos?
 
                 KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
-                output.EndSection("KBDoctor", title, success);
+                KBDoctorOutput.EndSection(title, success);
             }
             catch
             {
@@ -1734,7 +1734,7 @@ El módulo tiene objetos públicos no referenciados por externos?
         {
             KBDoctorOutput.StartSection("Modularization");
             KBModel model = UIServices.KB.CurrentModel;
-            // Displays an OpenFileDialog so the user can select a Cursor.  
+            // Displays an OpenFileDialog so the user can select a Cursor.
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.Filter = "Modularization|*.bunch";
             openFileDialog1.Filter = "Todos|*.*";
@@ -1809,7 +1809,7 @@ El módulo tiene objetos públicos no referenciados por externos?
         private static Module ModuloAAsignar(string mdl)
         {
             string mdl2 = FixObjectName(mdl);
-            
+
             Module modu = new Module(UIServices.KB.CurrentModel);
             Guid moduletypeid = new Guid("c88fffcd-b6f8-0000-8fec-00b5497e2117");
             foreach (KBObject obj in Module.GetAll(UIServices.KB.CurrentModel))
@@ -1819,7 +1819,7 @@ El módulo tiene objetos públicos no referenciados por externos?
             }
 
             if (modu.Name == null )
-        
+
             {
                 Random rnd = new Random();
                 int length = 5;

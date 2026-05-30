@@ -15,7 +15,7 @@ namespace IniParser.Model
         public SectionData(string sectionName)
             :this(sectionName, EqualityComparer<string>.Default)
         {
-            
+
         }
         /// <summary>
         ///     Initializes a new instance of the <see cref="SectionData"/> class.
@@ -41,7 +41,7 @@ namespace IniParser.Model
         ///     Data is deeply copied
         /// </remarks>
         /// <param name="ori">
-        ///     The instance of the <see cref="SectionData"/> class 
+        ///     The instance of the <see cref="SectionData"/> class
         ///     used to create the new instance.
         /// </param>
         /// <param name="searchComparer">
@@ -101,7 +101,7 @@ namespace IniParser.Model
             Keys.Merge(toMergeSection.Keys);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            foreach(var comment in toMergeSection.TrailingComments) 
+            foreach(var comment in toMergeSection.TrailingComments)
 #pragma warning restore CS0618 // Type or member is obsolete
 #pragma warning disable CS0618 // Type or member is obsolete
                 TrailingComments.Add(comment);

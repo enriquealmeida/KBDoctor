@@ -4,7 +4,7 @@ SET VisualStudioDir="C:\Program Files (x86)\Microsoft Visual Studio\2019\Communi
 SET NETFRAMEWORK_DIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
 SET TargetGenexusVersion=%1
 CALL :CASE_%1
-IF ERRORLEVEL 1 CALL :DEFAULT_CASE 
+IF ERRORLEVEL 1 CALL :DEFAULT_CASE
 EXIT /B
 
 
@@ -41,6 +41,6 @@ echo %TargetFrameworkVersion%
 echo %GX_SDK_DIR%
 echo %TargetGenexusVersion%
 
- GOTO :EOF 
+ GOTO :EOF
 
 :EOF

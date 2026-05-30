@@ -5,7 +5,7 @@ diff a/src/IniFileParser/Model/IniData.cs b/src/IniFileParser/Model/IniData.cs	(
              _sections = (SectionDataCollection)sdc.Clone();
              Global = new KeyDataCollection();
          }
- 
+
 -        public IniData(IniData ori): this((SectionDataCollection) ori.Sections)
 +        public IniData(IniData ori): this(ori.Sections)
          {
@@ -13,9 +13,9 @@ diff a/src/IniFileParser/Model/IniData.cs b/src/IniFileParser/Model/IniData.cs	(
 -            Configuration = ori.Configuration.Clone();
          }
          #endregion
- 
+
          #region Properties
- 
+
 -        /// <summary>
 -        ///     Configuration used to write an ini file with the proper
 -        ///     delimiter characters and data.
@@ -40,9 +40,9 @@ diff a/src/IniFileParser/Model/IniData.cs b/src/IniFileParser/Model/IniData.cs	(
 -
 -            set { _configuration = (IIniParserConfiguration) value.Clone(); }
 -        }
- 
+
          /// <summary>
          /// 	Global sections. Contains key/value pairs which are not
-         /// 	enclosed in any section (i.e. they are defined at the beginning 
+         /// 	enclosed in any section (i.e. they are defined at the beginning
          /// 	of the file, before any section.
          /// </summary>

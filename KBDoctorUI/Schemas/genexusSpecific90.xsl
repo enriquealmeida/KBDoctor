@@ -72,14 +72,14 @@
 <xsl:template match="Prompt" mode="TableRow">
 	<xsl:call-template name="NewLine"/>
 	<xsl:apply-templates select="Table" mode="icon"/>
-	<xsl:text> </xsl:text>  
+	<xsl:text> </xsl:text>
 		<xsl:if test="Object">
 			<xsl:apply-templates select="Object" mode="icon"/>
 			<xsl:if test="PromptType">
 				<xsl:apply-templates select="PromptType"/>
 			</xsl:if>
 		</xsl:if>
-		
+
 		<xsl:text> </xsl:text>
 		<xsl:if test="ProgramName">
 			<xsl:value-of select="ProgramName"/>
@@ -87,7 +87,7 @@
 				<xsl:apply-templates select="PromptType"/>
 			</xsl:if>
 		</xsl:if>
-		
+
 		<xsl:text> </xsl:text>
 	<xsl:apply-templates select="InputParameters"/>
 	<xsl:text> </xsl:text>

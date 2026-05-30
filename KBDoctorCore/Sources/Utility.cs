@@ -104,13 +104,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             if (Anio >= 2000 && Mes > 0 && Mes <= 12 && Dia <= 31 && Dia > 0 && Hora >= 0 && Hora <= 23 && Minutos >= 0 && Minutos <= 60 && Segundos >= 0 && Segundos <= 60)
                 return true;
-            else 
+            else
                 return false;
         }
 
         internal static string NvgComparerDirectory(KnowledgeBase KB)
         {
-            
+
             GxModel gxModel = KB.DesignModel.Environment.TargetModel.GetAs<GxModel>();
             string dir = Path.Combine(SpcDirectory(KB), "NvgComparer");
             try
@@ -244,7 +244,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     line = line.TrimStart().ToUpper();
                     if (line.StartsWith("DO '"))
                     {
-                        //Si es un llamado a una subrutina, no hago nada y lo salteo. 
+                        //Si es un llamado a una subrutina, no hago nada y lo salteo.
                     }
                     else
                     {
@@ -264,7 +264,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 return MaxNestLevel;
             }
         }
-      
+
         public static bool ValidateINOUTinParm(KBObject obj)
         {
             bool err = false;
@@ -317,7 +317,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 sw.WriteLine(DateTime.Now.ToString() + "," + texto);
                 fs.Dispose();
             }
-            
+
         }
 
         public static void AddLineSummary(string fileName, string texto)
@@ -390,7 +390,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             catch (Exception e) { Console.WriteLine(e.Message);  }
             return null;
-            
+
         }
 
         internal static KBObjectPart ObjectRulesPart(KBObject obj)
@@ -516,7 +516,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 if (d.Name == domainName)
                 {
                     return d;
-                   
+
                 }
             }
             return null;
@@ -586,14 +586,14 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string outputFile = KB.UserDirectory + @"\kbdoctor." + Utility.CleanFileName(title) + ".html";
             if (File.Exists(outputFile))
             {
-                
+
                 try
                 {
                     File.Delete(outputFile);
                 }
                 catch
                 {
-                    
+
                 }
                 KBDoctor.KBDoctorOutput.Warning("File " + outputFile + " is locked. The start page cannot be generated");
             }
@@ -662,7 +662,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                             string desc = v.Description;
                             int dec = v.Decimals;
 
-                            //Modifico la variable, para que no se base en el atributo. 
+                            //Modifico la variable, para que no se base en el atributo.
                             v.AttributeBasedOn = null;
                             v.Type = type;
                             v.Decimals = dec;
@@ -698,7 +698,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 #else
             myKey = sdtItem.BasedOn.Key;
 #endif
-            //Termina compatibilidad Evo3 y 15. 
+            //Termina compatibilidad Evo3 y 15.
             return myKey;
         }
 
@@ -726,7 +726,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                         string desc = sdtItem.Description;
                         int dec = sdtItem.Decimals;
 
-                        //Modifico la variable, para que no se base en el atributo. 
+                        //Modifico la variable, para que no se base en el atributo.
                         sdtItem.AttributeBasedOn = null;
                         sdtItem.Type = type;
                         sdtItem.Decimals = dec;
@@ -903,7 +903,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             return "";
         }
-        
+
         public static Domain GetOutputDomains(KBObject obj)
         {
 
@@ -1022,7 +1022,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             else
             {
-                throw new System.ArgumentException("El archivo no existe. " + path); 
+                throw new System.ArgumentException("El archivo no existe. " + path);
             }
         }
 
@@ -1080,7 +1080,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 splits = qname.Split('.');
                 int i = 0;
                 while (i < splits.Length - 1){
-                    //Si este es el último, no pongo un punto. 
+                    //Si este es el último, no pongo un punto.
                     if (i + 1 < splits.Length - 1)
                         module += splits[i] + ".";
                     else
@@ -1095,7 +1095,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 ret[0] = "";
                 ret[1] = qname;
             }
-            
+
             return ret;
         }
 
@@ -1143,7 +1143,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
         {
             return ReturnFormattedType(d.Type, d.Length, d.Decimals, d.Signed);
         }
-        
+
         public static string ReturnFormattedType(eDBType type, int length, int decimals, bool signed)
         {
             string formatType = "";
@@ -1153,7 +1153,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             {
                 formatType = type.ToString() + "(" + length.ToString() + ")" + (signed ? "-" : "");
             }
-            else { 
+            else {
                 formatType = type.ToString() + "(" + length.ToString() + (decimals > 0 ? "." + decimals.ToString() : "") + ")" + (signed ? "-" : "");
             }
 
@@ -1221,7 +1221,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static bool TypeHasToBeInDomain(eDBType type)
         {
-            if (type != eDBType.Boolean && type != eDBType.BITMAP && type != eDBType.BINARY && type != eDBType.GX_SDT && 
+            if (type != eDBType.Boolean && type != eDBType.BITMAP && type != eDBType.BINARY && type != eDBType.GX_SDT &&
                 type != eDBType.GX_EXTERNAL_OBJECT && type != eDBType.GX_USRDEFTYP && type != eDBType.GX_BUSCOMP && type != eDBType.GX_BUSCOMP_LEVEL)
             {
                 return true;
@@ -1258,7 +1258,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             }
             if (isGeneratedWithPattern || isParentPattern)
             {
-                return true; 
+                return true;
             }
             else
             {
@@ -1344,7 +1344,7 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                     {
                         if (!objectsFolder.Contains(obj))
                             objectsFolder.Add(obj);
-                    }   
+                    }
                 }
                 return objectsFolder;
             }

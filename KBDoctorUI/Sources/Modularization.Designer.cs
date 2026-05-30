@@ -51,9 +51,9 @@ namespace Concepto.Packages.KBDoctor.Modularization
             this.LoadTables = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridTables)).BeginInit();
             this.SuspendLayout();
-            // 
+            //
             // dataGridTables
-            // 
+            //
             this.dataGridTables.AllowUserToAddRows = false;
             this.dataGridTables.AllowUserToDeleteRows = false;
             this.dataGridTables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -61,9 +61,9 @@ namespace Concepto.Packages.KBDoctor.Modularization
             this.dataGridTables.Name = "dataGridTables";
             this.dataGridTables.Size = new System.Drawing.Size(1284, 381);
             this.dataGridTables.TabIndex = 0;
-            // 
+            //
             // LoadTables
-            // 
+            //
             this.LoadTables.Location = new System.Drawing.Point(373, 56);
             this.LoadTables.Name = "LoadTables";
             this.LoadTables.Size = new System.Drawing.Size(75, 23);
@@ -71,9 +71,9 @@ namespace Concepto.Packages.KBDoctor.Modularization
             this.LoadTables.Text = "Load Tables";
             this.LoadTables.UseVisualStyleBackColor = true;
             this.LoadTables.Click += new System.EventHandler(this.buttonLoadTables_Click);
-            // 
+            //
             // Modularization
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1334, 697);

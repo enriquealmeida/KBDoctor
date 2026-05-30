@@ -16,7 +16,7 @@
 		<xsl:text>Navigation to evaluate: </xsl:text ><xsl:apply-templates select="FormulaAttri"/>
 				<xsl:if test="FormulaExpression">
 				Formula: <xsl:apply-templates select="FormulaExpression"/>
-				</xsl:if>				
+				</xsl:if>
 				<xsl:call-template name="FormulaWhereMultiple"/>
 				<xsl:if test="FormulaGivenAttris">
 					Given:<xsl:apply-templates select="FormulaGivenAttris"/>
@@ -26,7 +26,7 @@
 				</xsl:if>
 				<xsl:if test="FormulaGroupByAttris">
 					Group by:<xsl:apply-templates select="FormulaGroupByAttris"/>
-				</xsl:if>						
+				</xsl:if>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>Navigation to evaluate: </xsl:text><xsl:value-of select="FormulaName"/>
@@ -38,7 +38,7 @@
 				Loop While: <xsl:apply-templates select="LoopWhile"/>
 				Returning: <xsl:apply-templates select="FormulaReturnAttri"/>
 			</xsl:otherwise>
-		</xsl:choose>	
+		</xsl:choose>
 				Returning: <xsl:apply-templates select="FormulaReturnAttri"/>
 		<xsl:apply-templates select="NavigationTree"/>
 		<xsl:call-template name="NewLine"/>
@@ -58,7 +58,7 @@
 					<xsl:call-template name="ProcessList"/>
 				</xsl:otherwise>
 			</xsl:choose>
-		</xsl:for-each>		
+		</xsl:for-each>
 </xsl:template>
 <xsl:template match="FormulaWhere">
 	<xsl:call-template name="ProcessList"/>
@@ -71,7 +71,7 @@
 		Navigation to evaluate: <xsl:apply-templates select="FormulasInGroup"/>
 		<xsl:apply-templates select="NavigationTree"/>
 	</xsl:for-each>
-	</xsl:if>	
+	</xsl:if>
 </xsl:template>
 
 <xsl:template match="FormulaOutputAttri">

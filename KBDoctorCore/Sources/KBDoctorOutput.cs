@@ -17,14 +17,14 @@ namespace Concepto.Packages.KBDoctor
         public static void Error(string v)
         {
             IOutputService output = NewKBDoctorOutput();
-            output.AddErrorLine(v);
+            output.AddErrorLine("KBDoctor", v);
         }
 
         public static void InternalError(string v, Exception e)
         {
             IOutputService output = NewKBDoctorOutput();
-            output.AddErrorLine("Internal error: " + v + " " + e.Message);
-            output.AddErrorLine(e.StackTrace);
+            output.AddErrorLine("KBDoctor", "Internal error: " + v + " " + e.Message);
+            output.AddErrorLine("KBDoctor", e.StackTrace);
         }
 
         public static void EndSection(string section)
@@ -42,14 +42,14 @@ namespace Concepto.Packages.KBDoctor
         public static void Message(string v)
         {
             IOutputService output = NewKBDoctorOutput();
-            output.AddLine(v);
+            output.AddLine("KBDoctor", v);
         }
 
 
         public static void Warning(string v)
         {
             IOutputService output = NewKBDoctorOutput();
-            output.AddWarningLine(v);
+            output.AddWarningLine("KBDoctor", v);
         }
 
         public static void OutputError(OutputError oe)
@@ -66,4 +66,4 @@ namespace Concepto.Packages.KBDoctor
         }
     }
 }
- 
+

@@ -114,7 +114,7 @@ namespace KBDoctorCmd
                     TeamDevelopmentData tdd = new TeamDevelopmentData(KB.DesignModel);
                     tdd.User = ServerUser;
                     tdd.Password = ServerPassword;
-                    
+
                     List<IKBVersionRevision> revisions_list = BLServices.TeamDevClient.GetRevisions(tdd, KB.DesignModel.KBVersion.Id, KB.DesignModel.KBVersion.Name, querystring, 1);
                     Dictionary<string, List<string[]>> review_by_user;
                     isSuccess = API.ReivewCommits(KB, revisions_list, out review_by_user);

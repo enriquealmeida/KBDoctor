@@ -94,7 +94,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.SDTsWithDateInWS, new ExecHandler(ExecSDTsWithDateInWS), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.GenerateSDTDataLoad, new ExecHandler(ExecGenerateSDTDataLoad), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.VariablesNotBasedOnAttributes, new ExecHandler(ExecVariablesNotBasedOnAttributes), new QueryHandler(QueryKBDoctor));
-            
+
 
             //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
@@ -178,6 +178,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.GeneratedByPatternWithoutDynamism, new ExecHandler(ExecGeneratedByPatternWithoutDynamism), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ReplaceNullCompatible, new ExecHandler(ExecReplaceNullCompatible), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListObj, new ExecHandler(ExecListObj), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ListUnreferencedObjectsInUserModules, new ExecHandler(ExecListUnreferencedObjectsInUserModules), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CreateDeployUnits, new ExecHandler(ExecCreateDeployUnits), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.MarkPublicObjects, new ExecHandler(ExecMarkPublicObjects), new QueryHandler(QueryKBDoctor));
@@ -196,7 +197,7 @@ namespace Concepto.Packages.KBDoctor
 
             AddCommand(CommandKeys.RecomendedModule, new ExecHandler(ExecRecomendedModule), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CheckBldObjects, new ExecHandler(ExecCheckBldObjects), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CheckVariableUsages, new ExecHandler(ExeCheckVariableUsages), new QueryHandler(QueryKBDoctor)); 
+            AddCommand(CommandKeys.CheckVariableUsages, new ExecHandler(ExeCheckVariableUsages), new QueryHandler(QueryKBDoctor));
 
             //Modularization
             AddCommand(CommandKeys.ListModularizationQuality, new ExecHandler(ExecListModularizationQuality), new QueryHandler(QueryKBDoctor));
@@ -474,7 +475,7 @@ namespace Concepto.Packages.KBDoctor
         }
 
         /// <summary>
-        /// Lista las tablas de los modulos. 
+        /// Lista las tablas de los modulos.
         /// </summary>
         /// <param name="cmdData"></param>
         /// <returns></returns>
@@ -486,7 +487,7 @@ namespace Concepto.Packages.KBDoctor
         }
 
         /// <summary>
-        /// Lista las objetos con tablas en modulos diferentes al suyo. 
+        /// Lista las objetos con tablas en modulos diferentes al suyo.
         /// </summary>
         /// <param name="cmdData"></param>
         /// <returns></returns>
@@ -1011,7 +1012,7 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = KBDoctorHelper.SelectOutput();
 
-  
+
             Thread thread = new Thread(() => VariablesNotBasedOnAttributes(objs));
             thread.Start();
 
@@ -1036,7 +1037,7 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorHelper.ShowKBDoctorResults(outputFile);
         }
 
- 
+
 
 
             private static void GenerateRESTCalls(List<KBObject> objs)
@@ -1386,13 +1387,13 @@ namespace Concepto.Packages.KBDoctor
             ObjectsHelper.ObjectsWithConstants();
             return true;
         }
-        
+
         public bool ExecUDPCallables(CommandData cmdData)
         {
 
             return true;
             /*
-             * Comento este procedimiento para usarlo como opción nueva. 
+             * Comento este procedimiento para usarlo como opción nueva.
              * ObjectsHelper.ObjectsUDPCallables();
             return true;*/
         }
@@ -1458,7 +1459,7 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
         #endregion
-        
+
 
 
         #region Acciones sobre objetos
@@ -1658,6 +1659,14 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecListUnreferencedObjectsInUserModules(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            Thread t = new Thread(new ThreadStart(KbStats.ListUnreferencedObjectsInUserModules));
+            t.Start();
+            return true;
+        }
+
         public bool ExecCreateDeployUnits(CommandData cmdData)
         {
             IOutputService output = KBDoctorHelper.SelectOutput();
@@ -1779,7 +1788,7 @@ namespace Concepto.Packages.KBDoctor
             ObjectsHelper.ListWebObjectsProperties();
             return true;
         }
-        
+
         #region QueryKBDoctor
         private bool QueryKBDoctor(CommandData cmdData, ref CommandStatus status)
         {
