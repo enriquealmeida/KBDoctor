@@ -250,8 +250,18 @@
   <Target Name="AfterBuild">
     <Message Text="Version = $(Major).$(Minor).$(Build).$(Revision)" Importance="high" />
   </Target>
+  <Target Name="CopyKBDoctorToGeneXusPackages" AfterTargets="Build" Condition="'$(GX_PROGRAM_DIR)' != ''">
+    <ItemGroup>
+      <KBDoctorDebugFiles Include="$(TargetDir)KBDoctor*.dll;$(TargetDir)KBDoctor*.pdb;$(TargetDir)KBDoctor*.dll.config" />
+    </ItemGroup>
+    <MakeDir Directories="$(GX_PROGRAM_DIR)\Packages" />
+    <Copy SourceFiles="@(KBDoctorDebugFiles)" DestinationFolder="$(GX_PROGRAM_DIR)\Packages\" SkipUnchangedFiles="true" />
+    <Message Text="Copied @(KBDoctorDebugFiles->'%(Filename)%(Extension)', ', ') to $(GX_PROGRAM_DIR)\Packages" Importance="high" />
+  </Target>
+  <Target Name="WarnMissingGeneXusInstallDir" AfterTargets="Build" Condition="'$(GX_PROGRAM_DIR)' == ''">
+    <Warning Text="GX_PROGRAM_DIR is not set. KBDoctor assemblies were not copied to the GeneXus Packages directory." />
+  </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy C:\mis_cosas\Projects\KBDoctor\KBDoctorUI\bin\Debug\net472\kbdoctor*.dll  "C:\GeneXus\GeneXus18U10dev\Packages\Packages\" /q /Y </PostBuildEvent>
     <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
