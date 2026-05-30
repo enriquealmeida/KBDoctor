@@ -47,7 +47,6 @@ using Artech.Packages.Patterns.Objects;
 using Artech.Patterns.WorkWithDevices.Helpers;
 using Artech.Patterns.WorkWithDevices;
 using Artech.Common.Helpers.Reflection;
-//using Menubar = Artech.Genexus.Common.KMW.Menubar;
 
 namespace Concepto.Packages.KBDoctor
 {
@@ -61,7 +60,6 @@ namespace Concepto.Packages.KBDoctor
             bool success = true;
             string title = "KBDoctor - Unreachable Objects";
             output.StartSection("KBDoctor", title);
-            // UIServices.ToolWindows.ShowToolWindow(new Guid("59CE53BC-F419-402b-AC09-AC275ED21AB9"));
             try
             {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
@@ -197,17 +195,10 @@ namespace Concepto.Packages.KBDoctor
 
                 if ((objRef != null) && !reachablesObjects.Contains(objRef))
                 {
-                   // if (objRef.Name.StartsWith("Transaction"))
-                   // {
                         KBDoctorOutput.Message("Referencia:" + obj.Name + " LinkType: " + reference.LinkType.ToString() + " LinkTypeInfo: " + reference.LinkTypeInfo.ToString() + " ReferenceType: " + reference.ReferenceType.ToString() + " Objref: " + objRef.Name);
 
-                  //  }
 
                     MarkReachables(output, objRef, reachablesObjects);
-                    //if (obj is Procedure && (objRef is Transaction || objRef is WebPanel))
-                    //{
-                     //   KBDoctorOutput.Warning(obj.Name + "===>" + objRef.Name);
-                    //}
                 }
             }
         }
@@ -238,25 +229,10 @@ namespace Concepto.Packages.KBDoctor
                     foreach (EntityReference reference in obj.GetReferencesTo(LinkType.UsedObject))
                     {
                         callers = callers + 1;
-                        //break;
                     }
-                    //if (callers > 0)
-                    // {
                     string ruleParm = Functions.ExtractRuleParm(obj);
                     string enc = obj.GetPropertyValueString("USE_ENCRYPTION");
                     writer.AddTableData(new string[] { obj.TypeDescriptor.Name, Functions.linkObject(obj), obj.Description, ruleParm, callers.ToString(), obj.GetPropertyValueString("CALL_PROTOCOL"), isGeneratedbyPattern(obj).ToString(), enc });
-                    /*
-                    if (obj is Procedure)
-                    {
-                        try
-                        {
-                            KBDoctorOutput.Message(obj.Name);
-                            obj.SetPropertyValue("isMain", false);
-                            obj.Save();
-                        }
-                        catch (Exception e) { KBDoctorOutput.Message(e.Message.ToString()); };
-                    }
-                    */
                 }
 
 
@@ -299,7 +275,6 @@ namespace Concepto.Packages.KBDoctor
 
                     KBObjectCollection objColl = new KBObjectCollection();
 
-                    // string  mainss = KbStats.MainsOf(obj, objColl, callTree);
                     string mainss = "";
 
                     writer.AddTableData(new string[] { obj.Parent.Name, objNameLink, obj.Description, ruleParm, obj.Timestamp.ToString(), mainss });
@@ -703,8 +678,6 @@ namespace Concepto.Packages.KBDoctor
             string title = "KBDoctor - Tree Commit  ";
 
             output.StartSection("KBDoctor", title);
-          //  try
-           // {
                 string outputFile = Functions.CreateOutputFile(kbserv, title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
@@ -802,7 +775,6 @@ namespace Concepto.Packages.KBDoctor
                 writer.AddTableData(new string[] { Anidacion + Functions.linkObject(obj), doCommit, obj.Description, ExecuteInNewLuw, UpdateInsertDelete, obj.Timestamp.ToShortDateString(), tblList });
 
 
-                // Anidacion += "____";
                 yaIncluido.Add(obj);
 
                 Parse(obj.Model, obj, Anidacion, yaIncluido, writer);
@@ -838,7 +810,6 @@ namespace Concepto.Packages.KBDoctor
                         KBObject objRef = KBObject.Get(obj.Model, objKey);
                         if (objRef != null)
                              GraboLlamado((Procedure)objRef, Anidacion + "____", yaIncluido, writer);
-                        //Parse(obj.Model, objRef, Anidacion + "____");
                     }
                     if (token.Token == (int)TokensIds.DTCMM)
                         writer.AddTableData(new string[] { Anidacion + " COMMIT ", "", "Commit Explicito", "", "", "", "", "" });
@@ -1061,59 +1032,6 @@ namespace Concepto.Packages.KBDoctor
 
             DTREDUNDANCY = 397, // Used to give redundancy info to the specifier
         };
-        /*
-private static void IsLevelRemovable(Transaction trn, Table tbl, out bool isRemovable, out bool isRemovableWithWarning)
-{
-isRemovable = true;
-isRemovableWithWarning = true;
-lstTrns = "";
-attExclusive = new KBObjectCollection();
-
-foreach (TransactionLevel LVL in trn.Structure.GetLevels())
-{
-   bool isLevelRemovable = true;
-
-   Table TBL = LVL.AssociatedTable;
-   string tblName = TBL.Name;
-
-   KBObjectCollection attLvl = new KBObjectCollection();
-   attLvl = AttributesFromGeneratedTransactions(TBL);
-
-   KBObjectCollection attLvlAll = new KBObjectCollection();
-
-   attLvlAll = AttributesFromAllTransactionsExceptOne(TBL, trn, out lstTrns);
-
-   foreach (Artech.Genexus.Common.Objects.Attribute a in LVL.Structure.GetAttributes())
-   {
-
-
-       if (!attLvl.Contains(a))
-       {
-           KBDoctorOutput.Message("Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
-               + a.Name + " not in any generated transaction");
-           isRemovable = false;
-           isLevelRemovable = false;
-       }
-
-       if (!attLvlAll.Contains(a))
-       {
-           KBDoctorOutput.Message("Transaction " + trn.Name + " Table " + tblName + " LVL " + LVL.Name + " Attribute "
-               + a.Name + " not in any other transaction");
-           isRemovableWithWarning = false;
-           isLevelRemovable = false;
-           attExclusive.Add(a);
-       }
-
-
-
-
-   }
-   if (isLevelRemovable)
-       writer.AddTableData(new string[] { tblName, linkObject(trn), LVL.Name, trn.Description, "Level Removable" });
-
-}
-}
-*/
         private static KBObjectCollection AttributesFromGeneratedTransactions(Table tBL)
         {
             KBObjectCollection attlist = new KBObjectCollection();
@@ -1349,9 +1267,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                             obj.SetPropertyValue("AppLocation", pd.Description);
                             obj.Save();
                         }
-                        /* } */
-
-
                     }
                     string mainstr = obj.GetPropertyValueString("AppLocation");
 
@@ -1390,10 +1305,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
             selectObjectOption.MultipleSelection = true;
             KBModel kbModel = UIServices.KB.CurrentModel;
 
-            //QualifiedName qn = 
-            //qn.ModuleName = "Root";
-            //qn.ObjectName = "Root";
-            //Folder root = Folder.Get(kbModel,"Root KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
 
 
 
@@ -1436,7 +1347,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     parm2 = parm2.Replace("inout:", "");
                     parm2 = parm2.Replace("(", "");
                     parm2 = parm2.Replace(")", "");
-                    //parm = parm.PadLeft().PadRight();
                 };
 
                 nuevo.ProcedurePart.Source = objName + "_core.call(" + parm2 + ") ";
@@ -1449,7 +1359,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                 try
                 {
                     output.AddWarningLine("Create new: " + nuevo.Name + " Protocol: " + callProtocol);
-                    // CleanKBHelper.CleanKBObjectVariables(nuevo);
                     nuevo.Save();
                 }
                 catch (Exception e)
@@ -1483,7 +1392,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
 
             StringCollection objReferenced = new StringCollection();
 
-            //KBCategory mainCategory = KBCategory.Get(kbserv.CurrentModel, "Main Programs");
 
             int iObj = 0;
             foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
@@ -1496,7 +1404,6 @@ foreach (TransactionLevel LVL in trn.Structure.GetLevels())
                     {
                         KBDoctorOutput.Message( obj.GetFullName());
                     }
-                    //  WriteObjectToTextFile(obj, newDir);
                     WriteObjectToJsonFile(obj, newDir); 
                 }
             }
@@ -1801,8 +1708,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                         TipoLink = r.LinkTypeInfo.ToString(),
                         TipoLinkInfo = r.LinkTypeInfo.ToString()
                     };
-                    // file.WriteLine(obj.Name + " hace referencia a " + objRef.Name + " en una relacion de tipo  " + r.ReferenceType.ToString() + " " + r.LinkType.ToString() + " " + r.LinkTypeInfo.ToString());
-                    // file.WriteLine(objRef.Name + " es referenciado por " + objRef.Name + " en una relacion de tipo  " + r.ReferenceType.ToString() + " " + r.LinkType.ToString() + " " + r.LinkTypeInfo.ToString());
                 }
 
             }
@@ -1812,19 +1717,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         {
             switch (obj.TypeDescriptor.Name)
         {
-                /*
-            case "Attribute":
-                return GetAttributeData((Artech.Genexus.Common.Objects.Attribute)obj);
-            case "Procedure":
-                return GetProcedureData(obj);
-            case "Transaction":
-                return GetTransactionData(obj);
-            case "WorkPanel":
-                return GetWorkPanelData((WorkPanel)obj);
-            case "WebPanel":
-                return GetWebPanelData((WebPanel)obj);
-            case "WebComponent":
-                return GetWebComponentData((WebPanel)obj); */
             case "Table":
                 return GetTableData((Table)obj);
             case "SDT":
@@ -1851,7 +1743,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
         private static object GetTableData(Table obj)
         {
             StringBuilder line = new StringBuilder();
-            //file.WriteLine("=== TABLE STRUCTURE ===");
             foreach (TableAttribute attr in obj.TableStructure.Attributes)
             {
                 
@@ -1931,10 +1822,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                            
                                 if (updateDBbool)
                                 {
-                                /*
-                                obj.SetPropertyValue("CommitOnExit", "Yes");
-                                obj.Description = obj.Description + '.';
-                                obj.Save();*/
                                 updateDB = "YES";
                                 }
                                     
@@ -1985,8 +1872,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             WriteTabs(tabs, file);
             string dataType = Utility.ReturnFormattedType(item.Type, item.Length, item.Decimals, item.Signed);
             file.WriteLine("{0}, {1}, {2} {3}", item.Name, dataType, item.Description, (item.IsCollection ? ", collection " + item.CollectionItemName : ""));
-            //if (item.IsCollection)
-            //    file.Write(", collection: {0}", item.CollectionItemName);
         }
 
         private static void WriteTabs(int tabs, System.IO.StreamWriter file)
@@ -2034,33 +1919,15 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             IKBService kbserv = UIServices.KB;
             IOutputService output = CommonServices.Output;
 
-            /*
-            foreach (KBObject webp in WebPanel.GetAll(kbserv.CurrentModel))
-            {
-                WebFormPart wfp = webp.Parts.Get<WebFormPart>();
-                foreach (IWebTag webTag in WebFormHelper.EnumerateWebTag(wfp))
-                {
-                    if (webTag != null)
-                    {
-                        output.AddLine(webTag.Node.Name + " " + webTag.Type);
-                    }
-
-                }
-                  
-            }
-            */
 
 
             foreach (WorkPanel obj in WorkPanel.GetAll(kbserv.CurrentModel))
             {
                 string objName = obj.Name.ToUpper();
-                //  if (objName == "WINV500" || objName == "WINV250" || objName == "WINV501" || objName == "WBaePorE".ToUpper())
                 if  (objName == "WINV501")
                       {
                     CreateNewWebPanel(obj);
                 }
-               //CreateNewWebPanel(obj);
-               // CreateNewPanel(obj);
             }
             
 
@@ -2178,21 +2045,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     }
                 }
             }
-            /*
-            // Copy Conditions
-            ConditionsPart workPanelConditions = workPanel.Parts.Get<ConditionsPart>();
-            if (workPanelConditions != null)
-            {
-                newPanel.Conditions.Source = workPanelConditions.Source;
-            }
-
-            // Copy Rules
-            RulesPart workPanelRules = workPanel.Parts.Get<RulesPart>();
-            if (workPanelRules != null)
-            {
-                newPanel.Rules.Source = workPanelRules.Source;
-            }
-            */
 
       
             // Copy Events
@@ -2204,29 +2056,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             {
                 panel.Attributes.SetPropertyValue(InstanceAttributes.Panel.Events, workPanelEvents.ToString());
             }
-            /*
-            // Copy Help
-            HelpPart workPanelHelp = workPanel.Parts.Get<HelpPart>();
-            if (workPanelHelp != null)
-            {
-                newPanel.Help.HtmlContent = workPanelHelp.HtmlContent;
-            }
-
-            // Copy Documentation
-            DocumentationPart workPanelDocumentation = workPanel.Parts.Get<DocumentationPart>();
-            if (workPanelDocumentation != null)
-            {
-                newPanel.Documentation.Page = workPanelDocumentation.Page;
-            }
-
-            // Process Form
-            WinFormPart winForm = workPanel.Parts.Get<WinFormPart>();
-            WebFormPart webForm = newPanel.Parts.Get<WebFormPart>();
-            if (winForm != null && webForm != null)
-            {
-                ProcessFormDefinitions(winForm.MyDocument, output, webForm);
-            }
-            */
             try
             {
                 newPanel.Save();
@@ -2239,101 +2068,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             
         }
 
-        /*
-                CreateNewPanel(obj);
-                if (!obj.IsReadOnly && obj is SDPanel)
-                {
-                    string objName = obj.Name;
-                    output.AddLine(objName);
-     
-              //  if (obj is Transaction || obj is WorkPanel || obj is WebPanel || objName.Contains("_panel"))
-                        if ( objName.Contains("_panel"))
-
-                        {
-
-                    WebPanel newWbp = new WebPanel(kbserv.CurrentModel);
-                    newWbp.Name = obj.Name + "_v18";
-                    WebFormPart wp = newWbp.Parts.Get<WebFormPart>();
-
-                    //iterate in all Parts in obj
-                    foreach (KBObjectPart part in obj.Parts)
-                    {
-                      //  output.AddLine(obj.Name + ' ' + part.Name);
-                        switch (part.Type)
-                        {
-                            case var type when type == PartType.Rules:
-                                RulesPart rp = (RulesPart)part;
-                                newWbp.Rules.Source = ProcessRulesSource(rp.Source);    
-                                output.AddLine(rp.Source);
-                                break;
-                            case var type when type == PartType.Events:
-                                EventsPart ep = (EventsPart)part;
-                           //     newWbp.Events.Source = "/* " + ep.Source + "*
-                                output.AddLine(ep.Source);
-                                break;
-                            case var type when type == PartType.Structure:
-                                StructurePart sp = (StructurePart)part;
-                                //output.AddLine(sp.Source);
-                                break;
-                            case var type when type == PartType.Procedure:
-                                ProcedurePart pp = (ProcedurePart)part;
-                                output.AddLine(pp.Source);
-                                break;
-                            case var type when type == PartType.Variables:
-                                VariablesPart vp = (VariablesPart)part;
-                                foreach (Variable v in vp.Variables)
-                                {
-                                    if (! v.IsStandard) 
-                                    { 
-                                        newWbp.Variables.Add(v);
-                                    }
-                                }
-                               
-                                //output.AddLine(vp.Source);
-                                break;
-                            case var type when type == PartType.WebForm:
-                               // WebFormPart wp = (WebFormPart)part;
-                                // output.AddLine(wp.Source);
-                                break;
-                            case var type when type == PartType.WinForm:
-                                output.AddLine(obj.Name + ' ' + part.Name);
-                                WinFormPart winForm = obj.Parts.Get<WinFormPart>();
-                                
-                                ProcessFormDefinitions(winForm.MyDocument,output,wp);
-
-                                
-                               // output.AddLine(winForm.Name);
-                                break;
-                            case var type when type == PartType.Conditions:
-                                ConditionsPart cp = (ConditionsPart)part;
-                                newWbp.Conditions.Source = cp.Source;
-                               // newWbp.Parts.Add(cp);
-                                output.AddLine(cp.Source);
-                                break;
-                        }
-
-                        try
-                        {
-                            
-                           
-                            newWbp.Save();
-                        }
-                        catch (Exception e)
-                        {
-
-                           output.AddErrorLine(e.Message.Replace("\r\n"," ") + " - " + e.InnerException);
-                        }
-
-
-                        }
-
-                    }
-
-                }
-
-            }
-        }
-        */
 
         private static string ProcessRulesSource(string source)
         {
@@ -2552,7 +2286,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                         KBDoctorOutput.Message( "Object " + obj.Name);
 
                         string callers = ChangeUDPCallWhenNecesary(obj);
-                        // CleanKBHelper.CleanKBObjectVariables(obj);
                         //Cambio expresiones regulares
                         for (int i = 0; i < 9; i++)
                         {
@@ -2631,7 +2364,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
         private static string ReplaceOneLegacy(string myString, string v)
         {
-            //IOutputService output = CommonServices.Output;
             int from, to;
             string newString = "";
 
@@ -2639,12 +2371,10 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             to = from + v.Length;
             string aux = myString.Substring(to, myString.Length - to).Trim();
             aux = aux.Replace("(", "");
-            // aux = aux.Replace(" ", "");
             string objeto = "";
             foreach (var token in aux.Split(new char[] { ',', ')', ' ' }))
             {
                 objeto = token;
-                //  KBDoctorOutput.Message("Token>" + token + "<FinToken");
                 break;
             }
             if (objeto != "" && objeto.Substring(0, 1) != "&") //Call Dinamico si esta llamando a una variable
@@ -2674,7 +2404,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             foreach (KBObject obj in sorted )
                 {
                 string objTypeName = obj.TypeDescriptor.Name;
-               // KBDoctorOutput.Message(obj.Name);
 
                 if (objTypeName.Contains("Pattern"))
                     continue;
@@ -2695,7 +2424,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 if (obj is DataStoreCategory)
                     continue;
 
-               // KBDoctorOutput.Message(obj.Name);
                 string objName = "KBD_" + obj.Guid.ToString().Replace("-", "");
                 obj.Name = objName;
                 obj.Description = objName;
@@ -2706,7 +2434,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 }
                 catch 
                     {
-                       // KBDoctorOutput.Error(obj.Name + " " + obj.TypeDescriptor.Name + " " + e.Message + " " + e.InnerException);
                     }          
 
             }
@@ -2783,14 +2510,12 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                                        where ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
                                        select model.Objects.Get(r.To)).ToList().Count;
                         // ESTO DEJO DE SER NECESARIO EN GX15
-                        // readers = readers - updaters - inserters - deleters;
                         int total = updaters + inserters + deleters + readers;
 
                         List<KBObject> outmodule = (from r in model.GetReferencesFrom(obj.Key, LinkType.UsedObject)
                                                     where r.ReferenceType == ReferenceType.WeakExternal // las referencias a tablas que agrega el especificador son de este tipo
                                                     where ReferenceTypeInfo.HasUpdateAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasInsertAccess(r.LinkTypeInfo) 
                                                        || ReferenceTypeInfo.HasDeleteAccess(r.LinkTypeInfo) || ReferenceTypeInfo.HasReadAccess(r.LinkTypeInfo)
-                                                   // where obj.Module != TablesHelper.TableModule(model, (Table)model.Objects.Get(r.To))
                                                     select model.Objects.Get(r.To)).ToList();
                         //Busco las tablas fuera del modulo. 
                         int outmoduleint = 0;
@@ -2874,7 +2599,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 output.StartSection("KBDoctor", title);
 
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                // writer.AddHeader(title);
                 writer.AddCSVLine(new string[] { "Object", "Description", "Type", "Module",
                                 "#ParmIN", "#ParamOUT", "#ParamINOUT", "#Parameters",
                                 "#Comments", "#Lines", "Max Nest", "Longest Code Block", "Cyclomatic Complexity",
@@ -2936,7 +2660,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     {
                         if (isGenerated(obj) && !isGeneratedbyPattern(obj))
                         {
-                           // KBDoctorOutput.Message("Processing :" + obj.Name);
                             
 
                             string source = Functions.ObjectSourceUpper(obj);
@@ -3046,35 +2769,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             }
             return dict_commits;
         }
-        /*
-        private static int CountCommits(KBObject obj, List<IKBVersionRevision> revisions_list)
-        {
-            int commits = 0;
-            Dictionary<string, List<string[]>> review_by_user;
-            List<string> objs_reviewed = new List<string>();
-            foreach (IKBVersionRevision revision in revisions_list)
-            {
-                foreach (IRevisionAction action in revision.Actions)
-                {
-                    QualifiedName qn;
-                    string name = "";
-                    if (obj.Model.Objects.GetName(action.Key) != null)
-                    {
-                        KBObject obj_act = obj.KB.DesignModel.Objects.Get(action.Guid);
-                        qn = obj_act.QualifiedName;
-                        name = qn.ObjectName;
-                    }
-                    if (name != "")
-                    {
-                        if(name == obj.QualifiedName.ObjectName)
-                        {
-                            commits++;
-                        }
-                    }
-                }
-            }
-            return commits;
-        }*/
 
         private static int CountRules(KBObject obj)
         {
@@ -3145,7 +2839,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 }
             }
 
-          //  callers = list_ref.Count();
             return callers;
         }
 
@@ -3470,7 +3163,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                 KBObject objRef = KBObject.Get(obj.Model, reference.From);
 
-                // KBDoctorOutput.Message(objRef.Name + "->" + obj.Name);
 
                 string source = Functions.ObjectSourceUpper(objRef);
                 source = Functions.RemoveEmptyLines(source);
@@ -3478,7 +3170,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 string sourceWOComments = Functions.ExtractComments(source);
                 sourceWOComments = sourceWOComments.Replace("\t", "");
                 sourceWOComments = sourceWOComments.Replace(" ", "");
-                // sourceWOComments = sourceWOComments.Replace(".CALL", "..");
 
                 string callAux = "CALL(" + obj.Name.ToUpper();
 
@@ -3511,7 +3202,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 SaveNewSource(obj, sourcemodified);
                 KBDoctorOutput.Message( "=====================================");
                 KBDoctorOutput.Message( "Modified .. " + obj.Name);
-                //KBDoctorOutput.Message(sourcemodified);
                 modified = true;
             }
             return modified;
@@ -3566,18 +3256,14 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
             string sourceWOComments = Functions.ExtractComments(source);
 
             string lista = "";
-            //     KBDoctorOutput.Message("");
-            //     KBDoctorOutput.Message("Processing : " + obj.Name);
 
             foreach (EntityReference reference in obj.GetReferences())
             {
                 KBObject objRef = KBObject.Get(obj.Model, reference.To);
 
 
-                //    List<string> Spec = new List<string>();
                 if (IsCallalable(objRef))
                 {
-                    //           KBDoctorOutput.Message("     Calling : " + objRef.Name);
                     StringCollection interfazCalledObject = InspectCall(objRef);
 
                     using (StringReader reader = new StringReader(sourceWOComments))
@@ -3595,7 +3281,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                                 line.Replace("call(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace("udp(", "(", StringComparison.CurrentCultureIgnoreCase);
                                 line.Replace(objRef.Name, "Ñ", StringComparison.CurrentCultureIgnoreCase);
-                                //                     KBDoctorOutput.Message("............ Line . " + line);
 
                                 StringCollection interfazCallerObject = ProcessingObjectCall(obj, line);
                                 for (int i = 0; i < interfazCallerObject.Count; i++)
@@ -3633,25 +3318,19 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                 if (substring != "")
                 {
-                    // KBDoctorOutput.Message("................ Substring ." + substring);
                     if (substring.StartsWith("&"))
                     {
                         lista.Add(TypeOfVariable(substring.Replace("&", ""), obj));
-                        //KBDoctorOutput.Message("_________________________" + TypeOfVariable(substring.Replace("&", ""), obj));
                     }
                     else
                     {
                         IKBService kbserv = UIServices.KB;
-                        //    +TypeDescriptor  { Attribute(adbb33c9 - 0906 - 4971 - 833c - 998de27e0676)}
-                        //    Artech.Architecture.Common.Descriptors.KBObjectDescriptor
-
                         foreach (KBObject att in kbserv.CurrentModel.Objects.GetByName("Attributes", new Guid("adbb33c9-0906-4971-833c-998de27e0676"), substring))
                         {
                             if ((att != null) && (att is Artech.Genexus.Common.Objects.Attribute))
                             {
                                 string type = (TypeOfAttribute((Artech.Genexus.Common.Objects.Attribute)att));
                                 lista.Add(type);
-                                //KBDoctorOutput.Message("__________x______________" + TypeOfAttribute((Artech.Genexus.Common.Objects.Attribute)att));
                                 if (type == "")
                                 {
                                     KBDoctorOutput.Message( "__________no se pudo______________" + substring);
@@ -3663,7 +3342,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
                 }
             }
-            // }
             return lista;
 
 
@@ -3683,7 +3361,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                         string p = TypeOfParm(parm, objRef);
 
                         lista.Add(p);
-                        // KBDoctorOutput.Message("        parameter : " + parm.Name + " - " + p);
                     }
                 }
             }
@@ -3831,7 +3508,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    //  line = line.TrimStart().ToUpper();
                     countLine += 1;
 
                     if (line.StartsWith("SUB ") || line.StartsWith("EVENT "))
@@ -3871,16 +3547,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                         MarkReachables(output, obj, reachablesObjects);
                     }
                                   
-/*
-                    foreach (KBObject objRef in reachablesObjects)
-                    {
-                      
-                        if (objRef is Transaction || objRef is WebPanel)
-
-                            KBDoctorOutput.Message( obj.TypeName + " " + obj.Name + " => " + objRef.Name + " " + objRef.TypeName );
-                            
-                        
-                    } */
                 }
 
                 writer.AddFooter();
@@ -4007,7 +3673,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
 
 
                     Boolean SaveObj = false;
-                    if (isGenerated(obj) && (/*obj is Transaction || obj is WebPanel || obj is WorkPanel ||*/ obj is Procedure))
+                    if (isGenerated(obj) && (obj is Procedure))
                     {
                         KBDoctorOutput.Message( "Procesing.... " + obj.Name + " - " + obj.TypeDescriptor.Name);
                         string pic2 = (string)obj.GetPropertyValue("ATT_PICTURE");
@@ -4375,7 +4041,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                             }
                         }
                         i.Delete();
-                        //   i.Save();
                         t.Save();
                         MessageBox.Show("Index " + name + " was successfully removed.");
                     }
@@ -4682,14 +4347,11 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 selectObjectOption.MultipleSelection = true;
                 string lista = "";
 
-                // selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Module>());
                 foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
                 {
 
                     if (KBObjectHelper.IsSpecifiable(obj))
                     {
-                        //        lista += obj.Name + ";";
-                        //output.Add(obj.QualifiedName.ObjectName.ToString() + ";");
 
                         if (!objToBuild.Contains(obj))
                         {
@@ -4736,177 +4398,7 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                 form.ShowDialog();
                 return;
             }
-            /*
-            IKBService kbserv = UIServices.KB;
-            KBModel kbModel = UIServices.KB.CurrentModel;
-            IOutputService output = CommonServices.Output;
 
-            bool success = true;
-            string title = "KBDoctor - Objects with property";
-            output.StartSection("KBDoctor", title);
-
-            //string propertyString = Properties.WBP.WebUserExperience ;
-            //string propertyValue = Properties.WBP.WebUserExperience_Values.Smooth;
-            try
-            {
-               
-          
-                KBDoctorOutput.Message( "Type, Name, Web User Exp, MasterPage, Theme, Web Form Defaults, FormisDefault ");
-                //foreach (KBObject obj in kbModel.Objects.GetByPropertyValue(propertyString, propertyValue) )
-                /*  foreach (KBObject obj in Transaction.GetAll(kbModel))
-
-                   {
-                       ListaObjectProperties(obj);
-                   }
-                */
-
-            /*
-                SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                selectObjectOption.MultipleSelection = true;
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-                selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-             //   List<KBObject> objects = new List<KBObject>();
-             //   HashSet<EntityKey> guids = new HashSet<EntityKey>();
-                foreach (KBObject obj in UIServices.SelectObjectDialog.SelectObjects(selectObjectOption))
-                {
-                    ListaObjectProperties(obj);
-                }
-             
-
-
-                /*
-                KBDoctorOutput.Message("===== External Objects = WSDL ========");
-                foreach (KBObject obj in ExternalObject.GetAll(kbModel)) //.GetByPropertyValue("USE_ENCRYPTION", "SITE"))
-                {
-                    if (obj.GetPropertyValueString("ExoType") == "WSDL")
-                    {
-                        KBDoctorOutput.Message(obj.Name);
-
-                        EXOStructurePart EOPart = obj.Parts.Get<EXOStructurePart>();
-                        foreach (ExternalObjectMethod eom in EOPart.ExternalMethods)
-                        {
-                            String eomAddress = eom.GetPropertyValueString("ExoMethodAddress");
-
-                            Uri uri = new Uri(eomAddress);
-                            // string requested = uri.Scheme + Uri.SchemeDelimiter + uri.Host + ":" + uri.Port;
-                            string LocationSecure = (uri.Scheme == "http") ? "0" : "1";
-                            string LocationProgram = uri.Segments[uri.Segments.Length - 1];
-                            string LocationBaseURL = string.Empty;
-                            string LocationID = obj.QualifiedName.ToString().Replace(".", "_");
-                            for (int i = 0; i < uri.Segments.Length - 1; i++)
-                            {
-                                LocationBaseURL += uri.Segments[i];
-                            }
-                            string LocationNameID = string.Empty;
-                            if (obj.Description == "")
-                                LocationNameID = LocationID;
-                            else
-                                LocationNameID = obj.Description;
-
-                            KBDoctorOutput.Message(" ");
-
-                            KBDoctorOutput.Message("Msg('Inserted:  " + LocationID  + "',status)");
-                            KBDoctorOutput.Message("new ");
-                            KBDoctorOutput.Message("  LocationID=  '" + LocationID +"'");
-                            KBDoctorOutput.Message("  LocationNameID='" + LocationNameID + "'");
-                            KBDoctorOutput.Message("  LocationHost=  '" + uri.Host + "'") ;
-                            KBDoctorOutput.Message("  LocationPort=  " + uri.Port);
-                            KBDoctorOutput.Message("  LocationSecure=" + LocationSecure);
-                            KBDoctorOutput.Message("  LocationBaseURL='" + LocationBaseURL + "'");
-                            KBDoctorOutput.Message("  LocationProgram='" + LocationProgram + "'");
-                            KBDoctorOutput.Message("  LocationTimeout = 3600");
-                            
-                            KBDoctorOutput.Message("      when duplicate Msg('ERROR DUPLICATE: ' + LocationID,status)");
-                            KBDoctorOutput.Message("endnew " + Environment.NewLine );
-                            break;
-                        }
-
-                    }
-                }
-                
-                KBDoctorOutput.Message( "");
-                KBDoctorOutput.Message( "===== SOAP ========");
-                bool hassdt;
-                foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "SOAP"))
-                {
-                    hassdt = false;
-                    ICallableObject callableObject = obj as ICallableObject;
-                    if (callableObject != null)
-                    {
-                        foreach (Signature signature in callableObject.GetSignatures())
-                        {
-                            foreach (Parameter parm in signature.Parameters)
-                            {
-
-                                if (parm.IsAttribute)
-                                {
-                                    Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)parm.Object;
-                                    if (att != null)
-                                        if (Utility.FormattedTypeAttribute(att).Contains("GX_SDT")){
-                                            hassdt = true;
-                                        }
-                                }
-                                else
-                                {
-                                    Variable var = (Variable)parm.Object;
-                                    if (var != null)
-                                        if (Utility.FormattedTypeVariable(var).Contains("GX_SDT"))
-                                        {
-                                            hassdt = true;
-                                        }
-                                }
-                            }
-                        }
-                    }
-                    if (hassdt)
-                    {
-                        KBDoctorOutput.Message("SOAP:" + obj.Name + " (SDT in Parms)");
-                    }
-                    else
-                    {
-                        KBDoctorOutput.Message("SOAP:" + obj.Name);
-                    }
-                    
-                }
-                
-                KBDoctorOutput.Message( "");
-                KBDoctorOutput.Message( "===== HTTP ========");
-                foreach (KBObject obj in kbModel.Objects.GetByPropertyValue("CALL_PROTOCOL", "HTTP"))
-                {
-                    KBDoctorOutput.Message( obj.Name);
-                }
-                /*
-                KBDoctorOutput.Message( "");
-                KBDoctorOutput.Message( "===== SOAP NAMESPACE IN PROCEDURE ========");
-                foreach (Procedure p in Procedure.GetAll(kbModel))
-                {
-                    string propval = p.GetPropertyValueString("SOAP_NAMESPACE");
-                    Artech.Common.Properties.Property prop =  p.GetProperty("SOAP_NAMESPACE");
-                    
-                    if (propval != "" && !prop.IsDefault)
-                    {
-                        KBDoctorOutput.Message( p.Name + " Namespace:" + propval );
-                    }
-
-                }
-
-                KBDoctorOutput.Message( "");
-                KBDoctorOutput.Message( "===== xml NAMESPACE IN SDT ========");
-                foreach (SDT sdt in SDT.GetAll(kbModel))
-                {
-                    ListSdtNamespace(sdt.SDTStructure.Root, sdt.Name);
-
-                }*/
-            /*
-            }
-            catch (Exception e)
-            {
-                success = false;
-                output.AddErrorLine(e.Message + " " +e.InnerException);
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
-            }
-
-            */
             void ListaObjectProperties(KBObject obj)
             {
                 if (isGenerated(obj))
@@ -4925,15 +4417,6 @@ private static void WriteObjectToJsonFile(KBObject obj, string newDir)
                     QualifiedName qname = new QualifiedName("", "LuciaMasterPage_v4");
                     WebPanel masterPage = WebPanel.Get(kbModel, qname);
 
-                    /*
-
-                    obj.SetPropertyValue(Properties.WBP.MasterPage, new WebPanelReference(masterPage) );
-
-
-                    obj.SetPropertyValue(Properties.TRN.WebUserExperience, Properties.TRN.WebUserExperience_Values.Smooth);
-                    obj.SetPropertyValue(Properties.TRN.WebFormDefaults, Properties.TRN.WebFormDefaults_Enum.ResponsiveWebDesign);
-                    obj.Save();
-                    */
 
 
 
@@ -5005,11 +4488,8 @@ public static void ListAPIObjects()
 
                 string  sw2 = "";
                 SortedDictionary<string, string> sw3 = new SortedDictionary<string, string>();
-                //     KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                //     writer.AddHeader(title);
                 int numObj = 0;
 
-                //writer.AddTableHeader(new string[] { "Type", "Object", "Module", "Parm" });
 
                 foreach (KBObject obj in kbserv.CurrentModel.Objects.GetAll())
                 {
@@ -5039,20 +4519,13 @@ public static void ListAPIObjects()
                             tieneInterfaz = true;
 
 
-                        //  string ruleparm = Functions.ExtractRuleParm(obj);
-                        //  ruleparm = Regex.Replace(ruleparm, @"\t|\n|\r", "");
-                        // ruleparm = ruleparm.Replace(" ", "");
                         string callprotocol = obj.GetPropertyValueString("CALL_PROTOCOL");
                         if (callprotocol == "")
                             callprotocol = "Internal";
 
                         if (tieneInterfaz)
                         {
-                            // if (obj is Procedure && isMain)
 
-                            //   writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Functions.linkObject(obj), obj.Module.Name, ruleparm });
-                            //sw += obj.TypeDescriptor.Name + "\t" + obj.QualifiedName + "\t" + callprotocol  + "\t"  + ruleparm + "\r\n";
-                            //      sw2 += callprotocol+ "\t" + obj.Name + "\t" + qualifiedName + "\r\n";
                             sw3[callprotocol + "\t" + obj.Name] = qualifiedName;
                         }
                         numObj += 1;
@@ -5060,18 +4533,13 @@ public static void ListAPIObjects()
                             KBDoctorOutput.Message( obj.TypeDescriptor.Name + "," + obj.Name + "," + obj.Description); //+ "," + obj.Timestamp.ToString());
                     }
                 }
-                //     writer.AddFooter();
-                //     writer.Close();
 
-                //KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 bool success = true;
 
 
                 string directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
                 string fechahora = String.Format("{0:yyyy-MM-dd-HHmm}", DateTime.Now);
 
-                // string fileName = directoryArg + @"\API-" + fechahora + ".txt";
-                // System.IO.File.WriteAllText(fileName, sw);
 
 
 
@@ -5153,7 +4621,6 @@ public static void ListAPIObjects()
                             foreach (KBObject obj in updatersAtt)
                             {
                                 updateattstring += Functions.linkObject(obj) + " ";
-                                // KBDoctorOutput.Message(obj.Name);
                             }
 
                             writer.AddTableData(new string[] { Functions.linkObject(t), trnstring, updatetablestring, updateattstring });
@@ -5163,7 +4630,6 @@ public static void ListAPIObjects()
                             KBDoctorHelper.ShowKBDoctorResults(outputFile);
 
 
-                            //output.EndSection("KBDoctor", title, success);
                         }
 
                     }
@@ -5572,19 +5038,6 @@ public static void ListAPIObjects()
                             Artech.Genexus.Common.AST.AbstractNode paramRootNode = Artech.Genexus.Common.AST.ASTNodeFactory.Create(parser.Structure, source, vp, info);
                         }
 
-                        /*
-                        foreach (TokenData token in parser.GetTokens(true, parserInfo, source.Source))
-                        {
-                                string meaning = token_meaning[(TokensIds)token.Token] as string;
-                            if (token.Token >= 100)
-                            {
-                                writer.AddTableData(new string[] { "", meaning + "(" + token.Word + ")", "", token.Token.ToString() });
-                            }
-                            else
-                            {
-                                writer.AddTableData(new string[] { "", "", meaning + "(" + token.Word + ")", token.Token.ToString() });
-                            }
-                        }*/
                     }
                 }
                 writer.AddFooter();
@@ -5630,31 +5083,12 @@ public static void ListAPIObjects()
         private static void AddElementToWebForm(FormElement element, WebFormPart webForm)
         {
 
-  /*
-            // Create a new WebForm element based on the WinForm element
-            var newElement = new WebFormElement
-            {
-                Name = element.Name,
-                Type = element.Type,
-                Properties = element.Properties
-            };
-
-            // Add the new element to the WebForm
-            webForm.Document.AppendChild(newElement);
-
-            // Recursively add child elements
-            foreach (var childElement in element.Children)
-            {
-                AddElementToWebForm(childElement, webForm);
-            }
-  */
         }
         public static void AddObjectToSDPanel(SDPanel sDPanel, KBObject objToAdd)
         {
             IOutputService output = CommonServices.Output;
             try
             {
-              //  sDPanel.Objects..Add(objToAdd, objToAdd.Name, null);
                 sDPanel.Save();
                 output.AddLine($"Object {objToAdd.Name} added to SDPanel {sDPanel.Name} successfully.");
             }
@@ -5683,10 +5117,4 @@ public static void ListAPIObjects()
 
     }
 
- //   internal class WebFormElement : XmlNode
- //   {
-  //      public string Name { get; set; }
-   //     public RuntimeControlType Type { get; set; }
-   //     public PropertiesObject Properties { get; set; }
-  //  }
 }
