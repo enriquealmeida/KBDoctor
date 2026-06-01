@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
 
 using Artech.Architecture.Common.Collections;
+using Artech.Architecture.Common.Descriptors;
 using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.Architecture.UI.Framework.Services;
@@ -182,17 +183,68 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
             XmlDocument doc = new XmlDocument();
-            String ObjName = "";
             try
             {
                 doc.LoadXml(xmlstring);
-                ObjName = doc.SelectSingleNode("ObjectSpec/Object/ObjName").InnerText;
-                if (ObjName.EndsWith("_BC"))
-                    ObjName = ObjName.Replace("_BC", "");
+                string objName = FirstDescendantValue(doc, "ObjName");
+                string objType = FirstDescendantValue(doc, "ObjClsName");
+                KBObject obj = GetObjectFromNavigationName(kbserv.CurrentModel, objType, objName);
+                if (obj != null)
+                {
+                    return obj;
+                }
+
+                if (objName.EndsWith("_BC", StringComparison.OrdinalIgnoreCase))
+                {
+                    return GetObjectFromNavigationName(kbserv.CurrentModel, objType, objName.Substring(0, objName.Length - 3));
+                }
             }
             catch (Exception e) { Console.WriteLine(e.Message); };
-            return KbStats.ObjectPartialName(ObjName);
+            return null;
 
+        }
+
+        private static KBObject GetObjectFromNavigationName(KBModel model, string objType, string qualifiedObjectName)
+        {
+            if (string.IsNullOrEmpty(qualifiedObjectName))
+            {
+                return null;
+            }
+
+            string moduleName = "";
+            string objectName = qualifiedObjectName;
+            int lastDot = qualifiedObjectName.LastIndexOf('.');
+            if (lastDot >= 0)
+            {
+                moduleName = qualifiedObjectName.Substring(0, lastDot);
+                objectName = qualifiedObjectName.Substring(lastDot + 1);
+            }
+
+            QualifiedName qualifiedName = new QualifiedName(moduleName, objectName);
+            if (!string.IsNullOrEmpty(objType))
+            {
+                KBObjectDescriptor descriptor = KBObjectDescriptor.Get(objType);
+                if (descriptor != null)
+                {
+                    KBObject typedObject = model.Objects.Get(descriptor.Id, qualifiedName);
+                    if (typedObject != null)
+                    {
+                        return typedObject;
+                    }
+                }
+            }
+
+            foreach (KBObject obj in model.Objects.GetByPartialName(new[] { "Objects" }, objectName))
+            {
+                if (string.Equals(obj.QualifiedName.ToString(), qualifiedObjectName, StringComparison.OrdinalIgnoreCase)
+                    || (string.Equals(obj.Name, objectName, StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(obj.QualifiedName.ModuleName, moduleName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return obj;
+                }
+            }
+
+            return null;
         }
 
         private static void ProcesoNavigation(string xmlstring, IOutputService output, TextWriter writer2, KBObject obj)
@@ -630,83 +682,143 @@ namespace Concepto.Packages.KBDoctor
         {
             IKBService kbserv = UIServices.KB;
 
-            string title = "KBDoctor - Where update this attribute? :";
-            KBDoctorWebForms.ShowTableAttributeSelection(title, "ApplyAttUpdated", GetTableAttributes(kbserv.CurrentModel));
+            string title = "KBDoctor - Where update this attribute";
+            KBDoctorWebForms.ShowTableAttributeSelectionWithLabels(title, "ApplyAttUpdated", GetTableAttributeOptions(kbserv.CurrentModel));
         }
 
         public static void ApplyAttUpdated(object[] parameters)
         {
             IKBService kbserv = UIServices.KB;
 
-            string title = "KBDoctor - Where update this attribute? :";
+            string title = "KBDoctor - Where update this attribute";
+            string outputFile = string.Empty;
+            KBDoctorXMLWriter writer = null;
+            bool reportStarted = false;
+            bool success = false;
             try
             {
-                string outputFile = Utility.CreateOutputFile(kbserv, title);
+                outputFile = Utility.CreateOutputFile(kbserv, title);
 
                 IOutputService output = CommonServices.Output;
                 KBDoctorOutput.StartSection(title);
+                reportStarted = true;
+                KBDoctorOutput.Message("AttUpdated debug: output file '" + outputFile + "'.");
 
                 string tblName = KBDoctorWebForms.GetParameter(parameters, "tblName");
                 string attName = KBDoctorWebForms.GetParameter(parameters, "attName");
-                if (!string.IsNullOrEmpty(tblName) && !string.IsNullOrEmpty(attName))
+                KBDoctorOutput.Message("AttUpdated debug: selected table='" + tblName + "', attribute='" + attName + "'.");
+                if (string.IsNullOrEmpty(tblName) || string.IsNullOrEmpty(attName))
                 {
+                    KBDoctorOutput.Error("Missing table or attribute selection.");
+                    return;
+                }
 
-                    List<string> Objlist = new List<string>();
+                writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+                writer.AddHeader(title + attName + " in table " + tblName);
+                writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Navigation File" });
 
+                int IndFiles = 0;
+                int foundRows = 0;
 
-                    KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
-                    writer.AddHeader(title + attName + " in table " + tblName);
-                    writer.AddTableHeader(new string[] { "Object", "Description", "Type", "Navigation File" });
+                //   IKBService kbserv = UIServices.KB;
+                string fileWildcard = @"*.xml";
+                var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
+                int totalFiles = 0;
+                int matchingTableFiles = 0;
+                int matchingAttributeFiles = 0;
 
-                    int IndFiles = 0;
-
-                    //   IKBService kbserv = UIServices.KB;
-                    string directoryArg = KBDoctorHelper.SpcDirectory(kbserv);
-                    string fileWildcard = @"*.xml";
-                    var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
+                foreach (string directoryArg in NavigationXmlDirectories(kbserv))
+                {
+                    KBDoctorOutput.Message("AttUpdated debug: scanning navigation directory '" + directoryArg + "'.");
                     string[] xFiles = System.IO.Directory.GetFiles(directoryArg, fileWildcard, searchSubDirsArg);
+                    KBDoctorOutput.Message("AttUpdated debug: directory file count=" + xFiles.Length.ToString() + ".");
 
                     foreach (string x in xFiles)
                     {
-                        // KBDoctorOutput.Message(x);
-                        IndFiles += 1;
-                        if (IndFiles % 100 == 0)
-                            KBDoctorOutput.Message( " Procesing " + IndFiles.ToString() + " navigation files.");
 
-                        string filename = Path.GetFileNameWithoutExtension(x);
 
-                        if (!Objlist.Contains(filename))
+                        if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
+
                         {
-                            Objlist.Add(filename);
-                            if (!Path.GetFileNameWithoutExtension(x).StartsWith("Gx0"))
-                            {
-                                string xmlstring = AddXMLHeader(x);
+                            // KBDoctorOutput.Message(x);
+                            totalFiles++;
 
-                                if (ObjectUpdateTable(xmlstring, tblName, attName))
+
+                            string xmlstring = AddXMLHeader(x);
+
+                            if (ObjectChangesTable(xmlstring, tblName))
+                            {
+                                matchingTableFiles++;
+                                if (!ObjectUpdateTable(xmlstring, tblName, attName))
                                 {
-                                    KBObject obj = ExtractObject(xmlstring);
-                                    if (obj == null)
-                                        writer.AddTableData(new string[] { "Can't find object", "", "", x });
-                                    else
-                                        if (Utility.isGenerated(obj) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT"))
-                                        writer.AddTableData(new string[] { Utility.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, x });
+                                    continue;
+                                }
+
+                                matchingAttributeFiles++;
+                                IndFiles += 1;
+                                if (IndFiles % 100 == 0)
+                                    KBDoctorOutput.Message(" Procesing " + IndFiles.ToString() + " navigation files.");
+
+                                KBObject obj = ExtractObject(xmlstring);
+                                if (obj == null)
+                                {
+                                    KBDoctorOutput.Warning("AttUpdated debug: matching file but object could not be resolved. File='" + x + "'.");
+                                    writer.AddTableData(new string[] { "Can't find object", "", "", x });
+                                    foundRows++;
+                                }
+                                else if (Utility.isGenerated(obj) || obj.GetPropertyValue<bool>("idISBUSINESSCOMPONENT"))
+                                {
+                                    writer.AddTableData(new string[] { Utility.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, x });
+                                    foundRows++;
                                 }
                             }
                         }
                     }
+                }
 
+                if (foundRows == 0)
+                {
+                    writer.AddTableData(new string[] { "No objects found", "", "", "" });
+                }
+
+                KBDoctorOutput.Message("AttUpdated debug: total XML files checked=" + totalFiles.ToString() + ".");
+                KBDoctorOutput.Message("AttUpdated debug: files changing table=" + matchingTableFiles.ToString() + ".");
+                KBDoctorOutput.Message("AttUpdated debug: files updating attribute=" + matchingAttributeFiles.ToString() + ".");
+                KBDoctorOutput.Message("AttUpdated debug: report rows=" + foundRows.ToString() + ".");
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                KBDoctorOutput.Error("Error generating AttUpdated report: " + ex.Message);
+                KBDoctorOutput.Error("AttUpdated debug stack: " + ex.StackTrace);
+            }
+            finally
+            {
+                if (writer != null)
+                {
+                    KBDoctorOutput.Message("AttUpdated debug: closing report writer.");
                     writer.AddFooter();
                     writer.Close();
-
-                    KBDoctorHelper.ShowKBDoctorResults(outputFile);
-                    bool success = true;
-                    KBDoctorOutput.EndSection(title, success);
                 }
-            }
-            catch
-            {
-                bool success = false;
-                KBDoctor.KBDoctorOutput.EndSection(title, success);
+                else
+                {
+                    KBDoctorOutput.Warning("AttUpdated debug: writer was not created.");
+                }
+
+                if (reportStarted)
+                {
+                    KBDoctor.KBDoctorOutput.EndSection(title, success);
+                }
+
+                KBDoctorOutput.Message("AttUpdated debug: reportStarted=" + reportStarted.ToString() + ", success=" + success.ToString() + ", output exists=" + File.Exists(outputFile).ToString() + ".");
+                if (!string.IsNullOrEmpty(outputFile) && File.Exists(outputFile))
+                {
+                    KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                }
+                else
+                {
+                    KBDoctorOutput.Error("AttUpdated debug: report file was not found and cannot be shown. File='" + outputFile + "'.");
+                }
             }
         }
 
@@ -727,8 +839,60 @@ namespace Concepto.Packages.KBDoctor
             return result;
         }
 
+        private static Dictionary<string, IList<KBDoctorWebForms.SelectOption>> GetTableAttributeOptions(KBModel model)
+        {
+            Dictionary<string, IList<KBDoctorWebForms.SelectOption>> result = new Dictionary<string, IList<KBDoctorWebForms.SelectOption>>();
+            foreach (Table table in Table.GetAll(model))
+            {
+                List<KBDoctorWebForms.SelectOption> attributes = new List<KBDoctorWebForms.SelectOption>();
+                foreach (TableAttribute attribute in table.TableStructure.Attributes)
+                {
+                    string description = attribute.Attribute == null || string.IsNullOrEmpty(attribute.Attribute.Description) ? attribute.Name : attribute.Attribute.Description;
+                    attributes.Add(new KBDoctorWebForms.SelectOption(attribute.Name, attribute.Name + " - " + description));
+                }
 
+                result[table.Name] = attributes;
+            }
 
+            return result;
+        }
+
+        private static IEnumerable<string> NavigationXmlDirectories(IKBService kbserv)
+        {
+            HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (string generatorDirectory in Directory.GetDirectories(KBDoctorHelper.SpcDirectory(kbserv), "GEN*", System.IO.SearchOption.TopDirectoryOnly))
+            {
+                AddDirectoryIfExists(directories, Path.Combine(generatorDirectory, "NVG"));
+            }
+
+            string kbLocation = kbserv.CurrentKB.Location;
+            if (Directory.Exists(kbLocation))
+            {
+                foreach (string spcDirectory in Directory.GetDirectories(kbLocation, "GXSPC*", System.IO.SearchOption.TopDirectoryOnly))
+                {
+                    foreach (string generatorDirectory in Directory.GetDirectories(spcDirectory, "GEN*", System.IO.SearchOption.TopDirectoryOnly))
+                    {
+                        AddDirectoryIfExists(directories, Path.Combine(generatorDirectory, "NVG"));
+                    }
+                }
+            }
+
+            if (directories.Count == 0)
+            {
+                AddDirectoryIfExists(directories, KBDoctorHelper.SpcDirectory(kbserv));
+            }
+
+            return directories;
+        }
+
+        private static void AddDirectoryIfExists(HashSet<string> directories, string directory)
+        {
+            if (!string.IsNullOrEmpty(directory) && Directory.Exists(directory))
+            {
+                directories.Add(directory);
+            }
+        }
 
         private static string AddXMLHeader(string fileName)
         {
@@ -746,23 +910,109 @@ namespace Concepto.Packages.KBDoctor
             {
                 doc.LoadXml(xmlstring);
 
-              //  string xpathstr = "//TableToUpdate/Table/TableName[text()='" + tblName + "']/../../AttrisToUpdate/Attribute/AttriName[text()='" + attName + "']";
-                string xpathstr = "//TableToUpdate[Table/TableName='" + tblName + "' and ./TableAction='update' and  ./AttrisToUpdate/Attribute/AttriName='" + attName + "']";
-                XmlNode node = doc.SelectSingleNode(xpathstr);
-                if (node == null)
-                    return false;
-                else
+                foreach (XmlNode tableToUpdate in NodesByLocalName(doc, "TableToUpdate"))
                 {
+                    string tableName = FirstDescendantValue(tableToUpdate, "TableName");
+                    if (!string.Equals(tableName, tblName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
 
-                    return true;
+                    foreach (XmlNode attrisToUpdate in ChildNodesByLocalName(tableToUpdate, "AttrisToUpdate"))
+                    {
+                        foreach (XmlNode attribute in ChildNodesByLocalName(attrisToUpdate, "Attribute"))
+                        {
+                            string attributeName = FirstDescendantValue(attribute, "AttriName");
+                            if (string.Equals(attributeName, attName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                return true;
+                            }
+                        }
+                    }
                 }
-                 }
+            }
             catch (Exception e) { Console.WriteLine(e.Message); };
-
-
 
             return false;
 
+        }
+
+        private static Boolean ObjectChangesTable(string xmlstring, string tblName)
+        {
+
+            XmlDocument doc = new XmlDocument();
+
+            try
+            {
+                doc.LoadXml(xmlstring);
+
+                foreach (XmlNode tableToUpdate in NodesByLocalName(doc, "TableToUpdate"))
+                {
+                    string tableName = FirstDescendantValue(tableToUpdate, "TableName");
+                    if (!string.Equals(tableName, tblName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    string tableAction = FirstDescendantValue(tableToUpdate, "TableAction");
+                    if (IsTableChangeAction(tableAction))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception e) { Console.WriteLine(e.Message); };
+
+            return false;
+
+        }
+
+        private static bool IsTableChangeAction(string tableAction)
+        {
+            return string.Equals(tableAction, "insert", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(tableAction, "update", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(tableAction, "delete", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static IEnumerable<XmlNode> NodesByLocalName(XmlDocument doc, string localName)
+        {
+            foreach (XmlNode node in doc.GetElementsByTagName("*"))
+            {
+                if (string.Equals(node.LocalName, localName, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return node;
+                }
+            }
+        }
+
+        private static IEnumerable<XmlNode> ChildNodesByLocalName(XmlNode parent, string localName)
+        {
+            foreach (XmlNode node in parent.ChildNodes)
+            {
+                if (string.Equals(node.LocalName, localName, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return node;
+                }
+            }
+        }
+
+        private static string FirstDescendantValue(XmlNode parent, string localName)
+        {
+            foreach (XmlNode node in parent.ChildNodes)
+            {
+                if (string.Equals(node.LocalName, localName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return node.InnerText;
+                }
+
+                string value = FirstDescendantValue(node, localName);
+                if (!string.IsNullOrEmpty(value))
+                {
+                    return value;
+                }
+            }
+
+            return string.Empty;
         }
 
     }

@@ -29,6 +29,18 @@ namespace Concepto.Packages.KBDoctor
             public int Decimals { get; private set; }
         }
 
+        public sealed class SelectOption
+        {
+            public SelectOption(string value, string text)
+            {
+                Value = value;
+                Text = text;
+            }
+
+            public string Value { get; private set; }
+            public string Text { get; private set; }
+        }
+
         public static void ShowTextInput(string title, string message, string command, IDictionary<string, string> fixedParameters, string valueParameterName, string currentValue)
         {
             string outputFile = Functions.CreateOutputFile(UIServices.KB, title);
@@ -157,6 +169,17 @@ namespace Concepto.Packages.KBDoctor
 
         public static void ShowTableAttributeSelection(string title, string command, IDictionary<string, IList<string>> tableAttributes)
         {
+            Dictionary<string, IList<SelectOption>> options = new Dictionary<string, IList<SelectOption>>();
+            foreach (KeyValuePair<string, IList<string>> pair in tableAttributes)
+            {
+                options[pair.Key] = pair.Value.Select(value => new SelectOption(value, value)).ToList();
+            }
+
+            ShowTableAttributeSelectionWithLabels(title, command, options);
+        }
+
+        public static void ShowTableAttributeSelectionWithLabels(string title, string command, IDictionary<string, IList<SelectOption>> tableAttributes)
+        {
             string outputFile = Functions.CreateOutputFile(UIServices.KB, title);
             KBDoctorOutput.StartSection(title);
 
@@ -168,13 +191,13 @@ namespace Concepto.Packages.KBDoctor
             html.AppendLine("<br><button type=\"button\" onclick=\"applyValue()\">Apply</button>");
             html.AppendLine("<script>");
             html.AppendLine("var tableAttributes={};");
-            foreach (KeyValuePair<string, IList<string>> pair in tableAttributes)
+            foreach (KeyValuePair<string, IList<SelectOption>> pair in tableAttributes)
             {
                 html.Append("tableAttributes['").Append(JavaScript(pair.Key)).Append("']=[");
-                html.Append(string.Join(",", pair.Value.OrderBy(name => name).Select(name => "'" + JavaScript(name) + "'").ToArray()));
+                html.Append(string.Join(",", pair.Value.OrderBy(option => option.Value).Select(option => "{value:'" + JavaScript(option.Value) + "',text:'" + JavaScript(option.Text) + "'}").ToArray()));
                 html.AppendLine("];");
             }
-            html.AppendLine("function fillAttributes(){var t=document.getElementById('tableName').value;var a=document.getElementById('attributeName');a.innerHTML='';(tableAttributes[t]||[]).forEach(function(name){var o=document.createElement('option');o.value=name;o.text=name;a.add(o);});}");
+            html.AppendLine("function fillAttributes(){var t=document.getElementById('tableName').value;var a=document.getElementById('attributeName');var items=tableAttributes[t]||[];a.options.length=0;for(var i=0;i<items.length;i++){a.options[a.options.length]=new Option(items[i].text,items[i].value);}}");
             html.AppendLine("function applyValue(){");
             html.AppendLine("var href='" + JavaScript(PackageCommandPrefix + command) + "';");
             html.AppendLine("href+='&tblName='+encodeURIComponent(document.getElementById('tableName').value);");

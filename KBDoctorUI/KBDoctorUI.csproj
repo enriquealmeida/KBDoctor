@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>Library</OutputType>
@@ -51,6 +51,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <SystemResourcesExtensionsPath Condition="Exists('$(GX_PROGRAM_DIR)\System.Resources.Extensions.dll')">$(GX_PROGRAM_DIR)\System.Resources.Extensions.dll</SystemResourcesExtensionsPath>
+    <SystemResourcesExtensionsPath Condition="'$(SystemResourcesExtensionsPath)' == '' and Exists('$(GX_PROGRAM_DIR)\Packages\System.Resources.Extensions.dll')">$(GX_PROGRAM_DIR)\Packages\System.Resources.Extensions.dll</SystemResourcesExtensionsPath>
     <SystemResourcesExtensionsPath Condition="'$(SystemResourcesExtensionsPath)' == '' and Exists('$(GX_PROGRAM_DIR)\..\GeneXus18\System.Resources.Extensions.dll')">$(GX_PROGRAM_DIR)\..\GeneXus18\System.Resources.Extensions.dll</SystemResourcesExtensionsPath>
     <SystemResourcesExtensionsPath Condition="'$(SystemResourcesExtensionsPath)' == '' and Exists('C:\GeneXus\GeneXus18\System.Resources.Extensions.dll')">C:\GeneXus\GeneXus18\System.Resources.Extensions.dll</SystemResourcesExtensionsPath>
   </PropertyGroup>
@@ -284,6 +285,7 @@
     <MakeDir Directories="$(GX_PROGRAM_DIR)\Packages" />
     <Copy SourceFiles="@(KBDoctorDebugFiles)" DestinationFolder="$(GX_PROGRAM_DIR)\Packages\" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(KBDoctorDependencyFiles)" DestinationFolder="$(GX_PROGRAM_DIR)\Packages\" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(SystemResourcesExtensionsPath)" DestinationFolder="$(GX_PROGRAM_DIR)\" SkipUnchangedFiles="true" Condition="'$(SystemResourcesExtensionsPath)' != '' and !Exists('$(GX_PROGRAM_DIR)\System.Resources.Extensions.dll')" />
     <Message Text="Copied @(KBDoctorDebugFiles->'%(Filename)%(Extension)', ', '), @(KBDoctorDependencyFiles->'%(Filename)%(Extension)', ', ') to $(GX_PROGRAM_DIR)\Packages" Importance="high" />
   </Target>
   <Target Name="WarnMissingGeneXusInstallDir" AfterTargets="Build" Condition="'$(GX_PROGRAM_DIR)' == ''">

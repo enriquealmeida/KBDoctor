@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -21,7 +21,7 @@ using Artech.Common.Framework.Commands;
 
 namespace Concepto.Packages.KBDoctor.Sources
 {
-    [Guid("37fc47d7-03d7-4389-9017-b8b711870599")]
+    [Guid("6f5f1d9e-4e9c-4b49-928c-b438a80d85a1")]
     public partial class KBDoctorToolWindow : AbstractToolWindow, ISelectionListener, ISelectionContainer
     {
         public static Guid guid = typeof(KBDoctorToolWindow).GUID;
@@ -55,11 +55,14 @@ namespace Concepto.Packages.KBDoctor.Sources
 
         public void Navigate(string address)
         {
+            KBDoctorOutput.Message("KBDoctorToolWindow.Navigate: address='" + address + "'.");
             if (!(String.IsNullOrEmpty(address)))
             {
                 if (!address.Equals("about:blank"))
                 {
+                    KBDoctorOutput.Message("KBDoctorToolWindow.Navigate: calling WebBrowser.Navigate.");
                     webBrowser2.Navigate(new Uri(address));
+                    KBDoctorOutput.Message("KBDoctorToolWindow.Navigate: WebBrowser.Navigate returned.");
                 }
             }
         }
