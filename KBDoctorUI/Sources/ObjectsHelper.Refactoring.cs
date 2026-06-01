@@ -683,18 +683,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     if (HasVariablesNotBasedOnAttributeOrDomain(obj, out cantVar))
                     {
-                        AssignDomToVar f = new AssignDomToVar(obj);
-                        f.ShowDialog();
-                        f.Close();
-                    }
-
-                }
-
-                foreach (KBObject obj in listObj)
-                {
-                    if (HasVariablesNotBasedOnAttributeOrDomain(obj, out cantVar))
-                    {
-                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, cantVar.ToString() });
+                        writer.AddTableData(new string[] { Functions.linkObject(obj), obj.Description, obj.TypeDescriptor.Name, VariablesNotBasedActions(obj) });
                     }
                 }
                 writer.AddTableFooterOnly();
@@ -736,6 +725,28 @@ namespace Concepto.Packages.KBDoctor
                 }
             }
             return tieneVarSinDomain;
+        }
+
+        private static string VariablesNotBasedActions(KBObject obj)
+        {
+            StringBuilder actions = new StringBuilder();
+            VariablesPart vp = obj.Parts.Get<VariablesPart>();
+            if (vp == null)
+            {
+                return string.Empty;
+            }
+
+            foreach (Variable v in vp.Variables)
+            {
+                if ((!v.IsStandard) && (v.AttributeBasedOn == null) && (v.DomainBasedOn == null) && (v.Type != eDBType.GX_USRDEFTYP)
+                    && (v.Type != eDBType.GX_SDT) && (v.Type != eDBType.GX_EXTERNAL_OBJECT) && (v.Type != eDBType.Boolean) && v.Type != eDBType.GX_BUSCOMP && v.Type != eDBType.GX_BUSCOMP_LEVEL && v.Type != eDBType.BITMAP)
+                {
+                    actions.Append(Functions.CommandLink("AssignAttributeOrDomainToVariable", v.Name + " " + Utility.FormattedTypeVariable(v), "guid", obj.Guid.ToString(), "varName", v.Name));
+                    actions.Append("<br>");
+                }
+            }
+
+            return actions.ToString();
         }
 
 

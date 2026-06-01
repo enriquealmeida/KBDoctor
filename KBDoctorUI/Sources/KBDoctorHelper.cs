@@ -38,6 +38,12 @@ namespace Concepto.Packages.KBDoctor
                     kbdtw.Navigate(outputFile);
                     return;
                 }
+
+                if (Package.CurrentKBDoctorWindow != null)
+                {
+                    Package.CurrentKBDoctorWindow.Navigate(outputFile);
+                    return;
+                }
             }
             catch (Exception e)
             {

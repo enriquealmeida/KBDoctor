@@ -1,0 +1,129 @@
+# Cambios recientes
+
+Fecha de revision: 2026-05-31
+
+## 2026-05-29 / 2026-05-30 - Cambios confirmados en Git
+
+- Se incorporo un checkpoint general del proyecto y se reorganizaron archivos historicos de `KBDoctorUI`, moviendo codigo hacia `Sources` y actualizando metadata, documentacion y recursos del paquete.
+- Se ajusto el build de la solucion completa:
+  - `KBDoctor.sln` vuelve a incluir los proyectos necesarios para compilar la solucion.
+  - `KBDoctorCore/Sources/Utility.cs` concentra utilidades compartidas.
+  - `KBDoctorUI/Sources/Functions.cs` quedo reducido al delegar logica comun.
+- Se corrigio la copia de assemblies de debug hacia los paquetes GeneXus desde `KBDoctorUI/KBDoctorUI.csproj`.
+- Se limpio `ObjectsHelper.cs`, eliminando codigo comentado y luego separando la clase en parciales:
+  - `ObjectsHelper.Commands.cs`
+  - `ObjectsHelper.MigrationLegacy.cs`
+  - `ObjectsHelper.Parser.cs`
+  - `ObjectsHelper.Refactoring.cs`
+- Se movio la logica de reportes de tablas desde UI hacia core:
+  - nuevo `KBDoctorCore/Sources/Tables.cs`
+  - ajustes en `KBDoctorCore.csproj`, `KBDoctorCmd.csproj`, `KBDoctorUI.csproj`, `KBDoctorHelper.cs` y `TablesHelper.cs`
+- Se agrego/actualizo la logica de estadisticas en core, especialmente `KBDoctorCore/Sources/KbStatistics.cs`, reduciendo responsabilidad equivalente en UI.
+- Se filtraron reportes y acciones para trabajar sobre objetos editables de usuario:
+  - uso de `Utility.EditableObjects`
+  - cambios en reportes de objetos, modulos, grafo, bad smells, atributos, tablas y seleccion de KBDoctor
+  - mejoras en `KBDoctorCore/Sources/API.cs`, `Objects.cs`, `CleanKB.cs`, `Utility.cs` y varios helpers de UI.
+
+Commits revisados:
+
+- `45bda42` - chore: checkpoint current changes
+- `8fd5fd3` - fix: copy debug assemblies to GeneXus packages
+- `f51fc67` - fix: allow full solution rebuild
+- `27444f5` - chore: remove commented code from ObjectsHelper
+- `92d633b` - refactor: split ObjectsHelper partials
+- `096a0b6` - Move table report logic to core
+- `db1487f` - EA - Primera version con Codex.
+- `962657d` - Filter object reports to editable objects
+
+## 2026-05-31 - Cambios locales sin commit
+
+### Formularios HTML para acciones interactivas
+
+- Se agrego `KBDoctorUI/Sources/KBDoctorWebForms.cs`.
+- Este helper genera paginas HTML temporales para pedir datos al usuario y luego ejecutar comandos KBDoctor mediante links `gx://`.
+- Incluye utilidades para:
+  - entradas de texto genericas
+  - busqueda y reemplazo
+  - reemplazo de dominios
+  - seleccion de tabla y atributo
+  - menus de acciones
+  - pantalla About
+  - lectura normalizada de parametros de comandos
+
+### Reemplazo de dialogos WinForms por comandos aplicables
+
+- `AttributesHelper.cs`:
+  - `AssignDescriptionToAttribute` ahora muestra un formulario HTML con el valor actual.
+  - nuevo `ApplyAttributeText` para aplicar descripcion, titulo o column title.
+  - `ReplaceDomain` ahora muestra un formulario HTML con dominios de origen y destino.
+  - nuevo `ApplyReplaceDomain` para ejecutar el reemplazo real.
+- `TablesHelper.cs`:
+  - `AssignDescriptionToTable` ahora muestra un formulario HTML.
+  - nuevo `ApplyTableText` para guardar la descripcion de la tabla.
+- `CleanKBHelper.cs`:
+  - `SearchAndReplace` ahora muestra formulario HTML.
+  - nuevo `ApplySearchAndReplace` para ejecutar la busqueda y reemplazo sobre objetos seleccionados.
+- `NavigationHelper.cs`:
+  - `AttUpdated` ahora muestra seleccion HTML de tabla y atributo.
+  - nuevo `ApplyAttUpdated` para ejecutar el reporte con los parametros elegidos.
+- `ObjectsHelper.Commands.cs`:
+  - `ObjectsUpdatingAttributes` se separo en seleccion y aplicacion.
+  - nuevos `SelectObjectsUpdatingAttributes` y `ApplyObjectsUpdatingAttributes`.
+
+### Nuevos comandos y registro del paquete
+
+- Se agregaron claves en `CommandKeys.cs` y handlers en `CommandManager.cs` para las nuevas acciones:
+  - `ApplyReplaceDomain`
+  - `ApplyAttUpdated`
+  - `ApplyAttributeText`
+  - `ApplyTableText`
+  - `SelectObjectsUpdateAttribute`
+  - `ApplyObjectsUpdateAttribute`
+  - `SetObjectPropertyText`
+  - `ApplyObjectPropertyText`
+  - `AssignAttributeOrDomainToVariable`
+  - `ApplySearchAndReplace`
+  - `RunResponsiveSmoothAction`
+- Se actualizaron `KBDoctorUI/KBDoctor.package` y `KBDoctorUI/GeneXusPackage.package` para exponer esos comandos.
+
+### Acciones sobre objetos y variables
+
+- `ObjectsHelper.Commands.cs`:
+  - nuevo flujo para editar propiedades de texto de objetos mediante formulario HTML (`SetObjectPropertyText` / `ApplyObjectPropertyText`).
+  - nueva accion `AssignAttributeOrDomainToVariable` para asignar atributo o dominio a una variable sin usar el formulario WinForms anterior.
+- `ObjectsHelper.Refactoring.cs`:
+  - el reporte de variables no basadas en atributo/dominio ahora agrega links accionables por variable.
+- `ObjectsHelper.cs`:
+  - `CreateDeployUnits` deja de abrir un prompt directo para `AppLocation` y agrega una accion `Set AppLocation` en el reporte.
+
+### Acciones Responsive / Smooth
+
+- Se agrego `KBDoctorUI/Sources/ResponsiveSmoothActions.cs`.
+- `BuildObjectWithProperty` ahora abre un menu HTML de acciones.
+- Acciones disponibles:
+  - convertir propiedades responsive por defecto
+  - convertir Web UX por defecto a Smooth
+  - mover objetos generados de Previous compatible a Smooth
+  - auditar objetos Smooth/Responsive
+  - resetear referencias a MasterPage por defecto
+
+### Limpieza de dependencias WinForms
+
+- `KBDoctorUI.csproj` excluye de compilacion formularios WinForms reemplazados o deshabilitados:
+  - `AboutBox1`
+  - `AsignDomToVar`
+  - `AskAttributeandTable`
+  - `PromptDescription`
+  - `ReplaceDomain`
+  - `ResponsiveSmooth`
+  - `Modularization`
+  - `SearchReplace`
+- `CommandManager.ExecAboutKBDoctor` ahora usa `KBDoctorWebForms.ShowAbout` en lugar de abrir `AboutBox1`.
+
+### Estado pendiente
+
+- Cambios locales modifican 12 archivos versionados y agregan 2 archivos nuevos.
+- Archivos nuevos sin seguimiento:
+  - `KBDoctorUI/Sources/KBDoctorWebForms.cs`
+  - `KBDoctorUI/Sources/ResponsiveSmoothActions.cs`
+- No se registro en este documento una validacion de build posterior a estos cambios locales.

@@ -16,6 +16,8 @@
     <CommandDefinition id="AttDescWithoutUniqueIndex" />
     <CommandDefinition id="AttWithoutBaseTable" />
     <CommandDefinition id="AttFormula" />
+    <CommandDefinition id="ApplyAttUpdated" />
+    <CommandDefinition id="ApplyReplaceDomain" />
 
     <!-- Tablas -->
     <CommandDefinition id="TablesWithNoDescription" />
@@ -32,6 +34,8 @@
     <CommandDefinition id="ObjectsNotReacheable" />
     <CommandDefinition id="ObjectsWithoutInOut" />
     <CommandDefinition id="ObjectsWithVarNotBasedOnAtt" />
+    <CommandDefinition id="SelectObjectsUpdateAttribute" />
+    <CommandDefinition id="ApplyObjectsUpdateAttribute" />
     <CommandDefinition id="ObjectsWithCommitOnExit" />
     <!--CommandDefinition id="ObjectsWithVarsNotUsed" /-->
     <!-- Atributos -->
@@ -43,6 +47,7 @@
     <!-- Acciones sobre atributos -->
     <CommandDefinition id="AssignDomainToAttribute" />
     <CommandDefinition id="AssignDescriptionToAttribute" />
+    <CommandDefinition id="ApplyAttributeText" />
     <CommandDefinition id="AssignTitleToAttribute" />
     <CommandDefinition id="AssignColumnTitleToAttribute" />
     <CommandDefinition id="ListAttribute" />
@@ -52,19 +57,25 @@
     <!-- Acciones sobre objetos -->
     <CommandDefinition id="RemoveObject" />
     <CommandDefinition id="OpenObject" />
+    <CommandDefinition id="SetObjectPropertyText" />
+    <CommandDefinition id="ApplyObjectPropertyText" />
     <CommandDefinition id="AssignAttributeToVariable" />
     <CommandDefinition id="AssignDomainToVariable" />
+    <CommandDefinition id="AssignAttributeOrDomainToVariable" />
     <CommandDefinition id="CleanVarsNotUsed" />
     <CommandDefinition id="CleanObjects" />
 
     <!-- Acciones sobre tablas -->
     <CommandDefinition id="AssignDescriptionToTable" />
+    <CommandDefinition id="ApplyTableText" />
 
     <!-- Acciones sobre la KB-->
     <CommandDefinition id="AddINParmRule" />
     <CommandDefinition id="CleanKBAsMuchAsPossible" />
     <CommandDefinition id="PrcCalledByTrn" />
     <CommandDefinition id="SearchAndReplace" />
+    <CommandDefinition id="ApplySearchAndReplace" />
+    <CommandDefinition id="RunResponsiveSmoothAction" />
     <CommandDefinition id="ClassNotInTheme" />
 
 

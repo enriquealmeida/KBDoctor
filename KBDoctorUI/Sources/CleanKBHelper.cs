@@ -591,90 +591,7 @@ namespace Concepto.Packages.KBDoctor
         /// </summary>
         public static void SearchAndReplace2() //SearchAndReplace()
         {
-            IKBService kB = UIServices.KB;
-            IOutputService output = CommonServices.Output;
-
-            string mensaje = "";
-            string title = "Search and replace";
-            KBDoctorOutput.StartSection(title);
-            if (kB != null && kB.CurrentModel != null)
-            {
-
-                PromptDescription pd;
-                DialogResult dr;
-                mensaje = "Find";
-
-                pd = new PromptDescription(mensaje);
-                dr = pd.ShowDialog();
-                if (dr == DialogResult.OK)
-                {
-                    string txtfind = pd.Description;
-                    mensaje = "Replace with";
-                    pd = new PromptDescription(mensaje);
-                    dr = pd.ShowDialog();
-                    if (dr == DialogResult.OK)
-                    {
-                        string txtreplace = pd.Description;
-                        SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                        selectObjectOption.MultipleSelection = true;
-                        KBModel kbModel = UIServices.KB.CurrentModel;
-
-                        int objcambiados = 0;
-                        int objtotales = 0;
-                        //SELECCIONO OBJETOS A BUSCAR
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataSelector>());
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataProvider>());
-
-                        foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
-                        {
-                            objtotales += 1;
-                            Application.DoEvents();
-                            if ((objtotales % 100) == 0)
-                            {
-
-                                KBDoctorOutput.Message("Searching in " + objtotales + " objects ");
-                            }
-
-                            StringBuilder buffer = new StringBuilder();
-                            using (TextWriter writer = new StringWriter(buffer))
-                                obj.Serialize(writer);
-
-                            string objxml = buffer.ToString();
-
-
-                            string newobjxml = objxml.Replace(txtfind, txtreplace, StringComparison.InvariantCultureIgnoreCase);
-
-                            using (StringReader strReader = new StringReader(newobjxml))
-                            using (XmlTextReader reader = new XmlTextReader(strReader))
-                                BLServices.KnowledgeManager.ImportInObject(reader, obj);
-                            if (objxml != newobjxml)
-                            {
-                                try
-                                {
-                                    obj.Save();
-                                    KBDoctorOutput.Message("Changed >> '" + txtfind + "' to '" + txtreplace + "' in object " + obj.Name);
-                                    objcambiados += 1;
-                                }
-                                catch (Exception e)
-                                {
-                                    if (e.InnerException == null)
-                                        output.AddErrorLine(e.Message);
-                                    else
-                                        output.AddErrorLine(e.Message + " - " + e.InnerException);
-                                };
-                            }
-
-                        }
-                        title = "Changed objects " + objcambiados.ToString();
-                        KBDoctorOutput.EndSection(title, true);
-                    }
-                }
-            }
-
+            SearchAndReplace();
         }
 
 
@@ -696,89 +613,78 @@ namespace Concepto.Packages.KBDoctor
 
         public static void SearchAndReplace() //SearchAndReplace()
         {
+            KBDoctorWebForms.ShowSearchReplace("KBDoctor - Search and replace");
+        }
+
+        public static void ApplySearchAndReplace(object[] parameters)
+        {
             IKBService kB = UIServices.KB;
             IOutputService output = CommonServices.Output;
 
-            string mensaje = "";
-            string title = "Search and replace string with !";
+            string txtfind = KBDoctorWebForms.GetParameter(parameters, "find");
+            string txtreplace = KBDoctorWebForms.GetParameter(parameters, "replace");
+            string title = "KBDoctor - Search and replace";
             KBDoctorOutput.StartSection(title);
-            if (kB != null && kB.CurrentModel != null)
+            if (kB == null || kB.CurrentModel == null || string.IsNullOrEmpty(txtfind))
             {
+                KBDoctorOutput.Error("Missing KB or text to find.");
+                KBDoctorOutput.EndSection(title, false);
+                return;
+            }
 
-                PromptDescription pd;
-                DialogResult dr;
-                mensaje = "Find";
+            SelectObjectOptions selectObjectOption = new SelectObjectOptions();
+            selectObjectOption.MultipleSelection = true;
+            KBModel kbModel = UIServices.KB.CurrentModel;
 
-                pd = new PromptDescription(mensaje);
-                dr = pd.ShowDialog();
-                if (dr == DialogResult.OK)
+            int objcambiados = 0;
+            int objtotales = 0;
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataSelector>());
+            selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataProvider>());
+
+            foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
+            {
+                objtotales += 1;
+                Application.DoEvents();
+                if ((objtotales % 100) == 0)
                 {
-                    string txtfind = pd.Description;
-                    mensaje = "Replace with";
-                    pd = new PromptDescription(mensaje);
-                    dr = pd.ShowDialog();
-                    if (dr == DialogResult.OK)
+
+                    KBDoctorOutput.Message("Searching in " + objtotales + " objects ");
+                }
+
+                StringBuilder buffer = new StringBuilder();
+                using (TextWriter writer = new StringWriter(buffer))
+                    obj.Serialize(writer);
+
+                string objxml = buffer.ToString();
+                string newobjxml = objxml.Replace(txtfind, txtreplace, StringComparison.InvariantCultureIgnoreCase);
+
+                if (objxml != newobjxml)
+                {
+                    using (StringReader strReader = new StringReader(newobjxml))
+                    using (XmlTextReader reader = new XmlTextReader(strReader))
+                        BLServices.KnowledgeManager.ImportInObject(reader, obj);
+
+                    try
                     {
-                        string txtreplace = pd.Description;
-                        SelectObjectOptions selectObjectOption = new SelectObjectOptions();
-                        selectObjectOption.MultipleSelection = true;
-                        KBModel kbModel = UIServices.KB.CurrentModel;
-
-                        int objcambiados = 0;
-                        int objtotales = 0;
-                        //SELECCIONO OBJETOS A BUSCAR
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Procedure>());
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<Transaction>());
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WebPanel>());
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<WorkPanel>());
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataSelector>());
-                        selectObjectOption.ObjectTypes.Add(KBObjectDescriptor.Get<DataProvider>());
-
-                        foreach (KBObject obj in Utility.EditableObjects(UIServices.SelectObjectDialog.SelectObjects(selectObjectOption)))
-                        {
-                            objtotales += 1;
-                            Application.DoEvents();
-                            if ((objtotales % 100) == 0)
-                            {
-
-                                KBDoctorOutput.Message("Searching in " + objtotales + " objects ");
-                            }
-
-                            StringBuilder buffer = new StringBuilder();
-                            using (TextWriter writer = new StringWriter(buffer))
-                                obj.Serialize(writer);
-
-                            string objxml = buffer.ToString();
-
-                            string newobjxml = ProcessEachLine(objxml);
-
-                            if (objxml != newobjxml)
-                            {
-                                using (StringReader strReader = new StringReader(newobjxml))
-                                using (XmlTextReader reader = new XmlTextReader(strReader))
-                                    BLServices.KnowledgeManager.ImportInObject(reader, obj);
-                                try
-                                {
-                                    obj.Save();
-                                    KBDoctorOutput.Message("Changed >> '" + txtfind + "' to '" + txtreplace + "' in object " + obj.Name);
-                                    objcambiados += 1;
-                                }
-                                catch (Exception e)
-                                {
-                                    if (e.InnerException == null)
-                                        output.AddErrorLine(e.Message);
-                                    else
-                                        output.AddErrorLine(e.Message + " - " + e.InnerException);
-                                };
-                            }
-
-                        }
-                        title = "Changed objects " + objcambiados.ToString();
-                        KBDoctorOutput.EndSection(title, true);
+                        obj.Save();
+                        KBDoctorOutput.Message("Changed >> '" + txtfind + "' to '" + txtreplace + "' in object " + obj.Name);
+                        objcambiados += 1;
                     }
+                    catch (Exception e)
+                    {
+                        if (e.InnerException == null)
+                            output.AddErrorLine(e.Message);
+                        else
+                            output.AddErrorLine(e.Message + " - " + e.InnerException);
+                    };
                 }
             }
 
+            KBDoctorOutput.EndSection("Changed objects " + objcambiados.ToString(), true);
         }
 
         public static string ProcessEachLine(string input)

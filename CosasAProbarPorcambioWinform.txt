@@ -1,0 +1,31 @@
+Lista de pruebas por cambio WinForms a HTML/comandos gx://
+
+1. About KBDoctor
+   Debe abrir un HTML con nombre y version, sin popup WinForms.
+
+2. Tables with no description
+   Click en descripcion, editar en HTML, aplicar y verificar que la tabla guarda descripcion.
+
+3. Attributes without description
+   Probar description, title y column title desde los links.
+
+4. ReplaceDomain
+   Debe abrir HTML con combos de dominios y aplicar reemplazo.
+
+5. AttUpdated
+   Debe abrir selector HTML tabla/atributo y luego generar el reporte.
+
+6. ObjectsUpdateAttribute
+   Debe abrir selector HTML tabla/atributo y luego listar objetos que actualizan.
+
+7. SearchAndReplace
+   Debe pedir find/replace en HTML, luego abrir selector GeneXus de objetos y aplicar.
+
+8. FixVariablesNotBasedInAttributesOrDomain
+   Debe generar reporte con links por variable; cada link abre selector GeneXus de atributo/dominio.
+
+9. BuildObjectWithProperty
+   Debe abrir menu HTML con las 5 acciones de Responsive/Smooth.
+
+10. CreateDeployUnits
+    Si falta AppLocation, debe mostrar link Set AppLocation; probar setearlo y volver a correr el reporte.

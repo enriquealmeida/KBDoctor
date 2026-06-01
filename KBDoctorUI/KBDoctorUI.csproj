@@ -246,10 +246,28 @@
     <Compile Remove="Properties\Resources.Designer.cs" />
     <Compile Remove="SearchReplace.cs" />
     <Compile Remove="SearchReplace.Designer.cs" />
+    <Compile Remove="Sources\AboutBox1.cs" />
+    <Compile Remove="Sources\AboutBox1.Designer.cs" />
+    <Compile Remove="Sources\AsignDomToVar.cs" />
+    <Compile Remove="Sources\AsignDomToVar.Designer.cs" />
+    <Compile Remove="Sources\AskAttributeandTable.cs" />
+    <Compile Remove="Sources\AskAttributeandTable.Designer.cs" />
     <Compile Remove="Sources\Modularization.cs" />
     <Compile Remove="Sources\Modularization.Designer.cs" />
+    <Compile Remove="Sources\PromptDescription.cs" />
+    <Compile Remove="Sources\PromptDescription.Designer.cs" />
+    <Compile Remove="Sources\ReplaceDomain.cs" />
+    <Compile Remove="Sources\ReplaceDomain.Designer.cs" />
+    <Compile Remove="Sources\ResponsiveSmooth.cs" />
+    <Compile Remove="Sources\ResponsiveSmooth.Designer.cs" />
     <EmbeddedResource Remove="SearchReplace.resx" />
     <EmbeddedResource Remove="Sources\Modularization.resx" />
+    <EmbeddedResource Remove="Sources\AboutBox1.resx" />
+    <EmbeddedResource Remove="Sources\AsignDomToVar.resx" />
+    <EmbeddedResource Remove="Sources\AskAttributeandTable.resx" />
+    <EmbeddedResource Remove="Sources\PromptDescription.resx" />
+    <EmbeddedResource Remove="Sources\ReplaceDomain.resx" />
+    <EmbeddedResource Remove="Sources\ResponsiveSmooth.resx" />
   </ItemGroup>
   <Target Name="AfterBuild">
     <Message Text="Version = $(Major).$(Minor).$(Build).$(Revision)" Importance="high" />

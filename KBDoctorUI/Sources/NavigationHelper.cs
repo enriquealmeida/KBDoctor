@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +16,7 @@ using Artech.Architecture.Common.Services;
 using Artech.Architecture.UI.Framework.Services;
 using Artech.Genexus.Common.Helpers;
 using Artech.Genexus.Common.Objects;
+using Artech.Genexus.Common.Parts;
 using Artech.Udm.Framework.References;
 using Artech.Architecture.UI.Framework.Helper;
 using Artech.Common.Framework.Commands;
@@ -630,6 +631,14 @@ namespace Concepto.Packages.KBDoctor
             IKBService kbserv = UIServices.KB;
 
             string title = "KBDoctor - Where update this attribute? :";
+            KBDoctorWebForms.ShowTableAttributeSelection(title, "ApplyAttUpdated", GetTableAttributes(kbserv.CurrentModel));
+        }
+
+        public static void ApplyAttUpdated(object[] parameters)
+        {
+            IKBService kbserv = UIServices.KB;
+
+            string title = "KBDoctor - Where update this attribute? :";
             try
             {
                 string outputFile = Utility.CreateOutputFile(kbserv, title);
@@ -637,15 +646,10 @@ namespace Concepto.Packages.KBDoctor
                 IOutputService output = CommonServices.Output;
                 KBDoctorOutput.StartSection(title);
 
-
-                AskAttributeandTable at = new AskAttributeandTable();
-                DialogResult dr = new DialogResult();
-                dr = at.ShowDialog();
-
-                if (dr == DialogResult.OK)
+                string tblName = KBDoctorWebForms.GetParameter(parameters, "tblName");
+                string attName = KBDoctorWebForms.GetParameter(parameters, "attName");
+                if (!string.IsNullOrEmpty(tblName) && !string.IsNullOrEmpty(attName))
                 {
-                    string tblName = at.tblName;
-                    string attName = at.attName;
 
                     List<string> Objlist = new List<string>();
 
@@ -704,6 +708,23 @@ namespace Concepto.Packages.KBDoctor
                 bool success = false;
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
+        }
+
+        private static Dictionary<string, IList<string>> GetTableAttributes(KBModel model)
+        {
+            Dictionary<string, IList<string>> result = new Dictionary<string, IList<string>>();
+            foreach (Table table in Table.GetAll(model))
+            {
+                List<string> attributes = new List<string>();
+                foreach (TableAttribute attribute in table.TableStructure.Attributes)
+                {
+                    attributes.Add(attribute.Name);
+                }
+
+                result[table.Name] = attributes;
+            }
+
+            return result;
         }
 
 

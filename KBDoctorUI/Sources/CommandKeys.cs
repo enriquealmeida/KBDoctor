@@ -20,8 +20,10 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey attInOneTrnOnly = new CommandKey(Package.guid, "AttInOneTrnOnly");
         private static CommandKey attFormula = new CommandKey(Package.guid, "AttFormula");
         private static CommandKey replaceDomain = new CommandKey(Package.guid, "ReplaceDomain");
+        private static CommandKey applyReplaceDomain = new CommandKey(Package.guid, "ApplyReplaceDomain");
         private static CommandKey listDomain = new CommandKey(Package.guid, "ListDomain");
         private static CommandKey attUpdated = new CommandKey(Package.guid, "AttUpdated");
+        private static CommandKey applyAttUpdated = new CommandKey(Package.guid, "ApplyAttUpdated");
 
         public static CommandKey AttWithNoDomain { get { return attWithNoDomain; } }
         public static CommandKey ListAttributes { get { return listAttributes; } }
@@ -35,13 +37,16 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey AttInOneTrnOnly { get { return attInOneTrnOnly; } }
         public static CommandKey AttFormula { get { return attFormula; } }
         public static CommandKey ReplaceDomain { get { return replaceDomain; } }
+        public static CommandKey ApplyReplaceDomain { get { return applyReplaceDomain; } }
         public static CommandKey ListDomain { get { return listDomain; } }
         public static CommandKey AttUpdated { get { return attUpdated; } }
+        public static CommandKey ApplyAttUpdated { get { return applyAttUpdated; } }
 
 
         // Acciones sobre atributos
         private static CommandKey assignDomainToAttribute = new CommandKey(Package.guid, "AssignDomainToAttribute");
         private static CommandKey assignDescriptionToAttribute = new CommandKey(Package.guid, "AssignDescriptionToAttribute");
+        private static CommandKey applyAttributeText = new CommandKey(Package.guid, "ApplyAttributeText");
         private static CommandKey assignTitleToAttribute = new CommandKey(Package.guid, "AssignTitleToAttribute");
         private static CommandKey assignColumnTitleToAttribute = new CommandKey(Package.guid, "AssignColumnTitleToAttribute");
         private static CommandKey listAttribute = new CommandKey(Package.guid, "ListAttribute");
@@ -49,6 +54,7 @@ namespace Concepto.Packages.KBDoctor
 
         public static CommandKey AssignDomainToAttribute { get { return assignDomainToAttribute; } }
         public static CommandKey AssignDescriptionToAttribute { get { return assignDescriptionToAttribute; } }
+        public static CommandKey ApplyAttributeText { get { return applyAttributeText; } }
         public static CommandKey AssignTitleToAttribute { get { return assignTitleToAttribute; } }
         public static CommandKey AssignColumnTitleToAttribute { get { return assignColumnTitleToAttribute; } }
         public static CommandKey ListAttribute { get { return listAttribute; } }
@@ -103,8 +109,10 @@ namespace Concepto.Packages.KBDoctor
 
         // Acciones sobre tablas
         private static CommandKey assignDescriptionToTable = new CommandKey(Package.guid, "AssignDescriptionToTable");
+        private static CommandKey applyTableText = new CommandKey(Package.guid, "ApplyTableText");
 
         public static CommandKey AssignDescriptionToTable { get { return assignDescriptionToTable; } }
+        public static CommandKey ApplyTableText { get { return applyTableText; } }
 
         // Indices
         private static CommandKey indexWithNotRefAtt = new CommandKey(Package.guid, "IndexWithNotRefAtt");
@@ -130,6 +138,8 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey listCommitOnExit = new CommandKey(Package.guid, "ListCommitOnExit");
         private static CommandKey objectsWithVarsNotUsed = new CommandKey(Package.guid, "ObjectsWithVarsNotUsed");
         private static CommandKey listDynamicCombo = new CommandKey(Package.guid, "ListDynamicCombo");
+        private static CommandKey selectObjectsUpdateAttribute = new CommandKey(Package.guid, "SelectObjectsUpdateAttribute");
+        private static CommandKey applyObjectsUpdateAttribute = new CommandKey(Package.guid, "ApplyObjectsUpdateAttribute");
 
         private static CommandKey listProperties = new CommandKey(Package.guid, "ListProperties");
 
@@ -180,6 +190,8 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey ObjectsReferenced { get { return objectsReferenced; } }
         public static CommandKey ObjectsWithVarNotBasedOnAtt { get { return objectsWithVarNotBasedOnAtt; } }
         public static CommandKey ListDynamicCombo { get { return listDynamicCombo; } }
+        public static CommandKey SelectObjectsUpdateAttribute { get { return selectObjectsUpdateAttribute; } }
+        public static CommandKey ApplyObjectsUpdateAttribute { get { return applyObjectsUpdateAttribute; } }
         public static CommandKey ListProperties { get { return listProperties; } }
         public static CommandKey RenameVariables { get { return renameVariables; } }
         public static CommandKey BuildModule { get { return buildModule; } }
@@ -237,8 +249,11 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");
         private static CommandKey removeUnreferencedObjectsInUserModules = new CommandKey(Package.guid, "RemoveUnreferencedObjectsInUserModules");
         private static CommandKey openObject = new CommandKey(Package.guid, "OpenObject");
+        private static CommandKey setObjectPropertyText = new CommandKey(Package.guid, "SetObjectPropertyText");
+        private static CommandKey applyObjectPropertyText = new CommandKey(Package.guid, "ApplyObjectPropertyText");
         private static CommandKey assignDomainToVariable = new CommandKey(Package.guid, "AssignDomainToVariable");
         private static CommandKey assignAttributeToVariable = new CommandKey(Package.guid, "AssignAttributeToVariable");
+        private static CommandKey assignAttributeOrDomainToVariable = new CommandKey(Package.guid, "AssignAttributeOrDomainToVariable");
         private static CommandKey renameAttributesAndTables =  new CommandKey(Package.guid, "RenameAttributesAndTables");
 
 
@@ -246,8 +261,11 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey RemoveObject { get { return removeObject; } }
         public static CommandKey RemoveUnreferencedObjectsInUserModules { get { return removeUnreferencedObjectsInUserModules; } }
         public static CommandKey OpenObject { get { return openObject; } }
+        public static CommandKey SetObjectPropertyText { get { return setObjectPropertyText; } }
+        public static CommandKey ApplyObjectPropertyText { get { return applyObjectPropertyText; } }
         public static CommandKey AssignDomainToVariable { get { return assignDomainToVariable; } }
         public static CommandKey AssignAttributeToVariable { get { return assignAttributeToVariable; } }
+        public static CommandKey AssignAttributeOrDomainToVariable { get { return assignAttributeOrDomainToVariable; } }
 
         public static CommandKey RenameAttributesAndTables { get { return renameAttributesAndTables; } }
 
@@ -297,8 +315,14 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey resetWINForm = new CommandKey(Package.guid, "ResetWINForm");
         public static CommandKey ResetWINForm { get { return resetWINForm; } }
 
+        private static CommandKey runResponsiveSmoothAction = new CommandKey(Package.guid, "RunResponsiveSmoothAction");
+        public static CommandKey RunResponsiveSmoothAction { get { return runResponsiveSmoothAction; } }
+
         private static CommandKey searchAndReplace = new CommandKey(Package.guid, "SearchAndReplace");
         public static CommandKey SearchAndReplace { get { return searchAndReplace; } }
+
+        private static CommandKey applySearchAndReplace = new CommandKey(Package.guid, "ApplySearchAndReplace");
+        public static CommandKey ApplySearchAndReplace { get { return applySearchAndReplace; } }
 
         private static CommandKey classNotInTheme = new CommandKey(Package.guid, "ClassNotInTheme");
         public static CommandKey ClassNotInTheme { get { return classNotInTheme; } }

@@ -894,17 +894,8 @@ namespace Concepto.Packages.KBDoctor
 
                     if (obj.GetPropertyValueString("AppLocation") == "")
                     {
-
-                        string mensaje = "Insert Location for (" + obj.TypeDescriptor.Name + ") " + obj.Name + "-" + obj.Description;
-
-                        PromptDescription pd = new PromptDescription(mensaje);
-                        DialogResult dr = pd.ShowDialog();
-
-                        if (dr == DialogResult.OK)
-                        {
-                            obj.SetPropertyValue("AppLocation", pd.Description);
-                            obj.Save();
-                        }
+                        string setLocation = Functions.CommandLink("SetObjectPropertyText", "Set AppLocation", "guid", obj.Guid.ToString(), "property", "AppLocation");
+                        writer.AddTableData(new string[] { "", Functions.linkObject(obj), setLocation, "Missing AppLocation" });
                     }
                     string mainstr = obj.GetPropertyValueString("AppLocation");
 

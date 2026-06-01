@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Artech.Architecture.BL.Framework.Packages;
@@ -19,6 +19,7 @@ namespace Concepto.Packages.KBDoctor
         private KBDoctorToolWindow myKBDoctorWindow;
 
         public static Guid guid = typeof(Package).GUID;
+        public static KBDoctorToolWindow CurrentKBDoctorWindow { get; private set; }
 
       public override string Name
       {
@@ -51,6 +52,7 @@ namespace Concepto.Packages.KBDoctor
                 {
                     this.myKBDoctorWindow = new KBDoctorToolWindow();
                 }
+                CurrentKBDoctorWindow = this.myKBDoctorWindow;
                 result = this.myKBDoctorWindow;
             }
             else

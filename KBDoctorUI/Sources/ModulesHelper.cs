@@ -36,6 +36,279 @@ namespace Concepto.Packages.KBDoctor
             return modulename;
         }
 
+        public static bool MoveUserObjectToModule(KBObject obj, string moduleName)
+        {
+            string message;
+            return MoveUserObjectToModule(obj, moduleName, out message);
+        }
+
+        public class ModuleSuggestion
+        {
+            public Module Module { get; private set; }
+            public int IntraModuleWeight { get; private set; }
+            public int InterModuleWeight { get; private set; }
+            public int TotalWeight { get; private set; }
+            public int Score { get; private set; }
+            public int DeltaScore { get; private set; }
+            public bool IsCurrentModule { get; private set; }
+
+            public ModuleSuggestion(Module module, int intraModuleWeight, int interModuleWeight, int currentScore, bool isCurrentModule)
+            {
+                Module = module;
+                IntraModuleWeight = intraModuleWeight;
+                InterModuleWeight = interModuleWeight;
+                TotalWeight = intraModuleWeight + interModuleWeight;
+                Score = intraModuleWeight - interModuleWeight;
+                DeltaScore = Score - currentScore;
+                IsCurrentModule = isCurrentModule;
+            }
+        }
+
+        public static ModuleSuggestion SuggestModuleForObject(KBObject obj)
+        {
+            List<ModuleSuggestion> suggestions = SuggestModulesForObject(obj);
+            if (suggestions.Count == 0)
+            {
+                return null;
+            }
+
+            return suggestions[0];
+        }
+
+        public static List<ModuleSuggestion> SuggestModulesForObject(KBObject obj)
+        {
+            List<ModuleSuggestion> suggestions = new List<ModuleSuggestion>();
+
+            if (!CanSuggestModuleForObject(obj))
+            {
+                return suggestions;
+            }
+
+            List<WeightedModuleDependency> dependencies = GetWeightedModuleDependencies(obj);
+            int currentScore = ScoreModuleCandidate(obj.Module, dependencies);
+
+            foreach (Module module in Module.GetAll(obj.Model))
+            {
+                int intraModuleWeight = 0;
+                int interModuleWeight = 0;
+
+                foreach (WeightedModuleDependency dependency in dependencies)
+                {
+                    if (dependency.Module == module)
+                    {
+                        intraModuleWeight += dependency.Weight;
+                    }
+                    else
+                    {
+                        interModuleWeight += dependency.Weight;
+                    }
+                }
+
+                suggestions.Add(new ModuleSuggestion(module, intraModuleWeight, interModuleWeight, currentScore, obj.Module == module));
+            }
+
+            return suggestions
+                .OrderByDescending(s => s.Score)
+                .ThenByDescending(s => s.IntraModuleWeight)
+                .ThenBy(s => s.InterModuleWeight)
+                .ThenByDescending(s => s.IsCurrentModule)
+                .ThenBy(s => s.Module.QualifiedName.ToString())
+                .ToList();
+        }
+
+        private static bool CanSuggestModuleForObject(KBObject obj)
+        {
+            return obj != null
+                && Utility.IsUserEditableObject(obj)
+                && !(obj is Table)
+                && Utility.HasModule(obj)
+                && !ObjectsHelper.isGeneratedbyPattern(obj);
+        }
+
+        private static int ScoreModuleCandidate(Module module, List<WeightedModuleDependency> dependencies)
+        {
+            int intraModuleWeight = 0;
+            int interModuleWeight = 0;
+
+            foreach (WeightedModuleDependency dependency in dependencies)
+            {
+                if (dependency.Module == module)
+                {
+                    intraModuleWeight += dependency.Weight;
+                }
+                else
+                {
+                    interModuleWeight += dependency.Weight;
+                }
+            }
+
+            return intraModuleWeight - interModuleWeight;
+        }
+
+        private static List<WeightedModuleDependency> GetWeightedModuleDependencies(KBObject obj)
+        {
+            List<WeightedModuleDependency> dependencies = new List<WeightedModuleDependency>();
+
+            foreach (EntityReference reference in obj.GetReferences())
+            {
+                KBObject objRef = KBObject.Get(obj.Model, reference.To);
+                if (objRef != null && objRef != obj && GraphHelper.IncludedInGraph(objRef))
+                {
+                    AddWeightedModuleDependency(dependencies, ModuleOfObject(objRef), GraphHelper.ReferenceWeight(obj, objRef));
+                }
+            }
+
+            foreach (EntityReference reference in obj.GetReferencesTo())
+            {
+                KBObject objRef = KBObject.Get(obj.Model, reference.From);
+                if (objRef != null && objRef != obj && GraphHelper.IncludedInGraph(objRef))
+                {
+                    AddWeightedModuleDependency(dependencies, ModuleOfObject(objRef), GraphHelper.ReferenceWeight(objRef, obj));
+                }
+            }
+
+            return dependencies;
+        }
+
+        private static void AddWeightedModuleDependency(List<WeightedModuleDependency> dependencies, Module module, int weight)
+        {
+            if (module == null || weight <= 0)
+            {
+                return;
+            }
+
+            dependencies.Add(new WeightedModuleDependency(module, weight));
+        }
+
+        private static Module ModuleOfObject(KBObject obj)
+        {
+            if (obj is Table)
+            {
+                return TablesHelper.TableModule(obj.Model, (Table)obj);
+            }
+
+            if (!Utility.HasModule(obj))
+            {
+                return null;
+            }
+
+            return obj.Module;
+        }
+
+        private class WeightedModuleDependency
+        {
+            public Module Module { get; private set; }
+            public int Weight { get; private set; }
+
+            public WeightedModuleDependency(Module module, int weight)
+            {
+                Module = module;
+                Weight = weight;
+            }
+        }
+
+        public static bool MoveUserObjectToModule(KBObject obj, string moduleName, out string message)
+        {
+            message = "";
+
+            if (obj == null)
+            {
+                message = "Object not found.";
+                return false;
+            }
+
+            if (moduleName == null || moduleName.Trim() == "")
+            {
+                message = "Module name is empty.";
+                return false;
+            }
+
+            if (!Utility.IsUserEditableObject(obj))
+            {
+                message = "Object is read-only.";
+                return false;
+            }
+
+            if (obj is Table)
+            {
+                message = "Tables are not moved by this function.";
+                return false;
+            }
+
+            if (!Utility.HasModule(obj))
+            {
+                message = "Object does not support module assignment.";
+                return false;
+            }
+
+            if (ObjectsHelper.isGeneratedbyPattern(obj))
+            {
+                message = "Objects generated by pattern are not moved by this function.";
+                return false;
+            }
+
+            Module newModule = FindModuleByName(obj.Model, moduleName);
+            if (newModule == null)
+            {
+                message = "Module '" + moduleName + "' was not found.";
+                return false;
+            }
+
+            if (obj.Module == newModule || SameModuleName(obj.Module, moduleName))
+            {
+                message = "Object is already in module '" + moduleName + "'.";
+                return false;
+            }
+
+            Module previousModule = obj.Module;
+            try
+            {
+                obj.Module = newModule;
+                obj.Save();
+                message = "Object moved to module '" + newModule.QualifiedName.ToString() + "'.";
+                return true;
+            }
+            catch (Exception e)
+            {
+                obj.Module = previousModule;
+                message = "Could not move object to module '" + newModule.QualifiedName.ToString() + "': " + e.Message;
+                return false;
+            }
+        }
+
+        private static Module FindModuleByName(KBModel model, string moduleName)
+        {
+            string normalizedName = moduleName.Trim();
+            Module moduleBySimpleName = null;
+
+            foreach (Module module in Module.GetAll(model))
+            {
+                if (String.Equals(module.QualifiedName.ToString(), normalizedName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return module;
+                }
+
+                if (moduleBySimpleName == null && String.Equals(module.Name, normalizedName, StringComparison.OrdinalIgnoreCase))
+                {
+                    moduleBySimpleName = module;
+                }
+            }
+
+            return moduleBySimpleName;
+        }
+
+        private static bool SameModuleName(Module module, string moduleName)
+        {
+            if (module == null)
+            {
+                return false;
+            }
+
+            string normalizedName = moduleName.Trim();
+            return String.Equals(module.QualifiedName.ToString(), normalizedName, StringComparison.OrdinalIgnoreCase)
+                || String.Equals(module.Name, normalizedName, StringComparison.OrdinalIgnoreCase);
+        }
+
         public static void MarkPublicObjects()
         {
             IKBService kbserv = UIServices.KB;
@@ -1682,8 +1955,6 @@ El módulo tiene objetos públicos no referenciados por externos?
         {
             IKBService kbserv = UIServices.KB;
 
-            Dictionary<string, KBObjectCollection> dic = new Dictionary<string, KBObjectCollection>();
-
             string title = "KBDoctor - Recomended module";
             try
             {
@@ -1695,7 +1966,7 @@ El módulo tiene objetos públicos no referenciados por externos?
                 KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
                 writer.AddHeader(title);
 
-                writer.AddTableHeader(new string[] { "Type", "Object", "Module", "List of modules" });
+                writer.AddTableHeader(new string[] { "Type", "Object", "Current Module", "Suggested Module", "Intra Weight", "Inter Weight", "Score", "Delta", "Top candidates" });
 
 
                 SelectObjectOptions selectObjectOption = new SelectObjectOptions();
@@ -1706,16 +1977,29 @@ El módulo tiene objetos públicos no referenciados por externos?
                 {
                     foreach (KBObject obj in Utility.EditableObjects(module.GetAllMembers()))
                     {
-                        if (Utility.HasModule(obj))
+                        if (CanSuggestModuleForObject(obj))
                         {
+                            List<ModuleSuggestion> suggestions = SuggestModulesForObject(obj);
+                            if (suggestions.Count == 0)
+                            {
+                                continue;
+                            }
 
-                            KBDoctorOutput.Message( obj.Name);
-                            string moduleListString = "";
-                            foreach (Module mod in ListModulesOfReferencedTables(obj))
-                                moduleListString += mod.Name + " ";
-
-                            if (obj.Module.Name != moduleListString.Trim() && moduleListString.Trim() != "")
-                                writer.AddTableData(new string[] { obj.TypeDescriptor.Name + " ", Utility.linkObject(obj), obj.Module.Name, moduleListString });
+                            ModuleSuggestion suggestion = suggestions[0];
+                            if (suggestion.Module != obj.Module && suggestion.TotalWeight > 0)
+                            {
+                                writer.AddTableData(new string[] {
+                                    obj.TypeDescriptor.Name,
+                                    Utility.linkObject(obj),
+                                    obj.Module.QualifiedName.ToString(),
+                                    suggestion.Module.QualifiedName.ToString(),
+                                    suggestion.IntraModuleWeight.ToString(),
+                                    suggestion.InterModuleWeight.ToString(),
+                                    suggestion.Score.ToString(),
+                                    suggestion.DeltaScore.ToString(),
+                                    FormatTopModuleCandidates(suggestions)
+                                });
+                            }
                         }
                     }
                 }
@@ -1732,6 +2016,30 @@ El módulo tiene objetos públicos no referenciados por externos?
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
 
+        }
+
+        private static string FormatTopModuleCandidates(List<ModuleSuggestion> suggestions)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            foreach (ModuleSuggestion suggestion in suggestions.Take(3))
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append("<br>");
+                }
+
+                builder.Append(suggestion.Module.QualifiedName.ToString());
+                builder.Append(" (");
+                builder.Append(suggestion.Score.ToString());
+                if (suggestion.IsCurrentModule)
+                {
+                    builder.Append(", current");
+                }
+                builder.Append(")");
+            }
+
+            return builder.ToString();
         }
 
         public static void ApplyExternalModularization()

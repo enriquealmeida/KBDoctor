@@ -92,36 +92,51 @@ namespace Concepto.Packages.KBDoctor
 
         public static void AssignDescriptionToTable(object[] parameters)
         {
-            foreach (object o in parameters)
+            Dictionary<string, string> commandParameters = KBDoctorWebForms.GetCommandParameters(parameters);
+            string tblName;
+            if (!commandParameters.TryGetValue("tblName", out tblName) || string.IsNullOrEmpty(tblName))
             {
-                Dictionary<string, string> dic = (Dictionary<string, string>)o;
-                int cant = 0;
-
-                string tblName = "";
-                string mensaje;
-                PromptDescription pd;
-                DialogResult dr;
-
-                foreach (string s in dic.Values)
-                {
-                    if (cant == 1)
-                    {
-                        tblName = s;
-                        mensaje = "Insert description for table " + tblName;
-                        pd = new PromptDescription(mensaje);
-                        dr = pd.ShowDialog();
-
-                        if (dr == DialogResult.OK)
-                        {
-                            Table t = Table.Get(UIServices.KB.CurrentModel, tblName);
-                            t.Description = pd.Description;
-                            t.Save();
-                        }
-                    }
-
-                    cant++;
-                }
+                return;
             }
+
+            Table t = Table.Get(UIServices.KB.CurrentModel, tblName);
+            if (t == null)
+            {
+                KBDoctorOutput.Error("Table not found: " + tblName);
+                return;
+            }
+
+            KBDoctorWebForms.ShowTextInput(
+                "KBDoctor - Table description",
+                "Insert description for table " + tblName,
+                "ApplyTableText",
+                new Dictionary<string, string> { { "tblName", tblName } },
+                "value",
+                t.Description);
+        }
+
+        public static void ApplyTableText(object[] parameters)
+        {
+            Dictionary<string, string> commandParameters = KBDoctorWebForms.GetCommandParameters(parameters);
+            string tblName;
+            string value;
+            if (!commandParameters.TryGetValue("tblName", out tblName) || !commandParameters.TryGetValue("value", out value))
+            {
+                KBDoctorOutput.Error("Missing parameters to apply table text.");
+                return;
+            }
+
+            Table t = Table.Get(UIServices.KB.CurrentModel, tblName);
+            if (t == null)
+            {
+                KBDoctorOutput.Error("Table not found: " + tblName);
+                return;
+            }
+
+            t.Description = value;
+            t.Save();
+            KBDoctorOutput.Message("Table updated: " + tblName);
+            ListWithoutDescription();
         }
 
         public static void ListTablesWidth()

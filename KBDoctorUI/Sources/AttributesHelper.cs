@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -48,24 +48,19 @@ namespace Concepto.Packages.KBDoctor
                         if (a.Title == a.Description)
                         {
                             titlesuggested = Functions.CommandLink("AssignTitleToAttribute", a.Title, "attName", a.Name);
-                            writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
-
                         }
 
                         if (a.Description.Replace(" ", "") == a.Name)
                         {
                             description = Functions.CommandLink("AssignDescriptionToAttribute", a.Description, "attName", a.Name);
-                            Table t = TablesHelper.TableOfAttribute(a);
-                            writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
-
                         }
 
                         if (a.ColumnTitle == a.Description)
                         {
                             columnTitle = Functions.CommandLink("AssignColumnTitleToAttribute", a.ColumnTitle, "attName", a.Name);
-                            writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
                         }
 
+                        writer.AddTableData(new string[] { attNameLink, description, Picture, titlesuggested, columnTitle });
 
                     }
 
@@ -562,59 +557,94 @@ namespace Concepto.Packages.KBDoctor
 
         public static void AssignDescriptionToAttribute(object[] parameters, int descriptionToSet)
         {
-            foreach (object o in parameters)
+            Dictionary<string, string> commandParameters = KBDoctorWebForms.GetCommandParameters(parameters);
+            string attName;
+            if (!commandParameters.TryGetValue("attName", out attName) || string.IsNullOrEmpty(attName))
             {
-                Dictionary<string, string> dic = (Dictionary<string, string>)o;
-                int cant = 0;
-
-                string attName = "";
-                string mensaje = "";
-                PromptDescription pd;
-                DialogResult dr;
-
-                foreach (string s in dic.Values)
-                {
-                    if (cant == 1)
-                    {
-                        attName = s;
-                        switch (descriptionToSet)
-                        {
-                            case 0:
-                                mensaje = "Insert description for attribute " + attName;
-                                break;
-                            case 1:
-                                mensaje = "Insert title for attribute " + attName;
-                                break;
-                            case 2:
-                                mensaje = "Insert column title for attribute " + attName;
-                                break;
-                        }
-
-                        pd = new PromptDescription(mensaje);
-                        dr = pd.ShowDialog();
-
-                        if (dr == DialogResult.OK)
-                        {
-                            Artech.Genexus.Common.Objects.Attribute a = Artech.Genexus.Common.Objects.Attribute.Get(UIServices.KB.CurrentModel, attName);
-                            switch (descriptionToSet)
-                            {
-                                case 0:
-                                    a.Description = pd.Description;
-                                    break;
-                                case 1:
-                                    a.Title = pd.Description;
-                                    break;
-                                case 2:
-                                    a.ColumnTitle = pd.Description;
-                                    break;
-                            }
-                            a.Save();
-                        }
-                    }
-
-                    cant++;
-                }
+                return;
             }
+
+            Artech.Genexus.Common.Objects.Attribute a = Artech.Genexus.Common.Objects.Attribute.Get(UIServices.KB.CurrentModel, attName);
+            if (a == null)
+            {
+                KBDoctorOutput.Error("Attribute not found: " + attName);
+                return;
+            }
+
+            string message = "";
+            string currentValue = "";
+            switch (descriptionToSet)
+            {
+                case 0:
+                    message = "Insert description for attribute " + attName;
+                    currentValue = a.Description;
+                    break;
+                case 1:
+                    message = "Insert title for attribute " + attName;
+                    currentValue = a.Title;
+                    break;
+                case 2:
+                    message = "Insert column title for attribute " + attName;
+                    currentValue = a.ColumnTitle;
+                    break;
+            }
+
+            KBDoctorWebForms.ShowTextInput(
+                "KBDoctor - Attribute text",
+                message,
+                "ApplyAttributeText",
+                new Dictionary<string, string> { { "attName", attName }, { "textKind", descriptionToSet.ToString() } },
+                "value",
+                currentValue);
+        }
+
+        public static void ApplyAttributeText(object[] parameters)
+        {
+            Dictionary<string, string> commandParameters = KBDoctorWebForms.GetCommandParameters(parameters);
+            string attName;
+            string textKindValue;
+            string value;
+            if (!commandParameters.TryGetValue("attName", out attName)
+                || !commandParameters.TryGetValue("textKind", out textKindValue)
+                || !commandParameters.TryGetValue("value", out value))
+            {
+                KBDoctorOutput.Error("Missing parameters to apply attribute text.");
+                return;
+            }
+
+            int textKind;
+            if (!int.TryParse(textKindValue, out textKind))
+            {
+                KBDoctorOutput.Error("Invalid attribute text kind: " + textKindValue);
+                return;
+            }
+
+            Artech.Genexus.Common.Objects.Attribute a = Artech.Genexus.Common.Objects.Attribute.Get(UIServices.KB.CurrentModel, attName);
+            if (a == null)
+            {
+                KBDoctorOutput.Error("Attribute not found: " + attName);
+                return;
+            }
+
+            switch (textKind)
+            {
+                case 0:
+                    a.Description = value;
+                    break;
+                case 1:
+                    a.Title = value;
+                    break;
+                case 2:
+                    a.ColumnTitle = value;
+                    break;
+                default:
+                    KBDoctorOutput.Error("Invalid attribute text kind: " + textKind);
+                    return;
+            }
+
+            a.Save();
+            KBDoctorOutput.Message("Attribute updated: " + attName);
+            ListAttWithoutDescription();
         }
 
 
@@ -636,17 +666,6 @@ namespace Concepto.Packages.KBDoctor
 
                     cant++;
                 }
-
-
-
-                //   mensaje = "Insert a name for the index:";
-                //   pd = new PromptDescription(mensaje);
-                //   dr = pd.ShowDialog();
-
-
-
-                //if (dr == DialogResult.OK)
-                //{
                 IKBService kbserv = UIServices.KB;
 
                 Artech.Genexus.Common.Objects.Index i = Artech.Genexus.Common.Objects.Index.Create(kbserv.CurrentModel);
@@ -681,7 +700,6 @@ namespace Concepto.Packages.KBDoctor
                 {
                     MessageBox.Show(gxe.Message, "Could not create index", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-                //}
             }
         }
 
@@ -763,63 +781,67 @@ namespace Concepto.Packages.KBDoctor
         public static void ReplaceDomain()
         {
             IKBService kbserv = UIServices.KB;
-
-            bool success = true;
-            string title = "KBDoctor - Replace domain ";
-            IOutputService output = CommonServices.Output;
-
-
-            ReplaceDomain rd = new ReplaceDomain();
-            DialogResult dr = new DialogResult();
-            dr = rd.ShowDialog();
-
-            if (dr == DialogResult.OK)
+            string title = "KBDoctor - Replace domain";
+            List<KBDoctorWebForms.DomainOption> domains = new List<KBDoctorWebForms.DomainOption>();
+            foreach (Domain domain in Domain.GetAll(kbserv.CurrentModel))
             {
-                KBDoctorOutput.StartSection(title);
-                Domain od = Functions.DomainByName(rd.originalDomainName);
-                Domain ud = Functions.DomainByName(rd.destDomainName);
-                if (od != null && ud != null)
-                {
-
-                    foreach (EntityReference reference in od.GetReferencesTo()) // LinkType.UsedObject))
-                    {
-                        KBObject objRef = KBObject.Get(UIServices.KB.CurrentModel, reference.From);
-                        KBDoctorOutput.Message("Procesing " + objRef.Name);
-                        if (objRef is Artech.Genexus.Common.Objects.Attribute)
-                        {
-
-                            Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)objRef;
-                            att.DomainBasedOn = ud;
-                            att.Save();
-                        }
-                        else
-                        {
-                            VariablesPart vp = objRef.Parts.Get<VariablesPart>();
-                            if (vp != null)
-                            {
-                                foreach (Variable v in vp.Variables)
-                                {
-                                    if (v.DomainBasedOn == od && !v.IsStandard)
-                                    {
-                                        v.DomainBasedOn = ud;
-                                    }
-                                }
-                                objRef.Save();
-                            }
-                            else
-                            {
-                                KBDoctorOutput.Message("Replace " + od.Name + " domain manually in object " + objRef.Name);
-                                success = false;
-                            }
-
-
-                        }
-                    }
-                }
-                KBDoctorOutput.EndSection(title, success);
+                domains.Add(new KBDoctorWebForms.DomainOption(domain.Name, domain.Type.ToString(), domain.Length, domain.Decimals));
             }
 
+            KBDoctorWebForms.ShowDomainReplacement(title, domains);
+        }
 
+        public static void ApplyReplaceDomain(object[] parameters)
+        {
+            bool success = true;
+            string title = "KBDoctor - Replace domain ";
+            string originalDomainName = KBDoctorWebForms.GetParameter(parameters, "originalDomain");
+            string destDomainName = KBDoctorWebForms.GetParameter(parameters, "destDomain");
+
+            KBDoctorOutput.StartSection(title);
+            Domain od = Functions.DomainByName(originalDomainName);
+            Domain ud = Functions.DomainByName(destDomainName);
+            if (od == null || ud == null)
+            {
+                KBDoctorOutput.Error("Invalid domain selection.");
+                KBDoctorOutput.EndSection(title, false);
+                return;
+            }
+
+            foreach (EntityReference reference in od.GetReferencesTo()) // LinkType.UsedObject))
+            {
+                KBObject objRef = KBObject.Get(UIServices.KB.CurrentModel, reference.From);
+                KBDoctorOutput.Message("Procesing " + objRef.Name);
+                if (objRef is Artech.Genexus.Common.Objects.Attribute)
+                {
+
+                    Artech.Genexus.Common.Objects.Attribute att = (Artech.Genexus.Common.Objects.Attribute)objRef;
+                    att.DomainBasedOn = ud;
+                    att.Save();
+                }
+                else
+                {
+                    VariablesPart vp = objRef.Parts.Get<VariablesPart>();
+                    if (vp != null)
+                    {
+                        foreach (Variable v in vp.Variables)
+                        {
+                            if (v.DomainBasedOn == od && !v.IsStandard)
+                            {
+                                v.DomainBasedOn = ud;
+                            }
+                        }
+                        objRef.Save();
+                    }
+                    else
+                    {
+                        KBDoctorOutput.Message("Replace " + od.Name + " domain manually in object " + objRef.Name);
+                        success = false;
+                    }
+                }
+            }
+
+            KBDoctorOutput.EndSection(title, success);
         }
 
         public static void ListDomain()

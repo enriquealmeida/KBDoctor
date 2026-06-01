@@ -18,8 +18,10 @@
     <CommandDefinition id="AttWithoutBaseTable" image="Eraser" imageType="ico"/>
     <CommandDefinition id="AttFormula" />
     <CommandDefinition id="ReplaceDomain" />
+    <CommandDefinition id="ApplyReplaceDomain" />
     <CommandDefinition id="ListDomain" />
     <CommandDefinition id="AttUpdated" />
+    <CommandDefinition id="ApplyAttUpdated" />
     <CommandDefinition id="GenerateSQLScripts" />
 
     <!-- Modularization -->
@@ -54,6 +56,8 @@
     <CommandDefinition id="ObjectsWithoutInOut" />
     <CommandDefinition id="ObjectsMainCalled" />
     <CommandDefinition id="ObjectsUpdateAttribute" />
+    <CommandDefinition id="SelectObjectsUpdateAttribute" />
+    <CommandDefinition id="ApplyObjectsUpdateAttribute" />
     <CommandDefinition id="ObjectsReferenced" />
     <CommandDefinition id="ObjectsWithVarNotBasedOnAtt" />
     <CommandDefinition id="RenameVariables" />
@@ -106,7 +110,9 @@
     <CommandDefinition id="AttributeAsOutput" />
     <!-- Acciones sobre atributos -->
     <CommandDefinition id="AssignDomainToAttribute" />
+    <CommandDefinition id="AssignDescriptionToAttribute" />
     <CommandDefinition id="AssignDeionToAttribute" />
+    <CommandDefinition id="ApplyAttributeText" />
     <CommandDefinition id="AssignTitleToAttribute" />
     <CommandDefinition id="AssignColumnTitleToAttribute" />
     <CommandDefinition id="ListAttribute" />
@@ -116,11 +122,15 @@
     <CommandDefinition id="RemoveObject" />
     <CommandDefinition id="RemoveUnreferencedObjectsInUserModules" />
     <CommandDefinition id="OpenObject" />
+    <CommandDefinition id="SetObjectPropertyText" />
+    <CommandDefinition id="ApplyObjectPropertyText" />
     <CommandDefinition id="AssignAttributeToVariable" />
     <CommandDefinition id="AssignDomainToVariable" />
+    <CommandDefinition id="AssignAttributeOrDomainToVariable" />
     <CommandDefinition id="CleanVarsNotUsed" />
     <CommandDefinition id="CleanObjects" />
     <CommandDefinition id="ResetWINForm" />
+    <CommandDefinition id="RunResponsiveSmoothAction" />
     <CommandDefinition id="ThemeClassesNotUsed" />
 	<CommandDefinition id="ObjThemeClassesNotUsed" />
     <CommandDefinition id="AssignTypeComparer" />
@@ -150,7 +160,9 @@
     <CommandDefinition id="CompareLastOBJDirectory" />
     <CommandDefinition id="OpenFolderObjComparerNavigation" />
     <!-- Acciones sobre tablas -->
+    <CommandDefinition id="AssignDescriptionToTable" />
     <CommandDefinition id="AssignDeionToTable" />
+    <CommandDefinition id="ApplyTableText" />
     <!-- Acciones sobre la KB-->
     <CommandDefinition id="AddINParmRule" image="Splatter1" imageType="ico" />
     <CommandDefinition id="ListTableAttributesUsingDomain" image="Splatter1" imageType="ico" />
@@ -158,6 +170,7 @@
     <CommandDefinition id="ProcedureSDT" image="SDT" imageType="ico"/>
     <CommandDefinition id="ProcedureGetSet" image="SDT" imageType="ico"/>
     <CommandDefinition id="SearchAndReplace" image="Magnifier" imageType="ico"/>
+    <CommandDefinition id="ApplySearchAndReplace" />
     <CommandDefinition id="ClassNotInTheme" image="Palette" imageType="ico"/>
     <CommandDefinition id="ClassUsed" image="Palette" imageType="ico"/>
     <CommandDefinition id="ListClassUsed" image="Palette" imageType="ico"/>

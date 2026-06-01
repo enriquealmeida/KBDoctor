@@ -38,11 +38,14 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.AttInOneTrnOnly, new ExecHandler(ExecAttInOneTrnOnly), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AttFormula, new ExecHandler(ExecAttFormula), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ReplaceDomain, new ExecHandler(ExecReplaceDomain), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ApplyReplaceDomain, new ExecHandler(ExecApplyReplaceDomain), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListDomain, new ExecHandler(ExecListDomain), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AttUpdated, new ExecHandler(ExecAttUpdated), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ApplyAttUpdated, new ExecHandler(ExecApplyAttUpdated), new QueryHandler(QueryKBDoctor));
             // Acciones sobre atributos
             AddCommand(CommandKeys.AssignDomainToAttribute, new ExecHandler(ExecAssignDomainToAttribute), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignDescriptionToAttribute, new ExecHandler(ExecAssignDescriptionToAttribute), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ApplyAttributeText, new ExecHandler(ExecApplyAttributeText), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignTitleToAttribute, new ExecHandler(ExecAssignTitleToAttribute), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignColumnTitleToAttribute, new ExecHandler(ExecAssignColumnTitleToAttribute), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AddDescriptorIndex, new ExecHandler(ExecAddDescriptorIndex), new QueryHandler(QueryKBDoctor));
@@ -67,6 +70,7 @@ namespace Concepto.Packages.KBDoctor
 
             // Acciones sobre tablas
             AddCommand(CommandKeys.AssignDescriptionToTable, new ExecHandler(ExecAssignDescriptionToTable), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ApplyTableText, new ExecHandler(ExecApplyTableText), new QueryHandler(QueryKBDoctor));
             // Indices
             AddCommand(CommandKeys.IndexWithNotRefAtt, new ExecHandler(ExecIndexWithNotRefAtt), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.RemoveIndexAttribute, new ExecHandler(ExecRremoveIndexAttribute), new QueryHandler(QueryKBDoctor));
@@ -105,9 +109,12 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ListCommitOnExit, new ExecHandler(ExecListCommitOnExit), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWithVarsNotUsed, new ExecHandler(ExecObjectsWithVarsNotUsed), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ResetWINForm, new ExecHandler(ExecResetWINForm), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.RunResponsiveSmoothAction, new ExecHandler(ExecRunResponsiveSmoothAction), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectMigration, new ExecHandler(ExecObjectMigration), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ObjectsUpdateAttribute, new ExecHandler(ExecProceduresThatUpdatesAttributes), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.SelectObjectsUpdateAttribute, new ExecHandler(ExecSelectObjectsUpdateAttribute), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ApplyObjectsUpdateAttribute, new ExecHandler(ExecApplyObjectsUpdateAttribute), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.ChangeCommitOnExit, new ExecHandler(ExecChangeCommitOnExit), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.TreeCommit, new ExecHandler(ExecTreeCommit), new QueryHandler(QueryKBDoctor));
@@ -136,8 +143,11 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.RemoveObject, new ExecHandler(ExecRemoveObject), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.RemoveUnreferencedObjectsInUserModules, new ExecHandler(ExecRemoveUnreferencedObjectsInUserModules), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.OpenObject, new ExecHandler(ExecOpenKBObject), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.SetObjectPropertyText, new ExecHandler(ExecSetObjectPropertyText), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ApplyObjectPropertyText, new ExecHandler(ExecApplyObjectPropertyText), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignAttributeToVariable, new ExecHandler(ExecAssignAttributeToVariable), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.AssignDomainToVariable, new ExecHandler(ExecAssignDomainToVariable), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.AssignAttributeOrDomainToVariable, new ExecHandler(ExecAssignAttributeOrDomainToVariable), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.CleanVarsNotUsed, new ExecHandler(ExecCleanVarsNotUsed), new QueryHandler(QueryKBDoctor));
 
             AddCommand(CommandKeys.AddINParmRule, new ExecHandler(ExecAddINParmRule), new QueryHandler(QueryKBDoctor));
@@ -147,6 +157,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ProcedureSDT, new ExecHandler(ExecProcedureSDT), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ProcedureGetSet, new ExecHandler(ExecProcedureGetSet), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.SearchAndReplace, new ExecHandler(ExecSearchAndReplace), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.ApplySearchAndReplace, new ExecHandler(ExecApplySearchAndReplace), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ClassNotInTheme, new ExecHandler(ExecClassNotInTheme), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ClassUsed, new ExecHandler(ExecClassUsed), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ListClassUsed, new ExecHandler(ExecClassUsed), new QueryHandler(QueryKBDoctor));
@@ -319,6 +330,13 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecApplyReplaceDomain(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            AttributesHelper.ApplyReplaceDomain(cmdData.Parameters);
+            return true;
+        }
+
         public bool ExecListDomain(CommandData cmdData)
         {
             IOutputService output = KBDoctorHelper.SelectOutput();
@@ -330,6 +348,13 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = KBDoctorHelper.SelectOutput();
             NavigationHelper.AttUpdated();
+            return true;
+        }
+
+        public bool ExecApplyAttUpdated(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            NavigationHelper.ApplyAttUpdated(cmdData.Parameters);
             return true;
         }
         #endregion
@@ -346,6 +371,12 @@ namespace Concepto.Packages.KBDoctor
         {
 
             AttributesHelper.AssignDescriptionToAttribute(cmdData.Parameters, 0);
+            return true;
+        }
+
+        public bool ExecApplyAttributeText(CommandData cmdData)
+        {
+            AttributesHelper.ApplyAttributeText(cmdData.Parameters);
             return true;
         }
 
@@ -531,6 +562,13 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = KBDoctorHelper.SelectOutput();
             TablesHelper.AssignDescriptionToTable(cmdData.Parameters);
+            return true;
+        }
+
+        public bool ExecApplyTableText(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            TablesHelper.ApplyTableText(cmdData.Parameters);
             return true;
         }
         #endregion
@@ -1264,6 +1302,18 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecSelectObjectsUpdateAttribute(CommandData cmdData)
+        {
+            ObjectsHelper.SelectObjectsUpdatingAttributes();
+            return true;
+        }
+
+        public bool ExecApplyObjectsUpdateAttribute(CommandData cmdData)
+        {
+            ObjectsHelper.ApplyObjectsUpdatingAttributes(cmdData.Parameters);
+            return true;
+        }
+
         public bool ExecObjectsNotCalled(CommandData cmdData)
         {
             IOutputService output = KBDoctorHelper.SelectOutput();
@@ -1301,6 +1351,12 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ResetWINForm));
             t.Start();
+            return true;
+        }
+
+        public bool ExecRunResponsiveSmoothAction(CommandData cmdData)
+        {
+            ObjectsHelper.RunResponsiveSmoothAction(cmdData.Parameters);
             return true;
         }
 
@@ -1483,9 +1539,27 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecSetObjectPropertyText(CommandData cmdData)
+        {
+            ObjectsHelper.SetObjectPropertyText(cmdData.Parameters);
+            return true;
+        }
+
+        public bool ExecApplyObjectPropertyText(CommandData cmdData)
+        {
+            ObjectsHelper.ApplyObjectPropertyText(cmdData.Parameters);
+            return true;
+        }
+
         public bool ExecAssignAttributeToVariable(CommandData cmdData)
         {
             ObjectsHelper.AssignAttributeToVariable(cmdData.Parameters);
+            return true;
+        }
+
+        public bool ExecAssignAttributeOrDomainToVariable(CommandData cmdData)
+        {
+            ObjectsHelper.AssignAttributeOrDomainToVariable(cmdData.Parameters);
             return true;
         }
 
@@ -1516,11 +1590,7 @@ namespace Concepto.Packages.KBDoctor
         public bool ExecAboutKBDoctor(CommandData cmdData)
         {
             Assembly assem = this.GetType().Assembly;
-            object[] atributos = assem.GetCustomAttributes(typeof(AssemblyVersionAttribute), false);
-            using (Form aboutBox = new AboutBox1())
-            {
-                aboutBox.ShowDialog();
-            }
+            KBDoctorWebForms.ShowAbout(assem);
             return true;
         }
 
@@ -1616,6 +1686,12 @@ namespace Concepto.Packages.KBDoctor
         public bool ExecSearchAndReplace(CommandData cmdData)
         {
             CleanKBHelper.SearchAndReplace();
+            return true;
+        }
+
+        public bool ExecApplySearchAndReplace(CommandData cmdData)
+        {
+            CleanKBHelper.ApplySearchAndReplace(cmdData.Parameters);
             return true;
         }
 

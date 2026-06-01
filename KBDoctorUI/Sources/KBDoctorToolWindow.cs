@@ -29,6 +29,7 @@ namespace Concepto.Packages.KBDoctor.Sources
         public KBDoctorToolWindow()
         {
             InitializeComponent();
+            webBrowser2.ScriptErrorsSuppressed = true;
             UIServices.TrackSelection.Subscribe(Guid.NewGuid(), this);
         }
 
@@ -72,6 +73,7 @@ namespace Concepto.Packages.KBDoctor.Sources
 
             if (UriHelper.Parse(e.Url.ToString(), out kbPath, parms))
             {
+                e.Cancel = true;
                 CommandKey cmdKey = CommandKey.Empty;
                 object[] cmdParams = null;
                 if (parms.ContainsKey(UriHelper.CommandKey))

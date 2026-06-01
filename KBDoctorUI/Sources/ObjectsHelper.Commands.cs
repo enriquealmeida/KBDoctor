@@ -219,6 +219,57 @@ namespace Concepto.Packages.KBDoctor
             }
         }
 
+        public static void SetObjectPropertyText(object[] parameters)
+        {
+            string guidValue = KBDoctorWebForms.GetParameter(parameters, "guid");
+            string property = KBDoctorWebForms.GetParameter(parameters, "property");
+            Guid guid;
+            if (!Guid.TryParse(guidValue, out guid) || string.IsNullOrEmpty(property))
+            {
+                KBDoctorOutput.Error("Missing object or property.");
+                return;
+            }
+
+            KBObject obj = UIServices.KB.CurrentModel.Objects.Get(guid);
+            if (!Utility.IsUserEditableObject(obj))
+            {
+                KBDoctorOutput.Error("Object not found or read-only.");
+                return;
+            }
+
+            KBDoctorWebForms.ShowTextInput(
+                "KBDoctor - Set object property",
+                "Set " + property + " for " + obj.Name,
+                "ApplyObjectPropertyText",
+                new Dictionary<string, string> { { "guid", guidValue }, { "property", property } },
+                "value",
+                obj.GetPropertyValueString(property));
+        }
+
+        public static void ApplyObjectPropertyText(object[] parameters)
+        {
+            string guidValue = KBDoctorWebForms.GetParameter(parameters, "guid");
+            string property = KBDoctorWebForms.GetParameter(parameters, "property");
+            string value = KBDoctorWebForms.GetParameter(parameters, "value");
+            Guid guid;
+            if (!Guid.TryParse(guidValue, out guid) || string.IsNullOrEmpty(property))
+            {
+                KBDoctorOutput.Error("Missing object or property.");
+                return;
+            }
+
+            KBObject obj = UIServices.KB.CurrentModel.Objects.Get(guid);
+            if (!Utility.IsUserEditableObject(obj))
+            {
+                KBDoctorOutput.Error("Object not found or read-only.");
+                return;
+            }
+
+            obj.SetPropertyValue(property, value);
+            obj.Save();
+            KBDoctorOutput.Message("Updated " + property + " for " + obj.Name);
+        }
+
         // TODO: Sin referencias textuales encontradas; revisar si se usa por comando/reflection antes de eliminar.
         public static void OpenObjectRules(object[] parameters)
         {
@@ -468,6 +519,63 @@ namespace Concepto.Packages.KBDoctor
                     }
                 }
             }
+        }
+
+        public static void AssignAttributeOrDomainToVariable(object[] parameters)
+        {
+            string guidValue = KBDoctorWebForms.GetParameter(parameters, "guid");
+            string varName = KBDoctorWebForms.GetParameter(parameters, "varName");
+            Guid guid;
+            if (!Guid.TryParse(guidValue, out guid) || string.IsNullOrEmpty(varName))
+            {
+                KBDoctorOutput.Error("Missing object or variable to assign.");
+                return;
+            }
+
+            KBObject obj = UIServices.KB.CurrentModel.Objects.Get(guid);
+            if (!Utility.IsUserEditableObject(obj))
+            {
+                KBDoctorOutput.Error("Object not found or read-only.");
+                return;
+            }
+
+            VariablesPart vp = obj.Parts.Get<VariablesPart>();
+            Variable variable = vp == null ? null : vp.Variables.FirstOrDefault(v => string.Equals(v.Name, varName, StringComparison.OrdinalIgnoreCase));
+            if (variable == null)
+            {
+                KBDoctorOutput.Error("Variable not found: " + varName);
+                return;
+            }
+
+            AttributeVariableDialogInfo info = new AttributeVariableDialogInfo();
+            info.Filter = TypedObjectKind.Attribute | TypedObjectKind.Domain;
+            info.DialogTitle = "Select domain/attribute for " + obj.Name + "." + varName;
+            info.MultiSelection = false;
+            IList<object> selectedObjects = GenexusUIServices.SelectAttributeVariable.SelectAttributeVariable(info);
+            if (selectedObjects.Count == 0)
+            {
+                return;
+            }
+
+            Domain domain = selectedObjects[0] as Domain;
+            if (domain != null)
+            {
+                variable.DomainBasedOn = domain;
+            }
+            else
+            {
+                Artech.Genexus.Common.Objects.Attribute attribute = selectedObjects[0] as Artech.Genexus.Common.Objects.Attribute;
+                if (attribute == null)
+                {
+                    KBDoctorOutput.Error("Selected object is not an attribute or domain.");
+                    return;
+                }
+
+                variable.AttributeBasedOn = attribute;
+            }
+
+            obj.Save();
+            KBDoctorOutput.Message("Variable updated: " + obj.Name + "." + varName);
         }
 
         public static void IndexWithNotRefAtt()
@@ -985,38 +1093,21 @@ namespace Concepto.Packages.KBDoctor
 
         public static void BuildObjectWithProperty()
         {
-
-            using (Form form = new ResponsiveSmooth())
-            {
-                form.ShowDialog();
-                return;
-            }
-
-            void ListaObjectProperties(KBObject obj)
-            {
-                if (isGenerated(obj))
+            KBDoctorWebForms.ShowActionMenu(
+                "KBDoctor - Responsive/Smooth actions",
+                new List<KeyValuePair<string, string>>
                 {
+                    new KeyValuePair<string, string>("responsiveDefaults", "Convert default responsive properties"),
+                    new KeyValuePair<string, string>("smoothDefaults", "Convert default Web UX to Smooth"),
+                    new KeyValuePair<string, string>("generatedPreviousToSmooth", "Move generated objects from previous compatible to Smooth"),
+                    new KeyValuePair<string, string>("auditSmoothResponsive", "Audit Smooth/Responsive objects"),
+                    new KeyValuePair<string, string>("resetDefaultMasterPage", "Reset default MasterPage references")
+                });
+        }
 
-
-                    WebFormPart webForm = obj.Parts.Get<WebFormPart>();
-                    KBDoctorOutput.Message(obj.Name + "," + obj.GetPropertyValueString("WebUX") + "," + obj.GetPropertyValueString("MasterPage") + "," + obj.GetPropertyValueString("Theme")
-                        + "," + obj.GetPropertyValueString("WebFormDefaults") + "," + obj.GetPropertyValueString("AUTO_REFRESH") + "," + webForm.IsDefault);
-
-                    KBModel kbModel = obj.Model;
-
-                    Artech.Genexus.Common.Objects.Theme theme = Artech.Genexus.Common.Objects.Theme.Get(kbModel, "LuciaTheme_v4");
-                    obj.SetPropertyValue(Properties.WBP.Theme, new ThemeWebReference(theme));
-
-                    QualifiedName qname = new QualifiedName("", "LuciaMasterPage_v4");
-                    WebPanel masterPage = WebPanel.Get(kbModel, qname);
-
-
-
-
-
-                }
-
-            }
+        public static void RunResponsiveSmoothAction(object[] parameters)
+        {
+            ResponsiveSmoothActions.Run(KBDoctorWebForms.GetParameter(parameters, "action"));
         }
 
         public static void ListWebObjectsProperties()
@@ -1156,6 +1247,16 @@ public static void ListAPIObjects()
 
         public static void ObjectsUpdatingAttributes()
         {
+            SelectObjectsUpdatingAttributes();
+        }
+
+        public static void SelectObjectsUpdatingAttributes()
+        {
+            KBDoctorWebForms.ShowTableAttributeSelection("KBDoctor - Objects updating attribute", "ApplyObjectsUpdateAttribute", GetTableAttributes(UIServices.KB.CurrentModel));
+        }
+
+        public static void ApplyObjectsUpdatingAttributes(object[] parameters)
+        {
             IOutputService output = CommonServices.Output;
             output.SelectOutput("KBDoctor");
 
@@ -1175,15 +1276,10 @@ public static void ListAPIObjects()
 
                 writer.AddTableHeader(new string[] { "Table", "Transactions", "Objects updating table", "Objects updating attribute" });
 
-                AskAttributeandTable at = new AskAttributeandTable();
-                DialogResult dr = new DialogResult();
-                dr = at.ShowDialog();
-
-                if (dr == DialogResult.OK)
+                string tblName = KBDoctorWebForms.GetParameter(parameters, "tblName");
+                string attName = KBDoctorWebForms.GetParameter(parameters, "attName");
+                if (!string.IsNullOrEmpty(tblName) && !string.IsNullOrEmpty(attName))
                 {
-                    string tblName = at.tblName;
-                    string attName = at.attName;
-
                     string trnstring = "";
                     string updatetablestring = "";
                     string updateattstring = "";
@@ -1241,6 +1337,23 @@ public static void ListAPIObjects()
                 bool success = false;
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
+        }
+
+        private static Dictionary<string, IList<string>> GetTableAttributes(KBModel model)
+        {
+            Dictionary<string, IList<string>> result = new Dictionary<string, IList<string>>();
+            foreach (Table table in Table.GetAll(model))
+            {
+                List<string> attributes = new List<string>();
+                foreach (TableAttribute attribute in table.TableStructure.Attributes)
+                {
+                    attributes.Add(attribute.Name);
+                }
+
+                result[table.Name] = attributes;
+            }
+
+            return result;
         }
         // TODO: Sin referencias textuales encontradas; revisar si debe exponerse como comando antes de eliminar.
         public static void ObjectsWithTheSameSignature()

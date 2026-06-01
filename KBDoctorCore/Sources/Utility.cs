@@ -158,14 +158,6 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         internal static void ShowKBDoctorResults(string outputFile)
         {
-            //Usando la nueva tool window
-            //StartWindow sw = new StartWindow()
-            // Usando la start page
-            /*
-            UIServices.StartPage.OpenPage(outputFile, "KBDoctor", null);
-            //   UIServices.StartPage.OpenPage(outputFile, pageTitle, null);
-            UIServices.ToolWindows.FocusToolWindow(UIServices.StartPage.ToolWindow.Id);
-            */
         }
 
         internal static string SpcDirectory(KnowledgeBase KB)
@@ -602,16 +594,13 @@ namespace Concepto.Packages.KBDoctorCore.Sources
             string outputFile = KB.UserDirectory + @"\kbdoctor." + Utility.CleanFileName(title) + ".html";
             if (File.Exists(outputFile))
             {
-
                 try
                 {
                     File.Delete(outputFile);
                 }
                 catch
                 {
-
                 }
-                KBDoctor.KBDoctorOutput.Warning("File " + outputFile + " is locked. The start page cannot be generated");
             }
 
             return outputFile;
