@@ -1,6 +1,6 @@
 # Cambios recientes
 
-Fecha de revision: 2026-05-31
+Fecha de revision: 2026-06-02
 
 ## 2026-05-29 / 2026-05-30 - Cambios confirmados en Git
 
@@ -35,7 +35,7 @@ Commits revisados:
 - `db1487f` - EA - Primera version con Codex.
 - `962657d` - Filter object reports to editable objects
 
-## 2026-05-31 - Cambios locales sin commit
+## 2026-05-31 - Migracion de dialogos WinForms a formularios HTML
 
 ### Formularios HTML para acciones interactivas
 
@@ -120,10 +120,30 @@ Commits revisados:
   - `SearchReplace`
 - `CommandManager.ExecAboutKBDoctor` ahora usa `KBDoctorWebForms.ShowAbout` en lugar de abrir `AboutBox1`.
 
-### Estado pendiente
+## 2026-06-02 - WebForm to AbstractEditor
 
-- Cambios locales modifican 12 archivos versionados y agregan 2 archivos nuevos.
-- Archivos nuevos sin seguimiento:
-  - `KBDoctorUI/Sources/KBDoctorWebForms.cs`
-  - `KBDoctorUI/Sources/ResponsiveSmoothActions.cs`
-- No se registro en este documento una validacion de build posterior a estos cambios locales.
+- Se agrego el comando `WebFormToAbstractEditor` para convertir WebPanels seleccionados desde WebForm HTML al Abstract Editor.
+- Se registro el comando en:
+  - `KBDoctorUI/Sources/CommandKeys.cs`
+  - `KBDoctorUI/Sources/CommandManager.cs`
+  - `KBDoctorUI/KBDoctor.package`
+  - `KBDoctorUI/GeneXusPackage.package`
+  - `KBDoctorUI/StringResources.resx`
+- Se agrego una entrada de menu `UI-FrontEnd` para ejecutar la conversion desde GeneXus.
+- `ObjectsHelper.Commands.cs` agrega la accion `webFormToAbstractEditor` al menu HTML de acciones Responsive/Smooth.
+- `ResponsiveSmoothActions.cs` incorpora la logica principal:
+  - seleccion multiple de WebPanels.
+  - filtro de objetos editables por usuario.
+  - reseteo de `MasterPage` y `Theme` a valores por defecto cuando corresponde.
+  - conversion del formulario raiz HTML a layout abstracto usando `MultiForm.Layout.ConvertForm`.
+  - resolucion previa de referencias almacenadas `att:` y `var:` antes de convertir.
+  - reemplazo posterior de referencias por nombres de atributos y variables.
+  - sanitizacion de terminadores CDATA invalidos y validacion de XML convertido.
+  - soporte para reemplazos de clases mediante `KBDoctorWebFormClassReplacements.csv` en el directorio de usuario de la KB.
+  - reporte HTML con objeto, modulo, MasterPage, Style, tipo de editor y resultado de conversion.
+  - salida de resumen con seleccionados, guardados, ya abstractos, convertidos, no convertidos y fallidos.
+- Se agregaron diagnosticos de conversion para volcar XML intermedio cuando falla la conversion o `EditableToStored`.
+
+### Estado de validacion
+
+- No se registro en este documento una validacion de build posterior a estos cambios.

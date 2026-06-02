@@ -109,6 +109,7 @@ namespace Concepto.Packages.KBDoctor
             AddCommand(CommandKeys.ListCommitOnExit, new ExecHandler(ExecListCommitOnExit), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectsWithVarsNotUsed, new ExecHandler(ExecObjectsWithVarsNotUsed), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ResetWINForm, new ExecHandler(ExecResetWINForm), new QueryHandler(QueryKBDoctor));
+            AddCommand(CommandKeys.WebFormToAbstractEditor, new ExecHandler(ExecWebFormToAbstractEditor), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.RunResponsiveSmoothAction, new ExecHandler(ExecRunResponsiveSmoothAction), new QueryHandler(QueryKBDoctor));
             AddCommand(CommandKeys.ObjectMigration, new ExecHandler(ExecObjectMigration), new QueryHandler(QueryKBDoctor));
 
@@ -1351,6 +1352,13 @@ namespace Concepto.Packages.KBDoctor
             IOutputService output = KBDoctorHelper.SelectOutput();
             Thread t = new Thread(new ThreadStart(ObjectsHelper.ResetWINForm));
             t.Start();
+            return true;
+        }
+
+        public bool ExecWebFormToAbstractEditor(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            ResponsiveSmoothActions.Run("webFormToAbstractEditor");
             return true;
         }
 

@@ -130,6 +130,7 @@
     <CommandDefinition id="CleanVarsNotUsed" />
     <CommandDefinition id="CleanObjects" />
     <CommandDefinition id="ResetWINForm" />
+    <CommandDefinition id="WebFormToAbstractEditor" />
     <CommandDefinition id="RunResponsiveSmoothAction" />
     <CommandDefinition id="ThemeClassesNotUsed" />
 	<CommandDefinition id="ObjThemeClassesNotUsed" />
@@ -283,6 +284,9 @@
               <Command refid="GenerateGraph"/>
               <Command refid="ApplyExternalModularization" />
             </Group>
+          </Popup>
+          <Popup name ="UI-FrontEnd" >
+            <Command refid="WebFormToAbstractEditor"/>
           </Popup>
           <Group id="CleanKB" >
             <Popup name ="Clean KB">

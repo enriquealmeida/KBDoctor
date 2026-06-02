@@ -412,6 +412,9 @@
   <data name="BuildObjectWithProperty" xml:space="preserve">
     <value>List objects with property</value>
   </data>
+  <data name="WebFormToAbstractEditor" xml:space="preserve">
+    <value>WebForm to Abstract Editor</value>
+  </data>
   <data name="ObjectsWithConstants" xml:space="preserve">
     <value>Anonimize KB</value>
   </data>

@@ -1101,7 +1101,8 @@ namespace Concepto.Packages.KBDoctor
                     new KeyValuePair<string, string>("smoothDefaults", "Convert default Web UX to Smooth"),
                     new KeyValuePair<string, string>("generatedPreviousToSmooth", "Move generated objects from previous compatible to Smooth"),
                     new KeyValuePair<string, string>("auditSmoothResponsive", "Audit Smooth/Responsive objects"),
-                    new KeyValuePair<string, string>("resetDefaultMasterPage", "Reset default MasterPage references")
+                    new KeyValuePair<string, string>("resetDefaultMasterPage", "Reset default MasterPage references"),
+                    new KeyValuePair<string, string>("webFormToAbstractEditor", "WebForm to Abstract Editor")
                 });
         }
 

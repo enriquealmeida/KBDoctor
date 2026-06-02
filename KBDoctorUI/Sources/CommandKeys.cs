@@ -315,6 +315,9 @@ namespace Concepto.Packages.KBDoctor
         private static CommandKey resetWINForm = new CommandKey(Package.guid, "ResetWINForm");
         public static CommandKey ResetWINForm { get { return resetWINForm; } }
 
+        private static CommandKey webFormToAbstractEditor = new CommandKey(Package.guid, "WebFormToAbstractEditor");
+        public static CommandKey WebFormToAbstractEditor { get { return webFormToAbstractEditor; } }
+
         private static CommandKey runResponsiveSmoothAction = new CommandKey(Package.guid, "RunResponsiveSmoothAction");
         public static CommandKey RunResponsiveSmoothAction { get { return runResponsiveSmoothAction; } }
 

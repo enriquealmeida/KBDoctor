@@ -64,6 +64,7 @@
     <CommandDefinition id="AssignAttributeOrDomainToVariable" />
     <CommandDefinition id="CleanVarsNotUsed" />
     <CommandDefinition id="CleanObjects" />
+    <CommandDefinition id="WebFormToAbstractEditor" />
 
     <!-- Acciones sobre tablas -->
     <CommandDefinition id="AssignDescriptionToTable" />
@@ -132,6 +133,9 @@
             <Command refid="CleanVarsNotUsed" />
           </Popup>
         </Group>
+        <Popup name ="UI-FrontEnd">
+          <Command refid="WebFormToAbstractEditor" />
+        </Popup>
         <Group id="AboutKBDoctor" insertAfter="Objects">
           <Command refid="AboutKBDoctor"/>
         </Group>
