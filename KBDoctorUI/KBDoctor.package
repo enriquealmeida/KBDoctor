@@ -62,9 +62,7 @@
     <CommandDefinition id="ObjectsWithVarNotBasedOnAtt" />
     <CommandDefinition id="RenameVariables" />
     <CommandDefinition id="BuildModule" />
-    <CommandDefinition id="BuildModuleContext" />
     <CommandDefinition id="BuildObjectAndReferences" />
-    <CommandDefinition id="BuildObjectAndReferencesContext" />
     <CommandDefinition id="BuildObjectWithProperty" />
     <CommandDefinition id="ObjectsWithCommitOnExit" />
     <CommandDefinition id="ListCommitOnExit" />
@@ -111,12 +109,11 @@
     <!-- Acciones sobre atributos -->
     <CommandDefinition id="AssignDomainToAttribute" />
     <CommandDefinition id="AssignDescriptionToAttribute" />
-    <CommandDefinition id="AssignDeionToAttribute" />
     <CommandDefinition id="ApplyAttributeText" />
     <CommandDefinition id="AssignTitleToAttribute" />
     <CommandDefinition id="AssignColumnTitleToAttribute" />
     <CommandDefinition id="ListAttribute" />
-    <CommandDefinition id="AddDeorIndex" />
+    <CommandDefinition id="AddDescriptorIndex" />
     <CommandDefinition id="AttInOneTrnOnly" />
     <!-- Acciones sobre objetos -->
     <CommandDefinition id="RemoveObject" />
@@ -131,6 +128,9 @@
     <CommandDefinition id="CleanObjects" />
     <CommandDefinition id="ResetWINForm" />
     <CommandDefinition id="WebFormToAbstractEditor" />
+    <CommandDefinition id="ImproveControlClasses" />
+    <CommandDefinition id="AuditWebPanelsSmoothUX" />
+    <CommandDefinition id="ConvertSafeWebPanelsToSmoothUX" />
     <CommandDefinition id="RunResponsiveSmoothAction" />
     <CommandDefinition id="ThemeClassesNotUsed" />
 	<CommandDefinition id="ObjThemeClassesNotUsed" />
@@ -146,6 +146,8 @@
     <CommandDefinition id="SDTsWithDateInWS" />
     <CommandDefinition id="GenerateSDTDataLoad" />
     <CommandDefinition id="CheckVariableUsages"/>
+    <CommandDefinition id="CheckBldObjects"/>
+    <CommandDefinition id="ObjectsWithVarsNotUsed"/>
 	<CommandDefinition id="ListWebObjectsProperties"/>
     <!--- acciones sobre atributos y tablas -->
     <CommandDefinition id="RenameAttributesAndTables" />
@@ -162,7 +164,6 @@
     <CommandDefinition id="OpenFolderObjComparerNavigation" />
     <!-- Acciones sobre tablas -->
     <CommandDefinition id="AssignDescriptionToTable" />
-    <CommandDefinition id="AssignDeionToTable" />
     <CommandDefinition id="ApplyTableText" />
     <!-- Acciones sobre la KB-->
     <CommandDefinition id="AddINParmRule" image="Splatter1" imageType="ico" />
@@ -174,7 +175,6 @@
     <CommandDefinition id="ApplySearchAndReplace" />
     <CommandDefinition id="ClassNotInTheme" image="Palette" imageType="ico"/>
     <CommandDefinition id="ClassUsed" image="Palette" imageType="ico"/>
-    <CommandDefinition id="ListClassUsed" image="Palette" imageType="ico"/>
     <CommandDefinition id ="ListLastReports" />
     <!-- Acerca de -->
     <CommandDefinition id="AboutKBDoctor" image="Red_Cross"   imageType="ico" />
@@ -203,158 +203,151 @@
     <Menu type="menubar">
       <Popup refid='ToolsMenu' name='Tools' >
         <Popup name="KBDoctor"   >
-          <Popup name ="Attributes" >
-            <Group>
-              <Command refid="ListAttributes"/>
+          <Popup name="Diagnostics">
+            <Popup name="Attributes">
               <Command refid="AttWithNoDomain"/>
               <Command refid="AttWithoutDescription"/>
               <Command refid="AttInOneTrnOnly"/>
-              <Command refid="AttFormula"/>
               <Command refid="AttUpdated"/>
-            </Group>
-            <Group>
               <Command refid="AttCharToVarchar"/>
               <Command refid="AttVarcharToChar"/>
               <Command refid="AttKeyVarchar"/>
-            </Group>
-          </Popup>
-          <Popup name ="Domains">
-            <Group>
-              <Command refid="ListDomain"/>
-              <Command refid="ReplaceDomain"/>
-            </Group>
-          </Popup>
-
-          <Popup name ="Tables">
-            <Command refid="ListTables" />
-            <Command refid="TablesWithNoDescription"/>
-            <Command refid="GroupWithNoDescription" />
-            <Command refid="TableTransaction" />
-            <Command refid="TableUpdate" />
-            <Command refid="IndexWithNotRefAtt"/>
-            <Command refid ="TablesWidth"/>
-            <Command refid="ListTableWithAttributeNullableCompatible" />
-
-          </Popup>
-
-          <Popup name ="Objects">
-            <Command refid="ListObj" />
-            <Command refid="ListUnreferencedObjectsInUserModules" />
-            <Command refid="ObjectsWithoutInOut"/>
-            <Command refid="KBInterfaces" />
-            <Command refid="BuildObjectAndReferences"/>
-            <Command refid="BuildObjectWithProperty"/>
-            <Command refid="TreeCommit" />
-            <Command refid="ObjectsUpdateAttribute"/>
-            <Group>
+            </Popup>
+            <Popup name="Tables">
+              <Command refid="TablesWithNoDescription"/>
+              <Command refid="GroupWithNoDescription" />
+              <Command refid="IndexWithNotRefAtt"/>
+            </Popup>
+            <Popup name="Objects">
+              <Command refid="ListUnreferencedObjectsInUserModules" />
+              <Command refid="ObjectsWithoutInOut"/>
+              <Command refid="TreeCommit" />
+              <Command refid="ObjectsUpdateAttribute"/>
               <Command refid="ReviewObjects" />
-            </Group>
-
-            <Group >
-              <Command refid="CalculateCheckSum"  />
-              <Command refid="CompareLastOBJDirectory" />
-              <Command refid="OpenFolderObjComparerNavigation"  />
-			  <Command refid="FixVariablesNotBasedInAttributesOrDomain" />
-				<Command refid="ListWebObjectsProperties"/>
-            </Group>
-
-          </Popup>
-
-          <Popup name="Navigation processing" >
-            <Command refid="ListObjWarningsErrors" />
-            <Command refid="ListObjSimilarNavigation" />
-            <Group >
-              <Command refid="PrepareComparerNavigations"  />
-              <Command refid="CompareLastNVGDirectory" />
-              <Command refid="OpenFolderComparerNavigation"  />
-            </Group>
-          </Popup>
-
-          <Popup name ="Modules" >
-            <Group>
-              <Command refid="ListModules" />
-              <Command refid="ListTablesInModules" />
+              <Command refid="VariablesNotBasedOnAttributes"/>
+            </Popup>
+            <Popup name="Navigation">
+              <Command refid="ListObjWarningsErrors" />
+              <Command refid="ListObjSimilarNavigation" />
+            </Popup>
+            <Popup name="Database">
+              <Command refid="ListTableWithAttributeNullableCompatible" />
+              <Command refid="ScriptToCompareNULLABLE_GXvsDB" />
+              <Command refid="ScriptToCompareNULLABLE_GXvsDB2" />
+            </Popup>
+            <Popup name="Modules">
               <Command refid="ListObjectsWithTableInOtherModule" />
+            </Popup>
+            <Popup name="UI / Frontend">
+              <Command refid="WebFormToAbstractEditor"/>
+              <Command refid="ImproveControlClasses"/>
+              <Command refid="AuditWebPanelsSmoothUX"/>
+            </Popup>
+          </Popup>
+
+          <Popup name="Fix / Cleanup">
+            <Popup name="Attributes">
+              <Command refid="ReplaceDomain"/>
+            </Popup>
+            <Popup name="Objects">
+              <Command refid="BuildObjectAndReferences"/>
+              <Command refid="FixVariablesNotBasedInAttributesOrDomain" />
+            </Popup>
+            <Popup name="Modules">
               <Command refid="BuildModule"/>
-              <Command refid="ListAPIObjects" />
-              <Command refid="ModuleDependencies" />
-              <Command refid="RecomendedModule" />
-              <Command refid="SplitMainObject" />
-              <Command refid="MoveTransactions" />
-              <Command refid="GenerateGraph"/>
-              <Command refid="ApplyExternalModularization" />
-            </Group>
-          </Popup>
-          <Popup name ="UI-FrontEnd" >
-            <Command refid="WebFormToAbstractEditor"/>
-          </Popup>
-          <Group id="CleanKB" >
-            <Popup name ="Clean KB">
+            </Popup>
+            <Popup name="UI / Frontend">
+              <Command refid="ConvertSafeWebPanelsToSmoothUX"/>
+            </Popup>
+            <Popup name="KB cleanup">
               <Command refid="AttWithoutBaseTable" />
               <Command refid="ObjectsNotCalled"/>
               <Command refid="CleanVarsNotUsed" />
               <Command refid="RemovableTransactions"/>
               <Command refid="CleanObjects" />
-              <Command refid="FixVariablesNotBasedInAttributesOrDomain" />
               <Command refid="ResetWINForm"/>
-              <Command refid="ReplaceNullCompatible"  />
+              <Command refid="ReplaceNullCompatible" />
               <Command refid="ChangeCommitOnExit" />
+            </Popup>
+          </Popup>
 
+          <Popup name="Reports &amp; Inventory">
+            <Popup name="Attributes">
+              <Command refid="ListAttributes"/>
+              <Command refid="AttFormula"/>
             </Popup>
-          </Group>
-          <Group id="Common errors" >
-            <Popup name ="Common errors">
-                <Command refid="ListProperties"/>
-                <Command refid="GeneratedByPatternWithoutDynamism"  />
-                <Command refid="ScriptToCompareNULLABLE_GXvsDB" />
-                <Command refid="ScriptToCompareNULLABLE_GXvsDB2" />
-                <Command refid="ListTableWithAttributeNullableCompatible" />
-                <Command refid="AttWithNoDomain"/>
-                <Command refid="AttWithoutDescription"/>
-                <Command refid="VariablesNotBasedOnAttributes"/>
-                <Command refid="ObjectsWithoutInOut"/>
+            <Popup name="Domains">
+              <Command refid="ListDomain"/>
             </Popup>
-          </Group>
+            <Popup name="Tables">
+              <Command refid="ListTables" />
+              <Command refid="TableTransaction" />
+              <Command refid="TableUpdate" />
+              <Command refid="TablesWidth"/>
+            </Popup>
+            <Popup name="Objects">
+              <Command refid="ListObj" />
+              <Command refid="KBInterfaces" />
+              <Command refid="BuildObjectWithProperty"/>
+              <Command refid="ListWebObjectsProperties"/>
+            </Popup>
+            <Popup name="Modules">
+              <Command refid="ListModules" />
+              <Command refid="ListTablesInModules" />
+              <Command refid="ListAPIObjects" />
+              <Command refid="ModuleDependencies" />
+            </Popup>
+          </Popup>
 
-          <Group id="KBstats" >
-            <Popup name ="KB stats">
-              <Command refid="ObjectsRefactoringCandidates" />
-              <Command refid="CountTableAccess" />
-              <Command refid="ListModulesStatistics" />
-              <Command refid="ListModularizationQuality" />
-              <Command refid="CountGeneratedByPattern"  />
-              <Command refid="GenerateCSV_ObjectsRefactoring" />
+          <Popup name="Compare &amp; Snapshots">
+            <Popup name="Objects">
+              <Command refid="CalculateCheckSum" />
+              <Command refid="CompareLastOBJDirectory" />
+              <Command refid="OpenFolderObjComparerNavigation" />
             </Popup>
-          </Group>
-          <Group id="ModularizationG" >
-            <Popup name ="Modularization">
-              <Command refid="GenerateGraph"/>
-              <Command refid="ApplyExternalModularization" />
-              <Command refid="ListModularizationQuality" />
-              <Command refid="AddModularizationInfo" />
-              <Command refid="DetectMavericks" />
+            <Popup name="Navigations">
+              <Command refid="PrepareComparerNavigations" />
+              <Command refid="CompareLastNVGDirectory" />
+              <Command refid="OpenFolderComparerNavigation" />
             </Popup>
-          </Group>
+          </Popup>
 
-          <Popup name="AboutKBDoctor" >
-            <Group id="Configuration" >
-              <Command refid="EditReviewObjects" />
-            </Group>
-            <Popup name="Utilities" >
-                <Command refid="SearchAndReplace"/>
-                <Command refid="SearchAndReplaceString"/>
-                <Command refid="GenerateLocationXML" />
-                <Command refid="RenameAttributesAndTables"  />
-                <Command refid="ListProperties" />
-            </Popup>
-            <Command refid="HelpKBDoctor" />
-            <Command refid="ListLastReports"  />
-            <Command refid="AboutKBDoctor"  />
+          <Popup name="Modularization">
+            <Command refid="RecomendedModule" />
+            <Command refid="SplitMainObject" />
+            <Command refid="MoveTransactions" />
+            <Command refid="GenerateGraph"/>
+            <Command refid="ApplyExternalModularization" />
+            <Command refid="AddModularizationInfo" />
+            <Command refid="DetectMavericks" />
+          </Popup>
+
+          <Popup name="Statistics">
+            <Command refid="ObjectsRefactoringCandidates" />
+            <Command refid="CountTableAccess" />
+            <Command refid="ListModulesStatistics" />
+            <Command refid="ListModularizationQuality" />
+            <Command refid="CountGeneratedByPattern" />
+          </Popup>
+
+          <Popup name="Utilities">
+            <Command refid="EditReviewObjects" />
+            <Command refid="SearchAndReplace"/>
+            <Command refid="GenerateLocationXML" />
+            <Command refid="RenameAttributesAndTables" />
+            <Command refid="ListProperties"/>
             <Command refid="ListDynamicCombo"/>
           </Popup>
 
+          <Popup name="Migration">
+            <Command refid="ObjectMigration" />
+          </Popup>
 
-
+          <Popup name="Help">
+            <Command refid="HelpKBDoctor" />
+            <Command refid="ListLastReports" />
+            <Command refid="AboutKBDoctor" />
+          </Popup>
 
           <Group id="LABS" >
             <Popup name ="Labs">
@@ -402,40 +395,14 @@
                   <Group>
                     <Command refid="ClassNotInTheme" />
                     <Command refid="ClassUsed" />
-                    <Command refid="ListClassUsed" />
-				          	<Command refid="ObjThemeClassesNotUsed"/>
+					          <Command refid="ObjThemeClassesNotUsed"/>
                     <Command refid="ThemeClassesNotUsed"/>
                   </Group>
                 </Popup>
-
-
-
             </Popup>
           </Group>
-
-
-
-		  <Group id="ObjMigration" >
-			  <Popup name ="ObjMigration">
-				  <Command refid="ObjectMigration" />
-				  <!--
-                <Command refid="GenerateSQLScripts"/>
-                <Command refid="GenerateLocationXML" />
-                <Command refid="CleanObjects" />
-
-                <Group>
-                  <Command refid="ObjectsMainCalled"/>
-                  <Command refid="ChangeLegacyCode" />
-                  <Command refid="EditLegacyCodeToReplace" />
-                  <Command refid="UDPCallables"/>
-                </Group>
-				-->
-             </Popup>
-          </Group>
-
-
+        </Popup>
       </Popup>
-    </Popup>
     </Menu>
   </Menus>
   <ToolWindows>

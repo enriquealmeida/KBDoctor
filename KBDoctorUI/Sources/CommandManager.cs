@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -25,206 +25,236 @@ namespace Concepto.Packages.KBDoctor
     {
         public CommandManager()
         {
-            // Atributos
-            AddCommand(CommandKeys.AttWithNoDomain, new ExecHandler(ExecAttWithNoDomain), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListAttributes, new ExecHandler(ExecListAttributes), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AttWithoutDescription, new ExecHandler(ExecAttWithoutDescription), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AttCharToVarchar, new ExecHandler(ExecAttCharToVarchar), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AttVarcharToChar, new ExecHandler(ExecAttVarcharToChar), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AttKeyVarchar, new ExecHandler(ExecAttKeyVarchar), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AttDescWithoutUniqueIndex, new ExecHandler(ExecAttDescWithoutUniqueIndex), new QueryHandler(QueryKBDoctor));
-            //    AddCommand(CommandKeys.AttNotReferenced, new ExecHandler(ExecAttNotReferenced), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AttWithoutBaseTable, new ExecHandler(ExecAttWithoutBaseTable), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AttInOneTrnOnly, new ExecHandler(ExecAttInOneTrnOnly), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AttFormula, new ExecHandler(ExecAttFormula), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ReplaceDomain, new ExecHandler(ExecReplaceDomain), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ApplyReplaceDomain, new ExecHandler(ExecApplyReplaceDomain), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListDomain, new ExecHandler(ExecListDomain), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AttUpdated, new ExecHandler(ExecAttUpdated), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ApplyAttUpdated, new ExecHandler(ExecApplyAttUpdated), new QueryHandler(QueryKBDoctor));
-            // Acciones sobre atributos
-            AddCommand(CommandKeys.AssignDomainToAttribute, new ExecHandler(ExecAssignDomainToAttribute), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AssignDescriptionToAttribute, new ExecHandler(ExecAssignDescriptionToAttribute), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ApplyAttributeText, new ExecHandler(ExecApplyAttributeText), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AssignTitleToAttribute, new ExecHandler(ExecAssignTitleToAttribute), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AssignColumnTitleToAttribute, new ExecHandler(ExecAssignColumnTitleToAttribute), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AddDescriptorIndex, new ExecHandler(ExecAddDescriptorIndex), new QueryHandler(QueryKBDoctor));
-            // Tablas
-            AddCommand(CommandKeys.TblWihNoDescription, new ExecHandler(ExecTblWihNoDescription), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.GrpWihNoDescription, new ExecHandler(ExecGrpWihNoDescription), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.TblWidth, new ExecHandler(ExecTblWidth), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListTables, new ExecHandler(ExecListTables), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.TblTableTransaction, new ExecHandler(ExecTblTableTransaction), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.TblGenerateSimpleTransactionFromNotGeneratedTransactions, new ExecHandler(ExecTblGenerateSimpleTransactionFromNotGeneratedTransactions), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.TblScriptToCompareNULLABLE_GXvsDB, new ExecHandler(ExecTblScriptToCompareNULLABLE_GXvsDB), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.TblScriptToCompareNULLABLE_GXvsDB2, new ExecHandler(ExecTblScriptToCompareNULLABLE_GXvsDB2), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.TblListTableWithAttributeNullableCompatible, new ExecHandler(ExecTblListTableWithAttributeNullableCompatible), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.TblTableUpdate, new ExecHandler(ExecTblTableUpdate), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.TblTableInsertNew, new ExecHandler(ExecTblTableInsertNew), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.GenerateTrnFromTables, new ExecHandler(ExecGenerateTrnFromTables), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.GenerateTrnFromTables2, new ExecHandler(ExecGenerateTrnFromTables2), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListTablesInModules, new ExecHandler(ExecListTablesInModules), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListObjectsWithTableInOtherModule, new ExecHandler(ExecListObjectsWithTableInOtherModule), new QueryHandler(QueryKBDoctor));
-
-            // Acciones sobre tablas
-            AddCommand(CommandKeys.AssignDescriptionToTable, new ExecHandler(ExecAssignDescriptionToTable), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ApplyTableText, new ExecHandler(ExecApplyTableText), new QueryHandler(QueryKBDoctor));
-            // Indices
-            AddCommand(CommandKeys.IndexWithNotRefAtt, new ExecHandler(ExecIndexWithNotRefAtt), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.RemoveIndexAttribute, new ExecHandler(ExecRremoveIndexAttribute), new QueryHandler(QueryKBDoctor));
-            // Objetos
-            AddCommand(CommandKeys.ObjNotReacheable, new ExecHandler(ExecObjNotReacheable), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectsWithoutInOut, new ExecHandler(ExecObjectsWithoutInOut), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectsMainCalled, new ExecHandler(ExecObjectsMainsCalled), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectsReferenced, new ExecHandler(ExecObjectsReferenced), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectsWithVarNotBasedOnAtt, new ExecHandler(ExecObjectsWithVarNotBasedOnAtt), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListDynamicCombo, new ExecHandler(ExecListDynamicCombo), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListProperties, new ExecHandler(ExecListProperties), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListWebObjectsProperties, new ExecHandler(ExecListWebObjectsProperties), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.RenameVariables, new ExecHandler(ExecRenameVariables), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.BuildModule, new ExecHandler(ExecBuildModule), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AssignTypeComparer, new ExecHandler(ExecAssignTypeComparer), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ParameterTypeComparer, new ExecHandler(ExecParametersTypeComparer), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectsWithRuleOld, new ExecHandler(ExecObjectsWithRuleOld), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.EmptyConditionalBlocks, new ExecHandler(ExecEmptyConditionalBlock), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.NewsWithoutWhenDuplicate, new ExecHandler(ExecNewsWithoutWhenDuplicate), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ForEachsWithoutWhenNone, new ExecHandler(ExecForEachsWithoutWhenNone), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ConstantsInCode, new ExecHandler(ExecConstantsInCode), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ReviewCommits, new ExecHandler(ExecReviewCommits), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.GenerateRESTCalls, new ExecHandler(ExecGenerateRESTCalls), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.SDTsWithDateInWS, new ExecHandler(ExecSDTsWithDateInWS), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.GenerateSDTDataLoad, new ExecHandler(ExecGenerateSDTDataLoad), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.VariablesNotBasedOnAttributes, new ExecHandler(ExecVariablesNotBasedOnAttributes), new QueryHandler(QueryKBDoctor));
-
-
-            //      AddCommand(CommandKeys.BuildModuleContext, new ExecHandler(ExecBuildModuleContext), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.BuildObjectAndReferences, new ExecHandler(ExecBuildObjectAndReferences), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.BuildObjectWithProperty, new ExecHandler(ExecBuildObjectWithProperty), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.ObjectsNotCalled, new ExecHandler(ExecObjectsNotCalled), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectsWithCommitOnExit, new ExecHandler(ExecObjectsWithCommitOnExit), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListCommitOnExit, new ExecHandler(ExecListCommitOnExit), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectsWithVarsNotUsed, new ExecHandler(ExecObjectsWithVarsNotUsed), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ResetWINForm, new ExecHandler(ExecResetWINForm), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.WebFormToAbstractEditor, new ExecHandler(ExecWebFormToAbstractEditor), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.RunResponsiveSmoothAction, new ExecHandler(ExecRunResponsiveSmoothAction), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectMigration, new ExecHandler(ExecObjectMigration), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.ObjectsUpdateAttribute, new ExecHandler(ExecProceduresThatUpdatesAttributes), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.SelectObjectsUpdateAttribute, new ExecHandler(ExecSelectObjectsUpdateAttribute), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ApplyObjectsUpdateAttribute, new ExecHandler(ExecApplyObjectsUpdateAttribute), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.ChangeCommitOnExit, new ExecHandler(ExecChangeCommitOnExit), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.TreeCommit, new ExecHandler(ExecTreeCommit), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.ObjectsLegacyCode, new ExecHandler(ExecObjectsLegacyCode), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ChangeLegacyCode, new ExecHandler(ExecChangeLegacyCode), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.EditLegacyCodeToReplace, new ExecHandler(ExecEditLegacyCodeToReplace), new QueryHandler(QueryKBDoctor));
-
-
-            AddCommand(CommandKeys.ObjectsRefactoringCandidates, new ExecHandler(ExecObjectsRefactoringCandidates), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CountTableAccess, new ExecHandler(ExecCountTableAccess), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.ObjectsWithConstants, new ExecHandler(ExecObjectsWithConstants), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.FixVariablesNotBasedInAttributesOrDomain, new ExecHandler(ExecFixVariablesNotBasedInAttributesOrDomain), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.KBInterfaces, new ExecHandler(ExecKBInterfaces), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ObjectsWINWEB, new ExecHandler(ExecObjectsWINWEB), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListProcedureCallWebpanelTransaction, new ExecHandler(ExecListProcedureCallWebpanelTransaction), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.MainTableUsed, new ExecHandler(ExecMainTableUsed), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.RemovableTransactions, new ExecHandler(ExecRemovableTransactions), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.GenerateSQLScripts, new ExecHandler(ExecGenerateSQLScripts), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.GenerateDPfromTable, new ExecHandler(ExecGenerateDPfromTable), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.GenerateGraph, new ExecHandler(ExecGenerateGraph), new QueryHandler(QueryKBDoctor));
-
-            // Acciones sobre objetos
-            AddCommand(CommandKeys.RemoveObject, new ExecHandler(ExecRemoveObject), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.RemoveUnreferencedObjectsInUserModules, new ExecHandler(ExecRemoveUnreferencedObjectsInUserModules), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.OpenObject, new ExecHandler(ExecOpenKBObject), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.SetObjectPropertyText, new ExecHandler(ExecSetObjectPropertyText), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ApplyObjectPropertyText, new ExecHandler(ExecApplyObjectPropertyText), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AssignAttributeToVariable, new ExecHandler(ExecAssignAttributeToVariable), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AssignDomainToVariable, new ExecHandler(ExecAssignDomainToVariable), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AssignAttributeOrDomainToVariable, new ExecHandler(ExecAssignAttributeOrDomainToVariable), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CleanVarsNotUsed, new ExecHandler(ExecCleanVarsNotUsed), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.AddINParmRule, new ExecHandler(ExecAddINParmRule), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListTableAttributesUsingDomain, new ExecHandler(ExecListTableAttributesUsingDomain), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CleanObjects, new ExecHandler(ExecCleanObjects), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CleanKBAsMuchAsPossible, new ExecHandler(ExecCleanKB), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ProcedureSDT, new ExecHandler(ExecProcedureSDT), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ProcedureGetSet, new ExecHandler(ExecProcedureGetSet), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.SearchAndReplace, new ExecHandler(ExecSearchAndReplace), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ApplySearchAndReplace, new ExecHandler(ExecApplySearchAndReplace), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ClassNotInTheme, new ExecHandler(ExecClassNotInTheme), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ClassUsed, new ExecHandler(ExecClassUsed), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListClassUsed, new ExecHandler(ExecClassUsed), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.PrepareComparerNavigations, new ExecHandler(ExecPrepareComparerNavigations), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.OpenFolderComparerNavigation, new ExecHandler(ExecOpenFolderComparerNavigation), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.OpenFolderObjComparerNavigation, new ExecHandler(ExecOpenFolderObjComparerNavigation), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CompareLastNVGDirectory, new ExecHandler(ExecCompareLastNVGDirectory), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CompareLastOBJDirectory, new ExecHandler(ExecCompareLastOBJDirectory), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AttributeAsOutput, new ExecHandler(ExecAttributeAsOutput), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.ListLastReports, new ExecHandler(ExecListLastReports), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.PreprocessPendingObjects, new ExecHandler(ExecPreprocessPendingObjects), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.ReviewObjects, new ExecHandler(ExecReviewObjects), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ReviewModuleOrFolder, new ExecHandler(ExecReviewModuleOrFolder), new QueryHandler(QueryIsModuleOrFolderSelected));
-            AddCommand(CommandKeys.ReviewObject, new ExecHandler(ExecReviewObject), new QueryHandler(QueryIsKBObjectSelected));
-            AddCommand(CommandKeys.EditReviewObjects, new ExecHandler(ExecEditReviewObjects), new QueryHandler(QueryKBDoctor));
-
-
-            AddCommand(CommandKeys.AboutKBDoctor, new ExecHandler(ExecAboutKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.HelpKBDoctor, new ExecHandler(ExecHelpKBDoctor), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.ThemeClassesNotUsed, new ExecHandler(ExecThemeClassesNotUsed), new QueryHandler(QueryKBDoctorNoKB));
-            AddCommand(CommandKeys.ObjThemeClassesNotUsed, new ExecHandler(ExecObjThemeClassesNotUsed), new QueryHandler(QueryKBDoctorNoKB));
-
-
-            //Labs
-            AddCommand(CommandKeys.RenameAttributesAndTables, new ExecHandler(ExecRenameAttributesAndTables), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CountGeneratedByPattern, new ExecHandler(ExecCountGeneratedByPattern), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.GeneratedByPatternWithoutDynamism, new ExecHandler(ExecGeneratedByPatternWithoutDynamism), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ReplaceNullCompatible, new ExecHandler(ExecReplaceNullCompatible), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListObj, new ExecHandler(ExecListObj), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListUnreferencedObjectsInUserModules, new ExecHandler(ExecListUnreferencedObjectsInUserModules), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CreateDeployUnits, new ExecHandler(ExecCreateDeployUnits), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.MarkPublicObjects, new ExecHandler(ExecMarkPublicObjects), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListModules, new ExecHandler(ExecListModules), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListModulesStatistics, new ExecHandler(ExecListModulesStatistics), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.MoveTransactions, new ExecHandler(ExecMoveTransactions), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ModuleDependencies, new ExecHandler(ExecModuleDependencies), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.CalculateCheckSum, new ExecHandler(ExecCalculateCheckSum), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.GenerateLocationXML, new ExecHandler(ExecGenerateLocationXML), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.ListObjWarningsErrors, new ExecHandler(ExecListObjWarningsErrors), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListObjSimilarNavigation, new ExecHandler(ExecListObjSimilarNavigation), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ListAPIObjects, new ExecHandler(ExecListAPIObjects), new QueryHandler(QueryKBDoctor));
-
-            AddCommand(CommandKeys.RecomendedModule, new ExecHandler(ExecRecomendedModule), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CheckBldObjects, new ExecHandler(ExecCheckBldObjects), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.CheckVariableUsages, new ExecHandler(ExeCheckVariableUsages), new QueryHandler(QueryKBDoctor));
-
-            //Modularization
-            AddCommand(CommandKeys.ListModularizationQuality, new ExecHandler(ExecListModularizationQuality), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.AddModularizationInfo, new ExecHandler(ExecAddModularizationInfo), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.ApplyExternalModularization, new ExecHandler(ExecApplyExternalModularization), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.DetectMavericks, new ExecHandler(ExecDetectMavericks), new QueryHandler(QueryKBDoctor));
-
-
-            AddCommand(CommandKeys.SplitMainObject, new ExecHandler(ExecSplitMainObject), new QueryHandler(QueryKBDoctor));
-            AddCommand(CommandKeys.UDPCallables, new ExecHandler(ExecUDPCallables), new QueryHandler(QueryKBDoctor));
-
+            RegisterAttributeCommands();
+            RegisterTableCommands();
+            RegisterObjectCommands();
+            RegisterObjectActionCommands();
+            RegisterKbCleanupCommands();
+            RegisterNavigationCompareCommands();
+            RegisterModularizationCommands();
+            RegisterReviewCommands();
+            RegisterUtilityCommands();
+            RegisterThemeCommands();
+            RegisterHelpCommands();
+            RegisterLabCommands();
         }
 
+        private void Register(CommandKey key, ExecHandler execHandler)
+        {
+            Register(key, execHandler, new QueryHandler(QueryKBDoctor));
+        }
 
+        private void Register(CommandKey key, ExecHandler execHandler, QueryHandler queryHandler)
+        {
+            AddCommand(key, execHandler, queryHandler);
+        }
+
+        private void RegisterAttributeCommands()
+        {
+            Register(CommandKeys.ListAttributes, ExecListAttributes);
+            Register(CommandKeys.ListAttribute, ExecListAttributes);
+            Register(CommandKeys.AttWithNoDomain, ExecAttWithNoDomain);
+            Register(CommandKeys.AttWithoutDescription, ExecAttWithoutDescription);
+            Register(CommandKeys.AttInOneTrnOnly, ExecAttInOneTrnOnly);
+            Register(CommandKeys.AttFormula, ExecAttFormula);
+            Register(CommandKeys.AttUpdated, ExecAttUpdated);
+            Register(CommandKeys.AttCharToVarchar, ExecAttCharToVarchar);
+            Register(CommandKeys.AttVarcharToChar, ExecAttVarcharToChar);
+            Register(CommandKeys.AttKeyVarchar, ExecAttKeyVarchar);
+            Register(CommandKeys.AttDescWithoutUniqueIndex, ExecAttDescWithoutUniqueIndex);
+            Register(CommandKeys.AttWithoutBaseTable, ExecAttWithoutBaseTable);
+            Register(CommandKeys.ReplaceDomain, ExecReplaceDomain);
+            Register(CommandKeys.ApplyReplaceDomain, ExecApplyReplaceDomain);
+            Register(CommandKeys.ListDomain, ExecListDomain);
+            Register(CommandKeys.ApplyAttUpdated, ExecApplyAttUpdated);
+
+            Register(CommandKeys.AssignDomainToAttribute, ExecAssignDomainToAttribute);
+            Register(CommandKeys.AssignDescriptionToAttribute, ExecAssignDescriptionToAttribute);
+            Register(CommandKeys.ApplyAttributeText, ExecApplyAttributeText);
+            Register(CommandKeys.AssignTitleToAttribute, ExecAssignTitleToAttribute);
+            Register(CommandKeys.AssignColumnTitleToAttribute, ExecAssignColumnTitleToAttribute);
+            Register(CommandKeys.AddDescriptorIndex, ExecAddDescriptorIndex);
+        }
+
+        private void RegisterTableCommands()
+        {
+            Register(CommandKeys.ListTables, ExecListTables);
+            Register(CommandKeys.TblWihNoDescription, ExecTblWihNoDescription);
+            Register(CommandKeys.GrpWihNoDescription, ExecGrpWihNoDescription);
+            Register(CommandKeys.TblWidth, ExecTblWidth);
+            Register(CommandKeys.TblTableTransaction, ExecTblTableTransaction);
+            Register(CommandKeys.TblGenerateSimpleTransactionFromNotGeneratedTransactions, ExecTblGenerateSimpleTransactionFromNotGeneratedTransactions);
+            Register(CommandKeys.TblScriptToCompareNULLABLE_GXvsDB, ExecTblScriptToCompareNULLABLE_GXvsDB);
+            Register(CommandKeys.TblScriptToCompareNULLABLE_GXvsDB2, ExecTblScriptToCompareNULLABLE_GXvsDB2);
+            Register(CommandKeys.TblListTableWithAttributeNullableCompatible, ExecTblListTableWithAttributeNullableCompatible);
+            Register(CommandKeys.TblTableUpdate, ExecTblTableUpdate);
+            Register(CommandKeys.TblTableInsertNew, ExecTblTableInsertNew);
+            Register(CommandKeys.GenerateTrnFromTables, ExecGenerateTrnFromTables);
+            Register(CommandKeys.GenerateTrnFromTables2, ExecGenerateTrnFromTables2);
+            Register(CommandKeys.ListTablesInModules, ExecListTablesInModules);
+            Register(CommandKeys.ListObjectsWithTableInOtherModule, ExecListObjectsWithTableInOtherModule);
+
+            Register(CommandKeys.AssignDescriptionToTable, ExecAssignDescriptionToTable);
+            Register(CommandKeys.ApplyTableText, ExecApplyTableText);
+            Register(CommandKeys.IndexWithNotRefAtt, ExecIndexWithNotRefAtt);
+            Register(CommandKeys.RemoveIndexAttribute, ExecRremoveIndexAttribute);
+        }
+
+        private void RegisterObjectCommands()
+        {
+            Register(CommandKeys.ListObj, ExecListObj);
+            Register(CommandKeys.ListUnreferencedObjectsInUserModules, ExecListUnreferencedObjectsInUserModules);
+            Register(CommandKeys.ObjNotReacheable, ExecObjNotReacheable);
+            Register(CommandKeys.ObjectsNotCalled, ExecObjectsNotCalled);
+            Register(CommandKeys.ObjectsWithoutInOut, ExecObjectsWithoutInOut);
+            Register(CommandKeys.ObjectsMainCalled, ExecObjectsMainsCalled);
+            Register(CommandKeys.ObjectsReferenced, ExecObjectsReferenced);
+            Register(CommandKeys.ObjectsWithVarNotBasedOnAtt, ExecObjectsWithVarNotBasedOnAtt);
+            Register(CommandKeys.ObjectsWithVarsNotUsed, ExecObjectsWithVarsNotUsed);
+            Register(CommandKeys.ObjectsWithCommitOnExit, ExecObjectsWithCommitOnExit);
+            Register(CommandKeys.ListCommitOnExit, ExecListCommitOnExit);
+            Register(CommandKeys.ObjectsUpdateAttribute, ExecProceduresThatUpdatesAttributes);
+            Register(CommandKeys.SelectObjectsUpdateAttribute, ExecSelectObjectsUpdateAttribute);
+            Register(CommandKeys.ApplyObjectsUpdateAttribute, ExecApplyObjectsUpdateAttribute);
+            Register(CommandKeys.ObjectsLegacyCode, ExecObjectsLegacyCode);
+            Register(CommandKeys.ObjectsRefactoringCandidates, ExecObjectsRefactoringCandidates);
+            Register(CommandKeys.ObjectsWithConstants, ExecObjectsWithConstants);
+            Register(CommandKeys.ObjectsWINWEB, ExecObjectsWINWEB);
+            Register(CommandKeys.ListProcedureCallWebpanelTransaction, ExecListProcedureCallWebpanelTransaction);
+            Register(CommandKeys.BuildObjectAndReferences, ExecBuildObjectAndReferences);
+            Register(CommandKeys.BuildObjectWithProperty, ExecBuildObjectWithProperty);
+            Register(CommandKeys.ObjectMigration, ExecObjectMigration);
+            Register(CommandKeys.KBInterfaces, ExecKBInterfaces);
+            Register(CommandKeys.ListWebObjectsProperties, ExecListWebObjectsProperties);
+            Register(CommandKeys.ListProperties, ExecListProperties);
+            Register(CommandKeys.ListDynamicCombo, ExecListDynamicCombo);
+            Register(CommandKeys.MainTableUsed, ExecMainTableUsed);
+            Register(CommandKeys.RemovableTransactions, ExecRemovableTransactions);
+            Register(CommandKeys.AttributeAsOutput, ExecAttributeAsOutput);
+        }
+
+        private void RegisterObjectActionCommands()
+        {
+            Register(CommandKeys.RemoveObject, ExecRemoveObject);
+            Register(CommandKeys.RemoveUnreferencedObjectsInUserModules, ExecRemoveUnreferencedObjectsInUserModules);
+            Register(CommandKeys.OpenObject, ExecOpenKBObject);
+            Register(CommandKeys.SetObjectPropertyText, ExecSetObjectPropertyText);
+            Register(CommandKeys.ApplyObjectPropertyText, ExecApplyObjectPropertyText);
+            Register(CommandKeys.AssignAttributeToVariable, ExecAssignAttributeToVariable);
+            Register(CommandKeys.AssignDomainToVariable, ExecAssignDomainToVariable);
+            Register(CommandKeys.AssignAttributeOrDomainToVariable, ExecAssignAttributeOrDomainToVariable);
+        }
+
+        private void RegisterKbCleanupCommands()
+        {
+            Register(CommandKeys.CleanVarsNotUsed, ExecCleanVarsNotUsed);
+            Register(CommandKeys.CleanObjects, ExecCleanObjects);
+            Register(CommandKeys.CleanKBAsMuchAsPossible, ExecCleanKB);
+            Register(CommandKeys.FixVariablesNotBasedInAttributesOrDomain, ExecFixVariablesNotBasedInAttributesOrDomain);
+            Register(CommandKeys.ResetWINForm, ExecResetWINForm);
+            Register(CommandKeys.ChangeCommitOnExit, ExecChangeCommitOnExit);
+            Register(CommandKeys.ReplaceNullCompatible, ExecReplaceNullCompatible);
+            Register(CommandKeys.WebFormToAbstractEditor, ExecWebFormToAbstractEditor);
+            Register(CommandKeys.ImproveControlClasses, ExecImproveControlClasses);
+            Register(CommandKeys.AuditWebPanelsSmoothUX, ExecAuditWebPanelsSmoothUX);
+            Register(CommandKeys.ConvertSafeWebPanelsToSmoothUX, ExecConvertSafeWebPanelsToSmoothUX);
+            Register(CommandKeys.RunResponsiveSmoothAction, ExecRunResponsiveSmoothAction);
+        }
+
+        private void RegisterNavigationCompareCommands()
+        {
+            Register(CommandKeys.PrepareComparerNavigations, ExecPrepareComparerNavigations);
+            Register(CommandKeys.OpenFolderComparerNavigation, ExecOpenFolderComparerNavigation);
+            Register(CommandKeys.OpenFolderObjComparerNavigation, ExecOpenFolderObjComparerNavigation);
+            Register(CommandKeys.CompareLastNVGDirectory, ExecCompareLastNVGDirectory);
+            Register(CommandKeys.CompareLastOBJDirectory, ExecCompareLastOBJDirectory);
+            Register(CommandKeys.CalculateCheckSum, ExecCalculateCheckSum);
+            Register(CommandKeys.ListObjWarningsErrors, ExecListObjWarningsErrors);
+            Register(CommandKeys.ListObjSimilarNavigation, ExecListObjSimilarNavigation);
+        }
+
+        private void RegisterModularizationCommands()
+        {
+            Register(CommandKeys.BuildModule, ExecBuildModule);
+            Register(CommandKeys.GenerateGraph, ExecGenerateGraph);
+            Register(CommandKeys.ListModules, ExecListModules);
+            Register(CommandKeys.ListModulesStatistics, ExecListModulesStatistics);
+            Register(CommandKeys.MoveTransactions, ExecMoveTransactions);
+            Register(CommandKeys.ModuleDependencies, ExecModuleDependencies);
+            Register(CommandKeys.ListAPIObjects, ExecListAPIObjects);
+            Register(CommandKeys.RecomendedModule, ExecRecomendedModule);
+            Register(CommandKeys.ListModularizationQuality, ExecListModularizationQuality);
+            Register(CommandKeys.AddModularizationInfo, ExecAddModularizationInfo);
+            Register(CommandKeys.ApplyExternalModularization, ExecApplyExternalModularization);
+            Register(CommandKeys.DetectMavericks, ExecDetectMavericks);
+            Register(CommandKeys.SplitMainObject, ExecSplitMainObject);
+        }
+
+        private void RegisterReviewCommands()
+        {
+            Register(CommandKeys.PreprocessPendingObjects, ExecPreprocessPendingObjects);
+            Register(CommandKeys.ReviewObjects, ExecReviewObjects);
+            Register(CommandKeys.ReviewModuleOrFolder, ExecReviewModuleOrFolder, new QueryHandler(QueryIsModuleOrFolderSelected));
+            Register(CommandKeys.ReviewObject, ExecReviewObject, new QueryHandler(QueryIsKBObjectSelected));
+            Register(CommandKeys.EditReviewObjects, ExecEditReviewObjects);
+        }
+
+        private void RegisterUtilityCommands()
+        {
+            Register(CommandKeys.SearchAndReplace, ExecSearchAndReplace);
+            Register(CommandKeys.ApplySearchAndReplace, ExecApplySearchAndReplace);
+            Register(CommandKeys.GenerateLocationXML, ExecGenerateLocationXML);
+            Register(CommandKeys.RenameAttributesAndTables, ExecRenameAttributesAndTables);
+            Register(CommandKeys.RenameVariables, ExecRenameVariables);
+            Register(CommandKeys.CountTableAccess, ExecCountTableAccess);
+            Register(CommandKeys.CountGeneratedByPattern, ExecCountGeneratedByPattern);
+            Register(CommandKeys.GeneratedByPatternWithoutDynamism, ExecGeneratedByPatternWithoutDynamism);
+            Register(CommandKeys.GenerateSQLScripts, ExecGenerateSQLScripts);
+            Register(CommandKeys.GenerateDPfromTable, ExecGenerateDPfromTable);
+            Register(CommandKeys.GenerateRESTCalls, ExecGenerateRESTCalls);
+            Register(CommandKeys.SDTsWithDateInWS, ExecSDTsWithDateInWS);
+            Register(CommandKeys.GenerateSDTDataLoad, ExecGenerateSDTDataLoad);
+            Register(CommandKeys.CreateDeployUnits, ExecCreateDeployUnits);
+            Register(CommandKeys.MarkPublicObjects, ExecMarkPublicObjects);
+            Register(CommandKeys.UDPCallables, ExecUDPCallables);
+            Register(CommandKeys.CheckBldObjects, ExecCheckBldObjects);
+            Register(CommandKeys.CheckVariableUsages, ExeCheckVariableUsages);
+            Register(CommandKeys.VariablesNotBasedOnAttributes, ExecVariablesNotBasedOnAttributes);
+            Register(CommandKeys.AssignTypeComparer, ExecAssignTypeComparer);
+            Register(CommandKeys.ParameterTypeComparer, ExecParametersTypeComparer);
+            Register(CommandKeys.ObjectsWithRuleOld, ExecObjectsWithRuleOld);
+            Register(CommandKeys.EmptyConditionalBlocks, ExecEmptyConditionalBlock);
+            Register(CommandKeys.NewsWithoutWhenDuplicate, ExecNewsWithoutWhenDuplicate);
+            Register(CommandKeys.ForEachsWithoutWhenNone, ExecForEachsWithoutWhenNone);
+            Register(CommandKeys.ConstantsInCode, ExecConstantsInCode);
+            Register(CommandKeys.ReviewCommits, ExecReviewCommits);
+        }
+
+        private void RegisterThemeCommands()
+        {
+            Register(CommandKeys.ClassNotInTheme, ExecClassNotInTheme);
+            Register(CommandKeys.ClassUsed, ExecClassUsed);
+            Register(CommandKeys.ThemeClassesNotUsed, ExecThemeClassesNotUsed, new QueryHandler(QueryKBDoctorNoKB));
+            Register(CommandKeys.ObjThemeClassesNotUsed, ExecObjThemeClassesNotUsed, new QueryHandler(QueryKBDoctorNoKB));
+        }
+
+        private void RegisterHelpCommands()
+        {
+            Register(CommandKeys.AboutKBDoctor, ExecAboutKBDoctor, new QueryHandler(QueryKBDoctorNoKB));
+            Register(CommandKeys.HelpKBDoctor, ExecHelpKBDoctor, new QueryHandler(QueryKBDoctorNoKB));
+            Register(CommandKeys.ListLastReports, ExecListLastReports);
+        }
+
+        private void RegisterLabCommands()
+        {
+            Register(CommandKeys.AddINParmRule, ExecAddINParmRule);
+            Register(CommandKeys.ListTableAttributesUsingDomain, ExecListTableAttributesUsingDomain);
+            Register(CommandKeys.ProcedureSDT, ExecProcedureSDT);
+            Register(CommandKeys.ProcedureGetSet, ExecProcedureGetSet);
+            Register(CommandKeys.ChangeLegacyCode, ExecChangeLegacyCode);
+            Register(CommandKeys.EditLegacyCodeToReplace, ExecEditLegacyCodeToReplace);
+            Register(CommandKeys.TreeCommit, ExecTreeCommit);
+        }
         #region Atributos
 
         public bool ExecAttWithoutDescription(CommandData cmdData)
@@ -1362,6 +1392,27 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecImproveControlClasses(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            UIFrontendActions.ImproveControlClasses();
+            return true;
+        }
+
+        public bool ExecAuditWebPanelsSmoothUX(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            ResponsiveSmoothActions.Run("auditWebPanelsSmoothUX");
+            return true;
+        }
+
+        public bool ExecConvertSafeWebPanelsToSmoothUX(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            ResponsiveSmoothActions.Run("convertSafeWebPanelsToSmoothUX");
+            return true;
+        }
+
         public bool ExecRunResponsiveSmoothAction(CommandData cmdData)
         {
             ObjectsHelper.RunResponsiveSmoothAction(cmdData.Parameters);
@@ -1715,11 +1766,6 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
-        public bool ExecListClassUsed(CommandData cmdData)
-        {
-            ThemeHelper.ClassUsed();
-            return true;
-        }
         #endregion
 
         public bool ExecCountGeneratedByPattern(CommandData cmdData)

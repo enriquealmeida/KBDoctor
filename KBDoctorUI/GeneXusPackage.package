@@ -65,6 +65,9 @@
     <CommandDefinition id="CleanVarsNotUsed" />
     <CommandDefinition id="CleanObjects" />
     <CommandDefinition id="WebFormToAbstractEditor" />
+    <CommandDefinition id="ImproveControlClasses" />
+    <CommandDefinition id="AuditWebPanelsSmoothUX" />
+    <CommandDefinition id="ConvertSafeWebPanelsToSmoothUX" />
 
     <!-- Acciones sobre tablas -->
     <CommandDefinition id="AssignDescriptionToTable" />
@@ -135,6 +138,9 @@
         </Group>
         <Popup name ="UI-FrontEnd">
           <Command refid="WebFormToAbstractEditor" />
+          <Command refid="ImproveControlClasses" />
+          <Command refid="AuditWebPanelsSmoothUX" />
+          <Command refid="ConvertSafeWebPanelsToSmoothUX" />
         </Popup>
         <Group id="AboutKBDoctor" insertAfter="Objects">
           <Command refid="AboutKBDoctor"/>

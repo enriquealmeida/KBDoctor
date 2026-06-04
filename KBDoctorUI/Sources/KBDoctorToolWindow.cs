@@ -55,14 +55,11 @@ namespace Concepto.Packages.KBDoctor.Sources
 
         public void Navigate(string address)
         {
-            KBDoctorOutput.Message("KBDoctorToolWindow.Navigate: address='" + address + "'.");
             if (!(String.IsNullOrEmpty(address)))
             {
                 if (!address.Equals("about:blank"))
                 {
-                    KBDoctorOutput.Message("KBDoctorToolWindow.Navigate: calling WebBrowser.Navigate.");
                     webBrowser2.Navigate(new Uri(address));
-                    KBDoctorOutput.Message("KBDoctorToolWindow.Navigate: WebBrowser.Navigate returned.");
                 }
             }
         }

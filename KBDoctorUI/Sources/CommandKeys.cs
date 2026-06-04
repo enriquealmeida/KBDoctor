@@ -1,440 +1,195 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Artech.Common.Framework.Commands;
 
 namespace Concepto.Packages.KBDoctor
 {
     static class CommandKeys
     {
-        // Atributos
-        private static CommandKey attWithNoDomain = new CommandKey(Package.guid, "AttWithNoDomain");
-        private static CommandKey listAttributes = new CommandKey(Package.guid, "ListAttributes");
-        private static CommandKey attWithoutDescription = new CommandKey(Package.guid, "AttWithoutDescription");
-        private static CommandKey attCharToVarchar = new CommandKey(Package.guid, "AttCharToVarchar");
-        private static CommandKey attVarcharToChar = new CommandKey(Package.guid, "AttVarcharToChar");
-        private static CommandKey attKeyVarchar = new CommandKey(Package.guid, "AttKeyVarchar");
-        private static CommandKey attDescWithoutUniqueIndex = new CommandKey(Package.guid, "AttDescWithoutUniqueIndex");
-        private static CommandKey attNotReferenced = new CommandKey(Package.guid, "AttNotReferenced");
-        private static CommandKey attWithoutBaseTable = new CommandKey(Package.guid, "AttWithoutBaseTable");
-        private static CommandKey attInOneTrnOnly = new CommandKey(Package.guid, "AttInOneTrnOnly");
-        private static CommandKey attFormula = new CommandKey(Package.guid, "AttFormula");
-        private static CommandKey replaceDomain = new CommandKey(Package.guid, "ReplaceDomain");
-        private static CommandKey applyReplaceDomain = new CommandKey(Package.guid, "ApplyReplaceDomain");
-        private static CommandKey listDomain = new CommandKey(Package.guid, "ListDomain");
-        private static CommandKey attUpdated = new CommandKey(Package.guid, "AttUpdated");
-        private static CommandKey applyAttUpdated = new CommandKey(Package.guid, "ApplyAttUpdated");
-
-        public static CommandKey AttWithNoDomain { get { return attWithNoDomain; } }
-        public static CommandKey ListAttributes { get { return listAttributes; } }
-        public static CommandKey AttWithoutDescription { get { return attWithoutDescription; } }
-        public static CommandKey AttCharToVarchar { get { return attCharToVarchar; } }
-        public static CommandKey AttVarcharToChar { get { return attVarcharToChar; } }
-        public static CommandKey AttKeyVarchar { get { return attKeyVarchar; } }
-        public static CommandKey AttDescWithoutUniqueIndex { get { return attDescWithoutUniqueIndex; } }
-        public static CommandKey AttNotReferenced { get { return attNotReferenced; } }
-        public static CommandKey AttWithoutBaseTable { get { return attWithoutBaseTable; } }
-        public static CommandKey AttInOneTrnOnly { get { return attInOneTrnOnly; } }
-        public static CommandKey AttFormula { get { return attFormula; } }
-        public static CommandKey ReplaceDomain { get { return replaceDomain; } }
-        public static CommandKey ApplyReplaceDomain { get { return applyReplaceDomain; } }
-        public static CommandKey ListDomain { get { return listDomain; } }
-        public static CommandKey AttUpdated { get { return attUpdated; } }
-        public static CommandKey ApplyAttUpdated { get { return applyAttUpdated; } }
-
-
-        // Acciones sobre atributos
-        private static CommandKey assignDomainToAttribute = new CommandKey(Package.guid, "AssignDomainToAttribute");
-        private static CommandKey assignDescriptionToAttribute = new CommandKey(Package.guid, "AssignDescriptionToAttribute");
-        private static CommandKey applyAttributeText = new CommandKey(Package.guid, "ApplyAttributeText");
-        private static CommandKey assignTitleToAttribute = new CommandKey(Package.guid, "AssignTitleToAttribute");
-        private static CommandKey assignColumnTitleToAttribute = new CommandKey(Package.guid, "AssignColumnTitleToAttribute");
-        private static CommandKey listAttribute = new CommandKey(Package.guid, "ListAttribute");
-        private static CommandKey addDescriptorIndex = new CommandKey(Package.guid, "AddDescriptorIndex");
-
-        public static CommandKey AssignDomainToAttribute { get { return assignDomainToAttribute; } }
-        public static CommandKey AssignDescriptionToAttribute { get { return assignDescriptionToAttribute; } }
-        public static CommandKey ApplyAttributeText { get { return applyAttributeText; } }
-        public static CommandKey AssignTitleToAttribute { get { return assignTitleToAttribute; } }
-        public static CommandKey AssignColumnTitleToAttribute { get { return assignColumnTitleToAttribute; } }
-        public static CommandKey ListAttribute { get { return listAttribute; } }
-        public static CommandKey AddDescriptorIndex { get { return addDescriptorIndex; } }
-
-
-        // Tablas
-        private static CommandKey tblWihNoDescription = new CommandKey(Package.guid, "TablesWithNoDescription");
-        public static CommandKey TblWihNoDescription { get { return tblWihNoDescription; } }
-
-        private static CommandKey grpWihNoDescription = new CommandKey(Package.guid, "GroupWithNoDescription");
-        public static CommandKey GrpWihNoDescription { get { return grpWihNoDescription; } }
-
-        private static CommandKey tblWidth            = new CommandKey(Package.guid, "TablesWidth");
-        public static CommandKey TblWidth { get { return tblWidth; } }
-
-        private static CommandKey listTables = new CommandKey(Package.guid, "ListTables");
-        public static CommandKey ListTables { get { return listTables; } }
-
-        private static CommandKey tblTableTransaction = new CommandKey(Package.guid, "TableTransaction");
-        public static CommandKey TblTableTransaction { get { return tblTableTransaction; } }
-
-        private static CommandKey tblGenerateSimpleTransactionFromNotGeneratedTransactions = new CommandKey(Package.guid, "GenerateSimpleTransactionFromNotGeneratedTransactions");
-        public static CommandKey TblGenerateSimpleTransactionFromNotGeneratedTransactions { get { return tblGenerateSimpleTransactionFromNotGeneratedTransactions; } }
-
-        private static CommandKey tblScriptToCompareNULLABLE_GXvsDB = new CommandKey(Package.guid, "ScriptToCompareNULLABLE_GXvsDB");
-        public static CommandKey TblScriptToCompareNULLABLE_GXvsDB { get { return tblScriptToCompareNULLABLE_GXvsDB; } }
-
-        private static CommandKey tblScriptToCompareNULLABLE_GXvsDB2 = new CommandKey(Package.guid, "ScriptToCompareNULLABLE_GXvsDB2");
-        public static CommandKey TblScriptToCompareNULLABLE_GXvsDB2 { get { return tblScriptToCompareNULLABLE_GXvsDB2; } }
-
-        private static CommandKey tblListTableWithAttributeNullableCompatible = new CommandKey(Package.guid, "ListTableWithAttributeNullableCompatible");
-        public static CommandKey TblListTableWithAttributeNullableCompatible { get { return tblListTableWithAttributeNullableCompatible; } }
-
-        private static CommandKey tblTableUpdate      = new CommandKey(Package.guid, "TableUpdate");
-        public static CommandKey TblTableUpdate { get { return tblTableUpdate; } }
-
-        private static CommandKey tblTableInsertNew = new CommandKey(Package.guid, "TableInsertNew");
-        public static CommandKey TblTableInsertNew { get { return tblTableInsertNew; } }
-
-        private static CommandKey tblGenerateTrnFromTables = new CommandKey(Package.guid, "GenerateTrnFromTables");
-        public static CommandKey GenerateTrnFromTables { get { return tblGenerateTrnFromTables; } }
-
-        private static CommandKey tblGenerateTrnFromTables2 = new CommandKey(Package.guid, "GenerateTrnFromTables2");
-        public static CommandKey GenerateTrnFromTables2 { get { return tblGenerateTrnFromTables2; } }
-
-        private static CommandKey tblListTablesInModules = new CommandKey(Package.guid, "ListTablesInModules");
-        public static CommandKey ListTablesInModules { get { return tblListTablesInModules; } }
-
-        private static CommandKey tblListObjectsWithTableInOtherModule = new CommandKey(Package.guid, "ListObjectsWithTableInOtherModule");
-        public static CommandKey ListObjectsWithTableInOtherModule { get { return tblListObjectsWithTableInOtherModule; } }
-
-        // Acciones sobre tablas
-        private static CommandKey assignDescriptionToTable = new CommandKey(Package.guid, "AssignDescriptionToTable");
-        private static CommandKey applyTableText = new CommandKey(Package.guid, "ApplyTableText");
-
-        public static CommandKey AssignDescriptionToTable { get { return assignDescriptionToTable; } }
-        public static CommandKey ApplyTableText { get { return applyTableText; } }
-
-        // Indices
-        private static CommandKey indexWithNotRefAtt = new CommandKey(Package.guid, "IndexWithNotRefAtt");
-        private static CommandKey removeIndexAttribute = new CommandKey(Package.guid, "RemoveIndexAttribute");
-
-        public static CommandKey IndexWithNotRefAtt { get { return indexWithNotRefAtt; } }
-        public static CommandKey RemoveIndexAttribute { get { return removeIndexAttribute; } }
-
-
-        // Objetos
-        private static CommandKey objNotReacheable = new CommandKey(Package.guid, "ObjectsNotReacheable");
-        private static CommandKey objectsWithoutInOut = new CommandKey(Package.guid, "ObjectsWithoutInOut");
-        private static CommandKey objectsMainCalled = new CommandKey(Package.guid, "ObjectsMainCalled");
-        private static CommandKey objectsReferenced = new CommandKey(Package.guid, "ObjectsReferenced");
-        private static CommandKey objectsWithVarNotBasedOnAtt = new CommandKey(Package.guid, "ObjectsWithVarNotBasedOnAtt");
-        private static CommandKey renameVariables = new CommandKey(Package.guid, "RenameVariables");
-        private static CommandKey buildModule = new CommandKey(Package.guid, "BuildModule");
-        private static CommandKey buildModuleContext = new CommandKey(Package.guid, "BuildModuleContext");
-        private static CommandKey buildObjectAndReferences = new CommandKey(Package.guid, "BuildObjectAndReferences");
-        private static CommandKey buildObjectWithProperty = new CommandKey(Package.guid, "BuildObjectWithProperty");
-        private static CommandKey objectsNotCalled = new CommandKey(Package.guid, "ObjectsNotCalled");
-        private static CommandKey objectsWithCommitOnExit = new CommandKey(Package.guid, "ObjectsWithCommitOnExit");
-        private static CommandKey listCommitOnExit = new CommandKey(Package.guid, "ListCommitOnExit");
-        private static CommandKey objectsWithVarsNotUsed = new CommandKey(Package.guid, "ObjectsWithVarsNotUsed");
-        private static CommandKey listDynamicCombo = new CommandKey(Package.guid, "ListDynamicCombo");
-        private static CommandKey selectObjectsUpdateAttribute = new CommandKey(Package.guid, "SelectObjectsUpdateAttribute");
-        private static CommandKey applyObjectsUpdateAttribute = new CommandKey(Package.guid, "ApplyObjectsUpdateAttribute");
-
-        private static CommandKey listProperties = new CommandKey(Package.guid, "ListProperties");
-
-        private static CommandKey cleanVarsNotUsed = new CommandKey(Package.guid, "CleanVarsNotUsed");
-        private static CommandKey objectMigration = new CommandKey(Package.guid, "ObjectMigration");
-        private static CommandKey objectsLegacyCode = new CommandKey(Package.guid, "ObjectsLegacyCode");
-        private static CommandKey changeLegacyCode = new CommandKey(Package.guid, "ChangeLegacyCode");
-
-        private static CommandKey changeCommitOnExit = new CommandKey(Package.guid, "ChangeCommitOnExit");
-        private static CommandKey treeCommit = new CommandKey(Package.guid, "TreeCommit");
-        private static CommandKey editLegacyCodeToReplace = new CommandKey(Package.guid, "EditLegacyCodeToReplace");
-        private static CommandKey editReviewObjects = new CommandKey(Package.guid, "EditReviewObjects");
-
-        private static CommandKey objectsRefactoringCandidates = new CommandKey(Package.guid, "ObjectsRefactoringCandidates");
-        private static CommandKey countTableAccess = new CommandKey(Package.guid, "CountTableAccess");
-        private static CommandKey objectsWithConstants = new CommandKey(Package.guid, "ObjectsWithConstants");
-        private static CommandKey fixVariablesNotBasedInAttributesOrDomain = new CommandKey(Package.guid, "FixVariablesNotBasedInAttributesOrDomain");
-
-        private static CommandKey objectsWIWEB = new CommandKey(Package.guid, "ObjectsWINWEB");
-        private static CommandKey listProcedureCallWebpanelTransaction = new CommandKey(Package.guid, "ListProcedureCallWebpanelTransaction");
-
-        private static CommandKey mainTableUsed = new CommandKey(Package.guid, "MainTableUsed");
-        private static CommandKey removableTransactions = new CommandKey(Package.guid, "RemovableTransactions");
-        private static CommandKey generateSQLScripts  = new CommandKey(Package.guid, "GenerateSQLScripts");
-        private static CommandKey generateDPfromTable  = new CommandKey(Package.guid, "GenerateDPfromTable");
-        private static CommandKey attributeAsOutput = new CommandKey(Package.guid, "AttributeAsOutput");
-
-
-        private static CommandKey generateGraph = new CommandKey(Package.guid, "GenerateGraph");
-        private static CommandKey themeClassesNotUsed = new CommandKey(Package.guid, "ThemeClassesNotUsed");
-        private static CommandKey objthemeClassesNotUsed = new CommandKey(Package.guid, "ObjThemeClassesNotUsed");
-        private static CommandKey parameterTypeComparer = new CommandKey(Package.guid, "ParameterTypeComparer");
-        private static CommandKey objectsWithRuleOld = new CommandKey(Package.guid, "ObjectsWithRuleOld");
-        private static CommandKey emptyConditionalBlocks = new CommandKey(Package.guid, "EmptyConditionalBlocks");
-        private static CommandKey newsWithoutWhenDuplicate = new CommandKey(Package.guid, "NewsWithoutWhenDuplicate");
-        private static CommandKey forEachsWithoutWhenNone = new CommandKey(Package.guid, "ForEachsWithoutWhenNone");
-        private static CommandKey constantsInCode = new CommandKey(Package.guid, "ConstantsInCode");
-        private static CommandKey reviewCommits = new CommandKey(Package.guid, "ReviewCommits");
-        private static CommandKey generateRESTCalls = new CommandKey(Package.guid, "GenerateRESTCalls");
-        private static CommandKey sDTsWithDateInWS = new CommandKey(Package.guid, "SDTsWithDateInWS");
-        private static CommandKey generateSDTDataLoad = new CommandKey(Package.guid, "GenerateSDTDataLoad");
-        private static CommandKey listWebObjectsProperties = new CommandKey(Package.guid, "ListWebObjectsProperties");
-        public static CommandKey ListWebObjectsProperties { get { return listWebObjectsProperties ; } }
-
-        public static CommandKey ObjNotReacheable { get { return objNotReacheable; } }
-        public static CommandKey ObjectsWithoutInOut { get { return objectsWithoutInOut; } }
-        public static CommandKey ObjectsMainCalled { get { return objectsMainCalled; } }
-        public static CommandKey ObjectsReferenced { get { return objectsReferenced; } }
-        public static CommandKey ObjectsWithVarNotBasedOnAtt { get { return objectsWithVarNotBasedOnAtt; } }
-        public static CommandKey ListDynamicCombo { get { return listDynamicCombo; } }
-        public static CommandKey SelectObjectsUpdateAttribute { get { return selectObjectsUpdateAttribute; } }
-        public static CommandKey ApplyObjectsUpdateAttribute { get { return applyObjectsUpdateAttribute; } }
-        public static CommandKey ListProperties { get { return listProperties; } }
-        public static CommandKey RenameVariables { get { return renameVariables; } }
-        public static CommandKey BuildModule { get { return buildModule; } }
-
-        public static CommandKey BuildModuleContext { get { return buildModuleContext; } }
-        public static CommandKey BuildObjectAndReferences { get { return buildObjectAndReferences; } }
-        public static CommandKey BuildObjectWithProperty { get { return buildObjectWithProperty; } }
-        public static CommandKey ObjectsNotCalled { get { return objectsNotCalled; } }
-        public static CommandKey ObjectsWithCommitOnExit { get { return objectsWithCommitOnExit; } }
-        public static CommandKey ListCommitOnExit { get { return listCommitOnExit; } }
-        public static CommandKey ObjectsWithVarsNotUsed { get { return objectsWithVarsNotUsed; } }
-
-        public static CommandKey CleanVarsNotUsed { get { return cleanVarsNotUsed; } }
-        public static CommandKey ObjectMigration { get { return objectMigration; } }
-        public static CommandKey ObjectsLegacyCode { get { return objectsLegacyCode; } }
-        public static CommandKey ChangeLegacyCode { get { return changeLegacyCode; } }
-        public static CommandKey ChangeCommitOnExit { get { return changeCommitOnExit; } }
-        public static CommandKey TreeCommit { get { return treeCommit; } }
-        public static CommandKey EditLegacyCodeToReplace { get { return editLegacyCodeToReplace; } }
-        public static CommandKey EditReviewObjects { get { return editReviewObjects; } }
-        public static CommandKey ObjectsRefactoringCandidates { get { return objectsRefactoringCandidates; } }
-
-        public static CommandKey CountTableAccess { get { return countTableAccess; } }
-
-        public static CommandKey ObjectsWithConstants { get { return objectsWithConstants; } }
-
-        private static CommandKey objectsUpdateAttribute = new CommandKey(Package.guid, "ObjectsUpdateAttribute");
-        public static CommandKey ObjectsUpdateAttribute { get { return objectsUpdateAttribute; } }
-
-        public static CommandKey FixVariablesNotBasedInAttributesOrDomain { get { return fixVariablesNotBasedInAttributesOrDomain; } }
-        public static CommandKey ObjectsWINWEB { get { return objectsWIWEB; } }
-        public static CommandKey ListProcedureCallWebpanelTransaction { get { return listProcedureCallWebpanelTransaction; } }
-        public static CommandKey MainTableUsed { get { return mainTableUsed; } }
-        public static CommandKey RemovableTransactions { get { return removableTransactions; } }
-        public static CommandKey GenerateSQLScripts { get { return generateSQLScripts; } }
-        public static CommandKey GenerateDPfromTable { get { return generateDPfromTable; } }
-        public static CommandKey AttributeAsOutput { get { return attributeAsOutput; } }
-
-        public static CommandKey GenerateGraph { get { return generateGraph; } }
-        public static CommandKey ThemeClassesNotUsed { get { return themeClassesNotUsed; } }
-        public static CommandKey ObjThemeClassesNotUsed { get { return objthemeClassesNotUsed; } }
-        public static CommandKey ParameterTypeComparer { get { return parameterTypeComparer; } }
-        public static CommandKey ObjectsWithRuleOld { get { return objectsWithRuleOld; } }
-        public static CommandKey EmptyConditionalBlocks { get { return emptyConditionalBlocks; } }
-        public static CommandKey NewsWithoutWhenDuplicate { get { return newsWithoutWhenDuplicate; } }
-        public static CommandKey ForEachsWithoutWhenNone { get { return forEachsWithoutWhenNone; } }
-        public static CommandKey ConstantsInCode { get { return constantsInCode; } }
-        public static CommandKey ReviewCommits { get { return reviewCommits; } }
-        public static CommandKey GenerateRESTCalls { get { return generateRESTCalls; } }
-        public static CommandKey SDTsWithDateInWS { get { return sDTsWithDateInWS; } }
-        public static CommandKey GenerateSDTDataLoad { get { return generateSDTDataLoad; } }
-
-
-        // Acciones sobre objetos
-        private static CommandKey removeObject = new CommandKey(Package.guid, "RemoveObject");
-        private static CommandKey removeUnreferencedObjectsInUserModules = new CommandKey(Package.guid, "RemoveUnreferencedObjectsInUserModules");
-        private static CommandKey openObject = new CommandKey(Package.guid, "OpenObject");
-        private static CommandKey setObjectPropertyText = new CommandKey(Package.guid, "SetObjectPropertyText");
-        private static CommandKey applyObjectPropertyText = new CommandKey(Package.guid, "ApplyObjectPropertyText");
-        private static CommandKey assignDomainToVariable = new CommandKey(Package.guid, "AssignDomainToVariable");
-        private static CommandKey assignAttributeToVariable = new CommandKey(Package.guid, "AssignAttributeToVariable");
-        private static CommandKey assignAttributeOrDomainToVariable = new CommandKey(Package.guid, "AssignAttributeOrDomainToVariable");
-        private static CommandKey renameAttributesAndTables =  new CommandKey(Package.guid, "RenameAttributesAndTables");
-
-
-
-        public static CommandKey RemoveObject { get { return removeObject; } }
-        public static CommandKey RemoveUnreferencedObjectsInUserModules { get { return removeUnreferencedObjectsInUserModules; } }
-        public static CommandKey OpenObject { get { return openObject; } }
-        public static CommandKey SetObjectPropertyText { get { return setObjectPropertyText; } }
-        public static CommandKey ApplyObjectPropertyText { get { return applyObjectPropertyText; } }
-        public static CommandKey AssignDomainToVariable { get { return assignDomainToVariable; } }
-        public static CommandKey AssignAttributeToVariable { get { return assignAttributeToVariable; } }
-        public static CommandKey AssignAttributeOrDomainToVariable { get { return assignAttributeOrDomainToVariable; } }
-
-        public static CommandKey RenameAttributesAndTables { get { return renameAttributesAndTables; } }
-
-        private static CommandKey preprocessPendingObjects = new CommandKey(Package.guid, "PreprocessPendingObjects");
-        public static CommandKey PreprocessPendingObjects { get { return preprocessPendingObjects; } }
-
-        private static CommandKey reviewObjects = new CommandKey(Package.guid, "ReviewObjects");
-        public static CommandKey ReviewObjects { get { return reviewObjects; } }
-
-        private static CommandKey reviewObject = new CommandKey(Package.guid, "ReviewObject");
-        public static CommandKey ReviewObject { get { return reviewObject; } }
-
-        private static CommandKey reviewModuleOrFolder = new CommandKey(Package.guid, "ReviewModuleOrFolder");
-        public static CommandKey ReviewModuleOrFolder { get { return reviewModuleOrFolder; } }
-
-        private static CommandKey assignTypeComparer = new CommandKey(Package.guid, "AssignTypeComparer");
-        public static CommandKey AssignTypeComparer { get { return assignTypeComparer; } }
-
-        private static CommandKey checkBldObjects = new CommandKey(Package.guid, "CheckBldObjects");
-        public static CommandKey CheckBldObjects { get { return checkBldObjects; } }
-
-        private static CommandKey checkVariableUsages = new CommandKey(Package.guid, "CheckVariableUsages");
-        public static CommandKey CheckVariableUsages { get { return checkVariableUsages; } }
-
-        private static CommandKey variablesNotBasedOnAttributes = new CommandKey(Package.guid, "VariablesNotBasedOnAttributes");
-        public static CommandKey VariablesNotBasedOnAttributes { get { return variablesNotBasedOnAttributes; } }
-
-        //Surgery
-        private static CommandKey procedureSDT = new CommandKey(Package.guid, "ProcedureSDT");
-        public static CommandKey ProcedureSDT { get { return procedureSDT; } }
-
-        private static CommandKey procedureGetSet = new CommandKey(Package.guid, "ProcedureGetSet");
-        public static CommandKey ProcedureGetSet { get { return procedureGetSet; } }
-
-        private static CommandKey addINPramRule = new CommandKey(Package.guid, "AddINParmRule");
-        public static CommandKey AddINParmRule { get { return addINPramRule; } }
-
-        private static CommandKey listTableAttributesUsingDomain = new CommandKey(Package.guid, "ListTableAttributesUsingDomain");
-        public static CommandKey ListTableAttributesUsingDomain { get { return listTableAttributesUsingDomain; } }
-
-        private static CommandKey cleanKBAsMuchAsPossible = new CommandKey(Package.guid, "CleanKBAsMuchAsPossible");
-        public static CommandKey CleanKBAsMuchAsPossible { get { return cleanKBAsMuchAsPossible; } }
-
-        private static CommandKey cleanObjects = new CommandKey(Package.guid, "CleanObjects");
-        public static CommandKey CleanObjects { get { return cleanObjects; } }
-
-        private static CommandKey resetWINForm = new CommandKey(Package.guid, "ResetWINForm");
-        public static CommandKey ResetWINForm { get { return resetWINForm; } }
-
-        private static CommandKey webFormToAbstractEditor = new CommandKey(Package.guid, "WebFormToAbstractEditor");
-        public static CommandKey WebFormToAbstractEditor { get { return webFormToAbstractEditor; } }
-
-        private static CommandKey runResponsiveSmoothAction = new CommandKey(Package.guid, "RunResponsiveSmoothAction");
-        public static CommandKey RunResponsiveSmoothAction { get { return runResponsiveSmoothAction; } }
-
-        private static CommandKey searchAndReplace = new CommandKey(Package.guid, "SearchAndReplace");
-        public static CommandKey SearchAndReplace { get { return searchAndReplace; } }
-
-        private static CommandKey applySearchAndReplace = new CommandKey(Package.guid, "ApplySearchAndReplace");
-        public static CommandKey ApplySearchAndReplace { get { return applySearchAndReplace; } }
-
-        private static CommandKey classNotInTheme = new CommandKey(Package.guid, "ClassNotInTheme");
-        public static CommandKey ClassNotInTheme { get { return classNotInTheme; } }
-
-        private static CommandKey classUsed = new CommandKey(Package.guid, "ClassUsed");
-        public static CommandKey ClassUsed { get { return classUsed; } }
-
-        private static CommandKey listClassUsed = new CommandKey(Package.guid, "ListClassUsed");
-        public static CommandKey ListClassUsed { get { return listClassUsed; } }
-
-        private static CommandKey historyGXServer = new CommandKey(Package.guid, "HistoryGXServer");
-        public static CommandKey HistoryGXServer { get { return historyGXServer; } }
-
-        //Stats
-        private static CommandKey countGeneratedByPattern = new CommandKey(Package.guid, "CountGeneratedByPattern");
-        public static CommandKey CountGeneratedByPattern { get { return countGeneratedByPattern; } }
-
-        private static CommandKey generatedByPatternWithoutDynamism = new CommandKey(Package.guid, "GeneratedByPatternWithoutDynamism");
-        public static CommandKey GeneratedByPatternWithoutDynamism { get { return generatedByPatternWithoutDynamism; } }
-
-        private static CommandKey replaceNullCompatible = new CommandKey(Package.guid, "ReplaceNullCompatible");
-        public static CommandKey ReplaceNullCompatible { get { return replaceNullCompatible; } }
-
-        private static CommandKey listObj = new CommandKey(Package.guid, "ListObj");
-        public static CommandKey ListObj { get { return listObj; } }
-
-        private static CommandKey listUnreferencedObjectsInUserModules = new CommandKey(Package.guid, "ListUnreferencedObjectsInUserModules");
-        public static CommandKey ListUnreferencedObjectsInUserModules { get { return listUnreferencedObjectsInUserModules; } }
-
-        private static CommandKey createDeployUnits = new CommandKey(Package.guid, "CreateDeployUnits");
-        public static CommandKey CreateDeployUnits { get { return createDeployUnits; } }
-
-        private static CommandKey markPublicObjects = new CommandKey(Package.guid, "MarkPublicObjects");
-        public static CommandKey MarkPublicObjects { get { return markPublicObjects; } }
-
-
-        private static CommandKey listModules = new CommandKey(Package.guid, "ListModules");
-        public static CommandKey ListModules { get { return listModules; } }
-
-        private static CommandKey listModulesStatistics = new CommandKey(Package.guid, "ListModulesStatistics");
-        public static CommandKey ListModulesStatistics { get { return listModulesStatistics; } }
-
-        private static CommandKey listModularizationQuality = new CommandKey(Package.guid, "ListModularizationQuality");
-        public static CommandKey ListModularizationQuality { get { return listModularizationQuality; } }
-
-        private static CommandKey addModularizationInfo = new CommandKey(Package.guid, "AddModularizationInfo");
-        public static CommandKey AddModularizationInfo { get { return addModularizationInfo; } }
-
-        private static CommandKey detectMavericks = new CommandKey(Package.guid, "DetectMavericks");
-        public static CommandKey DetectMavericks { get { return detectMavericks; } }
-
-        private static CommandKey moveTransactions = new CommandKey(Package.guid, "MoveTransactions");
-        public static CommandKey MoveTransactions { get { return moveTransactions; } }
-
-        private static CommandKey moduleDependencies = new CommandKey(Package.guid, "ModuleDependencies");
-        public static CommandKey ModuleDependencies { get { return moduleDependencies; } }
-
-        private static CommandKey calculateCheckSum = new CommandKey(Package.guid, "CalculateCheckSum");
-        public static CommandKey CalculateCheckSum { get { return calculateCheckSum; } }
-
-        private static CommandKey generateLocationXML = new CommandKey(Package.guid, "GenerateLocationXML");
-        public static CommandKey GenerateLocationXML { get { return generateLocationXML; } }
-
-        private static CommandKey listObjWarningsErrors = new CommandKey(Package.guid, "ListObjWarningsErrors");
-        public static CommandKey ListObjWarningsErrors { get { return listObjWarningsErrors; } }
-
-        private static CommandKey listObjSimilarNavigation = new CommandKey(Package.guid, "ListObjSimilarNavigation");
-        public static CommandKey ListObjSimilarNavigation { get { return listObjSimilarNavigation; } }
-
-        private static CommandKey listAPIObjects = new CommandKey(Package.guid, "ListAPIObjects");
-        public static CommandKey ListAPIObjects { get { return listAPIObjects; } }
-
-        private static CommandKey recomendedModule = new CommandKey(Package.guid, "RecomendedModule");
-        public static CommandKey RecomendedModule { get { return recomendedModule; } }
-
-        private static CommandKey applyExternalModularization = new CommandKey(Package.guid, "ApplyExternalModularization");
-        public static CommandKey ApplyExternalModularization { get { return applyExternalModularization; } }
-
-        private static CommandKey splitMainObject = new CommandKey(Package.guid, "SplitMainObject");
-        public static CommandKey SplitMainObject { get { return splitMainObject; } }
-
-        private static CommandKey prepareComparerNavigations = new CommandKey(Package.guid, "PrepareComparerNavigations");
-        public static CommandKey PrepareComparerNavigations { get { return prepareComparerNavigations; } }
-
-        private static CommandKey kbInterfaces = new CommandKey(Package.guid, "KBInterfaces");
-        public static CommandKey  KBInterfaces   { get { return kbInterfaces; } }
-
-        private static CommandKey compareLastNVGDirectory = new CommandKey(Package.guid, "CompareLastNVGDirectory");
-        public static CommandKey CompareLastNVGDirectory { get { return compareLastNVGDirectory; } }
-
-        private static CommandKey openFolderComparerNavigation = new CommandKey(Package.guid, "OpenFolderComparerNavigation");
-        public static CommandKey OpenFolderComparerNavigation { get { return openFolderComparerNavigation; } }
-
-        private static CommandKey openFolderObjComparerNavigation = new CommandKey(Package.guid, "OpenFolderObjComparerNavigation");
-        public static CommandKey OpenFolderObjComparerNavigation { get { return openFolderObjComparerNavigation; } }
-
-        private static CommandKey compareLastOBJDirectory = new CommandKey(Package.guid, "CompareLastOBJDirectory");
-        public static CommandKey CompareLastOBJDirectory { get { return compareLastOBJDirectory; } }
-
-        private static CommandKey listLastReports = new CommandKey(Package.guid, "ListLastReports");
-        public static CommandKey UDPCallables { get { return udpCallables; } }
-
-        private static CommandKey udpCallables = new CommandKey(Package.guid, "UDPCallables");
-        public static CommandKey ListLastReports { get { return listLastReports; } }
-        // Acerca de
-        private static CommandKey aboutKBDoctor = new CommandKey(Package.guid, "AboutKBDoctor");
-        public static CommandKey AboutKBDoctor { get { return aboutKBDoctor; } }
-
-        private static CommandKey helpKBDoctor = new CommandKey(Package.guid, "HelpKBDoctor");
-        public static CommandKey HelpKBDoctor { get { return helpKBDoctor; } }
+        private static CommandKey Key(string id)
+        {
+            return new CommandKey(Package.guid, id);
+        }
+
+        // Attributes and domains
+        public static CommandKey ListAttributes { get; } = Key("ListAttributes");
+        public static CommandKey ListAttribute { get; } = Key("ListAttribute");
+        public static CommandKey AttWithNoDomain { get; } = Key("AttWithNoDomain");
+        public static CommandKey AttWithoutDescription { get; } = Key("AttWithoutDescription");
+        public static CommandKey AttInOneTrnOnly { get; } = Key("AttInOneTrnOnly");
+        public static CommandKey AttFormula { get; } = Key("AttFormula");
+        public static CommandKey AttUpdated { get; } = Key("AttUpdated");
+        public static CommandKey AttCharToVarchar { get; } = Key("AttCharToVarchar");
+        public static CommandKey AttVarcharToChar { get; } = Key("AttVarcharToChar");
+        public static CommandKey AttKeyVarchar { get; } = Key("AttKeyVarchar");
+        public static CommandKey AttDescWithoutUniqueIndex { get; } = Key("AttDescWithoutUniqueIndex");
+        public static CommandKey AttWithoutBaseTable { get; } = Key("AttWithoutBaseTable");
+        public static CommandKey ReplaceDomain { get; } = Key("ReplaceDomain");
+        public static CommandKey ApplyReplaceDomain { get; } = Key("ApplyReplaceDomain");
+        public static CommandKey ListDomain { get; } = Key("ListDomain");
+        public static CommandKey ApplyAttUpdated { get; } = Key("ApplyAttUpdated");
+
+        public static CommandKey AssignDomainToAttribute { get; } = Key("AssignDomainToAttribute");
+        public static CommandKey AssignDescriptionToAttribute { get; } = Key("AssignDescriptionToAttribute");
+        public static CommandKey ApplyAttributeText { get; } = Key("ApplyAttributeText");
+        public static CommandKey AssignTitleToAttribute { get; } = Key("AssignTitleToAttribute");
+        public static CommandKey AssignColumnTitleToAttribute { get; } = Key("AssignColumnTitleToAttribute");
+        public static CommandKey AddDescriptorIndex { get; } = Key("AddDescriptorIndex");
+
+        // Tables and indexes
+        public static CommandKey ListTables { get; } = Key("ListTables");
+        public static CommandKey TblWihNoDescription { get; } = Key("TablesWithNoDescription");
+        public static CommandKey GrpWihNoDescription { get; } = Key("GroupWithNoDescription");
+        public static CommandKey TblWidth { get; } = Key("TablesWidth");
+        public static CommandKey TblTableTransaction { get; } = Key("TableTransaction");
+        public static CommandKey TblGenerateSimpleTransactionFromNotGeneratedTransactions { get; } = Key("GenerateSimpleTransactionFromNotGeneratedTransactions");
+        public static CommandKey TblScriptToCompareNULLABLE_GXvsDB { get; } = Key("ScriptToCompareNULLABLE_GXvsDB");
+        public static CommandKey TblScriptToCompareNULLABLE_GXvsDB2 { get; } = Key("ScriptToCompareNULLABLE_GXvsDB2");
+        public static CommandKey TblListTableWithAttributeNullableCompatible { get; } = Key("ListTableWithAttributeNullableCompatible");
+        public static CommandKey TblTableUpdate { get; } = Key("TableUpdate");
+        public static CommandKey TblTableInsertNew { get; } = Key("TableInsertNew");
+        public static CommandKey GenerateTrnFromTables { get; } = Key("GenerateTrnFromTables");
+        public static CommandKey GenerateTrnFromTables2 { get; } = Key("GenerateTrnFromTables2");
+        public static CommandKey ListTablesInModules { get; } = Key("ListTablesInModules");
+        public static CommandKey ListObjectsWithTableInOtherModule { get; } = Key("ListObjectsWithTableInOtherModule");
+
+        public static CommandKey AssignDescriptionToTable { get; } = Key("AssignDescriptionToTable");
+        public static CommandKey ApplyTableText { get; } = Key("ApplyTableText");
+        public static CommandKey IndexWithNotRefAtt { get; } = Key("IndexWithNotRefAtt");
+        public static CommandKey RemoveIndexAttribute { get; } = Key("RemoveIndexAttribute");
+
+        // Objects
+        public static CommandKey ListObj { get; } = Key("ListObj");
+        public static CommandKey ListUnreferencedObjectsInUserModules { get; } = Key("ListUnreferencedObjectsInUserModules");
+        public static CommandKey ObjNotReacheable { get; } = Key("ObjectsNotReacheable");
+        public static CommandKey ObjectsNotCalled { get; } = Key("ObjectsNotCalled");
+        public static CommandKey ObjectsWithoutInOut { get; } = Key("ObjectsWithoutInOut");
+        public static CommandKey ObjectsMainCalled { get; } = Key("ObjectsMainCalled");
+        public static CommandKey ObjectsReferenced { get; } = Key("ObjectsReferenced");
+        public static CommandKey ObjectsWithVarNotBasedOnAtt { get; } = Key("ObjectsWithVarNotBasedOnAtt");
+        public static CommandKey ObjectsWithVarsNotUsed { get; } = Key("ObjectsWithVarsNotUsed");
+        public static CommandKey ObjectsWithCommitOnExit { get; } = Key("ObjectsWithCommitOnExit");
+        public static CommandKey ListCommitOnExit { get; } = Key("ListCommitOnExit");
+        public static CommandKey ObjectsUpdateAttribute { get; } = Key("ObjectsUpdateAttribute");
+        public static CommandKey SelectObjectsUpdateAttribute { get; } = Key("SelectObjectsUpdateAttribute");
+        public static CommandKey ApplyObjectsUpdateAttribute { get; } = Key("ApplyObjectsUpdateAttribute");
+        public static CommandKey ObjectsLegacyCode { get; } = Key("ObjectsLegacyCode");
+        public static CommandKey ObjectsRefactoringCandidates { get; } = Key("ObjectsRefactoringCandidates");
+        public static CommandKey ObjectsWithConstants { get; } = Key("ObjectsWithConstants");
+        public static CommandKey ObjectsWINWEB { get; } = Key("ObjectsWINWEB");
+        public static CommandKey ListProcedureCallWebpanelTransaction { get; } = Key("ListProcedureCallWebpanelTransaction");
+        public static CommandKey BuildObjectAndReferences { get; } = Key("BuildObjectAndReferences");
+        public static CommandKey BuildObjectWithProperty { get; } = Key("BuildObjectWithProperty");
+        public static CommandKey ObjectMigration { get; } = Key("ObjectMigration");
+        public static CommandKey KBInterfaces { get; } = Key("KBInterfaces");
+        public static CommandKey ListWebObjectsProperties { get; } = Key("ListWebObjectsProperties");
+        public static CommandKey ListProperties { get; } = Key("ListProperties");
+        public static CommandKey ListDynamicCombo { get; } = Key("ListDynamicCombo");
+        public static CommandKey MainTableUsed { get; } = Key("MainTableUsed");
+        public static CommandKey RemovableTransactions { get; } = Key("RemovableTransactions");
+        public static CommandKey AttributeAsOutput { get; } = Key("AttributeAsOutput");
+
+        // Object actions
+        public static CommandKey RemoveObject { get; } = Key("RemoveObject");
+        public static CommandKey RemoveUnreferencedObjectsInUserModules { get; } = Key("RemoveUnreferencedObjectsInUserModules");
+        public static CommandKey OpenObject { get; } = Key("OpenObject");
+        public static CommandKey SetObjectPropertyText { get; } = Key("SetObjectPropertyText");
+        public static CommandKey ApplyObjectPropertyText { get; } = Key("ApplyObjectPropertyText");
+        public static CommandKey AssignAttributeToVariable { get; } = Key("AssignAttributeToVariable");
+        public static CommandKey AssignDomainToVariable { get; } = Key("AssignDomainToVariable");
+        public static CommandKey AssignAttributeOrDomainToVariable { get; } = Key("AssignAttributeOrDomainToVariable");
+
+        // Cleanup and UI
+        public static CommandKey CleanVarsNotUsed { get; } = Key("CleanVarsNotUsed");
+        public static CommandKey CleanObjects { get; } = Key("CleanObjects");
+        public static CommandKey CleanKBAsMuchAsPossible { get; } = Key("CleanKBAsMuchAsPossible");
+        public static CommandKey FixVariablesNotBasedInAttributesOrDomain { get; } = Key("FixVariablesNotBasedInAttributesOrDomain");
+        public static CommandKey ResetWINForm { get; } = Key("ResetWINForm");
+        public static CommandKey ChangeCommitOnExit { get; } = Key("ChangeCommitOnExit");
+        public static CommandKey ReplaceNullCompatible { get; } = Key("ReplaceNullCompatible");
+        public static CommandKey WebFormToAbstractEditor { get; } = Key("WebFormToAbstractEditor");
+        public static CommandKey ImproveControlClasses { get; } = Key("ImproveControlClasses");
+        public static CommandKey AuditWebPanelsSmoothUX { get; } = Key("AuditWebPanelsSmoothUX");
+        public static CommandKey ConvertSafeWebPanelsToSmoothUX { get; } = Key("ConvertSafeWebPanelsToSmoothUX");
+        public static CommandKey RunResponsiveSmoothAction { get; } = Key("RunResponsiveSmoothAction");
+
+        // Navigation and comparisons
+        public static CommandKey PrepareComparerNavigations { get; } = Key("PrepareComparerNavigations");
+        public static CommandKey OpenFolderComparerNavigation { get; } = Key("OpenFolderComparerNavigation");
+        public static CommandKey OpenFolderObjComparerNavigation { get; } = Key("OpenFolderObjComparerNavigation");
+        public static CommandKey CompareLastNVGDirectory { get; } = Key("CompareLastNVGDirectory");
+        public static CommandKey CompareLastOBJDirectory { get; } = Key("CompareLastOBJDirectory");
+        public static CommandKey CalculateCheckSum { get; } = Key("CalculateCheckSum");
+        public static CommandKey ListObjWarningsErrors { get; } = Key("ListObjWarningsErrors");
+        public static CommandKey ListObjSimilarNavigation { get; } = Key("ListObjSimilarNavigation");
+
+        // Modularization
+        public static CommandKey BuildModule { get; } = Key("BuildModule");
+        public static CommandKey GenerateGraph { get; } = Key("GenerateGraph");
+        public static CommandKey ListModules { get; } = Key("ListModules");
+        public static CommandKey ListModulesStatistics { get; } = Key("ListModulesStatistics");
+        public static CommandKey MoveTransactions { get; } = Key("MoveTransactions");
+        public static CommandKey ModuleDependencies { get; } = Key("ModuleDependencies");
+        public static CommandKey ListAPIObjects { get; } = Key("ListAPIObjects");
+        public static CommandKey RecomendedModule { get; } = Key("RecomendedModule");
+        public static CommandKey ListModularizationQuality { get; } = Key("ListModularizationQuality");
+        public static CommandKey AddModularizationInfo { get; } = Key("AddModularizationInfo");
+        public static CommandKey ApplyExternalModularization { get; } = Key("ApplyExternalModularization");
+        public static CommandKey DetectMavericks { get; } = Key("DetectMavericks");
+        public static CommandKey SplitMainObject { get; } = Key("SplitMainObject");
+
+        // Review
+        public static CommandKey PreprocessPendingObjects { get; } = Key("PreprocessPendingObjects");
+        public static CommandKey ReviewObjects { get; } = Key("ReviewObjects");
+        public static CommandKey ReviewModuleOrFolder { get; } = Key("ReviewModuleOrFolder");
+        public static CommandKey ReviewObject { get; } = Key("ReviewObject");
+        public static CommandKey EditReviewObjects { get; } = Key("EditReviewObjects");
+
+        // Utilities and lab checks
+        public static CommandKey SearchAndReplace { get; } = Key("SearchAndReplace");
+        public static CommandKey ApplySearchAndReplace { get; } = Key("ApplySearchAndReplace");
+        public static CommandKey GenerateLocationXML { get; } = Key("GenerateLocationXML");
+        public static CommandKey RenameAttributesAndTables { get; } = Key("RenameAttributesAndTables");
+        public static CommandKey RenameVariables { get; } = Key("RenameVariables");
+        public static CommandKey CountTableAccess { get; } = Key("CountTableAccess");
+        public static CommandKey CountGeneratedByPattern { get; } = Key("CountGeneratedByPattern");
+        public static CommandKey GeneratedByPatternWithoutDynamism { get; } = Key("GeneratedByPatternWithoutDynamism");
+        public static CommandKey GenerateSQLScripts { get; } = Key("GenerateSQLScripts");
+        public static CommandKey GenerateDPfromTable { get; } = Key("GenerateDPfromTable");
+        public static CommandKey GenerateRESTCalls { get; } = Key("GenerateRESTCalls");
+        public static CommandKey SDTsWithDateInWS { get; } = Key("SDTsWithDateInWS");
+        public static CommandKey GenerateSDTDataLoad { get; } = Key("GenerateSDTDataLoad");
+        public static CommandKey CreateDeployUnits { get; } = Key("CreateDeployUnits");
+        public static CommandKey MarkPublicObjects { get; } = Key("MarkPublicObjects");
+        public static CommandKey UDPCallables { get; } = Key("UDPCallables");
+        public static CommandKey CheckBldObjects { get; } = Key("CheckBldObjects");
+        public static CommandKey CheckVariableUsages { get; } = Key("CheckVariableUsages");
+        public static CommandKey VariablesNotBasedOnAttributes { get; } = Key("VariablesNotBasedOnAttributes");
+        public static CommandKey AssignTypeComparer { get; } = Key("AssignTypeComparer");
+        public static CommandKey ParameterTypeComparer { get; } = Key("ParameterTypeComparer");
+        public static CommandKey ObjectsWithRuleOld { get; } = Key("ObjectsWithRuleOld");
+        public static CommandKey EmptyConditionalBlocks { get; } = Key("EmptyConditionalBlocks");
+        public static CommandKey NewsWithoutWhenDuplicate { get; } = Key("NewsWithoutWhenDuplicate");
+        public static CommandKey ForEachsWithoutWhenNone { get; } = Key("ForEachsWithoutWhenNone");
+        public static CommandKey ConstantsInCode { get; } = Key("ConstantsInCode");
+        public static CommandKey ReviewCommits { get; } = Key("ReviewCommits");
+
+        // Themes
+        public static CommandKey ClassNotInTheme { get; } = Key("ClassNotInTheme");
+        public static CommandKey ClassUsed { get; } = Key("ClassUsed");
+        public static CommandKey ThemeClassesNotUsed { get; } = Key("ThemeClassesNotUsed");
+        public static CommandKey ObjThemeClassesNotUsed { get; } = Key("ObjThemeClassesNotUsed");
+
+        // Help
+        public static CommandKey AboutKBDoctor { get; } = Key("AboutKBDoctor");
+        public static CommandKey HelpKBDoctor { get; } = Key("HelpKBDoctor");
+        public static CommandKey ListLastReports { get; } = Key("ListLastReports");
+
+        // Labs
+        public static CommandKey AddINParmRule { get; } = Key("AddINParmRule");
+        public static CommandKey ListTableAttributesUsingDomain { get; } = Key("ListTableAttributesUsingDomain");
+        public static CommandKey ProcedureSDT { get; } = Key("ProcedureSDT");
+        public static CommandKey ProcedureGetSet { get; } = Key("ProcedureGetSet");
+        public static CommandKey ChangeLegacyCode { get; } = Key("ChangeLegacyCode");
+        public static CommandKey EditLegacyCodeToReplace { get; } = Key("EditLegacyCodeToReplace");
+        public static CommandKey TreeCommit { get; } = Key("TreeCommit");
     }
 }

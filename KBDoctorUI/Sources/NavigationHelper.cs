@@ -702,11 +702,9 @@ namespace Concepto.Packages.KBDoctor
                 IOutputService output = CommonServices.Output;
                 KBDoctorOutput.StartSection(title);
                 reportStarted = true;
-                KBDoctorOutput.Message("AttUpdated debug: output file '" + outputFile + "'.");
 
                 string tblName = KBDoctorWebForms.GetParameter(parameters, "tblName");
                 string attName = KBDoctorWebForms.GetParameter(parameters, "attName");
-                KBDoctorOutput.Message("AttUpdated debug: selected table='" + tblName + "', attribute='" + attName + "'.");
                 if (string.IsNullOrEmpty(tblName) || string.IsNullOrEmpty(attName))
                 {
                     KBDoctorOutput.Error("Missing table or attribute selection.");
@@ -723,15 +721,10 @@ namespace Concepto.Packages.KBDoctor
                 //   IKBService kbserv = UIServices.KB;
                 string fileWildcard = @"*.xml";
                 var searchSubDirsArg = System.IO.SearchOption.AllDirectories;
-                int totalFiles = 0;
-                int matchingTableFiles = 0;
-                int matchingAttributeFiles = 0;
 
                 foreach (string directoryArg in NavigationXmlDirectories(kbserv))
                 {
-                    KBDoctorOutput.Message("AttUpdated debug: scanning navigation directory '" + directoryArg + "'.");
                     string[] xFiles = System.IO.Directory.GetFiles(directoryArg, fileWildcard, searchSubDirsArg);
-                    KBDoctorOutput.Message("AttUpdated debug: directory file count=" + xFiles.Length.ToString() + ".");
 
                     foreach (string x in xFiles)
                     {
@@ -741,20 +734,17 @@ namespace Concepto.Packages.KBDoctor
 
                         {
                             // KBDoctorOutput.Message(x);
-                            totalFiles++;
 
 
                             string xmlstring = AddXMLHeader(x);
 
                             if (ObjectChangesTable(xmlstring, tblName))
                             {
-                                matchingTableFiles++;
                                 if (!ObjectUpdateTable(xmlstring, tblName, attName))
                                 {
                                     continue;
                                 }
 
-                                matchingAttributeFiles++;
                                 IndFiles += 1;
                                 if (IndFiles % 100 == 0)
                                     KBDoctorOutput.Message(" Procesing " + IndFiles.ToString() + " navigation files.");
@@ -762,7 +752,6 @@ namespace Concepto.Packages.KBDoctor
                                 KBObject obj = ExtractObject(xmlstring);
                                 if (obj == null)
                                 {
-                                    KBDoctorOutput.Warning("AttUpdated debug: matching file but object could not be resolved. File='" + x + "'.");
                                     writer.AddTableData(new string[] { "Can't find object", "", "", x });
                                     foundRows++;
                                 }
@@ -781,28 +770,18 @@ namespace Concepto.Packages.KBDoctor
                     writer.AddTableData(new string[] { "No objects found", "", "", "" });
                 }
 
-                KBDoctorOutput.Message("AttUpdated debug: total XML files checked=" + totalFiles.ToString() + ".");
-                KBDoctorOutput.Message("AttUpdated debug: files changing table=" + matchingTableFiles.ToString() + ".");
-                KBDoctorOutput.Message("AttUpdated debug: files updating attribute=" + matchingAttributeFiles.ToString() + ".");
-                KBDoctorOutput.Message("AttUpdated debug: report rows=" + foundRows.ToString() + ".");
                 success = true;
             }
             catch (Exception ex)
             {
                 KBDoctorOutput.Error("Error generating AttUpdated report: " + ex.Message);
-                KBDoctorOutput.Error("AttUpdated debug stack: " + ex.StackTrace);
             }
             finally
             {
                 if (writer != null)
                 {
-                    KBDoctorOutput.Message("AttUpdated debug: closing report writer.");
                     writer.AddFooter();
                     writer.Close();
-                }
-                else
-                {
-                    KBDoctorOutput.Warning("AttUpdated debug: writer was not created.");
                 }
 
                 if (reportStarted)
@@ -810,14 +789,13 @@ namespace Concepto.Packages.KBDoctor
                     KBDoctor.KBDoctorOutput.EndSection(title, success);
                 }
 
-                KBDoctorOutput.Message("AttUpdated debug: reportStarted=" + reportStarted.ToString() + ", success=" + success.ToString() + ", output exists=" + File.Exists(outputFile).ToString() + ".");
                 if (!string.IsNullOrEmpty(outputFile) && File.Exists(outputFile))
                 {
                     KBDoctorHelper.ShowKBDoctorResults(outputFile);
                 }
                 else
                 {
-                    KBDoctorOutput.Error("AttUpdated debug: report file was not found and cannot be shown. File='" + outputFile + "'.");
+                    KBDoctorOutput.Error("Report file was not found and cannot be shown. File='" + outputFile + "'.");
                 }
             }
         }

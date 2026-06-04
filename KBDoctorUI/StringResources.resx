@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -121,49 +121,49 @@
     <value>About KBDoctor</value>
   </data>
   <data name="AttCharToVarchar" xml:space="preserve">
-    <value>Char that should be VarChar</value>
+    <value>CHAR attributes that should be VARCHAR</value>
   </data>
   <data name="AttDescWithoutUniqueIndex" xml:space="preserve">
     <value>Description attribute without unique index</value>
   </data>
   <data name="AttKeyVarchar" xml:space="preserve">
-    <value>Attributes Key and Varchar</value>
+    <value>Key attributes using VARCHAR</value>
   </data>
   <data name="AttNotReferenced" xml:space="preserve">
     <value>Not referenced by any reachable object</value>
   </data>
   <data name="AttVarcharToChar" xml:space="preserve">
-    <value>VarChar that shoud be Char</value>
+    <value>VARCHAR attributes that should be CHAR</value>
   </data>
   <data name="AttWithNoDescription" xml:space="preserve">
     <value>With no description</value>
   </data>
   <data name="AttWithNoDomain" xml:space="preserve">
-    <value>Without domain</value>
+    <value>Attributes without domain</value>
   </data>
   <data name="ListAttributes" xml:space="preserve">
-    <value>List Attributes</value>
+    <value>Attributes</value>
   </data>
   <data name="AttWithoutBaseTable" xml:space="preserve">
-    <value>Remove attribute with no table</value>
+    <value>Remove attributes without table</value>
   </data>
   <data name="AttWithoutColumnTitle" xml:space="preserve">
     <value>Without column title</value>
   </data>
   <data name="AttWithoutDescription" xml:space="preserve">
-    <value>With incomplete description or title</value>
+    <value>Attributes with incomplete description/title</value>
   </data>
   <data name="AttWithoutTitle" xml:space="preserve">
     <value>Without title</value>
   </data>
   <data name="CleanVarsNotUsed" xml:space="preserve">
-    <value>Clean variables not used</value>
+    <value>Remove unused variables</value>
   </data>
   <data name="IndexWithNotRefAtt" xml:space="preserve">
-    <value>Index with not referenced attributes</value>
+    <value>Indexes with unreferenced attributes</value>
   </data>
   <data name="ObjectsNotCalled" xml:space="preserve">
-    <value>Remove not referenced objects</value>
+    <value>Remove unreferenced objects</value>
   </data>
   <data name="ObjectsNotReacheable" xml:space="preserve">
     <value>Mark unreachable objects with GenerateObject=FALSE</value>
@@ -175,7 +175,7 @@
     <value>List Commit On Exit</value>
   </data>
   <data name="ObjectsWithoutInOut" xml:space="preserve">
-    <value>With parm() without in:/out:/inout:</value>
+    <value>Parm rules without in/out/inout</value>
   </data>
   <data name="ObjectsMainCalled" xml:space="preserve">
     <value>Mains called by others</value>
@@ -199,10 +199,10 @@
     <value>Clean my KB as much as possible</value>
   </data>
   <data name="TablesWidth" xml:space="preserve">
-    <value>Table's width</value>
+    <value>Table width</value>
   </data>
   <data name="ListTables" xml:space="preserve">
-    <value>List Tables</value>
+    <value>Tables</value>
   </data>
   <data name="AddINParmRule" xml:space="preserve">
     <value>Add IN: to parametrs without IN:/OUT:/INOUT:</value>
@@ -220,31 +220,31 @@
     <value>Change code to improve readability</value>
   </data>
   <data name="ObjectsRefactoringCandidates" xml:space="preserve">
-    <value>Calculate KBDoctor complexity index</value>
+    <value>Object complexity index</value>
   </data>
   <data name="CountTableAccess" xml:space="preserve">
-    <value>Count table access</value>
+    <value>Table access count</value>
   </data>
   <data name="FixVariablesNotBasedInAttributesOrDomain" xml:space="preserve">
-    <value>Fix variables not based in Domain/Attributes</value>
+    <value>Fix variables not based on attribute/domain</value>
   </data>
   <data name="AttInOneTrnOnly" xml:space="preserve">
-    <value>Attributes only in transactions</value>
+    <value>Attributes used in one transaction only</value>
   </data>
   <data name="AttFormula" xml:space="preserve">
-    <value>List attributes Formula</value>
+    <value>Formula attributes</value>
   </data>
   <data name="AttUpdated" xml:space="preserve">
-    <value>Where is updated this attribute? </value>
+    <value>Where is this attribute updated?</value>
   </data>
   <data name="TableTransaction" xml:space="preserve">
-    <value>Table &lt;-&gt; Transaction Relation</value>
+    <value>Table / transaction relation</value>
   </data>
   <data name="PrcCalledByTrn" xml:space="preserve">
     <value>Forced generation of SDT </value>
   </data>
   <data name="SearchAndReplace" xml:space="preserve">
-    <value>Search and Replace in Objects</value>
+    <value>Search and replace in objects</value>
   </data>
   <data name="ClassNotInTheme" xml:space="preserve">
     <value>Class not in Theme and Class not used</value>
@@ -253,7 +253,7 @@
     <value>Initialize and clean objects</value>
   </data>
   <data name="TableUpdate" xml:space="preserve">
-    <value>Table - Update/Insert/Delete/Read</value>
+    <value>Table access: read/insert/update/delete</value>
   </data>
   <data name="TableInsertNew" xml:space="preserve">
     <value>New - Attribute not instanciated</value>
@@ -265,38 +265,38 @@
     <value>Generate Get/Set Procedures</value>
   </data>
   <data name="RemovableTransactions" xml:space="preserve">
-    <value>Removable Transactions</value>
+    <value>Removable transactions</value>
   </data>
   <data name="RenameAttributesAndTables" xml:space="preserve">
-    <value>Rename Objects to significant name length</value>
+    <value>Rename attributes and tables</value>
   </data>
   <data name="ListObjWarningsErrors" xml:space="preserve">
-    <value>Objects with warnings and errors</value>
+    <value>Objects with warnings/errors</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="specXEv2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\specXEv2.xsl;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
   <data name="OpenFolderComparerNavigation" xml:space="preserve">
-    <value>Open navigation folder</value>
+    <value>Open navigation snapshots folder</value>
   </data>
   <data name="PrepareComparerNavigations" xml:space="preserve">
-    <value>Create a snapshot of navigations</value>
+    <value>Create navigation snapshot</value>
   </data>
   <data name="ListLastReports" xml:space="preserve">
-    <value>List last KBDoctor reports</value>
+    <value>Last reports</value>
   </data>
   <data name="ListObj" xml:space="preserve">
-    <value>List Objects</value>
+    <value>Objects</value>
   </data>
   <data name="ListUnreferencedObjectsInUserModules" xml:space="preserve">
-    <value>List unreferenced objects in user modules</value>
+    <value>Unreferenced objects in user modules</value>
   </data>
   <data name="MainTableUsed" xml:space="preserve">
     <value>Tables used by mains</value>
   </data>
   <data name="HelpKBDoctor" xml:space="preserve">
-    <value>KBDoctor Help (in Spanish)</value>
+    <value>Help</value>
   </data>
   <data name="ListProcedureCallWebpanelTransaction" xml:space="preserve">
     <value>Webpanels and Transactions called by Procedures</value>
@@ -305,25 +305,25 @@
     <value>Generated for WIN and WEB</value>
   </data>
   <data name="CalculateCheckSum" xml:space="preserve">
-    <value>Generate objects in text files</value>
+    <value>Create object text snapshot</value>
   </data>
   <data name="MarkPublicObjects" xml:space="preserve">
     <value>Mark Public Objects</value>
   </data>
   <data name="ListObjSimilarNavigation" xml:space="preserve">
-    <value>Find Similar Navigations</value>
+    <value>Similar navigations</value>
   </data>
   <data name="OpenFolderObjComparerNavigation" xml:space="preserve">
-    <value>Open object  in text format folder</value>
+    <value>Open object snapshots folder</value>
   </data>
   <data name="GenerateLocationXML" xml:space="preserve">
-    <value>Generate Location.XML</value>
+    <value>Generate location.xml</value>
   </data>
   <data name="CompareLastNVGDirectory" xml:space="preserve">
-    <value>Compare Navigations (two last snapshots)</value>
+    <value>Compare last navigation snapshots</value>
   </data>
   <data name="CompareLastOBJDirectory" xml:space="preserve">
-    <value>Compare Objects in text format (two last snapshots)</value>
+    <value>Compare last object snapshots</value>
   </data>
   <data name="ClassUsed" xml:space="preserve">
     <value>Classes Used</value>
@@ -331,11 +331,8 @@
   <data name="GenerateTrnFromTable" xml:space="preserve">
     <value>Generate transactions from tables</value>
   </data>
-  <data name="ListClassUsed" xml:space="preserve">
-    <value>List classes used</value>
-  </data>
   <data name="ListTablesInModules" xml:space="preserve">
-    <value>List tables in modules</value>
+    <value>Tables by module</value>
   </data>
   <data name="GenerateSimpleTransactionFromNotGeneratedTransactions" xml:space="preserve">
     <value>Generate Simple Trn from Not Generate Transactions</value>
@@ -347,73 +344,82 @@
     <value>Generate DP from Table</value>
   </data>
   <data name="GenerateGraph" xml:space="preserve">
-    <value>Generate KB Graphs</value>
+    <value>Generate KB graph</value>
   </data>
   <data name="ResetWINForm" xml:space="preserve">
-    <value>Reset all transaction and workpanel WIN Forms</value>
+    <value>Reset Win forms</value>
   </data>
   <data name="EditLegacyCodeToReplace" xml:space="preserve">
     <value>Edit  code to replace</value>
   </data>
   <data name="ListDomain" xml:space="preserve">
-    <value>List Domains</value>
+    <value>Domains</value>
   </data>
   <data name="ReplaceDomain" xml:space="preserve">
-    <value>Replace Domain</value>
+    <value>Replace domain</value>
   </data>
   <data name="KBInterfaces" xml:space="preserve">
-    <value>KB Interfaces</value>
+    <value>KB interfaces</value>
   </data>
   <data name="ListModules" xml:space="preserve">
-    <value>List Modules Errors</value>
+    <value>Module issues</value>
   </data>
   <data name="ListModulesStatistics" xml:space="preserve">
-    <value>List Modules Statistics</value>
+    <value>Module statistics</value>
   </data>
   <data name="ListModularizationQuality" xml:space="preserve">
-    <value>Modularization Quality</value>
+    <value>Modularization quality</value>
   </data>
   <data name="AddModularizationInfo" xml:space="preserve">
-    <value>Add modularization information to documentation</value>
+    <value>Add modularization info to documentation</value>
   </data>
   <data name="MoveTransactions" xml:space="preserve">
-    <value>Move Transactions to Folders</value>
+    <value>Move transactions to folders</value>
   </data>
   <data name="ModuleDependencies" xml:space="preserve">
-    <value>Modules dependencies</value>
+    <value>Module dependencies</value>
   </data>
   <data name="CountGeneratedByPattern" xml:space="preserve">
-    <value>Generatd by patterns without dinamisms</value>
+    <value>Generated by pattern without dynamism</value>
   </data>
   <data name="ReplaceNullCompatible" xml:space="preserve">
-    <value>Change attributes with Nullable=Compatible</value>
+    <value>Replace Nullable = Compatible</value>
   </data>
   <data name="BuildModule" xml:space="preserve">
-    <value>Build Module Objects and References</value>
+    <value>Build module objects and references</value>
   </data>
   <data name="BuildObjectAndReferences" xml:space="preserve">
-    <value>Build Object and References</value>
+    <value>Build object and references</value>
   </data>
   <data name="ListAPIObjects" xml:space="preserve">
-    <value>List system public URI/URL</value>
+    <value>Public API objects</value>
   </data>
   <data name="RecomendedModule" xml:space="preserve">
-    <value>Recommended Module</value>
+    <value>Recommended module</value>
   </data>
   <data name="ApplyExternalModularization" xml:space="preserve">
-    <value>Apply External Modularization</value>
+    <value>Apply external modularization</value>
   </data>
   <data name="SplitMainObject" xml:space="preserve">
     <value>Split main object</value>
   </data>
   <data name="TreeCommit" xml:space="preserve">
-    <value>Tree call - Commit</value>
+    <value>Commit call tree</value>
   </data>
   <data name="BuildObjectWithProperty" xml:space="preserve">
-    <value>List objects with property</value>
+    <value>Objects by property</value>
   </data>
   <data name="WebFormToAbstractEditor" xml:space="preserve">
-    <value>WebForm to Abstract Editor</value>
+    <value>Web forms using Abstract Editor</value>
+  </data>
+  <data name="ImproveControlClasses" xml:space="preserve">
+    <value>Improve control classes</value>
+  </data>
+  <data name="AuditWebPanelsSmoothUX" xml:space="preserve">
+    <value>Audit Web Panels for Smooth UX</value>
+  </data>
+  <data name="ConvertSafeWebPanelsToSmoothUX" xml:space="preserve">
+    <value>Convert safe Web Panels to Smooth UX</value>
   </data>
   <data name="ObjectsWithConstants" xml:space="preserve">
     <value>Anonimize KB</value>
@@ -422,7 +428,7 @@
     <value>Review Object by KBDoctor</value>
   </data>
   <data name="ReviewObjects" xml:space="preserve">
-    <value>Review Objects</value>
+    <value>Review objects</value>
   </data>
   <data name="ReviewObject" xml:space="preserve">
     <value>Review Object by KBDoctor</value>
@@ -431,10 +437,10 @@
     <value>Review Objects by KBDoctor</value>
   </data>
   <data name="EditReviewObjects" xml:space="preserve">
-    <value>Edit review objects ini file</value>
+    <value>Review configuration</value>
   </data>
   <data name="ObjectsUpdateAttribute" xml:space="preserve">
-    <value>Procedures that updates attributes</value>
+    <value>Procedures updating attributes</value>
   </data>
   <data name="AssignTypeComparer" xml:space="preserve">
     <value>Assign Type Comparer</value>
@@ -461,13 +467,13 @@
     <value>Objects With Attribute/Domain as Output</value>
   </data>
   <data name="ScriptToCompareNULLABLE_GXvsDB" xml:space="preserve">
-    <value>Script to check Attribute Nullable "GeneXus vs Database"</value>
+    <value>Compare nullable: GeneXus vs database</value>
   </data>
   <data name="ScriptToCompareNULLABLE_GXvsDB2" xml:space="preserve">
-    <value>Script to check Attribute Type "GeneXus vs Database"</value>
+    <value>Compare data types: GeneXus vs database</value>
   </data>
   <data name="ListTableWithAttributeNullableCompatible" xml:space="preserve">
-    <value>Attributes with Nullable="Compatible"</value>
+    <value>Attributes with Nullable = Compatible</value>
   </data>
   <data name="specXEv3_V15" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\specXEv3_V15.xsl;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
@@ -476,6 +482,27 @@
     <value>QUILMES-Obj Migration</value>
   </data>
   <data name="ObjectMigration" xml:space="preserve">
-    <value>Green Screen -&gt; WEB</value>
+    <value>Green screen to web migration</value>
+  </data>
+  <data name="ListWebObjectsProperties" xml:space="preserve">
+    <value>Web object properties</value>
+  </data>
+  <data name="ListObjectsWithTableInOtherModule" xml:space="preserve">
+    <value>Objects using tables from another module</value>
+  </data>
+  <data name="DetectMavericks" xml:space="preserve">
+    <value>Detect module mavericks</value>
+  </data>
+  <data name="ChangeCommitOnExit" xml:space="preserve">
+    <value>Change Commit on Exit</value>
+  </data>
+  <data name="VariablesNotBasedOnAttributes" xml:space="preserve">
+    <value>Variables not based on attributes</value>
+  </data>
+  <data name="ListProperties" xml:space="preserve">
+    <value>Object properties</value>
+  </data>
+  <data name="ListDynamicCombo" xml:space="preserve">
+    <value>Dynamic combo usage</value>
   </data>
 </root>

@@ -531,12 +531,6 @@ namespace Concepto.Packages.KBDoctor {
         /// <summary>
         ///   Looks up a localized string similar to List classes used.
         /// </summary>
-        internal static string ListClassUsed {
-            get {
-                return ResourceManager.GetString("ListClassUsed", resourceCulture);
-            }
-        }
-
         /// <summary>
         ///   Looks up a localized string similar to List Commit On Exit.
         /// </summary>

@@ -30,13 +30,9 @@ namespace Concepto.Packages.KBDoctor
 
         public override void Initialize(IGxServiceProvider services)
         {
-            KBDoctorOutput.Message("Package.Initialize: start.");
          base.Initialize(services);
-            KBDoctorOutput.Message("Package.Initialize: base initialized.");
             LoadToolWindows();
-            KBDoctorOutput.Message("Package.Initialize: tool windows loaded.");
             AddCommandTarget(new CommandManager());
-            KBDoctorOutput.Message("Package.Initialize: command target added.");
         }
 
         /*     [EventSubscription(ArchitectureEvents.BeforeSaveKBObject)]
@@ -47,25 +43,20 @@ namespace Concepto.Packages.KBDoctor
              */
         public override IToolWindow CreateToolWindow(Guid toolWindowId)
         {
-            KBDoctorOutput.Message("Package.CreateToolWindow: requested id=" + toolWindowId.ToString() + ".");
             bool flag = toolWindowId.Equals(KBDoctorToolWindow.guid);
             IToolWindow result;
             if (flag)
             {
-                KBDoctorOutput.Message("Package.CreateToolWindow: creating/reusing KBDoctorToolWindow.");
                 bool flag2 = this.myKBDoctorWindow == null;
                 if (flag2)
                 {
-                    KBDoctorOutput.Message("Package.CreateToolWindow: new KBDoctorToolWindow instance.");
                     this.myKBDoctorWindow = new KBDoctorToolWindow();
                 }
                 CurrentKBDoctorWindow = this.myKBDoctorWindow;
                 result = this.myKBDoctorWindow;
-                KBDoctorOutput.Message("Package.CreateToolWindow: returning KBDoctorToolWindow.");
             }
             else
             {
-                KBDoctorOutput.Message("Package.CreateToolWindow: delegating to base.");
                 result = base.CreateToolWindow(toolWindowId);
             }
             return result;
@@ -73,7 +64,6 @@ namespace Concepto.Packages.KBDoctor
 
         private void LoadToolWindows()
         {
-            KBDoctorOutput.Message("Package.LoadToolWindows: AddToolWindow<KBDoctorToolWindow> id=" + KBDoctorToolWindow.guid.ToString() + ".");
             this.AddToolWindow<KBDoctorToolWindow>();
         }
 
