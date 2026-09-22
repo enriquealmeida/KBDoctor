@@ -68,6 +68,10 @@ namespace Concepto.Packages.KBDoctor.Sources
 
         private void webBrowser2_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
+            if (e.Url != null && e.Url.Scheme == "gx" &&
+                e.Url.ToString().IndexOf("ApplyCopyEnvironment", StringComparison.OrdinalIgnoreCase) >= 0)
+                KBDoctorOutput.Message("ApplyCopyEnvironment link reached KBDoctor browser.");
+
             string kbPath;
             IDictionary<string, string> parms = new Dictionary<string, string>();
 

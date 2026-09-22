@@ -103,6 +103,51 @@ namespace Concepto.Packages.KBDoctor
             KBDoctorOutput.EndSection(title, true);
         }
 
+        public static void ShowCopyEnvironment(string title, IEnumerable<string> environmentNames)
+        {
+            string outputFile = Functions.CreateOutputFile(UIServices.KB, title);
+            KBDoctorOutput.StartSection(title);
+            KBDoctorOutput.Message("Copy environment form opened. Waiting for Apply.");
+
+            List<string> environments = environmentNames.OrderBy(name => name).ToList();
+            StringBuilder html = StartHtml(title);
+            if (environments.Count == 0)
+            {
+                html.AppendLine("<p>No environments found in this KB.</p>");
+                EndHtml(html);
+            }
+            else
+            {
+                html.AppendLine("<label for=\"sourceEnvironment\">Source environment</label>");
+                AppendSelect(html, "sourceEnvironment", environments);
+                html.AppendLine("<label for=\"newEnvironment\" style=\"margin-top:12px\">New environment name</label>");
+                html.AppendLine("<input id=\"newEnvironment\" type=\"text\" autofocus>");
+                html.AppendLine("<div class=\"domain-info\">TargetPath: <span id=\"targetPathPreview\"></span></div>");
+                html.AppendLine("<br><button type=\"button\" onclick=\"applyValue()\">Apply</button>");
+                html.AppendLine("<div id=\"applyStatus\" class=\"domain-info\" role=\"status\"></div>");
+                html.AppendLine("<script>");
+                html.AppendLine("window.onerror=function(message){document.getElementById('applyStatus').innerText='JavaScript error: '+message;return true;};");
+                html.AppendLine("function sanitizeTargetPath(value){return (value||'').replace(/[<>:\"\\/\\\\|?*.\\x00-\\x1F]/g,'').replace(/^\\s+|\\s+$/g,'');}");
+                html.AppendLine("function updatePreview(){document.getElementById('targetPathPreview').innerText=sanitizeTargetPath(document.getElementById('newEnvironment').value);}");
+                html.AppendLine("function applyValue(){");
+                html.AppendLine("var targetPath=sanitizeTargetPath(document.getElementById('newEnvironment').value);");
+                html.AppendLine("if(!targetPath){alert('New environment name must produce a valid TargetPath.');return;}");
+                html.AppendLine("document.getElementById('applyStatus').innerText='Apply clicked. Sending command to GeneXus...';");
+                html.AppendLine("var href='" + JavaScript(PackageCommandPrefix + "ApplyCopyEnvironment") + "';");
+                html.AppendLine("href+='&sourceEnvironment='+encodeURIComponent(document.getElementById('sourceEnvironment').value);");
+                html.AppendLine("href+='&newEnvironment='+encodeURIComponent(document.getElementById('newEnvironment').value);");
+                html.AppendLine("window.location.href=href;");
+                html.AppendLine("}");
+                html.AppendLine("document.getElementById('newEnvironment').onkeyup=updatePreview;updatePreview();");
+                html.AppendLine("</script>");
+                EndHtml(html);
+            }
+
+            File.WriteAllText(outputFile, html.ToString(), Encoding.UTF8);
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            KBDoctorOutput.EndSection(title, true);
+        }
+
         public static void ShowDomainReplacement(string title, IEnumerable<DomainOption> domainOptions)
         {
             string outputFile = Functions.CreateOutputFile(UIServices.KB, title);

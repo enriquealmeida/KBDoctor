@@ -273,7 +273,7 @@
   <Target Name="AfterBuild">
     <Message Text="Version = $(Major).$(Minor).$(Build).$(Revision)" Importance="high" />
   </Target>
-  <Target Name="CopyKBDoctorToGeneXusPackages" AfterTargets="Build" Condition="'$(GX_PROGRAM_DIR)' != ''">
+  <Target Name="CopyKBDoctorToGeneXusPackages" AfterTargets="Build" Condition="'$(GX_PROGRAM_DIR)' != '' and '$(SkipKBDoctorPackageCopy)' != 'true'">
     <ItemGroup>
       <KBDoctorDebugFiles Include="$(TargetDir)KBDoctor*.dll;$(TargetDir)KBDoctor*.pdb;$(TargetDir)KBDoctor*.dll.config" />
       <KBDoctorDependencyFiles Include="$(SystemResourcesExtensionsPath)" Condition="'$(SystemResourcesExtensionsPath)' != ''" />

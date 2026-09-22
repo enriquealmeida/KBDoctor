@@ -386,44 +386,12 @@ namespace Concepto.Packages.KBDoctorCore.Sources
 
         private static string[] GetLast2Directorys(string[] Files, IOutputService output)
         {
-            DateTime FechaMax = new DateTime(1830,1,1);
-            DateTime FechaMaxSec = new DateTime(1830,1,1);
-            string DirectoryMax = "";
-            string DirectorySec = "";
-            string[] last2directories = new string[2];
-            if (Files.Length <= 1)
+            string[] last2directories = Utility.GetLastTwoComparerDirectories(Files, "NVG");
+            if (last2directories.Length < 2)
             {
                 output.AddErrorLine("Error: No existen 2 directorios de navegaciones para comparar");
-                return last2directories;
             }
-            foreach (string x in Files)
-            {
-                DateTime FechaX = Utility.GetDateTimeNVGDirectory(x);
-                if (!DateTime.Equals(FechaX, new DateTime()))
-                {
-                    if (DateTime.Compare(FechaMax, FechaX) < 0)
-                    {
-                        FechaMaxSec = FechaMax;
-                        DirectorySec = DirectoryMax;
-                        FechaMax = FechaX;
-                        DirectoryMax = x;
-                    }
-                    else
-                    {
-                        if (DateTime.Compare(FechaMaxSec, FechaX) < 0)
-                        {
-                            FechaMaxSec = FechaX;
-                            DirectorySec = x;
-                        }
-                    }
-                }
-                else
-                {
-                    output.AddWarningLine("Error al intentar obtener la fecha del directorio: " + x);
-                }
-            }
-            last2directories[0] = DirectoryMax;
-            last2directories[1] = DirectorySec;
+
             return last2directories;
         }
 

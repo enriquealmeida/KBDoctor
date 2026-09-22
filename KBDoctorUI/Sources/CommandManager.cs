@@ -188,6 +188,9 @@ namespace Concepto.Packages.KBDoctor
             Register(CommandKeys.ApplyExternalModularization, ExecApplyExternalModularization);
             Register(CommandKeys.DetectMavericks, ExecDetectMavericks);
             Register(CommandKeys.SplitMainObject, ExecSplitMainObject);
+            Register(CommandKeys.MakeWorkflowObjectsPublic, ExecMakeWorkflowObjectsPublic);
+            Register(CommandKeys.GeneratedObjectsNotReachableFromDeploymentUnits, ExecGeneratedObjectsNotReachableFromDeploymentUnits);
+            Register(CommandKeys.MoveObjectsToModulesFromFile, ExecMoveObjectsToModulesFromFile);
         }
 
         private void RegisterReviewCommands()
@@ -204,6 +207,8 @@ namespace Concepto.Packages.KBDoctor
             Register(CommandKeys.SearchAndReplace, ExecSearchAndReplace);
             Register(CommandKeys.ApplySearchAndReplace, ExecApplySearchAndReplace);
             Register(CommandKeys.GenerateLocationXML, ExecGenerateLocationXML);
+            Register(CommandKeys.CopyEnvironment, ExecCopyEnvironment);
+            Register(CommandKeys.ApplyCopyEnvironment, ExecApplyCopyEnvironment);
             Register(CommandKeys.RenameAttributesAndTables, ExecRenameAttributesAndTables);
             Register(CommandKeys.RenameVariables, ExecRenameVariables);
             Register(CommandKeys.CountTableAccess, ExecCountTableAccess);
@@ -1754,6 +1759,19 @@ namespace Concepto.Packages.KBDoctor
             return true;
         }
 
+        public bool ExecCopyEnvironment(CommandData cmdData)
+        {
+            EnvironmentHelper.ShowCopyEnvironment();
+            return true;
+        }
+
+        public bool ExecApplyCopyEnvironment(CommandData cmdData)
+        {
+            KBDoctorOutput.Message("ApplyCopyEnvironment command received by GeneXus.");
+            EnvironmentHelper.CopyEnvironment(cmdData.Parameters);
+            return true;
+        }
+
         public bool ExecClassNotInTheme(CommandData cmdData)
         {
             ThemeHelper.ClassNotInTheme();
@@ -1815,6 +1833,27 @@ namespace Concepto.Packages.KBDoctor
         {
             IOutputService output = KBDoctorHelper.SelectOutput();
             ModulesHelper.MarkPublicObjects();
+            return true;
+        }
+
+        public bool ExecMakeWorkflowObjectsPublic(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            ModulesHelper.MakeWorkflowObjectsPublic();
+            return true;
+        }
+
+        public bool ExecGeneratedObjectsNotReachableFromDeploymentUnits(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            ModulesHelper.GeneratedObjectsNotReachableFromDeploymentUnits();
+            return true;
+        }
+
+        public bool ExecMoveObjectsToModulesFromFile(CommandData cmdData)
+        {
+            IOutputService output = KBDoctorHelper.SelectOutput();
+            ModulesHelper.MoveObjectsToModulesFromFile();
             return true;
         }
 

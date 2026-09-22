@@ -135,6 +135,9 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey ApplyExternalModularization { get; } = Key("ApplyExternalModularization");
         public static CommandKey DetectMavericks { get; } = Key("DetectMavericks");
         public static CommandKey SplitMainObject { get; } = Key("SplitMainObject");
+        public static CommandKey MakeWorkflowObjectsPublic { get; } = Key("MakeWorkflowObjectsPublic");
+        public static CommandKey GeneratedObjectsNotReachableFromDeploymentUnits { get; } = Key("GeneratedObjectsNotReachableFromDeploymentUnits");
+        public static CommandKey MoveObjectsToModulesFromFile { get; } = Key("MoveObjectsToModulesFromFile");
 
         // Review
         public static CommandKey PreprocessPendingObjects { get; } = Key("PreprocessPendingObjects");
@@ -147,6 +150,8 @@ namespace Concepto.Packages.KBDoctor
         public static CommandKey SearchAndReplace { get; } = Key("SearchAndReplace");
         public static CommandKey ApplySearchAndReplace { get; } = Key("ApplySearchAndReplace");
         public static CommandKey GenerateLocationXML { get; } = Key("GenerateLocationXML");
+        public static CommandKey CopyEnvironment { get; } = Key("CopyEnvironment");
+        public static CommandKey ApplyCopyEnvironment { get; } = Key("ApplyCopyEnvironment");
         public static CommandKey RenameAttributesAndTables { get; } = Key("RenameAttributesAndTables");
         public static CommandKey RenameVariables { get; } = Key("RenameVariables");
         public static CommandKey CountTableAccess { get; } = Key("CountTableAccess");

@@ -37,6 +37,7 @@
     <CommandDefinition id="SelectObjectsUpdateAttribute" />
     <CommandDefinition id="ApplyObjectsUpdateAttribute" />
     <CommandDefinition id="ObjectsWithCommitOnExit" />
+    <CommandDefinition id="BuildObjectAndReferences" />
     <!--CommandDefinition id="ObjectsWithVarsNotUsed" /-->
     <!-- Atributos -->
     <!-- CommandDefinition id="ObjectsComplex" /-->
@@ -68,6 +69,9 @@
     <CommandDefinition id="ImproveControlClasses" />
     <CommandDefinition id="AuditWebPanelsSmoothUX" />
     <CommandDefinition id="ConvertSafeWebPanelsToSmoothUX" />
+    <CommandDefinition id="MakeWorkflowObjectsPublic" />
+    <CommandDefinition id="GeneratedObjectsNotReachableFromDeploymentUnits" />
+    <CommandDefinition id="MoveObjectsToModulesFromFile" />
 
     <!-- Acciones sobre tablas -->
     <CommandDefinition id="AssignDescriptionToTable" />
@@ -79,6 +83,8 @@
     <CommandDefinition id="PrcCalledByTrn" />
     <CommandDefinition id="SearchAndReplace" />
     <CommandDefinition id="ApplySearchAndReplace" />
+    <CommandDefinition id="CopyEnvironment" />
+    <CommandDefinition id="ApplyCopyEnvironment" />
     <CommandDefinition id="RunResponsiveSmoothAction" />
     <CommandDefinition id="ClassNotInTheme" />
 
@@ -115,6 +121,7 @@
           <Command refid="ObjectsWithoutInOut"/>
           <Command refid="ObjectsWithVarNotBasedOnAtt"/>
           <Command refid="ObjectsWithCommitOnExit"/>
+          <Command refid="BuildObjectAndReferences"/>
           <Command refid="ClassNotInTheme" />
           <!--Command refid="ObjectsWithVarsNotUsed"/-->
           <!--Command refid="ObjectsComplex" /-->
@@ -129,6 +136,7 @@
             </Group>
             <Command refid="ObjectsNotReacheable"/>
             <Command refid="SearchAndReplace"/>
+            <Command refid="CopyEnvironment"/>
             <Command refid="AddINParmRule"/>
             <Command refid="PrcCalledByTrn"/>
             <Command refid="CleanKBAsMuchAsPossible"/>
@@ -136,6 +144,11 @@
             <Command refid="CleanVarsNotUsed" />
           </Popup>
         </Group>
+        <Popup name ="Modularization">
+          <Command refid="MakeWorkflowObjectsPublic" />
+          <Command refid="GeneratedObjectsNotReachableFromDeploymentUnits" />
+          <Command refid="MoveObjectsToModulesFromFile" />
+        </Popup>
         <Popup name ="UI-FrontEnd">
           <Command refid="WebFormToAbstractEditor" />
           <Command refid="ImproveControlClasses" />

@@ -527,15 +527,8 @@ namespace Concepto.Packages.KBDoctor
             if (tipo == "OBJ")
                     { dir = KBDoctorHelper.ObjComparerDirectory(kbserv); }
 
-            //Me quedo con los ultimos dos directorios
-            string d1 = "";
-            string d2 = "";
-            foreach (string d in Directory.GetDirectories(dir, "*", SearchOption.TopDirectoryOnly))
-                {
-                    d2 = d1;
-                    d1 = d;
-                }
-            if (d2 == "" || d1 == "")
+            string[] lastTwoDirectories = Utility.GetLastTwoComparerDirectories(dir, tipo);
+            if (lastTwoDirectories.Length < 2)
             {
                 string title = "KBDoctor - Compare files";
                 IOutputService output = CommonServices.Output;
@@ -546,9 +539,21 @@ namespace Concepto.Packages.KBDoctor
             }
             else
             {
-                p.StartInfo.Arguments = d2 + " " + d1;
+                string newestDirectory = lastTwoDirectories[0];
+                string previousDirectory = lastTwoDirectories[1];
+                p.StartInfo.Arguments = QuoteProcessArgument(previousDirectory) + " " + QuoteProcessArgument(newestDirectory);
                 p.Start();
             }
+        }
+
+        private static string QuoteProcessArgument(string argument)
+        {
+            if (argument == null)
+            {
+                return "\"\"";
+            }
+
+            return "\"" + argument.Replace("\"", "\\\"") + "\"";
         }
 
         public static void KBInterfaces()

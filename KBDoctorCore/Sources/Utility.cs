@@ -7,6 +7,7 @@ using System.IO;
 using System.Xml.Xsl;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Globalization;
 using Artech.Architecture.Common.Objects;
 using Artech.Genexus.Common.Objects;
 using Artech.Genexus.Common.Parts;
@@ -106,6 +107,57 @@ namespace Concepto.Packages.KBDoctorCore.Sources
                 return true;
             else
                 return false;
+        }
+
+        public static string[] GetLastTwoComparerDirectories(string directory, string prefix)
+        {
+            if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+            {
+                return new string[0];
+            }
+
+            return GetLastTwoComparerDirectories(Directory.GetDirectories(directory, prefix + "-*", SearchOption.TopDirectoryOnly), prefix);
+        }
+
+        public static string[] GetLastTwoComparerDirectories(IEnumerable<string> directories, string prefix)
+        {
+            if (directories == null)
+            {
+                return new string[0];
+            }
+
+            return directories
+                .Select(path => new
+                {
+                    Path = path,
+                    Date = GetComparerDirectoryDate(path, prefix),
+                    LastWriteTime = Directory.Exists(path) ? Directory.GetLastWriteTime(path) : DateTime.MinValue
+                })
+                .Where(item => item.Date.HasValue)
+                .OrderByDescending(item => item.Date.Value)
+                .ThenByDescending(item => item.LastWriteTime)
+                .Take(2)
+                .Select(item => item.Path)
+                .ToArray();
+        }
+
+        private static DateTime? GetComparerDirectoryDate(string path, string prefix)
+        {
+            string directoryName = Path.GetFileName(path);
+            string expectedPrefix = prefix + "-";
+            if (string.IsNullOrEmpty(directoryName) || !directoryName.StartsWith(expectedPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            string dateText = directoryName.Substring(expectedPrefix.Length);
+            DateTime parsedDate;
+            if (DateTime.TryParseExact(dateText, new[] { "yyyy-MM-dd-HHmmss", "yyyy-MM-dd-HHmm" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
+            {
+                return parsedDate;
+            }
+
+            return null;
         }
 
         internal static string NvgComparerDirectory(KnowledgeBase KB)

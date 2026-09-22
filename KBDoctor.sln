@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LouvainCommunityPL", "Louva
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "INIFileParser", "IniFileParser\INIFileParser.csproj", "{5E46DCF4-C473-4171-9F9B-F3910B5EC407}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBDoctorCore.Tests", "KBDoctorCore.Tests\KBDoctorCore.Tests.csproj", "{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,18 @@ Global
 		{5E46DCF4-C473-4171-9F9B-F3910B5EC407}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5E46DCF4-C473-4171-9F9B-F3910B5EC407}.Release|x64.ActiveCfg = Release|Any CPU
 		{5E46DCF4-C473-4171-9F9B-F3910B5EC407}.Release|x86.ActiveCfg = Release|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Debug|x64.Build.0 = Debug|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Debug|x86.Build.0 = Debug|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Release|x64.ActiveCfg = Release|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Release|x64.Build.0 = Release|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Release|x86.ActiveCfg = Release|Any CPU
+		{78F7F9FA-91A9-4D73-8A1D-B1E6C3375C24}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -29,6 +29,9 @@
     <CommandDefinition id="ApplyExternalModularization" />
     <CommandDefinition id="ListModularizationQuality" />
     <CommandDefinition id="AddModularizationInfo" />
+    <CommandDefinition id="MakeWorkflowObjectsPublic" />
+    <CommandDefinition id="GeneratedObjectsNotReachableFromDeploymentUnits" />
+    <CommandDefinition id="MoveObjectsToModulesFromFile" />
     <CommandDefinition id="DetectMavericks" />
     <!-- Tablas -->
     <CommandDefinition id="ListTables" />
@@ -98,6 +101,8 @@
     <CommandDefinition id="ModuleDependencies" />
     <CommandDefinition id="CalculateCheckSum" />
     <CommandDefinition id="GenerateLocationXML" />
+    <CommandDefinition id="CopyEnvironment" />
+    <CommandDefinition id="ApplyCopyEnvironment" />
     <CommandDefinition id="KBInterfaces" />
     <CommandDefinition id="UDPCallables" />
     <CommandDefinition id="PreprocessPendingObjects" context="selection" image="Red_Cross" imageType="ico" />
@@ -204,7 +209,7 @@
       <Popup refid='ToolsMenu' name='Tools' >
         <Popup name="KBDoctor"   >
           <Popup name="Diagnostics">
-            <Popup name="Attributes">
+            <Popup id="DiagnosticsAttributes" name="Attributes">
               <Command refid="AttWithNoDomain"/>
               <Command refid="AttWithoutDescription"/>
               <Command refid="AttInOneTrnOnly"/>
@@ -213,12 +218,12 @@
               <Command refid="AttVarcharToChar"/>
               <Command refid="AttKeyVarchar"/>
             </Popup>
-            <Popup name="Tables">
+            <Popup id="DiagnosticsTables" name="Tables">
               <Command refid="TablesWithNoDescription"/>
               <Command refid="GroupWithNoDescription" />
               <Command refid="IndexWithNotRefAtt"/>
             </Popup>
-            <Popup name="Objects">
+            <Popup id="DiagnosticsObjects" name="Objects" >
               <Command refid="ListUnreferencedObjectsInUserModules" />
               <Command refid="ObjectsWithoutInOut"/>
               <Command refid="TreeCommit" />
@@ -226,19 +231,19 @@
               <Command refid="ReviewObjects" />
               <Command refid="VariablesNotBasedOnAttributes"/>
             </Popup>
-            <Popup name="Navigation">
+            <Popup id="DiagnosticsNavigation" name="Navigation">
               <Command refid="ListObjWarningsErrors" />
               <Command refid="ListObjSimilarNavigation" />
             </Popup>
-            <Popup name="Database">
+            <Popup id="DiagnosticsDatabase" name="Database">
               <Command refid="ListTableWithAttributeNullableCompatible" />
               <Command refid="ScriptToCompareNULLABLE_GXvsDB" />
               <Command refid="ScriptToCompareNULLABLE_GXvsDB2" />
             </Popup>
-            <Popup name="Modules">
+            <Popup id="DiagnosticsModules" name="Modules">
               <Command refid="ListObjectsWithTableInOtherModule" />
             </Popup>
-            <Popup name="UI / Frontend">
+            <Popup id="DiagnosticsUIFrontend" name="UI / Frontend">
               <Command refid="WebFormToAbstractEditor"/>
               <Command refid="ImproveControlClasses"/>
               <Command refid="AuditWebPanelsSmoothUX"/>
@@ -246,20 +251,21 @@
           </Popup>
 
           <Popup name="Fix / Cleanup">
-            <Popup name="Attributes">
+            <Popup id="FixAttributes" name="Attributes">
               <Command refid="ReplaceDomain"/>
             </Popup>
-            <Popup name="Objects">
+            <Popup id="FixObjects" name="Objects">
               <Command refid="BuildObjectAndReferences"/>
               <Command refid="FixVariablesNotBasedInAttributesOrDomain" />
             </Popup>
-            <Popup name="Modules">
+            <Popup id="FixModules" name="Modules">
               <Command refid="BuildModule"/>
+              <Command refid="MoveObjectsToModulesFromFile"/>
             </Popup>
-            <Popup name="UI / Frontend">
+            <Popup id="FixUIFrontend" name="UI / Frontend">
               <Command refid="ConvertSafeWebPanelsToSmoothUX"/>
             </Popup>
-            <Popup name="KB cleanup">
+            <Popup id="FixKBCleanup" name="KB cleanup">
               <Command refid="AttWithoutBaseTable" />
               <Command refid="ObjectsNotCalled"/>
               <Command refid="CleanVarsNotUsed" />
@@ -272,26 +278,27 @@
           </Popup>
 
           <Popup name="Reports &amp; Inventory">
-            <Popup name="Attributes">
+            <Popup id="ReportsAttributes" name="Attributes">
               <Command refid="ListAttributes"/>
               <Command refid="AttFormula"/>
             </Popup>
-            <Popup name="Domains">
+            <Popup id="ReportsDomains" name="Domains">
               <Command refid="ListDomain"/>
             </Popup>
-            <Popup name="Tables">
+            <Popup id="ReportsTables" name="Tables">
               <Command refid="ListTables" />
               <Command refid="TableTransaction" />
               <Command refid="TableUpdate" />
               <Command refid="TablesWidth"/>
             </Popup>
-            <Popup name="Objects">
+            <Popup id="ReportsObjects" name="Objects">
               <Command refid="ListObj" />
               <Command refid="KBInterfaces" />
+              <Command refid="BuildObjectAndReferences"/>
               <Command refid="BuildObjectWithProperty"/>
               <Command refid="ListWebObjectsProperties"/>
             </Popup>
-            <Popup name="Modules">
+            <Popup id="ReportsModules" name="Modules">
               <Command refid="ListModules" />
               <Command refid="ListTablesInModules" />
               <Command refid="ListAPIObjects" />
@@ -300,12 +307,12 @@
           </Popup>
 
           <Popup name="Compare &amp; Snapshots">
-            <Popup name="Objects">
+            <Popup id="CompareObjects" name="Objects">
               <Command refid="CalculateCheckSum" />
               <Command refid="CompareLastOBJDirectory" />
               <Command refid="OpenFolderObjComparerNavigation" />
             </Popup>
-            <Popup name="Navigations">
+            <Popup id="CompareNavigations" name="Navigations">
               <Command refid="PrepareComparerNavigations" />
               <Command refid="CompareLastNVGDirectory" />
               <Command refid="OpenFolderComparerNavigation" />
@@ -314,6 +321,8 @@
 
           <Popup name="Modularization">
             <Command refid="RecomendedModule" />
+            <Command refid="MakeWorkflowObjectsPublic" />
+            <Command refid="GeneratedObjectsNotReachableFromDeploymentUnits" />
             <Command refid="SplitMainObject" />
             <Command refid="MoveTransactions" />
             <Command refid="GenerateGraph"/>
@@ -334,6 +343,7 @@
             <Command refid="EditReviewObjects" />
             <Command refid="SearchAndReplace"/>
             <Command refid="GenerateLocationXML" />
+            <Command refid="CopyEnvironment" />
             <Command refid="RenameAttributesAndTables" />
             <Command refid="ListProperties"/>
             <Command refid="ListDynamicCombo"/>

@@ -310,6 +310,12 @@
   <data name="MarkPublicObjects" xml:space="preserve">
     <value>Mark Public Objects</value>
   </data>
+  <data name="MakeWorkflowObjectsPublic" xml:space="preserve">
+    <value>Make objects called from workflow public</value>
+  </data>
+  <data name="GeneratedObjectsNotReachableFromDeploymentUnits" xml:space="preserve">
+    <value>Generated objects not reachable from deployment units</value>
+  </data>
   <data name="ListObjSimilarNavigation" xml:space="preserve">
     <value>Similar navigations</value>
   </data>
@@ -318,6 +324,12 @@
   </data>
   <data name="GenerateLocationXML" xml:space="preserve">
     <value>Generate location.xml</value>
+  </data>
+  <data name="CopyEnvironment" xml:space="preserve">
+    <value>Copy environment</value>
+  </data>
+  <data name="ApplyCopyEnvironment" xml:space="preserve">
+    <value>Copy environment</value>
   </data>
   <data name="CompareLastNVGDirectory" xml:space="preserve">
     <value>Compare last navigation snapshots</value>
@@ -399,6 +411,9 @@
   </data>
   <data name="ApplyExternalModularization" xml:space="preserve">
     <value>Apply external modularization</value>
+  </data>
+  <data name="MoveObjectsToModulesFromFile" xml:space="preserve">
+    <value>Move objects to modules from file</value>
   </data>
   <data name="SplitMainObject" xml:space="preserve">
     <value>Split main object</value>

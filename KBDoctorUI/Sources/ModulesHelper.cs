@@ -1,6 +1,7 @@
 ﻿using Artech.Architecture.Common;
 using Artech.Architecture.Common.Collections;
 using Artech.Architecture.Common.Descriptors;
+using Artech.Architecture.Common.Helpers;
 using Artech.Architecture.Common.Objects;
 using Artech.Architecture.Common.Services;
 using Artech.Architecture.UI.Framework.Services;
@@ -23,6 +24,17 @@ namespace Concepto.Packages.KBDoctor
 
     static class ModulesHelper
     {
+        private const string CallableFromWorkflowProperty = "PWFCallable";
+        private const string ObjectVisibilityProperty = "ObjectVisibility";
+
+        private sealed class ModuleMoveRequest
+        {
+            public int LineNumber { get; set; }
+            public string ModuleQualifiedName { get; set; }
+            public string ObjectQualifiedName { get; set; }
+            public Guid ModuleGuid { get; set; }
+            public Guid ObjectGuid { get; set; }
+        }
 
         public static string ObjectModuleName(KBObject obj)
         {
@@ -356,6 +368,234 @@ namespace Concepto.Packages.KBDoctor
                 success = false;
                 KBDoctor.KBDoctorOutput.EndSection(title, success);
             }
+        }
+
+        public static void MakeWorkflowObjectsPublic()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            string title = "KBDoctor - Hacer publicos objetos de workflow";
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new[] { "Object", "Type", "Module", "Callable from Workflow", "Previous Visibility", "New Visibility", "Result" });
+
+            KBDoctorOutput.StartSection(title);
+
+            List<KBObject> objects = new List<KBObject>();
+            objects.AddRange(Utility.EditableObjects(Procedure.GetAll(kbserv.CurrentModel)));
+            objects.AddRange(Utility.EditableObjects(WebPanel.GetAll(kbserv.CurrentModel)));
+            List<KBObject> workflowObjects = objects.Where(IsCallableFromWorkflow).ToList();
+
+            int changed = 0;
+            int alreadyPublic = 0;
+            int failed = 0;
+
+            for (int index = 0; index < workflowObjects.Count; index++)
+            {
+                KBObject obj = workflowObjects[index];
+                string progress = "(" + (index + 1).ToString() + "/" + workflowObjects.Count.ToString() + ") ";
+                string previousVisibility = "";
+                string newVisibility = "";
+                string result;
+
+                try
+                {
+                    ObjectVisibility visibility = obj.GetPropertyValue<ObjectVisibility>(ObjectVisibilityProperty);
+                    previousVisibility = visibility.ToString();
+                    if (visibility == ObjectVisibility.Public)
+                    {
+                        alreadyPublic += 1;
+                        newVisibility = visibility.ToString();
+                        result = "Already public";
+                    }
+                    else
+                    {
+                        obj.SetPropertyValue(ObjectVisibilityProperty, ObjectVisibility.Public);
+                        obj.Save();
+                        changed += 1;
+                        newVisibility = ObjectVisibility.Public.ToString();
+                        result = "Changed";
+                    }
+
+                    output.AddLine(progress + obj.QualifiedName.ToString() + ": " + result);
+                }
+                catch (Exception e)
+                {
+                    failed += 1;
+                    result = "Error: " + e.Message;
+                    output.AddErrorLine(progress + obj.QualifiedName.ToString() + ": " + e.ToString());
+                }
+
+                writer.AddTableData(new[]
+                {
+                    Functions.linkObject(obj),
+                    obj.TypeDescriptor.Name,
+                    obj.Module == null ? "" : obj.Module.Name,
+                    obj.GetPropertyValueString(CallableFromWorkflowProperty),
+                    previousVisibility,
+                    newVisibility,
+                    result
+                });
+            }
+
+            writer.AddFooter();
+            writer.Close();
+
+            output.AddLine("");
+            output.AddLine("Workflow objects: " + workflowObjects.Count.ToString()
+                + ". Changed: " + changed.ToString()
+                + ". Already public: " + alreadyPublic.ToString()
+                + ". Failed: " + failed.ToString() + ".");
+            output.AddLine("Report: " + outputFile);
+            KBDoctorHelper.ShowKBDoctorResults(outputFile);
+            KBDoctorOutput.EndSection(title, failed == 0);
+        }
+
+        private static bool IsCallableFromWorkflow(KBObject obj)
+        {
+            if (!obj.ContainsPropertyDefinition(CallableFromWorkflowProperty))
+            {
+                return false;
+            }
+
+            object value = obj.GetPropertyValue(CallableFromWorkflowProperty);
+            if (value is bool booleanValue)
+            {
+                return booleanValue;
+            }
+
+            string text = obj.GetPropertyValueString(CallableFromWorkflowProperty);
+            return string.Equals(text, "True", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(text, "Yes", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(text, "1", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static void GeneratedObjectsNotReachableFromDeploymentUnits()
+        {
+            IKBService kbserv = UIServices.KB;
+            IOutputService output = CommonServices.Output;
+            string title = "KBDoctor - Generated objects not reachable from deployment units";
+            string outputFile = Functions.CreateOutputFile(kbserv, title);
+            KBDoctorXMLWriter writer = new KBDoctorXMLWriter(outputFile, Encoding.UTF8);
+            writer.AddHeader(title);
+            writer.AddTableHeader(new[] { "Type", "Object", "Module", "Generated by Pattern", "Is Main", "Referenced By", "Reason" });
+
+            KBDoctorOutput.StartSection(title);
+
+            try
+            {
+                Dictionary<Guid, string> reachableByDeploymentUnit = new Dictionary<Guid, string>();
+                List<DeploymentUnitCategory> deploymentUnits = DeploymentUnitCategory.GetAll(kbserv.CurrentModel).ToList();
+
+                output.AddLine("Deployment units: " + deploymentUnits.Count.ToString());
+                foreach (DeploymentUnitCategory deploymentUnit in deploymentUnits)
+                {
+                    output.AddLine("Processing deployment unit: " + deploymentUnit.QualifiedName.ToString());
+                    MarkDeploymentUnitReachables(deploymentUnit, reachableByDeploymentUnit);
+                }
+
+                int candidates = 0;
+                int notReachable = 0;
+                foreach (KBObject obj in Utility.EditableObjects(kbserv.CurrentModel.Objects.GetAll()))
+                {
+                    if (!IsGeneratedCandidateForDeploymentReachability(obj))
+                    {
+                        continue;
+                    }
+
+                    candidates += 1;
+                    if (reachableByDeploymentUnit.ContainsKey(obj.Guid))
+                    {
+                        continue;
+                    }
+
+                    notReachable += 1;
+                    writer.AddTableData(new[]
+                    {
+                        obj.TypeDescriptor.Name,
+                        Functions.linkObject(obj),
+                        obj.Module == null ? "" : obj.Module.Name,
+                        ObjectsHelper.isGeneratedbyPattern(obj).ToString(),
+                        Utility.IsMain(obj).ToString(),
+                        obj.GetReferencesTo(LinkType.UsedObject).Count().ToString(),
+                        "Generated object not reachable from any Deployment Unit"
+                    });
+                }
+
+                writer.AddFooter();
+                writer.Close();
+                output.AddLine("");
+                output.AddLine("Generated candidates: " + candidates.ToString()
+                    + ". Reachable from deployment units: " + reachableByDeploymentUnit.Count.ToString()
+                    + ". Not reachable: " + notReachable.ToString() + ".");
+                output.AddLine("Report: " + outputFile);
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                KBDoctorOutput.EndSection(title, true);
+            }
+            catch (Exception e)
+            {
+                writer.AddFooter();
+                writer.Close();
+                output.AddErrorLine(e.ToString());
+                KBDoctorHelper.ShowKBDoctorResults(outputFile);
+                KBDoctorOutput.EndSection(title, false);
+            }
+        }
+
+        private static void MarkDeploymentUnitReachables(DeploymentUnitCategory deploymentUnit, Dictionary<Guid, string> reachableByDeploymentUnit)
+        {
+            if (deploymentUnit.DeploymentUnitDefinition == null)
+            {
+                return;
+            }
+
+            foreach (DefinitionMember member in deploymentUnit.DeploymentUnitDefinition.Members)
+            {
+                MarkReachableFromDeploymentUnit(member.Object, deploymentUnit.Name, reachableByDeploymentUnit);
+            }
+
+            foreach (EntityReference reference in deploymentUnit.DeploymentUnitDefinition.GetPartReferences())
+            {
+                KBObject referencedObject = KBObject.Get(deploymentUnit.Model, reference.To);
+                MarkReachableFromDeploymentUnit(referencedObject, deploymentUnit.Name, reachableByDeploymentUnit);
+            }
+        }
+
+        private static void MarkReachableFromDeploymentUnit(KBObject obj, string deploymentUnitName, Dictionary<Guid, string> reachableByDeploymentUnit)
+        {
+            if (obj == null)
+            {
+                return;
+            }
+
+            if (reachableByDeploymentUnit.ContainsKey(obj.Guid))
+            {
+                return;
+            }
+
+            reachableByDeploymentUnit[obj.Guid] = deploymentUnitName;
+
+            foreach (EntityReference reference in obj.GetReferences())
+            {
+                KBObject referencedObject = KBObject.Get(obj.Model, reference.To);
+                MarkReachableFromDeploymentUnit(referencedObject, deploymentUnitName, reachableByDeploymentUnit);
+            }
+        }
+
+        private static bool IsGeneratedCandidateForDeploymentReachability(KBObject obj)
+        {
+            if (obj == null || obj is Artech.Architecture.Common.Objects.Module || obj is Folder)
+            {
+                return false;
+            }
+
+            if (obj is Table || obj is Domain || obj is Artech.Genexus.Common.Objects.Attribute || obj is Image)
+            {
+                return false;
+            }
+
+            return ObjectsHelper.isGenerated(obj);
         }
 
         private static void MakeAllObjectPublic(IKBService kbserv, IOutputService output)
@@ -2116,6 +2356,342 @@ El módulo tiene objetos públicos no referenciados por externos?
                 catch {  }
             }
             KBDoctorOutput.EndSection("Modularization");
+        }
+
+        public static void MoveObjectsToModulesFromFile()
+        {
+            const string title = "KBDoctor - Move objects to modules from file";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+                Title = "Select the module movements file",
+                CheckFileExists = true,
+                Multiselect = false
+            };
+
+            if (dialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            KBDoctorOutput.StartSection(title);
+            IOutputService output = CommonServices.Output;
+            KBModel model = UIServices.KB.CurrentModel;
+            List<string> errors = new List<string>();
+            List<ModuleMoveRequest> requests;
+
+            try
+            {
+                requests = ParseAndValidateModuleMoves(
+                    model,
+                    System.IO.File.ReadAllLines(dialog.FileName),
+                    errors);
+            }
+            catch (Exception exception)
+            {
+                errors.Add("Could not read the file: " + exception.Message);
+                requests = new List<ModuleMoveRequest>();
+            }
+
+            if (errors.Count > 0)
+            {
+                ShowModuleMoveErrors(errors, output);
+                KBDoctorOutput.EndSection(title, false);
+                return;
+            }
+
+            List<ModuleMoveRequest> pendingRequests = requests
+                .Where(request =>
+                {
+                    KBObject obj = FindObjectsByQualifiedName(model, request.ObjectQualifiedName).Single();
+                    return obj.Module == null
+                        || !string.Equals(
+                            obj.Module.QualifiedName.ToString(),
+                            request.ModuleQualifiedName,
+                            StringComparison.OrdinalIgnoreCase);
+                })
+                .ToList();
+
+            if (pendingRequests.Count == 0)
+            {
+                output.AddLine("The file is valid. All objects are already in their destination modules.");
+                KBDoctorOutput.EndSection(title, true);
+                return;
+            }
+
+            KnowledgeBase kb = model.KB;
+            KBVersion workingVersion = KBVersion.GetActive(kb);
+            KBVersion frozenVersion;
+            string frozenVersionName = CreateModuleMoveSnapshotName(kb);
+
+            try
+            {
+                frozenVersion = KBVersionHelper.FreezeModel(
+                    frozenVersionName,
+                    "Created by KBDoctor before moving objects between modules.",
+                    workingVersion);
+                output.AddLine("Frozen version created: " + frozenVersion.Name);
+            }
+            catch (Exception exception)
+            {
+                output.AddErrorLine("Could not create the frozen version. No objects were moved.");
+                output.AddErrorLine(exception.ToString());
+                MessageBox.Show(
+                    "The frozen version could not be created. No objects were moved.\r\n\r\n" + exception.Message,
+                    title,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                KBDoctorOutput.EndSection(title, false);
+                return;
+            }
+
+            int moved = 0;
+            Exception movementError = null;
+            ModuleMoveRequest failedRequest = null;
+
+            foreach (ModuleMoveRequest request in pendingRequests)
+            {
+                try
+                {
+                    KBModel currentModel = UIServices.KB.CurrentModel;
+                    Module destination = FindModuleByQualifiedName(currentModel, request.ModuleQualifiedName);
+                    List<KBObject> matches = FindObjectsByQualifiedName(currentModel, request.ObjectQualifiedName);
+                    KBObject obj = matches.Count == 1 ? matches[0] : null;
+
+                    if (destination == null || obj == null)
+                    {
+                        throw new InvalidOperationException(
+                            "The object or destination module is no longer available in the current version.");
+                    }
+
+                    obj.Module = destination;
+                    obj.Save();
+                    moved += 1;
+                    output.AddLine(obj.QualifiedName + " -> " + destination.QualifiedName);
+                }
+                catch (Exception exception)
+                {
+                    movementError = exception;
+                    failedRequest = request;
+                    break;
+                }
+            }
+
+            if (movementError == null)
+            {
+                output.AddLine("Completed. Objects moved: " + moved + ". Duplicates were ignored.");
+                output.AddLine("Recovery version: " + frozenVersion.Name);
+                KBDoctorOutput.EndSection(title, true);
+                return;
+            }
+
+            output.AddErrorLine(
+                "Movement failed at line " + failedRequest.LineNumber
+                + " for object '" + failedRequest.ObjectQualifiedName
+                + "': " + movementError.Message);
+            output.AddErrorLine("Objects moved before the error: " + moved + ".");
+            output.AddErrorLine("Frozen recovery version: " + frozenVersion.Name);
+
+            DialogResult rollback = MessageBox.Show(
+                "An error occurred while moving '" + failedRequest.ObjectQualifiedName + "'.\r\n\r\n"
+                + movementError.Message + "\r\n\r\n"
+                + moved + " object(s) had already been moved.\r\n"
+                + "Do you want to restore the working version from '" + frozenVersion.Name + "'?",
+                title,
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+
+            if (rollback == DialogResult.Yes)
+            {
+                try
+                {
+                    KBVersionHelper.Revert(frozenVersion, workingVersion);
+                    KBVersionHelper.SetAsActive(workingVersion, true);
+                    output.AddLine("The working version was restored from " + frozenVersion.Name + ".");
+                }
+                catch (Exception rollbackException)
+                {
+                    output.AddErrorLine("Automatic restore failed: " + rollbackException);
+                    MessageBox.Show(
+                        "Automatic restore failed.\r\n\r\n"
+                        + rollbackException.Message + "\r\n\r\n"
+                        + "The frozen version '" + frozenVersion.Name + "' is still available for manual recovery.",
+                        title,
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                output.AddLine("Restore was not requested. Frozen version available: " + frozenVersion.Name);
+            }
+
+            KBDoctorOutput.EndSection(title, false);
+        }
+
+        private static List<ModuleMoveRequest> ParseAndValidateModuleMoves(
+            KBModel model,
+            IEnumerable<string> lines,
+            List<string> errors)
+        {
+            List<ModuleMoveRequest> requests = new List<ModuleMoveRequest>();
+            Dictionary<Guid, ModuleMoveRequest> requestsByObject = new Dictionary<Guid, ModuleMoveRequest>();
+            int lineNumber = 0;
+
+            foreach (string sourceLine in lines)
+            {
+                lineNumber += 1;
+                string line = sourceLine == null ? "" : sourceLine.Trim();
+                if (line.Length == 0)
+                {
+                    continue;
+                }
+
+                int separator = line.IndexOf(':');
+                if (separator <= 0 || separator != line.LastIndexOf(':'))
+                {
+                    errors.Add("Line " + lineNumber + ": expected DestinationModule:Object1;Object2.");
+                    continue;
+                }
+
+                string moduleName = line.Substring(0, separator).Trim();
+                string objectsText = line.Substring(separator + 1).Trim();
+                Module destination = FindModuleByQualifiedName(model, moduleName);
+                if (destination == null)
+                {
+                    errors.Add("Line " + lineNumber + ": destination module '" + moduleName + "' does not exist.");
+                }
+
+                string[] objectNames = objectsText.Split(';');
+                if (objectNames.Length == 0 || objectNames.Any(name => string.IsNullOrWhiteSpace(name)))
+                {
+                    errors.Add("Line " + lineNumber + ": every object must have a qualified name.");
+                    continue;
+                }
+
+                foreach (string rawObjectName in objectNames)
+                {
+                    string objectName = rawObjectName.Trim();
+                    List<KBObject> matches = FindObjectsByQualifiedName(model, objectName);
+                    if (matches.Count == 0)
+                    {
+                        errors.Add("Line " + lineNumber + ": object '" + objectName + "' does not exist.");
+                        continue;
+                    }
+
+                    if (matches.Count > 1)
+                    {
+                        errors.Add("Line " + lineNumber + ": object '" + objectName + "' is ambiguous.");
+                        continue;
+                    }
+
+                    KBObject obj = matches[0];
+                    if (obj is Module || obj is Table || obj.IsReadOnly)
+                    {
+                        errors.Add(
+                            "Line " + lineNumber + ": object '" + objectName
+                            + "' cannot be moved because it is a module, table, or read-only object.");
+                        continue;
+                    }
+
+                    if (destination == null)
+                    {
+                        continue;
+                    }
+
+                    ModuleMoveRequest existing;
+                    if (requestsByObject.TryGetValue(obj.Guid, out existing))
+                    {
+                        if (existing.ModuleGuid != destination.Guid)
+                        {
+                            errors.Add(
+                                "Line " + lineNumber + ": object '" + objectName
+                                + "' is assigned to both '" + existing.ModuleQualifiedName
+                                + "' and '" + destination.QualifiedName + "'.");
+                        }
+                        continue;
+                    }
+
+                    ModuleMoveRequest request = new ModuleMoveRequest
+                    {
+                        LineNumber = lineNumber,
+                        ModuleQualifiedName = destination.QualifiedName.ToString(),
+                        ObjectQualifiedName = obj.QualifiedName.ToString(),
+                        ModuleGuid = destination.Guid,
+                        ObjectGuid = obj.Guid
+                    };
+                    requests.Add(request);
+                    requestsByObject.Add(obj.Guid, request);
+                }
+            }
+
+            if (requests.Count == 0 && errors.Count == 0)
+            {
+                errors.Add("The file does not contain any object movements.");
+            }
+
+            return requests;
+        }
+
+        private static Module FindModuleByQualifiedName(KBModel model, string qualifiedName)
+        {
+            return Module.GetAll(model).FirstOrDefault(
+                module => string.Equals(
+                    module.QualifiedName.ToString(),
+                    qualifiedName,
+                    StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static List<KBObject> FindObjectsByQualifiedName(KBModel model, string qualifiedName)
+        {
+            int separator = qualifiedName.LastIndexOf('.');
+            string objectName = separator < 0
+                ? qualifiedName
+                : qualifiedName.Substring(separator + 1);
+
+            return model.Objects
+                .GetByPartialName(new[] { "Objects" }, objectName)
+                .Where(obj => string.Equals(
+                    obj.QualifiedName.ToString(),
+                    qualifiedName,
+                    StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
+        private static string CreateModuleMoveSnapshotName(KnowledgeBase kb)
+        {
+            string baseName = "KBDoctor before module moves " + DateTime.Now.ToString("yyyyMMdd HHmmss");
+            string name = baseName;
+            int suffix = 2;
+            while (KBVersion.Get(kb, name) != null)
+            {
+                name = baseName + " " + suffix;
+                suffix += 1;
+            }
+            return name;
+        }
+
+        private static void ShowModuleMoveErrors(IEnumerable<string> errors, IOutputService output)
+        {
+            List<string> errorList = errors.ToList();
+            output.AddErrorLine("The file has errors. No version was created and no objects were moved.");
+            foreach (string error in errorList)
+            {
+                output.AddErrorLine(error);
+            }
+
+            string details = string.Join("\r\n", errorList.Take(20));
+            if (errorList.Count > 20)
+            {
+                details += "\r\n... and " + (errorList.Count - 20) + " more error(s).";
+            }
+
+            MessageBox.Show(
+                "The file has errors. No changes were made.\r\n\r\n" + details,
+                "KBDoctor - Move objects to modules from file",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
         }
 
         private static Module ModuloAAsignar(string mdl)
