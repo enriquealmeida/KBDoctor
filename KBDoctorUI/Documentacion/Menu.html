@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Menú publicado de KBDoctor</title>
+  <style>
+    :root {
+      --ink: #1c2430;
+      --muted: #5c6b7a;
+      --line: #d8e0e8;
+      --paper: #f6f8fb;
+      --card: #ffffff;
+      --accent: #0f6e6e;
+      --accent-soft: #e6f3f3;
+      --warn: #8a5a00;
+      --warn-soft: #fff6e5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 16px/1.5 "Segoe UI", system-ui, sans-serif;
+    }
+    header {
+      background: #12343a;
+      color: #f4fbfb;
+      padding: 2.2rem 1.5rem 1.6rem;
+    }
+    header h1 {
+      margin: 0 0 0.4rem;
+      font-size: 1.8rem;
+      font-weight: 650;
+    }
+    header p { margin: 0.35rem 0; max-width: 68rem; color: #d5e7e8; }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 0;
+    }
+    nav a {
+      color: var(--accent);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.25rem 0.75rem;
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+    nav a:hover { background: var(--accent-soft); }
+    main {
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 1.2rem 1.5rem 3rem;
+    }
+    .note {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      margin: 0.8rem 0 1.4rem;
+    }
+    .note p { margin: 0.35rem 0; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1rem 1.1rem 1.2rem;
+      margin: 1rem 0;
+    }
+    h2 {
+      margin: 0 0 0.4rem;
+      font-size: 1.35rem;
+      color: #12343a;
+    }
+    h3 {
+      margin: 1.2rem 0 0.45rem;
+      font-size: 1.05rem;
+      color: var(--accent);
+    }
+    p { margin: 0.4rem 0 0.7rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 0.45rem 0.55rem;
+    }
+    th {
+      background: #eef4f6;
+      font-weight: 650;
+    }
+    tr:last-child td { border-bottom: none; }
+    code {
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 0.88em;
+      background: #eef3f6;
+      padding: 0.05rem 0.28rem;
+      border-radius: 4px;
+    }
+    .missing { background: var(--warn-soft); }
+    .missing code { background: #ffe8c2; }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.6rem 0 0.8rem; }
+    .chips code { padding: 0.2rem 0.45rem; }
+    footer {
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 0 1.5rem 2rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Menú publicado de KBDoctor</h1>
+    <p>KBDoctor es una extensión de GeneXus. El menú que ve el usuario sale de <code>KBDoctorUI/KBDoctor.package</code>, embebido en el ensamblado. Se inserta en <strong>Tools &gt; KBDoctor</strong>.</p>
+  </header>
+
+  <nav>
+    <a href="#diagnostics">Diagnostics</a>
+    <a href="#fix">Fix / Cleanup</a>
+    <a href="#reports">Reports &amp; Inventory</a>
+    <a href="#compare">Compare &amp; Snapshots</a>
+    <a href="#modularization">Modularization</a>
+    <a href="#statistics">Statistics</a>
+    <a href="#utilities">Utilities</a>
+    <a href="#migration">Migration</a>
+    <a href="#help">Help</a>
+    <a href="#labs">Labs</a>
+    <a href="#fuera">Fuera de Tools</a>
+    <a href="#no-menu">No publicados</a>
+  </nav>
+
+  <main>
+    <div class="note">
+      <p>Los textos del menú salen de <code>KBDoctorUI/StringResources.resx</code>, con la misma clave que el id del comando. Casi todas las opciones quedan deshabilitadas hasta que hay una KB abierta. <strong>Help</strong> y <strong>About KBDoctor</strong> están siempre habilitadas.</p>
+      <p><code>GeneXusPackage.package</code> conserva un menú anterior y no se embebe en el proyecto. No es el menú que se publica.</p>
+      <p><strong>Build object and references</strong> aparece dos veces: en <strong>Fix / Cleanup &gt; Objects</strong> y en <strong>Reports &amp; Inventory &gt; Objects</strong>. Es el mismo comando.</p>
+    </div>
+
+    <section id="diagnostics">
+      <h2>Diagnostics</h2>
+      <p>Informes de problemas. No modifican la KB, salvo donde se indica.</p>
+
+      <h3>Attributes</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Attributes without domain</td><td><code>AttWithNoDomain</code></td><td>Lista atributos sin dominio.</td></tr>
+          <tr><td>Attributes with incomplete description/title</td><td><code>AttWithoutDescription</code></td><td>Lista atributos con descripción o título incompletos.</td></tr>
+          <tr><td>Attributes used in one transaction only</td><td><code>AttInOneTrnOnly</code></td><td>Lista atributos usados en una sola transacción.</td></tr>
+          <tr><td>Where is this attribute updated?</td><td><code>AttUpdated</code></td><td>Muestra dónde se actualiza un atributo.</td></tr>
+          <tr><td>CHAR attributes that should be VARCHAR</td><td><code>AttCharToVarchar</code></td><td>Lista atributos CHAR candidatos a pasar a VARCHAR.</td></tr>
+          <tr><td>VARCHAR attributes that should be CHAR</td><td><code>AttVarcharToChar</code></td><td>Lista atributos VARCHAR candidatos a pasar a CHAR.</td></tr>
+          <tr><td>Key attributes using VARCHAR</td><td><code>AttKeyVarchar</code></td><td>Lista claves definidas como VARCHAR.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Tables</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Tables with incomplete description</td><td><code>TablesWithNoDescription</code></td><td>Lista tablas con descripción incompleta.</td></tr>
+          <tr><td>Subtype groups with incomplete description</td><td><code>GroupWithNoDescription</code></td><td>Lista grupos de subtipos con descripción incompleta.</td></tr>
+          <tr><td>Indexes with unreferenced attributes</td><td><code>IndexWithNotRefAtt</code></td><td>Lista índices que incluyen atributos no referenciados.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Objects</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Unreferenced objects in user modules</td><td><code>ListUnreferencedObjectsInUserModules</code></td><td>Lista objetos de módulos de usuario que nadie referencia.</td></tr>
+          <tr><td>Parm rules without in/out/inout</td><td><code>ObjectsWithoutInOut</code></td><td>Lista reglas <code>parm</code> sin <code>in:</code>, <code>out:</code> o <code>inout:</code>.</td></tr>
+          <tr><td>Commit call tree</td><td><code>TreeCommit</code></td><td>Arma el árbol de llamadas relacionado con <code>commit</code>.</td></tr>
+          <tr><td>Procedures updating attributes</td><td><code>ObjectsUpdateAttribute</code></td><td>Lista procedimientos que actualizan atributos.</td></tr>
+          <tr><td>Review objects</td><td><code>ReviewObjects</code></td><td>Revisa los objetos elegidos y estima deuda técnica en minutos.</td></tr>
+          <tr><td>Variables not based on attributes</td><td><code>VariablesNotBasedOnAttributes</code></td><td>Lista variables que no se basan en un atributo.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Navigation</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Objects with warnings/errors</td><td><code>ListObjWarningsErrors</code></td><td>Lista objetos con warnings o errores de navegación.</td></tr>
+          <tr><td>Similar navigations</td><td><code>ListObjSimilarNavigation</code></td><td>Lista navegaciones parecidas entre objetos.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Database</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Attributes with Nullable = Compatible</td><td><code>ListTableWithAttributeNullableCompatible</code></td><td>Lista atributos con <code>Nullable = Compatible</code>.</td></tr>
+          <tr><td>Compare nullable: GeneXus vs database</td><td><code>ScriptToCompareNULLABLE_GXvsDB</code></td><td>Genera un script para comparar nulabilidad entre GeneXus y la base.</td></tr>
+          <tr><td>Compare data types: GeneXus vs database</td><td><code>ScriptToCompareNULLABLE_GXvsDB2</code></td><td>Genera un script para comparar tipos de datos entre GeneXus y la base.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Modules</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Objects using tables from another module</td><td><code>ListObjectsWithTableInOtherModule</code></td><td>Lista objetos que usan tablas de un módulo distinto al suyo.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>UI / Frontend</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Web forms using Abstract Editor</td><td><code>WebFormToAbstractEditor</code></td><td>Lista web forms que usan el editor abstracto.</td></tr>
+          <tr><td>Improve control classes</td><td><code>ImproveControlClasses</code></td><td>Revisa clases de controles para proponer mejoras.</td></tr>
+          <tr><td>Audit Web Panels for Smooth UX</td><td><code>AuditWebPanelsSmoothUX</code></td><td>Audita Web Panels respecto de Smooth UX.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="fix">
+      <h2>Fix / Cleanup</h2>
+      <p>Acciones que cambian objetos, atributos o propiedades de la KB.</p>
+
+      <h3>Attributes</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Replace domain</td><td><code>ReplaceDomain</code></td><td>Reemplaza el dominio de atributos.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Objects</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Build object and references</td><td><code>BuildObjectAndReferences</code></td><td>Especifica o compila un objeto y sus referencias.</td></tr>
+          <tr><td>Fix variables not based on attribute/domain</td><td><code>FixVariablesNotBasedInAttributesOrDomain</code></td><td>Asigna atributo o dominio a variables que no lo tienen.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Modules</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Build module objects and references</td><td><code>BuildModule</code></td><td>Compila los objetos de un módulo y sus referencias.</td></tr>
+          <tr><td>Move objects to modules from file</td><td><code>MoveObjectsToModulesFromFile</code></td><td>Mueve objetos a módulos según un archivo.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>UI / Frontend</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Convert safe Web Panels to Smooth UX</td><td><code>ConvertSafeWebPanelsToSmoothUX</code></td><td>Convierte a Smooth UX los Web Panels que el análisis marca como seguros.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>KB cleanup</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Remove attributes without table</td><td><code>AttWithoutBaseTable</code></td><td>Borra atributos que no tienen tabla base.</td></tr>
+          <tr><td>Remove unreferenced objects</td><td><code>ObjectsNotCalled</code></td><td>Borra objetos que no están referenciados.</td></tr>
+          <tr><td>Remove unused variables</td><td><code>CleanVarsNotUsed</code></td><td>Borra variables no usadas.</td></tr>
+          <tr><td>Removable transactions</td><td><code>RemovableTransactions</code></td><td>Detecta transacciones que se pueden sacar.</td></tr>
+          <tr><td>Initialize and clean objects</td><td><code>CleanObjects</code></td><td>Limpia los objetos que se seleccionan.</td></tr>
+          <tr><td>Reset Win forms</td><td><code>ResetWINForm</code></td><td>Regenera los Win forms.</td></tr>
+          <tr><td>Replace Nullable = Compatible</td><td><code>ReplaceNullCompatible</code></td><td>Cambia atributos con <code>Nullable = Compatible</code>.</td></tr>
+          <tr><td>Change Commit on Exit</td><td><code>ChangeCommitOnExit</code></td><td>Cambia la propiedad Commit on Exit.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="reports">
+      <h2>Reports &amp; Inventory</h2>
+      <p>Inventarios de la KB. No modifican objetos.</p>
+
+      <h3>Attributes</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Attributes</td><td><code>ListAttributes</code></td><td>Inventario de atributos.</td></tr>
+          <tr><td>Formula attributes</td><td><code>AttFormula</code></td><td>Lista atributos fórmula.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Domains</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Domains</td><td><code>ListDomain</code></td><td>Inventario de dominios.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Tables</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Tables</td><td><code>ListTables</code></td><td>Inventario de tablas.</td></tr>
+          <tr><td>Table / transaction relation</td><td><code>TableTransaction</code></td><td>Relaciona cada tabla con su transacción.</td></tr>
+          <tr><td>Table access: read/insert/update/delete</td><td><code>TableUpdate</code></td><td>Muestra en qué objetos se lee, inserta, actualiza o borra cada tabla.</td></tr>
+          <tr><td>Table width</td><td><code>TablesWidth</code></td><td>Informa el ancho de las tablas.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Objects</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Objects</td><td><code>ListObj</code></td><td>Inventario de objetos.</td></tr>
+          <tr><td>KB interfaces</td><td><code>KBInterfaces</code></td><td>Lista las interfaces de la KB.</td></tr>
+          <tr><td>Build object and references</td><td><code>BuildObjectAndReferences</code></td><td>El mismo comando de Fix / Cleanup &gt; Objects.</td></tr>
+          <tr><td>Objects by property</td><td><code>BuildObjectWithProperty</code></td><td>Lista objetos según el valor de una propiedad.</td></tr>
+          <tr><td>Web object properties</td><td><code>ListWebObjectsProperties</code></td><td>Lista propiedades de objetos web.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Modules</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Module issues</td><td><code>ListModules</code></td><td>Lista problemas de módulos (<code>ListModulesErrors</code>).</td></tr>
+          <tr><td>Tables by module</td><td><code>ListTablesInModules</code></td><td>Lista las tablas de cada módulo.</td></tr>
+          <tr><td>Public API objects</td><td><code>ListAPIObjects</code></td><td>Lista objetos expuestos como API.</td></tr>
+          <tr><td>Module dependencies</td><td><code>ModuleDependencies</code></td><td>Lista dependencias entre módulos.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="compare">
+      <h2>Compare &amp; Snapshots</h2>
+
+      <h3>Objects</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Create object text snapshot</td><td><code>CalculateCheckSum</code></td><td>Guarda una foto del texto de los objetos.</td></tr>
+          <tr><td>Compare last object snapshots</td><td><code>CompareLastOBJDirectory</code></td><td>Compara las dos últimas fotos de objetos.</td></tr>
+          <tr><td>Open object snapshots folder</td><td><code>OpenFolderObjComparerNavigation</code></td><td>Abre la carpeta de fotos de objetos.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Navigations</h3>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Create navigation snapshot</td><td><code>PrepareComparerNavigations</code></td><td>Guarda una foto de las navegaciones.</td></tr>
+          <tr><td>Compare last navigation snapshots</td><td><code>CompareLastNVGDirectory</code></td><td>Compara las dos últimas fotos de navegación.</td></tr>
+          <tr><td>Open navigation snapshots folder</td><td><code>OpenFolderComparerNavigation</code></td><td>Abre la carpeta de fotos de navegación.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="modularization">
+      <h2>Modularization</h2>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Recommended module</td><td><code>RecomendedModule</code></td><td>Sugiere el módulo de cada objeto.</td></tr>
+          <tr><td>Make objects called from workflow public</td><td><code>MakeWorkflowObjectsPublic</code></td><td>Marca como públicos los objetos llamados desde el workflow.</td></tr>
+          <tr><td>Generated objects not reachable from deployment units</td><td><code>GeneratedObjectsNotReachableFromDeploymentUnits</code></td><td>Lista objetos generados que ninguna deployment unit alcanza.</td></tr>
+          <tr><td>Split main object</td><td><code>SplitMainObject</code></td><td>Parte un objeto main.</td></tr>
+          <tr><td>Move transactions to folders</td><td><code>MoveTransactions</code></td><td>Mueve transacciones a carpetas.</td></tr>
+          <tr><td>Generate KB graph</td><td><code>GenerateGraph</code></td><td>Genera el grafo de la KB.</td></tr>
+          <tr><td>Apply external modularization</td><td><code>ApplyExternalModularization</code></td><td>Aplica una modularización calculada fuera de GeneXus.</td></tr>
+          <tr><td>Add modularization info to documentation</td><td><code>AddModularizationInfo</code></td><td>Escribe información de modularización en la documentación de los objetos.</td></tr>
+          <tr><td>Detect module mavericks</td><td><code>DetectMavericks</code></td><td>Detecta objetos difíciles de ubicar en un módulo.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="statistics">
+      <h2>Statistics</h2>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Object complexity index</td><td><code>ObjectsRefactoringCandidates</code></td><td>Exporta un CSV con el índice de complejidad de los objetos.</td></tr>
+          <tr><td>Table access count</td><td><code>CountTableAccess</code></td><td>Cuenta los accesos a cada tabla.</td></tr>
+          <tr><td>Module statistics</td><td><code>ListModulesStatistics</code></td><td>Estadísticas por módulo.</td></tr>
+          <tr><td>Modularization quality</td><td><code>ListModularizationQuality</code></td><td>Mide la calidad de la modularización.</td></tr>
+          <tr><td>Generated by pattern without dynamism</td><td><code>CountGeneratedByPattern</code></td><td>Cuenta objetos generados por pattern. El texto del menú habla de “without dynamism”; el comando que hace ese análisis (<code>GeneratedByPatternWithoutDynamism</code>) no está en el menú.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="utilities">
+      <h2>Utilities</h2>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Review configuration</td><td><code>EditReviewObjects</code></td><td>Edita la configuración de la revisión de objetos.</td></tr>
+          <tr><td>Search and replace in objects</td><td><code>SearchAndReplace</code></td><td>Busca y reemplaza texto en objetos.</td></tr>
+          <tr><td>Generate location.xml</td><td><code>GenerateLocationXML</code></td><td>Genera <code>location.xml</code>.</td></tr>
+          <tr><td>Copy environment</td><td><code>CopyEnvironment</code></td><td>Copia un environment de la KB.</td></tr>
+          <tr><td>Rename attributes and tables</td><td><code>RenameAttributesAndTables</code></td><td>Renombra atributos y tablas.</td></tr>
+          <tr><td>Object properties</td><td><code>ListProperties</code></td><td>Lista propiedades de objetos.</td></tr>
+          <tr><td>Dynamic combo usage</td><td><code>ListDynamicCombo</code></td><td>Lista el uso de dynamic combos.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="migration">
+      <h2>Migration</h2>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Green screen to web migration</td><td><code>ObjectMigration</code></td><td>Apoya la migración de objetos de pantalla verde a web.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="help">
+      <h2>Help</h2>
+      <table>
+        <thead><tr><th>Opción</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Help</td><td><code>HelpKBDoctor</code></td><td>Abre la página de la wiki de GeneXus (página 26679). Siempre habilitado.</td></tr>
+          <tr><td>Last reports</td><td><code>ListLastReports</code></td><td>Abre los últimos reportes generados.</td></tr>
+          <tr><td>About KBDoctor</td><td><code>AboutKBDoctor</code></td><td>Muestra el acerca de. Siempre habilitado.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="labs">
+      <h2>Labs</h2>
+      <p>Bloque experimental, publicado dentro del grupo <code>LABS</code> de <code>KBDoctor.package</code>. No hay código que lo oculte: aparece en el menú junto con el resto.</p>
+      <p>Varias opciones de este bloque no tienen entrada en <code>StringResources.resx</code>. En ese caso GeneXus muestra el id del comando. Esas filas están marcadas.</p>
+      <table>
+        <thead><tr><th>Opción en el menú</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr class="missing"><td><code>GenerateTrnFromTables</code></td><td><code>GenerateTrnFromTables</code></td><td>Genera transacciones a partir de tablas. Sin texto en recursos.</td></tr>
+          <tr><td>Add IN: to parametrs without IN:/OUT:/INOUT:</td><td><code>AddINParmRule</code></td><td>Agrega <code>IN:</code> a parámetros que no tienen dirección.</td></tr>
+          <tr><td>Generate SDT Sources</td><td><code>ProcedureSDT</code></td><td>Genera procedimientos fuente de un SDT.</td></tr>
+          <tr><td>Generate Get/Set Procedures</td><td><code>ProcedureGetSet</code></td><td>Genera procedimientos Get/Set.</td></tr>
+          <tr class="missing"><td><code>CreateDeployUnits</code></td><td><code>CreateDeployUnits</code></td><td>Crea deployment units. Sin texto en recursos.</td></tr>
+          <tr><td>Generate Simple Trn from Not Generate Transactions</td><td><code>GenerateSimpleTransactionFromNotGeneratedTransactions</code></td><td>Genera una transacción simple desde transacciones no generadas.</td></tr>
+          <tr class="missing"><td><code>RenameVariables</code></td><td><code>RenameVariables</code></td><td>Renombra variables. Sin texto en recursos.</td></tr>
+          <tr><td>Objects with variables not used</td><td><code>ObjectsWithVarsNotUsed</code></td><td>Lista objetos con variables sin usar.</td></tr>
+          <tr class="missing"><td><code>GenerateTrnFromTables2</code></td><td><code>GenerateTrnFromTables2</code></td><td>Segunda variante de generación de transacciones desde tablas. Sin texto en recursos.</td></tr>
+          <tr><td>Description attribute without unique index</td><td><code>AttDescWithoutUniqueIndex</code></td><td>Lista atributos descriptor sin índice único.</td></tr>
+          <tr><td>New - Attribute not instanciated</td><td><code>TableInsertNew</code></td><td>Lista <code>New</code> donde un atributo no se instancia.</td></tr>
+          <tr><td>Tables used by mains</td><td><code>MainTableUsed</code></td><td>Lista tablas usadas por objetos main.</td></tr>
+          <tr><td>List all object dependencies</td><td><code>ObjectsReferenced</code></td><td>Lista las dependencias de los objetos.</td></tr>
+          <tr><td>With parm() and Commit on exit=Yes</td><td><code>ObjectsWithCommitOnExit</code></td><td>Lista objetos con <code>parm()</code> y Commit on Exit = Yes.</td></tr>
+          <tr><td>List Commit On Exit</td><td><code>ListCommitOnExit</code></td><td>Lista el valor de Commit on Exit.</td></tr>
+          <tr><td>Generated for WIN and WEB</td><td><code>ObjectsWINWEB</code></td><td>Lista objetos generados para Win y Web.</td></tr>
+          <tr><td>Webpanels and Transactions called by Procedures</td><td><code>ListProcedureCallWebpanelTransaction</code></td><td>Lista Web Panels y transacciones llamados por procedimientos.</td></tr>
+          <tr><td>Objects with legacy code</td><td><code>ObjectsLegacyCode</code></td><td>Lista objetos con código legado.</td></tr>
+          <tr><td>Mark Public Objects</td><td><code>MarkPublicObjects</code></td><td>Marca objetos como públicos.</td></tr>
+          <tr><td>Mark unreachable objects with GenerateObject=FALSE</td><td><code>ObjectsNotReacheable</code></td><td>Pone <code>GenerateObject = FALSE</code> en objetos inalcanzables.</td></tr>
+          <tr><td>Clean my KB as much as possible</td><td><code>CleanKBAsMuchAsPossible</code></td><td>Encadena limpiezas sobre la KB.</td></tr>
+          <tr><td>List tables/attributes using domain</td><td><code>ListTableAttributesUsingDomain</code></td><td>Lista tablas y atributos que usan un dominio.</td></tr>
+          <tr><td>Anonimize KB</td><td><code>ObjectsWithConstants</code></td><td>Trabaja sobre constantes para anonimizar la KB.</td></tr>
+          <tr><td>Assign Type Comparer</td><td><code>AssignTypeComparer</code></td><td>Compara tipos en asignaciones.</td></tr>
+          <tr><td>Parameter type comparer</td><td><code>ParameterTypeComparer</code></td><td>Compara tipos de parámetros.</td></tr>
+          <tr class="missing"><td><code>ObjectsWithRuleOld</code></td><td><code>ObjectsWithRuleOld</code></td><td>Busca reglas con sintaxis vieja. Sin texto en recursos.</td></tr>
+          <tr><td>Empty Conditional Blocks</td><td><code>EmptyConditionalBlocks</code></td><td>Lista bloques condicionales vacíos.</td></tr>
+          <tr><td>For Each without When None</td><td><code>ForEachsWithoutWhenNone</code></td><td>Lista <code>For Each</code> sin <code>When None</code>.</td></tr>
+          <tr><td>News without When Duplicate</td><td><code>NewsWithoutWhenDuplicate</code></td><td>Lista <code>New</code> sin <code>When Duplicate</code>.</td></tr>
+          <tr><td>Constants in code</td><td><code>ConstantsInCode</code></td><td>Lista constantes escritas en el código.</td></tr>
+          <tr class="missing"><td><code>ReviewCommits</code></td><td><code>ReviewCommits</code></td><td>Revisa commits. Sin texto en recursos.</td></tr>
+          <tr class="missing"><td><code>GenerateRESTCalls</code></td><td><code>GenerateRESTCalls</code></td><td>Genera llamadas REST a partir de procedimientos elegidos. Sin texto en recursos.</td></tr>
+          <tr class="missing"><td><code>SDTsWithDateInWS</code></td><td><code>SDTsWithDateInWS</code></td><td>Lista SDT con fecha usados en web services. Sin texto en recursos.</td></tr>
+          <tr class="missing"><td><code>GenerateSDTDataLoad</code></td><td><code>GenerateSDTDataLoad</code></td><td>Genera la carga de datos de SDT elegidos. Sin texto en recursos.</td></tr>
+          <tr><td>Generate DP from Table</td><td><code>GenerateDPfromTable</code></td><td>El handler llama a <code>TablesHelper.GenerateTrnFromTables2()</code>, el mismo método que <code>GenerateTrnFromTables2</code>.</td></tr>
+          <tr><td>Objects With Attribute/Domain as Output</td><td><code>AttributeAsOutput</code></td><td>Lista objetos que devuelven un atributo o dominio en el <code>parm</code>.</td></tr>
+          <tr class="missing"><td><code>CheckVariableUsages</code></td><td><code>CheckVariableUsages</code></td><td>Revisa usos de variables. Sin texto en recursos.</td></tr>
+          <tr><td>Generate scripts to check data</td><td><code>GenerateSQLScripts</code></td><td>Genera scripts SQL para controlar datos.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Themes</h3>
+      <p>Submenú de Labs. <strong>Theme classes not used</strong> y <strong>Object theme classes not used</strong> están siempre habilitadas, aunque no haya KB abierta.</p>
+      <table>
+        <thead><tr><th>Opción en el menú</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Class not in Theme and Class not used</td><td><code>ClassNotInTheme</code></td><td>Lista clases que no están en el theme y clases no usadas.</td></tr>
+          <tr><td>Classes Used</td><td><code>ClassUsed</code></td><td>Lista clases usadas.</td></tr>
+          <tr class="missing"><td><code>ObjThemeClassesNotUsed</code></td><td><code>ObjThemeClassesNotUsed</code></td><td>Clases de theme no usadas por objeto. Sin texto en recursos.</td></tr>
+          <tr class="missing"><td><code>ThemeClassesNotUsed</code></td><td><code>ThemeClassesNotUsed</code></td><td>Clases de theme no usadas. Sin texto en recursos.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="fuera">
+      <h2>Entradas fuera de Tools</h2>
+      <p>El mismo paquete publica tres comandos en otras superficies de GeneXus. El texto de los tres es “Review Object by KBDoctor” o “Review Objects by KBDoctor”.</p>
+      <table>
+        <thead><tr><th>Dónde aparece</th><th>Id</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td>Grupo de commit de GeneXus</td><td><code>PreprocessPendingObjects</code></td><td>Revisa los objetos pendientes del commit.</td></tr>
+          <tr><td>Menú contextual de un objeto de la KB</td><td><code>ReviewObject</code></td><td>Revisa el objeto seleccionado. Solo se habilita con un objeto seleccionado.</td></tr>
+          <tr><td>Menú contextual de módulo o carpeta</td><td><code>ReviewModuleOrFolder</code></td><td>Revisa los objetos del módulo o la carpeta. Solo se habilita con un módulo o una carpeta seleccionados.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="no-menu">
+      <h2>Comandos registrados que no están en el menú</h2>
+      <p>Están definidos en <code>KBDoctor.package</code> y tienen handler, pero no se publican en Tools ni en los menús contextuales. Los reportes HTML los disparan como acciones (asignar dominio, abrir objeto, borrar, aplicar un reemplazo).</p>
+      <div class="chips">
+        <code>ApplyReplaceDomain</code>
+        <code>ApplyAttUpdated</code>
+        <code>RemoveIndexAttribute</code>
+        <code>SelectObjectsUpdateAttribute</code>
+        <code>ApplyObjectsUpdateAttribute</code>
+        <code>ObjectsWithVarNotBasedOnAtt</code>
+        <code>ChangeLegacyCode</code>
+        <code>EditLegacyCodeToReplace</code>
+        <code>GeneratedByPatternWithoutDynamism</code>
+        <code>AssignDomainToAttribute</code>
+        <code>AssignDescriptionToAttribute</code>
+        <code>ApplyAttributeText</code>
+        <code>AssignTitleToAttribute</code>
+        <code>AssignColumnTitleToAttribute</code>
+        <code>ListAttribute</code>
+        <code>AddDescriptorIndex</code>
+        <code>RemoveObject</code>
+        <code>RemoveUnreferencedObjectsInUserModules</code>
+        <code>OpenObject</code>
+        <code>SetObjectPropertyText</code>
+        <code>ApplyObjectPropertyText</code>
+        <code>AssignAttributeToVariable</code>
+        <code>AssignDomainToVariable</code>
+        <code>AssignAttributeOrDomainToVariable</code>
+        <code>RunResponsiveSmoothAction</code>
+        <code>ApplySearchAndReplace</code>
+        <code>ApplyCopyEnvironment</code>
+        <code>AssignDescriptionToTable</code>
+        <code>ApplyTableText</code>
+        <code>UDPCallables</code>
+        <code>CheckBldObjects</code>
+      </div>
+      <p><code>UDPCallables</code> está registrado y su handler no hace nada: el cuerpo está comentado.</p>
+    </section>
+  </main>
+  <footer>Generado a partir de <code>KBDoctorUI/Documentacion/Menu.md</code>.</footer>
+</body>
+</html>
